@@ -1,0 +1,1467 @@
+/* Gameplay Screen */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+isolation: isolate;
+
+position: relative;
+width: 390px;
+height: 884px;
+min-height: 884px;
+
+background: linear-gradient(0deg, #F7F4EC, #F7F4EC), #FFFFFF;
+
+
+/* Header - TopAppBar */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 16px 24.01px 16px 24px;
+gap: 64.1px;
+isolation: isolate;
+
+width: 390px;
+max-width: 576px;
+height: 64px;
+
+background: #F6FAF8;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Header - TopAppBar:shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Button - Back */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px;
+
+width: 32px;
+height: 32px;
+
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon */
+
+width: 16px;
+height: 16px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Heading 1 → ShiftTac */
+
+width: 133.73px;
+height: 32px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 600;
+font-size: 24px;
+line-height: 31px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+letter-spacing: 2.4px;
+text-transform: uppercase;
+
+color: #171D1C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Button - Restart */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px;
+
+width: 32px;
+height: 32px;
+
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+z-index: 3;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon */
+
+width: 16px;
+height: 16px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Main Game Area */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 24px;
+gap: 32px;
+
+width: 390px;
+max-width: 448px;
+height: 820px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 1;
+z-index: 0;
+
+
+/* Status Indicator */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 199.53px;
+height: 65px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Background */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 16px;
+gap: 8px;
+isolation: isolate;
+
+width: 199.53px;
+height: 44px;
+
+background: #CFE8E2;
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Overlay+Shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Background */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+
+width: 12px;
+height: 12px;
+
+background: #006A63;
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Overlay+Shadow */
+
+width: 12px;
+height: 12px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 0px 16px -2px rgba(0, 106, 99, 0.25);
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 147.53px;
+height: 28px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Text */
+
+width: 147.53px;
+height: 28px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 20px;
+line-height: 28px;
+/* identical to box height, or 140% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #006A63;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Margin */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 4px 0px 0px;
+
+width: 69.8px;
+height: 21px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 69.8px;
+height: 17px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 69.8px;
+height: 17px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* identical to box height, or 120% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: 0.7px;
+text-transform: uppercase;
+
+color: #6D7A77;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* The Game Board (3x3 Grid) */
+
+box-sizing: border-box;
+
+width: 342px;
+height: 342px;
+
+background: #FFFFFF;
+border: 1px solid rgba(223, 227, 226, 0.5);
+border-radius: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* The Game Board (3x3 Grid):shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 8px 16px -4px rgba(29, 35, 48, 0.08);
+border-radius: 24px;
+
+
+/* Button - Empty cell */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 13px;
+top: 13px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Empty cell:shadow */
+
+width: 97.33px;
+height: 97.33px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Button - Player O */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 16.65px 16.68px 16.68px 16.65px;
+isolation: isolate;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 122.33px;
+top: 13px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Player O:shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 50.67px;
+height: 50.67px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Icon */
+
+width: 50.67px;
+height: 50.67px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Button - Empty cell */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+position: absolute;
+width: 97.34px;
+height: 97.33px;
+left: 231.67px;
+top: 13px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Empty cell:shadow */
+
+width: 97.34px;
+height: 97.33px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Button - Player X */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 12.65px 12.65px 12.68px 12.66px;
+isolation: isolate;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 13px;
+top: 122.33px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Player X:shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 39.92px;
+height: 39.92px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Icon */
+
+width: 39.92px;
+height: 39.92px;
+
+background: #FD7865;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Button - Player O - Oldest Faded */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 16.65px 16.68px 16.68px 16.65px;
+isolation: isolate;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 122.33px;
+top: 122.33px;
+
+background: #F0F5F3;
+opacity: 0.45;
+border-radius: 16px;
+
+
+/* Button - Player O - Oldest Faded:shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 50.67px;
+height: 50.67px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Icon */
+
+width: 50.67px;
+height: 50.67px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Background+Border+Shadow */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 2px 6px;
+
+position: absolute;
+width: 41.97px;
+height: 21px;
+right: -8px;
+top: -8px;
+
+background: #F7F4EC;
+border: 1px solid #BCC9C6;
+box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Text */
+
+width: 27.97px;
+height: 15px;
+
+font-family: 'Nunito Sans';
+font-style: normal;
+font-weight: 700;
+font-size: 10px;
+line-height: 15px;
+/* identical to box height, or 150% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+
+color: #6D7A77;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Button - Player X */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 12.65px 12.67px 12.68px 12.65px;
+isolation: isolate;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 231.67px;
+top: 122.33px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Player X:shadow */
+
+position: absolute;
+left: 0px;
+right: -0.01px;
+top: 0px;
+bottom: 0px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 39.92px;
+height: 39.92px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Icon */
+
+width: 39.92px;
+height: 39.92px;
+
+background: #FD7865;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Button - Player O */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 16.68px 16.67px 16.66px 16.66px;
+isolation: isolate;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 13px;
+top: 231.67px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Player O:shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: -0.01px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 50.67px;
+height: 50.67px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Icon */
+
+width: 50.67px;
+height: 50.67px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Button - Empty cell */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+position: absolute;
+width: 97.33px;
+height: 97.34px;
+left: 122.33px;
+top: 231.67px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Empty cell:shadow */
+
+width: 97.33px;
+height: 97.34px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Button - Player X */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 12.68px 12.67px 12.66px 12.65px;
+isolation: isolate;
+
+position: absolute;
+width: 97.33px;
+height: 97.33px;
+left: 231.67px;
+top: 231.67px;
+
+background: #F0F5F3;
+border-radius: 16px;
+
+
+/* Button - Player X:shadow */
+
+position: absolute;
+left: 0px;
+right: -0.01px;
+top: 0px;
+bottom: -0.01px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 39.92px;
+height: 39.92px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Icon */
+
+width: 39.92px;
+height: 39.92px;
+
+background: #FD7865;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Player Cards:margin */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 129.219px 0px 0px;
+
+width: 342px;
+height: 301px;
+min-height: 163.98px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* Player Cards */
+
+width: 342px;
+height: 163.98px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Player X Card (Inactive) */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 16px 16px 18px;
+gap: 7px;
+isolation: isolate;
+
+position: absolute;
+height: 132.59px;
+left: 0px;
+right: 179px;
+top: 8px;
+
+background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), #FFFFFF;
+background-blend-mode: saturation, normal;
+opacity: 0.8;
+border: 1px solid #DFE3E2;
+border-radius: 16px;
+
+
+/* Player X Card (Inactive):shadow */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: -0.39px;
+
+background: rgba(255, 255, 255, 0.002);
+box-shadow: 0px 2px 8px -2px rgba(29, 35, 48, 0.05);
+border-radius: 16px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Overlay */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+width: 48px;
+height: 48px;
+
+background: rgba(255, 180, 168, 0.2);
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 17.5px;
+height: 17.5px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon */
+
+width: 17.5px;
+height: 17.5px;
+
+background: #FD7865;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 0px;
+
+width: 60.13px;
+height: 41.59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Heading 3 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px 0px 0.59px;
+
+width: 60.13px;
+height: 26.59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 60.13px;
+height: 26px;
+
+font-family: 'Nunito Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 26px;
+/* identical to box height, or 160% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #3D4947;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 60.13px;
+height: 15px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 50.72px;
+height: 15px;
+
+font-family: 'Nunito Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height, or 120% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #6D7A77;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Player O Card (Active) */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 16px;
+gap: 7px;
+isolation: isolate;
+
+position: absolute;
+height: 135.24px;
+left: 179px;
+right: 0px;
+top: 8px;
+
+background: #FFFFFF;
+border: 2px solid #006A63;
+box-shadow: 0px 0px 16px -2px rgba(0, 106, 99, 0.25);
+border-radius: 16px;
+
+
+/* Overlay */
+
+position: absolute;
+left: 2.04px;
+right: -1.36px;
+top: 2.04px;
+bottom: -1.01px;
+
+background: rgba(0, 106, 99, 0.05);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Overlay */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+width: 48.96px;
+height: 48.96px;
+
+background: rgba(58, 168, 158, 0.3);
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 25.5px;
+height: 25.5px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon */
+
+width: 25.5px;
+height: 25.5px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 75.43px;
+height: 42.42px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Heading 3 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px 0px 0.588235px;
+
+width: 75.43px;
+height: 27.12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 64.29px;
+height: 26.52px;
+
+font-family: 'Nunito Sans';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 26px;
+/* identical to box height, or 160% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #006A63;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 75.43px;
+height: 15.3px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 75.43px;
+height: 15.3px;
+
+font-family: 'Nunito Sans';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 14px;
+/* identical to box height, or 120% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: 0.6px;
+text-transform: uppercase;
+
+color: #006A63;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;

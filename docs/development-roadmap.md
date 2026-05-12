@@ -6,14 +6,16 @@
 > **Document role:** Execution contract · Scope controller · Implementation sequence.
 
 This document is the **single source of truth** for *what gets built, in what order, and when each thing is done*.
-It binds together the four foundational specs:
+It binds together the foundational specs:
 
 - `docs/design.md` — visual identity, screens, motion
 - `docs/rules.md` — gameplay rules and engine behavior
 - `docs/implementation-rules.md` — engineering guardrails
 - `docs/structure.md` — folder & file hierarchy
+- `css/*.css` — **Figma-exported per-screen pixel specs** (the UI source of truth for screens & modal surfaces built in P7–P13). See **§2.2 — Figma-Exported CSS → Flutter Implementation Workflow**.
+- `assets/images/`, `assets/icons/` — **brand image and icon assets** (logo, hero illustration, all UI glyphs). The CSS files reference visual slots; the actual rendered assets come from here. See **§2.3 — Image & Icon Asset Inventory**.
 
-If anything in this roadmap conflicts with the four documents above, **those documents win**. This file only sequences and bounds the work.
+If anything in this roadmap conflicts with the documents above, **those documents win**. This file only sequences and bounds the work.
 
 ---
 
@@ -63,6 +65,8 @@ Every phase must produce the **same** files, the **same** public APIs, and the *
 | P8 | Use design tokens from `design.md`. No magic colors, magic spacing, magic durations. | `implementation-rules.md §6` |
 | P9 | Implement incrementally. Small completed milestones over giant changesets. | `implementation-rules.md §10` |
 | P10 | No draw state. The game continues until a player wins. | `rules.md §8` |
+| P11 | UI screens & modal surfaces are sourced from `css/*.css` (Figma exports) and translated to Flutter via the `/figma-implement-design` skill. Raw CSS values are reconciled to `core/theme` / `game_constants.dart` tokens before commit — **never** committed as inline hex/px literals. | `css/`, `/figma-implement-design`, **§2.2** |
+| P12 | Images & icons live exclusively in `assets/images/` and `assets/icons/`. Widgets reference them by exact filename — no inline base64, no generated placeholders, no Material/Cupertino icon substitutions. If an implementing agent cannot find the asset that matches a CSS visual slot, it **must stop and ask the user** to clarify (or supply the missing file) before continuing. | `assets/`, **§2.3** |
 
 ---
 
@@ -82,6 +86,7 @@ These are **fixed** for the MVP. Do not add or swap libraries during phases.
 | Haptics | `HapticFeedback` from `flutter/services.dart` (built-in) |
 | Testing | `flutter_test` only |
 | Fonts | Google Fonts `Poppins` (headings) + `Nunito Sans` (body) — bundled via `google_fonts` package |
+| SVG rendering | `flutter_svg` — required by `assets/icons/*.svg` (all UI glyphs). First consumed in **P2** (`AppIconButton`); see **Amendment 2026-05-12 — flutter_svg + asset inventory**. |
 
 > **Rule:** If a phase needs something not on this list, **stop** and amend this section before adding the dependency.
 
@@ -99,6 +104,121 @@ These are **fixed** for the MVP. Do not add or swap libraries during phases.
 | `test/edge_cases_test.dart` | P18 | Consolidated edge-case tests (additional focused test files under `test/` are allowed if named per Section 16 and tied to an owning phase). |
 
 **Shared settings (MVP):** A single **`AppSettingsController`** instance lives at the app root (provided from `lib/app.dart` without any DI package). It is **in-memory only** — holds `soundEffectsEnabled`, `musicEnabled`, and `vibrationEnabled` via `ChangeNotifier` or `ValueNotifier`/`Listenable` pattern; resets to defaults on cold start. **No** `SharedPreferences`, repositories, services layer, or injectors.
+
+### 2.2 Figma-Exported CSS → Flutter Implementation Workflow
+
+The `css/` folder at the project root contains **Figma-exported pixel specs** for every screen and modal surface in the app. These files are the **layout & visual structure source of truth** for the UI-building phases (P7–P13) and remove all ambiguity about "how should this screen look".
+
+**Source-of-truth precedence (UI phases only):**
+
+1. **`css/*.css`** — exact layout, sizing, hierarchy, and visual structure (Figma export).
+2. **`assets/images/` + `assets/icons/`** — the actual rendered images and glyphs the CSS slots reference. See **§2.3 — Image & Icon Asset Inventory**.
+3. **`design.md`** — design rationale, motion system, copy, and named tokens.
+4. **`core/theme/` + `core/constants/game_constants.dart`** — the *only* place numeric values may originate in committed Dart code.
+
+The CSS files contain raw pixel and hex values straight from Figma. **Do not** copy those raw values into widgets. Every value pulled from the CSS must be reconciled to the nearest existing token in `core/theme` or `game_constants.dart`. If a CSS value has no matching token, **stop** and either (a) add the missing token under an amendment to Phase 1, or (b) snap to the nearest existing token — never both invent a value and leave it inline.
+
+The CSS files reference visuals with `<img>`, `background-image`, or named placeholders. **Do not** invent vector code, embed base64, generate placeholder graphics, or substitute Material/Cupertino icons for a missing asset. Every visual slot must resolve to a real file in `assets/images/` or `assets/icons/`. If a CSS slot has no matching asset, follow the **Missing-Asset Escalation** rule in **§2.3** — stop and ask the user.
+
+#### Phase → CSS file map
+
+| Phase | Surface | Design Source |
+|-------|---------|---------------|
+| P7 | Gameplay Screen | `css/GameplayScreen.css` |
+| P8 | Win Dialog | `css/WinDialog.css` |
+| P8 | Pause Bottom Sheet | `css/PauseMenu.css` |
+| P9 | Home Screen | `css/HomeScreen.css` |
+| P10 | Splash Screen | `css/SplashScreen.css` |
+| P11 | Onboarding — Page 1 ("Looks familiar?") | `css/Onboarding1ClassicStart.css` |
+| P11 | Onboarding — Page 2 ("The Shift Mechanic") | `css/Onboarding2TheShiftMechanic.css` |
+| P11 | Onboarding — Page 3 ("Watch the faded mark") | `css/Onboarding3.css` |
+| P12 | How to Play Screen | `css/HowtoPlayScreen.css` |
+| P13 | Settings Screen | `css/SettingsScreen.css` |
+
+#### Standard implementation procedure for any UI phase
+
+1. **Read the CSS file** for the surface being built. Identify the top-level layout container, repeating sub-components, and unique visual elements. Note any auto-layout / flex hints embedded as classes.
+2. **Invoke the `/figma-implement-design` skill** with the CSS file as the design source. Tell the skill:
+   - The target stack: **Flutter** + `flutter_screenutil` + `flutter_bloc`.
+   - The target widget file paths from the phase's `Deliverables` list.
+   - The available token files: `AppColors`, `AppTextStyles`, `AppSpacing`, `app_constants.dart`, `game_constants.dart`.
+   - The widgets it must reuse (e.g. `AppScaffold`, `PrimaryButton`, `SecondaryButton`, `ScreenHeader`, `InfinityLogo`, `AppIconButton`, `MiniBoardPreview`).
+3. **Decompose** the generated output into **exactly** the widgets listed in the phase's `Deliverables`. Do **not** introduce widgets that are not listed; merge fragments into the listed ones or split them into the listed ones. New shared widgets require an amendment to **§2.1**.
+4. **Reconcile tokens.** Replace every hard-coded color, font size, font weight, padding, gap, and radius from the CSS with the equivalent value from `core/theme` (or, if missing, snap to the nearest existing token). The committed code must contain **zero** raw hex literals and **zero** raw pixel literals outside `flutter_screenutil` extensions.
+5. **Apply responsive sizing.** All pixel values use `flutter_screenutil` extensions (`.w / .h / .r / .sp`) against the base design size `Size(390, 844)` (configured in P2).
+6. **Wire state.** Connect the screen to its Cubit / controller per the phase's `Scope In` (e.g. `GameCubit` for P7/P8, `AppSettingsController` for P13). Widgets must consume state through `BlocBuilder` / `BlocSelector` / `ListenableBuilder` — **never** by reading mutable globals.
+7. **Verify acceptance criteria** for the owning phase: visual fidelity to the CSS *and* compliance with the token / architecture rules in `implementation-rules.md`.
+
+#### Read-only constraint
+
+Files inside `css/` are **never** edited by any phase. If the design changes, the CSS must be re-exported from Figma and the affected phase re-run; phases must not patch CSS in place.
+
+### 2.3 Image & Icon Asset Inventory
+
+The `assets/images/` and `assets/icons/` folders contain every brand image, illustration, and UI glyph used by the app. The CSS files in `css/` reference visual slots; the **only** acceptable way to fill those slots is by loading a real file from these folders. SVGs render via the `flutter_svg` package (see Section 2 lock list); PNGs render via Flutter's built-in `Image.asset`.
+
+#### Inventory & per-phase usage
+
+| Asset | Type | Primary usage | Owning phase(s) |
+|-------|------|---------------|-----------------|
+| `assets/images/Logo.png` | PNG | App brand mark (infinity + X/O composition). Used on Splash, optionally on Home header, Onboarding hero slots. **Decision needed**: whether `InfinityLogo` (P2) is a hand-drawn vector or simply `Image.asset('assets/images/Logo.png')`. Clarify before starting P2. | P2 (TBD), P9, P10, P11 |
+| `assets/images/home_icon.png` | PNG | Home screen hero illustration (large illustrative block above CTAs, per `css/HomeScreen.css`). **Confirm placement** during P9 against the CSS layout. | P9 |
+| `assets/icons/x.svg` | SVG | Player X mark — used by `BoardCell` (P7), `MiniBoardPreview` (P11/P12), Win Dialog winner symbol (P8), player panels (P7). | P7, P8, P11, P12 |
+| `assets/icons/o.svg` | SVG | Player O mark — same surfaces as `x.svg`. | P7, P8, P11, P12 |
+| `assets/icons/play.svg` | SVG | "Play Local Multiplayer" primary CTA glyph on Home. | P9 |
+| `assets/icons/multiplayer.svg` | SVG | Multiplayer mode glyph (Home CTA / mode card). | P9 |
+| `assets/icons/ai.svg` | SVG | "Play vs AI — Coming Soon" disabled CTA glyph. | P9 |
+| `assets/icons/rules.svg` | SVG | Rules / How-to-Play glyph (Home secondary action, How-to-Play header). | P9, P12 |
+| `assets/icons/how_to_play.svg` | SVG | Alternative How-to-Play glyph (Home secondary action, Pause sheet). **Clarify** with user which of `rules.svg` / `how_to_play.svg` goes where if both are referenced by the same CSS slot. | P8, P9, P12 |
+| `assets/icons/settings.svg` | SVG | Settings glyph (Home secondary action, Pause sheet, gameplay header if specified by CSS). | P7 (TBD per CSS), P8, P9 |
+| `assets/icons/home.svg` | SVG | Home navigation glyph (back-to-home from Win Dialog "Back to Home", Pause sheet "Exit to Home" — verify against `css/WinDialog.css` & `css/PauseMenu.css`). | P8 |
+| `assets/icons/restart.svg` | SVG | Restart match glyph — Gameplay header (P7), Pause sheet "Restart Match", Win Dialog "Play Again". | P7, P8 |
+| `assets/icons/resume.svg` | SVG | Pause sheet "Resume" row glyph. | P8 |
+| `assets/icons/logout.svg` | SVG | Pause sheet "Exit to Home" row glyph (if CSS uses logout iconography). | P8 |
+| `assets/icons/tap.svg` | SVG | Tap-indicator glyph for the onboarding tutorial visuals. | P11 |
+| `assets/icons/xo_onboarding_background.svg` | SVG | Decorative X/O motif used as a faded background on Onboarding pages and (likely) the Splash screen. Confirm splash usage against `css/SplashScreen.css`. | P10 (TBD), P11 |
+| `assets/icons/dark.svg` | SVG | Dark-theme tile glyph in Settings (the disabled "Coming Soon" row). | P13 |
+| `assets/icons/sound.svg` | SVG | Sound effects tile glyph in Settings. | P13 |
+| `assets/icons/music.svg` | SVG | Music tile glyph in Settings. | P13 |
+| `assets/icons/haptic.svg` | SVG | Vibration tile glyph in Settings. | P13 |
+| `assets/icons/credits.svg` | SVG | Credits row glyph in Settings → About. | P13 |
+| `assets/icons/version.svg` | SVG | Version row glyph in Settings → About. | P13 |
+
+#### Loading conventions
+
+- **SVG icons** — render through `flutter_svg`'s `SvgPicture.asset(...)`. Apply `colorFilter` to tint per the active token (e.g. `AppColors.inkNavy`); never re-export a recoloured copy of the SVG.
+- **PNG images** — render through `Image.asset(...)`. Use `flutter_screenutil` extensions for width/height. Add `gaplessPlayback: true` only when needed during transitions.
+- **No `Icons.*` substitutions.** Material/Cupertino built-in icon fonts are **not** an acceptable fallback for a missing SVG.
+- **No on-the-fly recolouring of PNGs.** If a PNG looks wrong, raise it via the escalation rule below.
+
+#### Missing-Asset Escalation Rule (binding on all phases P7–P13)
+
+When an implementing agent is translating a CSS slot to a widget and either:
+
+1. **No asset matches** the visual slot (no file in `assets/images/` or `assets/icons/` looks like the right glyph or image), **or**
+2. **Multiple assets could match** the slot (genuine ambiguity — e.g. `rules.svg` vs `how_to_play.svg` for the same row), **or**
+3. The CSS references a name or alt-text that has no file equivalent, **or**
+4. The asset exists but its style (size, fill, viewBox) does not visually align with the CSS slot,
+
+the agent **must stop and ask the user a clarifying question** before proceeding. It must:
+
+- Quote the exact CSS selector / slot it is trying to fill.
+- List the assets it considered and why each was rejected (or why the choice is ambiguous).
+- Propose at most 2–3 concrete options (e.g. "use `rules.svg`", "use `how_to_play.svg`", "supply a new asset named `…`").
+- Wait for the user's reply.
+
+The agent **must not**:
+
+- Generate or inline a placeholder vector / emoji / Material icon.
+- Embed base64 image data in Dart files.
+- Auto-pick the "closest" asset and continue silently.
+- Skip the slot and leave a `TODO`.
+
+This rule overrides any pressure to "just keep going" — UI phases are not Done if any visual slot is filled by a placeholder.
+
+#### Read-only constraint (assets)
+
+Files inside `assets/images/` and `assets/icons/` are **read-only** during phases P7–P13. New assets are only added in response to the escalation rule above, after explicit user direction. Renames, recolour exports, and edits are out of scope for any phase unless the user opens an amendment.
 
 ---
 
@@ -126,7 +246,7 @@ Each milestone is broken into numbered phases below.
 |-------|-----------|-------|--------|
 | P0 | M0 | Project Foundation & Cleanup | Done |
 | P1 | M0 | Design System Tokens (Theme, Colors, Typography, Spacing) | Done |
-| P2 | M0 | App Shell, Routing Skeleton, Shared Widgets | Pending |
+| P2 | M0 | App Shell, Routing Skeleton, Shared Widgets | Done |
 | P3 | M1 | Game Domain Models | Pending |
 | P4 | M1 | Win Checker | Pending |
 | P5 | M1 | Game Engine (FIFO + Turn Lifecycle) | Pending |
@@ -253,6 +373,14 @@ lib/core/constants/game_constants.dart
 
 **Goal:** Wire `ScreenUtil`, the theme, and a route table. Add the *truly shared* widgets that every later screen will reuse.
 
+**Asset References & Clarifications (see §2.3):**
+
+- `AppIconButton` consumes SVG glyphs from `assets/icons/*.svg` via `flutter_svg`. Add `flutter_svg` to `pubspec.yaml` in this phase (per the Section 2 amendment).
+- **`InfinityLogo` decision required before starting P2:** is the logo
+  (a) a Dart-drawn vector (per the existing widget plan), or
+  (b) `Image.asset('assets/images/Logo.png')` rendered through `flutter_svg`/`Image.asset` with optional rotation animation?
+  Ask the user to confirm before scaffolding the widget. If (b), the `animate: true` parameter in P10 wraps the `Image.asset` in a `RotationTransition` instead of driving Dart-drawn paths.
+
 **Scope In:**
 
 - `app.dart` initializing `ScreenUtilInit(designSize: Size(390, 844))` and `MaterialApp` with `AppTheme.light`.
@@ -289,11 +417,11 @@ lib/shared/widgets/screen_header.dart
 
 **Acceptance Criteria:**
 
-- [ ] App boots to `/splash` route (placeholder allowed) on Warm Ivory background.
-- [ ] All routes resolve without `Navigator` errors.
-- [ ] `PrimaryButton` and `SecondaryButton` render correctly with theme colors.
-- [ ] `InfinityLogo` renders crisply at multiple sizes (test at 24, 48, 96 logical px).
-- [ ] No widget hardcodes a color, font, or spacing value — all flow from `core/theme`.
+- [x] App boots to `/splash` route (placeholder allowed) on Warm Ivory background.
+- [x] All routes resolve without `Navigator` errors.
+- [x] `PrimaryButton` and `SecondaryButton` render correctly with theme colors.
+- [x] `InfinityLogo` renders crisply at multiple sizes (test at 24, 48, 96 logical px).
+- [x] No widget hardcodes a color, font, or spacing value — all flow from `core/theme`.
 
 **Dependencies:** Phases 0, 1.
 
@@ -509,6 +637,20 @@ test/game_cubit_test.dart
 
 **Goal:** Build the hero screen. After this phase, the game is **end-to-end playable**.
 
+**Design Source:** `css/GameplayScreen.css` (Figma export — covers header row, turn pill, move-counter pill, 3×3 board, and both player panels). See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- `assets/icons/x.svg` — X mark on `BoardCell` and on `PlayerPanel` (left).
+- `assets/icons/o.svg` — O mark on `BoardCell` and on `PlayerPanel` (right).
+- `assets/icons/restart.svg` — restart icon in the header.
+- `assets/icons/home.svg` *or* back chevron — back action in the header (verify against the CSS).
+- `assets/icons/settings.svg` — gameplay header settings entry **only if** the CSS includes it (otherwise omit).
+
+If the CSS calls for an asset not listed above, follow the **Missing-Asset Escalation Rule** in §2.3.
+
+**Implementation Method:** Run the `/figma-implement-design` skill against `css/GameplayScreen.css`, scaffolding into the widget files listed in `Deliverables` below. Reuse `AppScaffold`, `ScreenHeader`, `AppIconButton`, `InfinityLogo` from P2. Load SVGs via `flutter_svg` and tint with `AppColors`. Reconcile every hex/px in the CSS to `AppColors`, `AppTextStyles`, `AppSpacing`, and `game_constants.dart` before commit.
+
 **Scope In:**
 
 - `GameplayScreen` (StatelessWidget) hosting a `BlocProvider<GameCubit>` and a `BlocBuilder` over `GameState`.
@@ -564,15 +706,31 @@ lib/features/game/presentation/widgets/player_panel.dart
 
 **Goal:** Close the gameplay loop with a calm, premium win celebration and a pause menu.
 
+**Design Source:**
+
+- `css/WinDialog.css` — Figma export for the win modal (winner symbol, title, stats row, CTAs).
+- `css/PauseMenu.css` — Figma export for the pause bottom sheet (handle, menu rows, footer).
+
+See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- **Win Dialog** — `assets/icons/x.svg` / `assets/icons/o.svg` (large winner symbol), `assets/icons/restart.svg` ("Play Again" CTA), `assets/icons/home.svg` ("Back to Home" CTA).
+- **Pause Bottom Sheet** — `assets/icons/resume.svg`, `assets/icons/restart.svg`, `assets/icons/how_to_play.svg` (or `rules.svg` — clarify via §2.3 escalation if both match the CSS slot), `assets/icons/settings.svg`, `assets/icons/logout.svg` (Exit to Home).
+
+If a CSS slot has no matching asset above, follow the **Missing-Asset Escalation Rule** in §2.3.
+
+**Implementation Method:** Run the `/figma-implement-design` skill twice — once against each CSS file — scaffolding into `win_dialog.dart` and `pause_bottom_sheet.dart` respectively. Reuse `PrimaryButton` / `SecondaryButton` from P2 for the dialog CTAs. Load SVGs via `flutter_svg` and tint with `AppColors`. Reconcile all CSS hex/px values to `AppColors`, `AppTextStyles`, `AppSpacing`, and `game_constants.dart` (`dialogEntranceMs`) before commit.
+
 **Scope In:**
 
-- `WinDialog` widget — modal route:
+- `WinDialog` widget — modal route built from `css/WinDialog.css`:
   - Large winner symbol (X coral / O teal).
   - Title "X Wins!" / "O Wins!".
   - Optional stats: total moves, match duration.
   - Primary CTA: **Play Again** → calls `cubit.restart()` and pops.
   - Secondary CTA: **Back to Home** → pops to `/home`.
-- `PauseBottomSheet` widget — bottom sheet from the header (restart button can long-press or settings icon can open it; for MVP we wire it to the header settings icon if present, otherwise restart-icon long-press):
+- `PauseBottomSheet` widget — bottom sheet built from `css/PauseMenu.css` (restart button can long-press or settings icon can open it; for MVP we wire it to the header settings icon if present, otherwise restart-icon long-press):
   - Resume · Restart Match · How to Play · Settings · Exit to Home.
 - Gameplay screen subscribes to `GameStatus.won` transitions and triggers `WinDialog` once per match.
 
@@ -608,6 +766,20 @@ lib/features/game/presentation/widgets/pause_bottom_sheet.dart
 ## Phase 9 — Home Screen
 
 **Goal:** Replace the home placeholder with the real central hub.
+
+**Design Source:** `css/HomeScreen.css` (Figma export — covers brand block, primary/secondary CTAs, the "Play vs AI — Coming Soon" disabled state, the secondary actions row, and the footer credits). See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- `assets/images/Logo.png` — top brand mark (or substituted by `InfinityLogo` widget — clarify with the user before P2; see §2.3 row for `Logo.png`).
+- `assets/images/home_icon.png` — hero illustration block above the CTAs. **Confirm exact placement** against `css/HomeScreen.css` and ask the user via §2.3 if the CSS slot does not visually match this image.
+- `assets/icons/play.svg` — primary CTA glyph ("Play Local Multiplayer").
+- `assets/icons/multiplayer.svg` — secondary mode glyph (if the CSS shows a separate multiplayer mode card).
+- `assets/icons/ai.svg` — "Play vs AI — Coming Soon" disabled CTA glyph.
+- `assets/icons/rules.svg` *or* `assets/icons/how_to_play.svg` — "How to Play" entry (escalate per §2.3 if the CSS doesn't disambiguate).
+- `assets/icons/settings.svg` — "Settings" entry.
+
+**Implementation Method:** Run the `/figma-implement-design` skill against `css/HomeScreen.css`, scaffolding into `home_screen.dart` and `home_action_card.dart`. Reuse `AppScaffold`, `InfinityLogo`, `PrimaryButton`, and `SecondaryButton` from P2. Load SVGs via `flutter_svg` (tinted with `AppColors`); load PNGs via `Image.asset`. Reconcile all CSS hex/px to `AppColors`, `AppTextStyles`, and `AppSpacing` before commit.
 
 **Scope In:**
 
@@ -652,6 +824,15 @@ lib/features/home/presentation/widgets/home_action_card.dart
 
 **Goal:** Brand intro, 2–3 seconds, with the infinity logo animation.
 
+**Design Source:** `css/SplashScreen.css` (Figma export — covers the centered infinity logo, "ShiftTac" wordmark, subtitle, and the faded X/O background motif). See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- `assets/images/Logo.png` — centered brand mark (or `InfinityLogo` widget animation, depending on the P2 decision; see §2.3 row for `Logo.png`).
+- `assets/icons/xo_onboarding_background.svg` — faded X/O background motif **if** `css/SplashScreen.css` includes one. If the CSS shows a different background pattern, escalate per §2.3.
+
+**Implementation Method:** Run the `/figma-implement-design` skill against `css/SplashScreen.css`, scaffolding into `splash_screen.dart`. Reuse `AppScaffold` and the enhanced animated `InfinityLogo` (extend `infinity_logo.dart` with the `animate: true` parameter described under `Scope In`). Load SVGs via `flutter_svg`; load PNGs via `Image.asset`. Reconcile all CSS hex/px to `AppColors`, `AppTextStyles`, and `AppSpacing` before commit.
+
 **Scope In:**
 
 - `SplashScreen`:
@@ -693,12 +874,31 @@ lib/features/splash/presentation/screens/splash_screen.dart
 
 **Goal:** Teach the FIFO + faded-mark mechanic in under 30 seconds.
 
+**Design Source:**
+
+- `css/Onboarding1ClassicStart.css` — Page 1 ("Looks familiar?").
+- `css/Onboarding2TheShiftMechanic.css` — Page 2 ("The Shift Mechanic").
+- `css/Onboarding3.css` — Page 3 ("Watch the faded mark").
+
+See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- `assets/icons/x.svg`, `assets/icons/o.svg` — player marks rendered inside `MiniBoardPreview` on each page.
+- `assets/icons/tap.svg` — tap indicator overlay on the animated pages (Page 2 / Page 3 — verify which CSS slot calls for it).
+- `assets/icons/xo_onboarding_background.svg` — decorative faded X/O motif behind the page content.
+- `assets/images/Logo.png` — small brand mark in the header (if the onboarding CSS includes one).
+
+If any CSS slot does not resolve to an asset above, escalate per §2.3.
+
+**Implementation Method:** Run the `/figma-implement-design` skill against the three CSS files in sequence; treat each as one `OnboardingPage` instance inside the shared `PageView`. Extract any element repeated across pages (page indicator dots, footer button row, visual slot frame) into `OnboardingPage`. The mini-board visual in each page is rendered by `MiniBoardPreview` — its visual language must match `BoardCell` from P7 (reuse helpers / styles, do not redefine cell visuals). Load SVGs via `flutter_svg`; load PNGs via `Image.asset`. Reconcile every CSS hex/px to `AppColors`, `AppTextStyles`, `AppSpacing`, and `game_constants.dart` (`fadedMarkOpacity`) before commit.
+
 **Scope In:**
 
 - `OnboardingScreen` hosting a `PageView` of 3 pages:
-  - **Page 1 — "Looks familiar?"** — classic 3×3 board static image.
-  - **Page 2 — "Only 3 marks stay active"** — animated mini-board showing the rotation.
-  - **Page 3 — "Watch the faded mark"** — mini-board with the faded oldest mark highlighted.
+  - **Page 1 — "Looks familiar?"** — classic 3×3 board static image. Source: `css/Onboarding1ClassicStart.css`.
+  - **Page 2 — "Only 3 marks stay active"** — animated mini-board showing the rotation. Source: `css/Onboarding2TheShiftMechanic.css`.
+  - **Page 3 — "Watch the faded mark"** — mini-board with the faded oldest mark highlighted. Source: `css/Onboarding3.css`.
 - `OnboardingPage` widget (title, description, visual slot, page index).
 - `MiniBoardPreview` widget — reusable 3×3 preview for onboarding & how-to-play, with optional pre-baked animation steps.
 - Progress indicator + Next / Back / **Start Playing** (final page).
@@ -736,6 +936,18 @@ lib/features/onboarding/presentation/widgets/mini_board_preview.dart
 ## Phase 12 — How to Play Screen
 
 **Goal:** Visual-first reference doc inside the app for players who skipped or forgot onboarding.
+
+**Design Source:** `css/HowtoPlayScreen.css` (Figma export — covers the screen header, the 5 stepped sections with their mini-board visuals and captions, and the scroll/section spacing). See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- `assets/icons/x.svg`, `assets/icons/o.svg` — player marks inside each step's `MiniBoardPreview`.
+- `assets/icons/rules.svg` *or* `assets/icons/how_to_play.svg` — header glyph (clarify per §2.3 if the CSS doesn't disambiguate).
+- `assets/icons/home.svg` — back-to-home action in the header (verify against CSS — could be a chevron instead).
+
+If any CSS slot does not resolve to an asset above, escalate per §2.3.
+
+**Implementation Method:** Run the `/figma-implement-design` skill against `css/HowtoPlayScreen.css`, scaffolding into `how_to_play_screen.dart` and `how_to_play_step.dart`. Reuse `AppScaffold`, `ScreenHeader`, and the `MiniBoardPreview` from P11 — do **not** redefine the mini-board. Load SVGs via `flutter_svg` and tint with `AppColors`. Reconcile all CSS hex/px to `AppColors`, `AppTextStyles`, and `AppSpacing` before commit.
 
 **Scope In:**
 
@@ -775,6 +987,22 @@ lib/features/how_to_play/presentation/widgets/how_to_play_step.dart
 ## Phase 13 — Settings Screen
 
 **Goal:** Lightweight settings UI wired to the **shared in-memory** `AppSettingsController` so toggles affect gameplay/audio/haptics **in-session** without persistence.
+
+**Design Source:** `css/SettingsScreen.css` (Figma export — covers the screen header, section groups for Theme / Audio / Gameplay / About, each `SettingsTile` row, and the disabled "Coming Soon" state for dark mode). See **§2.2 — CSS → Flutter Workflow**.
+
+**Asset References (see §2.3):**
+
+- `assets/icons/dark.svg` — Dark theme tile (disabled "Coming Soon").
+- `assets/icons/sound.svg` — Sound effects tile.
+- `assets/icons/music.svg` — Music tile.
+- `assets/icons/haptic.svg` — Vibration tile.
+- `assets/icons/version.svg` — Version row in About.
+- `assets/icons/credits.svg` — Credits row in About.
+- `assets/icons/home.svg` *or* back chevron — header back action (verify against CSS).
+
+If any CSS slot does not resolve to an asset above, escalate per §2.3.
+
+**Implementation Method:** Run the `/figma-implement-design` skill against `css/SettingsScreen.css`, scaffolding into `settings_screen.dart` and `settings_tile.dart`. Reuse `AppScaffold` and `ScreenHeader` from P2. After scaffold, replace any local toggle state in the generated code with reads/writes against the shared `AppSettingsController` (via `ListenableBuilder` / `InheritedNotifier` — **no** DI package, **no** per-screen duplicate state). Load SVGs via `flutter_svg` and tint with `AppColors`. Reconcile all CSS hex/px to `AppColors`, `AppTextStyles`, and `AppSpacing` before commit.
 
 **Scope In:**
 
@@ -1142,6 +1370,9 @@ GameState (wraps GameSnapshot for UI)
 | `lib/core/settings/` | P13 (create `app_settings_controller.dart`) | In-memory only for MVP; consumed by P15 (haptics), P16 (SFX); **no** persistence |
 | `lib/shared/animations/` | P14 | Stable |
 | `lib/core/audio/` | P16 | Roadmap-approved folder (Section 2.1); stable after P16 |
+| `css/` | Pre-P7 (Figma export, not authored in-phase) | **Read-only** during phases P7–P13; consumed via `/figma-implement-design` (see **§2.2**). Re-export from Figma if the design changes — never edited in place. |
+| `assets/images/` | Pre-P2 (user-supplied brand assets) | **Read-only** during phases P2–P13. New images may only be added in response to a Missing-Asset Escalation per **§2.3**. |
+| `assets/icons/` | Pre-P2 (user-supplied glyph set) | **Read-only** during phases P2–P13. Loaded via `flutter_svg`; tint via `AppColors`. New icons may only be added in response to a Missing-Asset Escalation per **§2.3**. |
 
 ### 7. Forbidden Patterns (Across All Phases)
 
@@ -1319,6 +1550,8 @@ Decisions locked by this roadmap (overrides anywhere else):
 - **D5** — Roadmap-approved `lib/` paths beyond `structure.md` are limited to **Section 2.1** (includes `lib/core/settings/` from P13 and `lib/core/audio/` from P16, plus domain/test/doc paths listed there).
 - **D6** — Engine is pure Dart; no Flutter imports inside `features/game/domain/`. (P3–P5)
 - **D7** — Exactly **one** `AppSettingsController` instance is created at the app root and exposed without DI packages; screens/features read it for in-session behavior only. (P13)
+- **D8** — UI for P7–P13 is sourced from the Figma-exported `css/*.css` files and translated to Flutter via the `/figma-implement-design` skill per **§2.2**. Raw CSS hex/px values are reconciled to `core/theme` / `game_constants.dart` tokens before commit; the committed Dart code contains **no** inline hex or raw pixel literals. `css/` is read-only during phases — design changes require a fresh Figma export. (P7–P13)
+- **D9** — Images and icons live exclusively in `assets/images/` and `assets/icons/` and are catalogued in **§2.3**. SVGs render via `flutter_svg`; PNGs via `Image.asset`. Material/Cupertino icon fonts, base64 inlining, and on-the-fly placeholder vectors are forbidden as substitutes. When an implementing agent cannot resolve a CSS visual slot to an existing asset (no match, ambiguous match, or visual mismatch), it **must stop and ask the user** via the Missing-Asset Escalation Rule before continuing. `assets/images/` and `assets/icons/` are read-only during phases. (P2, P7–P13)
 
 ---
 
@@ -1351,3 +1584,30 @@ Captured here so they don't pollute MVP phases:
 > *elegant · calm · structured · intentional · easy to evolve.*
 
 Every move on this roadmap, like every move on the board, should change the project — for the better.
+
+---
+
+## Amendment 2026-05-12 — `flutter_svg` + Asset Inventory
+
+**Trigger:** The user supplied brand assets under `assets/images/` (`Logo.png`, `home_icon.png`) and a full glyph set under `assets/icons/` (20 SVG icons covering gameplay, navigation, pause/menu, onboarding, and settings). Prior to this amendment the roadmap referenced "assets" only as placeholder declarations in `pubspec.yaml` (P0) and had no inventory or workflow for selecting them.
+
+**Decisions:**
+
+1. **§1 — New principle P11** added: assets are sourced exclusively from `assets/images/` and `assets/icons/`; missing-asset situations must escalate to the user.
+2. **§2 — Tech stack** gains `flutter_svg` as the SVG rendering library. First consumed in **P2** (`AppIconButton`). `pubspec.yaml` must add this dependency during P2 (not P0).
+3. **§2.3** — New section: **Image & Icon Asset Inventory**, including the full per-phase asset table, loading conventions (`SvgPicture.asset`, `Image.asset`, no `Icons.*` substitutions), and the binding **Missing-Asset Escalation Rule**.
+4. **P2** — Two clarifications added to the phase block: (a) `flutter_svg` is added to `pubspec.yaml` here; (b) the `InfinityLogo` widget needs an explicit user decision (Dart vector vs. `Logo.png`) before scaffolding.
+5. **P7, P8, P9, P10, P11, P12, P13** — each gains an **Asset References** subsection listing the exact files it consumes, with explicit escalation pointers to §2.3 for ambiguous slots (notably `rules.svg` vs. `how_to_play.svg`, the `home_icon.png` placement on Home, and the `xo_onboarding_background.svg` use on Splash).
+6. **§18 Decision Log** — new **D9** locks the asset-folder rule, the loading conventions, and the escalation requirement.
+7. **§6 File-Ownership Map** — `assets/images/` and `assets/icons/` rows added, both marked read-only during phases.
+
+**Impacted phases:** P2, P7, P8, P9, P10, P11, P12, P13.
+
+**Open clarifications still owed by the user (do not start the affected phase before resolving):**
+
+- **C1 (blocks P2 & P10):** Is `InfinityLogo` a Dart-drawn vector, or should it render `assets/images/Logo.png`?
+- **C2 (blocks P9):** Is `assets/images/home_icon.png` the hero illustration block in `css/HomeScreen.css`, and where exactly is it placed (above CTAs, behind the title, etc.)?
+- **C3 (blocks P8, P9, P12):** Which of `rules.svg` / `how_to_play.svg` is the canonical How-to-Play glyph, and where (if anywhere) is the other used?
+- **C4 (blocks P10):** Does `css/SplashScreen.css` reference `assets/icons/xo_onboarding_background.svg` as the background motif, or a different asset?
+
+These clarifications should be answered inline by the user (or via a future amendment) before the impacted phases are scheduled.

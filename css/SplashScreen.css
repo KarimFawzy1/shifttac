@@ -1,0 +1,438 @@
+/* Splash Screen */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 190px 0px 190.02px;
+isolation: isolate;
+
+position: relative;
+width: 390px;
+height: 884px;
+min-height: 884px;
+
+background: linear-gradient(0deg, #F7F4EC, #F7F4EC), #FFFFFF;
+
+
+/* Background Decorative Elements */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+opacity: 0.03;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* Abstract Faded X/O Pattern - Top Left → X */
+
+position: absolute;
+width: 74.53px;
+height: 168px;
+left: 22.35px;
+top: 132.68px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 120px;
+line-height: 180px;
+/* or 150% */
+display: flex;
+align-items: center;
+
+color: #1D2330;
+
+transform: rotate(12deg);
+
+
+/* Border */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 128px;
+height: 128px;
+left: 97.5px;
+top: 221px;
+
+border: 12px solid #1D2330;
+border-radius: 9999px;
+
+
+/* Abstract Faded X/O Pattern - Bottom Right */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 160px;
+height: 160px;
+right: 73.38px;
+bottom: 191.69px;
+
+border: 16px solid #1D2330;
+border-radius: 9999px;
+transform: rotate(-12deg);
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+position: absolute;
+width: 93.16px;
+height: 225px;
+right: 128.5px;
+bottom: 92.65px;
+
+transform: rotate(-6deg);
+
+
+/* Text */
+
+width: 93.16px;
+height: 225px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 150px;
+line-height: 225px;
+/* identical to box height, or 150% */
+display: flex;
+align-items: center;
+
+color: #1D2330;
+
+transform: rotate(-6deg);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Additional subtle shapes for depth */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 64px;
+height: 64px;
+left: 19.5px;
+top: 530.39px;
+
+opacity: 0.5;
+border: 6px solid #1D2330;
+border-radius: 9999px;
+
+
+/* Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+position: absolute;
+width: 49.69px;
+height: 120px;
+right: 74.14px;
+top: 88.4px;
+
+opacity: 0.5;
+transform: rotate(45deg);
+
+
+/* Text */
+
+width: 49.68px;
+height: 120px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 400;
+font-size: 80px;
+line-height: 120px;
+/* identical to box height, or 150% */
+display: flex;
+align-items: center;
+
+color: #1D2330;
+
+transform: rotate(45deg);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Overlay Gradient to ensure text readability against the warm background */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: linear-gradient(180deg, rgba(247, 244, 236, 0) 0%, rgba(247, 244, 236, 0.8) 100%);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Main Content Container */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px 24px;
+gap: 32px;
+
+width: 390px;
+max-width: 448px;
+height: 490.41px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+z-index: 2;
+
+
+/* Logo Area */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+isolation: isolate;
+
+width: 280px;
+max-width: 280px;
+height: 280px;
+
+border-radius: 22px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* A subtle glow behind the logo to lift it off the background */
+
+position: absolute;
+left: 0px;
+right: 0px;
+top: 0px;
+bottom: 0px;
+
+background: linear-gradient(45deg, rgba(255, 180, 168, 0.2) 0%, rgba(58, 168, 158, 0.2) 100%);
+opacity: 0.6;
+filter: blur(32px);
+border-radius: 9999px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* ShiftTac Infinity Logo featuring intertwined Coral X and Teal O symbols, 3D tactile aesthetic on a Warm Ivory background. */
+
+width: 280px;
+height: 280px;
+
+background: url(.png);
+box-shadow: 0px 8px 5px rgba(0, 0, 0, 0.08), 0px 20px 13px rgba(0, 0, 0, 0.03);
+border-radius: 22px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 1;
+z-index: 1;
+
+
+/* Typography Area */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 7.9px;
+
+width: 179.53px;
+height: 75.29px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Heading 1 */
+
+width: 126.03px;
+height: 38.39px;
+
+filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.05));
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Text */
+
+position: absolute;
+width: 126.03px;
+height: 39px;
+left: calc(50% - 126.03px/2);
+top: -1px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 600;
+font-size: 32px;
+line-height: 38px;
+/* identical to box height, or 120% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.8px;
+
+color: #1D2330;
+
+
+
+/* Text */
+
+width: 179.53px;
+height: 29px;
+
+font-family: 'Nunito Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 18px;
+line-height: 29px;
+/* identical to box height, or 160% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: 0.45px;
+
+color: #BCC9C6;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Call to Action Area:margin */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 32px 0px 0px;
+
+width: 129.64px;
+height: 71.12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Call to Action Area */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 3.89px;
+
+width: 129.64px;
+height: 39.12px;
+
+opacity: 0.8;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 129.64px;
+height: 17px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* identical to box height, or 120% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: 2.8px;
+text-transform: uppercase;
+
+color: #006A63;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon */
+
+width: 15.34px;
+height: 18.23px;
+
+background: #006A63;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;

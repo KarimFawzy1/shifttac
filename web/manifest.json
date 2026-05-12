@@ -1,6 +1,6 @@
 {
-    "name": "shifttac",
-    "short_name": "shifttac",
+    "name": "ShiftTac",
+    "short_name": "ShiftTac",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
