@@ -124,8 +124,8 @@ Each milestone is broken into numbered phases below.
 
 | Phase | Milestone | Title | Status |
 |-------|-----------|-------|--------|
-| P0 | M0 | Project Foundation & Cleanup | Pending |
-| P1 | M0 | Design System Tokens (Theme, Colors, Typography, Spacing) | Pending |
+| P0 | M0 | Project Foundation & Cleanup | Done |
+| P1 | M0 | Design System Tokens (Theme, Colors, Typography, Spacing) | Done |
 | P2 | M0 | App Shell, Routing Skeleton, Shared Widgets | Pending |
 | P3 | M1 | Game Domain Models | Pending |
 | P4 | M1 | Win Checker | Pending |
@@ -186,12 +186,12 @@ Each phase below follows the same shape:
 
 **Acceptance Criteria:**
 
-- [ ] `flutter pub get` succeeds.
-- [ ] `flutter analyze` returns 0 issues.
-- [ ] `flutter run` boots to a blank screen titled "ShiftTac" without errors.
-- [ ] Folder tree matches `structure.md` exactly (empty folders allowed).
-- [ ] Roadmap **Section 2.1** paths (e.g. `lib/core/settings/`, `lib/core/audio/`) are **not** required in P0 — they appear in their owning phases.
-- [ ] No leftover starter code (`_counter`, `MyHomePage`, etc.).
+- [x] `flutter pub get` succeeds.
+- [x] `flutter analyze` returns 0 issues.
+- [x] `flutter run` boots to a blank screen titled "ShiftTac" without errors.
+- [x] Folder tree matches `structure.md` exactly (empty folders allowed).
+- [x] Roadmap **Section 2.1** paths (e.g. `lib/core/settings/`, `lib/core/audio/`) are **not** required in P0 — they appear in their owning phases.
+- [x] No leftover starter code (`_counter`, `MyHomePage`, etc.).
 
 **Dependencies:** None.
 
@@ -235,11 +235,11 @@ lib/core/constants/game_constants.dart
 
 **Acceptance Criteria:**
 
-- [ ] Every named color in `design.md` appears as a `static const Color` in `AppColors`.
-- [ ] Every typography role in `design.md` appears in `AppTextStyles`.
-- [ ] All numeric magic values used later (durations, opacities, sizes) live in `app_spacing.dart` or `game_constants.dart`.
-- [ ] `AppTheme.light` returns a `ThemeData` with `scaffoldBackgroundColor = AppColors.warmIvory`.
-- [ ] `flutter analyze` clean.
+- [x] Every named color in `design.md` appears as a `static const Color` in `AppColors`.
+- [x] Every typography role in `design.md` appears in `AppTextStyles`.
+- [x] All numeric magic values used later (durations, opacities, sizes) live in `app_spacing.dart` or `game_constants.dart`.
+- [x] `AppTheme.light` returns a `ThemeData` with `scaffoldBackgroundColor = AppColors.warmIvory`.
+- [x] `flutter analyze` clean.
 
 **Dependencies:** Phase 0.
 
