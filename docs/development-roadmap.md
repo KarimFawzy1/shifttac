@@ -247,9 +247,9 @@ Each milestone is broken into numbered phases below.
 | P0 | M0 | Project Foundation & Cleanup | Done |
 | P1 | M0 | Design System Tokens (Theme, Colors, Typography, Spacing) | Done |
 | P2 | M0 | App Shell, Routing Skeleton, Shared Widgets | Done |
-| P3 | M1 | Game Domain Models | Pending |
-| P4 | M1 | Win Checker | Pending |
-| P5 | M1 | Game Engine (FIFO + Turn Lifecycle) | Pending |
+| P3 | M1 | Game Domain Models | Done |
+| P4 | M1 | Win Checker | Done |
+| P5 | M1 | Game Engine (FIFO + Turn Lifecycle) | Done |
 | P6 | M2 | Game State + Cubit | Pending |
 | P7 | M3 | Gameplay Screen (First Playable) | Pending |
 | P8 | M3 | Win Dialog & Pause Bottom Sheet | Pending |
@@ -463,11 +463,11 @@ lib/features/game/domain/models/move.dart
 
 **Acceptance Criteria:**
 
-- [ ] All models extend `Equatable` (or override `==` / `hashCode`).
-- [ ] No model imports anything from `flutter/material.dart`. Pure Dart only.
-- [ ] `Position.fromIndex(8)` returns `Position(row: 2, col: 2)` and vice versa.
-- [ ] `Player.x.opponent == Player.o`.
-- [ ] `flutter analyze` clean.
+- [x] All models extend `Equatable` (or override `==` / `hashCode`).
+- [x] No model imports anything from `flutter/material.dart`. Pure Dart only.
+- [x] `Position.fromIndex(8)` returns `Position(row: 2, col: 2)` and vice versa.
+- [x] `Player.x.opponent == Player.o`.
+- [x] `flutter analyze` clean.
 
 **Dependencies:** Phase 0.
 
@@ -502,10 +502,10 @@ test/win_checker_test.dart
 
 **Acceptance Criteria:**
 
-- [ ] All 8 winning lines (3 rows + 3 cols + 2 diagonals) are detected.
-- [ ] Returns `null` for partial lines or empty boards.
-- [ ] No side effects (pure function).
-- [ ] Tests: minimum 10 unit tests, **all green**.
+- [x] All 8 winning lines (3 rows + 3 cols + 2 diagonals) are detected.
+- [x] Returns `null` for partial lines or empty boards.
+- [x] No side effects (pure function).
+- [x] Tests: minimum 10 unit tests, **all green**.
 
 **Dependencies:** Phase 3.
 
@@ -565,11 +565,11 @@ test/game_engine_test.dart
 
 **Acceptance Criteria:**
 
-- [ ] All assertions in `rules.md §Turn Flow` hold under tests.
-- [ ] Engine never returns a snapshot with > 3 marks per player.
-- [ ] Win is evaluated **after** rotation, never during.
-- [ ] No `flutter/...` imports — engine is pure Dart.
-- [ ] **≥ 15 unit tests**, all green.
+- [x] All assertions in `rules.md §Turn Flow` hold under tests.
+- [x] Engine never returns a snapshot with > 3 marks per player.
+- [x] Win is evaluated **after** rotation, never during.
+- [x] No `flutter/...` imports — engine is pure Dart.
+- [x] **≥ 15 unit tests**, all green.
 
 **Dependencies:** Phases 3, 4.
 
