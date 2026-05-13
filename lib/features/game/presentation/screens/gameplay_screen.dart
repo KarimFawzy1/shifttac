@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/game_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -11,12 +14,15 @@ import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_icon_button.dart';
 import '../../../../shared/widgets/infinity_logo.dart';
 import '../../../../shared/widgets/screen_header.dart';
+import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
 import '../widgets/game_board.dart';
+import '../widgets/pause_bottom_sheet.dart';
 import '../widgets/player_panel.dart';
 import '../widgets/player_turn_indicator.dart';
+import '../widgets/win_dialog.dart';
 
 /// First playable screen: local multiplayer board driven by [GameCubit].
 class GameplayScreen extends StatelessWidget {
@@ -26,9 +32,44 @@ class GameplayScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => GameCubit(),
-      child: const _GameplayBody(),
+      child: BlocListener<GameCubit, GameState>(
+        listenWhen: (prev, next) =>
+            prev.snapshot.status != GameStatus.won &&
+            next.snapshot.status == GameStatus.won,
+        listener: (context, _) {
+          unawaited(_presentWinDialogWhenReady(context));
+        },
+        child: const _GameplayBody(),
+      ),
     );
   }
+}
+
+Future<void> _presentWinDialogWhenReady(BuildContext context) async {
+  await Future<void>.delayed(
+    const Duration(milliseconds: GameConstants.dialogEntranceMs),
+  );
+  if (!context.mounted) {
+    return;
+  }
+  final cubit = context.read<GameCubit>();
+  final state = cubit.state;
+  if (state.snapshot.status != GameStatus.won || state.snapshot.winner == null) {
+    return;
+  }
+  await WinDialog.show(
+    context,
+    winner: state.snapshot.winner!,
+    totalMoves: state.snapshot.turnIndex,
+    matchDurationMs: state.matchDurationMs,
+    onPlayAgain: cubit.restart,
+    onBackToHome: () {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.home,
+        (route) => false,
+      );
+    },
+  );
 }
 
 class _GameplayBody extends StatelessWidget {
@@ -83,12 +124,15 @@ class _GameplayHeader extends StatelessWidget {
           leadingSemanticLabel: 'Back',
           onLeadingPressed: onBack,
           center: InfinityLogo(size: (AppSpacing.stackLg * 1.1).r),
-          trailing: AppIconButton(
-            iconAsset: IconConstant.restart,
-            semanticLabel: 'Restart match',
-            iconColor: AppColors.primary,
-            backgroundColor: AppColors.surfaceContainerLowest,
-            onPressed: () => context.read<GameCubit>().restart(),
+          trailing: GestureDetector(
+            onLongPress: () => PauseBottomSheet.show(context),
+            child: AppIconButton(
+              iconAsset: IconConstant.restart,
+              semanticLabel: 'Restart match; long-press opens pause menu',
+              iconColor: AppColors.primary,
+              backgroundColor: AppColors.surfaceContainerLowest,
+              onPressed: () => context.read<GameCubit>().restart(),
+            ),
           ),
         ),
       ),

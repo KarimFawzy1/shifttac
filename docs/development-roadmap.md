@@ -262,7 +262,7 @@ Each milestone is broken into numbered phases below.
 | P5 | M1 | Game Engine (FIFO + Turn Lifecycle) | Done |
 | P6 | M2 | Game State + Cubit | Done |
 | P7 | M3 | Gameplay Screen (First Playable) | Done |
-| P8 | M3 | Win Dialog & Pause Bottom Sheet | Pending |
+| P8 | M3 | Win Dialog & Pause Bottom Sheet | Done |
 | P9 | M4 | Home Screen | Pending |
 | P10 | M4 | Splash Screen | Pending |
 | P11 | M4 | Onboarding (3 Screens) | Pending |
@@ -774,16 +774,16 @@ lib/features/game/presentation/widgets/pause_bottom_sheet.dart
 
 **Acceptance Criteria:**
 
-- [ ] Dialog appears **once** per win, never on restart, never during animation.
-- [ ] "Play Again" returns to a fresh `idle → playing` state.
-- [ ] "Back to Home" navigates to `/home` (or placeholder if Home not built yet).
-- [ ] Bottom sheet items all navigate or no-op cleanly (no dead links).
+- [x] Dialog appears **once** per win, never on restart, never during animation.
+- [x] "Play Again" returns to a fresh `idle → playing` state.
+- [x] "Back to Home" navigates to `/home` (or placeholder if Home not built yet).
+- [x] Bottom sheet items all navigate or no-op cleanly (no dead links).
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 8** (e.g. `feat(ui): add win dialog and pause sheet`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 8** (e.g. `feat(ui): add win dialog and pause sheet`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 7.
 
