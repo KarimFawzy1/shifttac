@@ -49,6 +49,16 @@ Every phase must produce the **same** files, the **same** public APIs, and the *
 - Public class/method names are defined in this roadmap. No synonyms.
 - State shape (Phase 4) is defined as a frozen contract. No fields added/removed without amending this document.
 
+### 0.4 Git — commit & push after each phase (P6–P20)
+
+For every **remaining** milestone phase (**P6 through P20** in §4), once that phase’s **Acceptance Criteria** are satisfied:
+
+1. Stage **only** files in that phase’s **Touch Scope** / **Deliverables** (plus §4 **Status** / checklist edits for that phase in `docs/development-roadmap.md` if you update them). Avoid bundling unrelated Android/iOS tweaks or other phases’ work.
+2. Create **one** commit with a [Conventional Commits](https://www.conventionalcommits.org/) message (e.g. `feat(game): …`, `feat(ui): …`, `test(game): …`, `chore(docs): …`) whose title and body describe **that phase only**.
+3. **Push** to GitHub: `git push origin <branch>` (typically `main`).
+
+Each phase block below repeats this as an explicit checklist (**Git (when this phase is Done)**) so it is not skipped during implementation.
+
 ---
 
 ## 1. Guiding Principles (Carried Across All Phases)
@@ -251,7 +261,7 @@ Each milestone is broken into numbered phases below.
 | P4 | M1 | Win Checker | Done |
 | P5 | M1 | Game Engine (FIFO + Turn Lifecycle) | Done |
 | P6 | M2 | Game State + Cubit | Done |
-| P7 | M3 | Gameplay Screen (First Playable) | Pending |
+| P7 | M3 | Gameplay Screen (First Playable) | Done |
 | P8 | M3 | Win Dialog & Pause Bottom Sheet | Pending |
 | P9 | M4 | Home Screen | Pending |
 | P10 | M4 | Splash Screen | Pending |
@@ -272,7 +282,9 @@ Each milestone is broken into numbered phases below.
 
 Each phase below follows the same shape:
 
-> **Goal** · **Scope In** · **Scope Out** · **Touch Scope** · **Deliverables** · **Tasks** · **Acceptance Criteria** · **Dependencies** · **Risks**
+> **Goal** · **Scope In** · **Scope Out** · **Touch Scope** · **Deliverables** · **Tasks** · **Acceptance Criteria** · **Git (commit & push)** · **Dependencies** · **Risks**
+
+Phases **P6–P20** include a **Git (when this phase is Done)** section; follow **§0.4** when closing out the phase.
 
 ---
 
@@ -693,12 +705,18 @@ lib/features/game/presentation/widgets/player_panel.dart
 
 **Acceptance Criteria:**
 
-- [ ] A user can play a full match: place marks → see oldest fade → place 4th mark → oldest disappears → win → see win state (frozen board even before Phase 8 dialog).
-- [ ] Faded mark is visible **only** for the player whose turn it is.
-- [ ] Tapping an occupied cell does nothing (no crash, no state mutation).
-- [ ] Board is centered, square, and bounded by `min(0.82.sw, 420.w)`.
-- [ ] Background = Warm Ivory; X = Soft Coral; O = Teal.
-- [ ] No widget reads or mutates `GameSnapshot.xMoves/oMoves` directly — only via cubit state and helpers.
+- [x] A user can play a full match: place marks → see oldest fade → place 4th mark → oldest disappears → win → see win state (frozen board even before Phase 8 dialog).
+- [x] Faded mark is visible **only** for the player whose turn it is.
+- [x] Tapping an occupied cell does nothing (no crash, no state mutation).
+- [x] Board is centered, square, and bounded by `min(0.82.sw, 420.w)`.
+- [x] Background = Warm Ivory; X = Soft Coral; O = Teal.
+- [x] No widget reads or mutates `GameSnapshot.xMoves/oMoves` directly — only via cubit state and helpers.
+
+**Git (when this phase is Done):**
+
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated). Include `app_router.dart` edits for `/game` only as listed in this phase.
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 7** (e.g. `feat(ui): add gameplay screen and board`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 6 (and transitively all prior).
 
@@ -761,6 +779,12 @@ lib/features/game/presentation/widgets/pause_bottom_sheet.dart
 - [ ] "Back to Home" navigates to `/home` (or placeholder if Home not built yet).
 - [ ] Bottom sheet items all navigate or no-op cleanly (no dead links).
 
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 8** (e.g. `feat(ui): add win dialog and pause sheet`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phase 7.
 
 **Risks:**
@@ -818,6 +842,12 @@ lib/features/home/presentation/widgets/home_action_card.dart
 - [ ] "Play vs AI" is visually disabled, with "Coming Soon" badge.
 - [ ] Background = Warm Ivory; CTAs use Teal primary.
 
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 9** (e.g. `feat(ui): add home screen`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phase 2, Phase 7 (for `/game` to be a real destination).
 
 **Risks:**
@@ -867,6 +897,12 @@ lib/features/splash/presentation/screens/splash_screen.dart
 - [ ] Splash holds for 2.5s (constant), then `pushReplacementNamed('/home')`.
 - [ ] Logo animates smoothly; no jank on a mid-range device.
 - [ ] App entry point in `main.dart` lands on `/splash`.
+
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 10** (e.g. `feat(ui): add splash screen and logo animation`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 2, Phase 9.
 
@@ -931,6 +967,12 @@ lib/features/onboarding/presentation/widgets/mini_board_preview.dart
 - [ ] Page 3 clearly fades the oldest mark at `fadedMarkOpacity`.
 - [ ] "Start Playing" navigates to `/game`.
 
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 11** (e.g. `feat(ui): add onboarding flow`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phase 2, Phase 7 (so MiniBoardPreview can share visual language with the real board).
 
 **Risks:**
@@ -983,6 +1025,12 @@ lib/features/how_to_play/presentation/widgets/how_to_play_step.dart
 - [ ] All 5 steps render with their mini-board visuals.
 - [ ] Reachable from Home and from Pause bottom sheet.
 - [ ] No paragraph exceeds 2 short lines.
+
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 12** (e.g. `feat(ui): add how to play screen`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 11 (`MiniBoardPreview`).
 
@@ -1046,6 +1094,12 @@ lib/features/settings/presentation/widgets/settings_tile.dart
 - [ ] Dark mode toggle is visibly disabled with "Coming Soon".
 - [ ] Reachable from Home and Pause sheet.
 
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated). Include `lib/core/settings/app_settings_controller.dart` and `lib/app.dart` wiring only as listed in this phase.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 13** (e.g. `feat(settings): add in-memory settings and screen`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phase 2.
 
 **Risks:** Scope creep into persistence. **Mitigation:** Backlog reference is explicit.
@@ -1090,6 +1144,12 @@ lib/shared/animations/fade_scale_transition.dart
 - [ ] No animation exceeds 320 ms (dialog entrance ceiling).
 - [ ] Visually smooth on a mid-range device (subjective QA).
 
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 14** (e.g. `feat(ui): add motion polish and shared animations`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phases 7, 8.
 
 **Risks:**
@@ -1121,6 +1181,12 @@ lib/shared/animations/fade_scale_transition.dart
 - [ ] Pressing the same cell 10× in rapid succession produces **exactly one** state change.
 - [ ] Restart during the fade-out animation does not leave a ghost mark.
 - [ ] Vibration toggle affects haptic behavior **in-session** via the shared `AppSettingsController` (off = no haptics from gameplay paths; on = haptics as specified).
+
+**Git (when this phase is Done):**
+
+- [ ] Stage only this phase’s **Touch Scope** files (edits only — no new files per Deliverables) and §4 **Status** in `docs/development-roadmap.md` if updated.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 15** (e.g. `feat(game): harden input lock and haptics`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phases 13, 14.
 
@@ -1163,6 +1229,12 @@ assets/sounds/win.wav
 - [ ] When `soundEffectsEnabled` is false, no placement/removal/win SFX fire (controller is authoritative; `AppAudio` does not maintain a parallel mute flag).
 - [ ] No audio plays when the app is backgrounded.
 
+**Git (when this phase is Done):**
+
+- [ ] Stage `pubspec.yaml`, `lib/core/audio/app_audio.dart`, `assets/sounds/*`, gameplay wiring edits, and §4 **Status** in `docs/development-roadmap.md` if updated. Do not commit unsigned keys or unrelated native churn.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 16** (e.g. `feat(audio): add SFX layer and assets`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phases 13, 14, 15.
 
 **Risks:**
@@ -1202,6 +1274,12 @@ flutter_native_splash config (in pubspec.yaml)
 - [ ] Icon renders correctly on Android home screen and iOS springboard at all sizes.
 - [ ] Native splash background matches Warm Ivory exactly.
 - [ ] In-app splash transitions seamlessly from native splash.
+
+**Git (when this phase is Done):**
+
+- [ ] Stage only icon/splash assets, `pubspec.yaml` launcher/native splash config, generated platform outputs from those tools, and §4 **Status** in `docs/development-roadmap.md` if updated.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 17** (e.g. `chore(branding): add app icon and native splash`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 10.
 
@@ -1250,6 +1328,12 @@ docs/qa-checklist.md
 - [ ] All 4 device sizes pass visual QA (board centered, readable labels, large tap targets).
 - [ ] `docs/qa-checklist.md` filled in with date and tester initials.
 
+**Git (when this phase is Done):**
+
+- [ ] Stage `test/edge_cases_test.dart`, `docs/qa-checklist.md`, and any related test edits; include §4 **Status** in `docs/development-roadmap.md` if updated.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 18** (e.g. `test(game): add edge case tests and QA log`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
+
 **Dependencies:** Phases 5, 6, 7, 14.
 
 **Risks:** None significant.
@@ -1282,6 +1366,12 @@ docs/qa-checklist.md
 - [ ] TalkBack / VoiceOver announces cells and buttons meaningfully.
 - [ ] Every tappable element is ≥ 48 × 48 logical px.
 - [ ] X and O remain distinguishable in a grayscale screenshot.
+
+**Git (when this phase is Done):**
+
+- [ ] Stage only widget accessibility edits from this phase’s **Touch Scope** and §4 **Status** in `docs/development-roadmap.md` if updated.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 19** (e.g. `feat(a11y): accessibility pass on gameplay and chrome`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** All UI phases.
 
@@ -1324,6 +1414,12 @@ ios/Runner/Info.plist       (display name, version)
 - [ ] `flutter build ios --no-codesign` succeeds on a Mac (skip if Windows-only — manual note in README).
 - [ ] README documents setup, run, and test commands.
 - [ ] App version is 1.0.0+1.
+
+**Git (when this phase is Done):**
+
+- [ ] Stage `README.md`, `LICENSE`, versioning/build config files listed in **Deliverables** / **Touch Scope**, and §4 **Status** in `docs/development-roadmap.md` if updated. Do **not** commit signing keys or secrets.
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 20** (e.g. `chore(release): prep README, license, and build metadata`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** All prior phases.
 

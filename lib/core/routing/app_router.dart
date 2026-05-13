@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/game/presentation/screens/gameplay_screen.dart';
 import '../../shared/widgets/infinity_logo.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
@@ -11,6 +12,13 @@ class AppRouter {
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final routeName = settings.name ?? AppRoutes.splash;
+
+    if (routeName == AppRoutes.game) {
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const GameplayScreen(),
+      );
+    }
 
     return MaterialPageRoute<void>(
       settings: settings,
