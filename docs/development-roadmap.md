@@ -250,7 +250,7 @@ Each milestone is broken into numbered phases below.
 | P3 | M1 | Game Domain Models | Done |
 | P4 | M1 | Win Checker | Done |
 | P5 | M1 | Game Engine (FIFO + Turn Lifecycle) | Done |
-| P6 | M2 | Game State + Cubit | Pending |
+| P6 | M2 | Game State + Cubit | Done |
 | P7 | M3 | Gameplay Screen (First Playable) | Pending |
 | P8 | M3 | Win Dialog & Pause Bottom Sheet | Pending |
 | P9 | M4 | Home Screen | Pending |
@@ -620,10 +620,16 @@ test/game_cubit_test.dart
 
 **Acceptance Criteria:**
 
-- [ ] `GameCubit` contains **zero** win/FIFO logic — only calls the engine.
-- [ ] `GameState` is immutable; updates via `copyWith`.
-- [ ] Input lock toggles correctly around moves.
-- [ ] ≥ 6 cubit tests, all green.
+- [x] `GameCubit` contains **zero** win/FIFO logic — only calls the engine.
+- [x] `GameState` is immutable; updates via `copyWith`.
+- [x] Input lock toggles correctly around moves.
+- [x] ≥ 6 cubit tests, all green.
+
+**Git (when this phase is Done):**
+
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if you mark it Done). Do not mix other phases or unrelated platform files.
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 6** (e.g. `feat(game): add GameCubit and GameState`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 5.
 
