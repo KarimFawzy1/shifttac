@@ -7,13 +7,36 @@ import '../theme/app_text_styles.dart';
 import '../widgets/app_scaffold.dart';
 import 'app_routes.dart';
 
+// class AppRouter {
+//   AppRouter._();
+
+//   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+//     final routeName = settings.name ?? AppRoutes.splash;
+
+//     if (routeName == AppRoutes.game) {
+//       return MaterialPageRoute<void>(
+//         settings: settings,
+//         builder: (_) => const GameplayScreen(),
+//       );
+//     }
+
+//     return MaterialPageRoute<void>(
+//       settings: settings,
+//       builder: (_) => _PlaceholderScreen(routeName: routeName),
+//     );
+//   }
+// }
+
 class AppRouter {
   AppRouter._();
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
-    final routeName = settings.name ?? AppRoutes.splash;
+    // Check if the route is the initial launch OR the explicit game route
+    final name = settings.name;
+    final isInitialOrGame =
+        name == AppRoutes.game || name == '/' || name == AppRoutes.splash;
 
-    if (routeName == AppRoutes.game) {
+    if (isInitialOrGame) {
       return MaterialPageRoute<void>(
         settings: settings,
         builder: (_) => const GameplayScreen(),
@@ -22,7 +45,7 @@ class AppRouter {
 
     return MaterialPageRoute<void>(
       settings: settings,
-      builder: (_) => _PlaceholderScreen(routeName: routeName),
+      builder: (_) => _PlaceholderScreen(routeName: name ?? 'Unknown'),
     );
   }
 }

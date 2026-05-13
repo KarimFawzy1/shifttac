@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches app warm canvas (#fbf2e7); used for launch window and Flutter init -->
+    <color name="splash_background">#FBF2E7</color>
+</resources>
