@@ -263,7 +263,7 @@ Each milestone is broken into numbered phases below.
 | P6 | M2 | Game State + Cubit | Done |
 | P7 | M3 | Gameplay Screen (First Playable) | Done |
 | P8 | M3 | Win Dialog & Pause Bottom Sheet | Done |
-| P9 | M4 | Home Screen | Pending |
+| P9 | M4 | Home Screen | Done |
 | P10 | M4 | Splash Screen | Pending |
 | P11 | M4 | Onboarding (3 Screens) | Pending |
 | P12 | M4 | How to Play Screen | Pending |
@@ -837,16 +837,16 @@ lib/features/home/presentation/widgets/home_action_card.dart
 
 **Acceptance Criteria:**
 
-- [ ] Layout matches `design.md §Home Screen`.
-- [ ] All CTAs route correctly (placeholders fine for not-yet-built screens).
-- [ ] "Play vs AI" is visually disabled, with "Coming Soon" badge.
-- [ ] Background = Warm Ivory; CTAs use Teal primary.
+- [x] Layout matches `design.md §Home Screen`.
+- [x] All CTAs route correctly (placeholders fine for not-yet-built screens).
+- [x] "Play vs AI" is visually disabled, with "Coming Soon" badge.
+- [x] Background = Warm Ivory; CTAs use Teal primary.
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 9** (e.g. `feat(ui): add home screen`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 9** (e.g. `feat(ui): add home screen`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 2, Phase 7 (for `/game` to be a real destination).
 
