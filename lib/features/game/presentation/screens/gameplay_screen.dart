@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/game_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -12,8 +14,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_icon_button.dart';
-import '../../../../shared/widgets/infinity_logo.dart';
-import '../../../../shared/widgets/screen_header.dart';
 import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
 import '../state/game_cubit.dart';
@@ -54,7 +54,8 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
   }
   final cubit = context.read<GameCubit>();
   final state = cubit.state;
-  if (state.snapshot.status != GameStatus.won || state.snapshot.winner == null) {
+  if (state.snapshot.status != GameStatus.won ||
+      state.snapshot.winner == null) {
     return;
   }
   await WinDialog.show(
@@ -64,10 +65,9 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
     matchDurationMs: state.matchDurationMs,
     onPlayAgain: cubit.restart,
     onBackToHome: () {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        AppRoutes.home,
-        (route) => false,
-      );
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
     },
   );
 }
@@ -75,22 +75,33 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
 class _GameplayBody extends StatelessWidget {
   const _GameplayBody();
 
+  static final SystemUiOverlayStyle _systemUi = SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    statusBarBrightness: Brightness.light,
+    systemNavigationBarColor: AppColors.warmIvory,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  );
+
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      header: _GameplayHeader(onBack: () => _handleBack(context)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: AppSpacing.stackSm.h),
-          const PlayerTurnIndicator(),
-          SizedBox(height: AppSpacing.stackSm.h),
-          const _MoveCounterPill(),
-          SizedBox(height: AppSpacing.stackLg.h),
-          const Expanded(
-            child: _GameplayBoardArea(),
-          ),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: _systemUi,
+      child: AppScaffold(
+        fullWidthHeader: true,
+        header: _GameplayHeader(onBack: () => _handleBack(context)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: AppSpacing.stackMd.h),
+            const PlayerTurnIndicator(),
+            SizedBox(height: AppSpacing.stackMd.h),
+            const _MoveCounterPill(),
+            SizedBox(height: AppSpacing.stackSm.h),
+            SizedBox(height: AppSpacing.stackLg.h),
+            const Expanded(child: _GameplayBoardArea()),
+          ],
+        ),
       ),
     );
   }
@@ -112,27 +123,63 @@ class _GameplayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      elevation: 1,
-      shadowColor: const Color(0x0D1D2330),
-      borderRadius: AppSpacing.borderRadiusDefault,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: ScreenHeader(
-          leadingIconAsset: IconConstant.home,
-          leadingSemanticLabel: 'Back',
-          onLeadingPressed: onBack,
-          center: InfinityLogo(size: (AppSpacing.stackLg * 1.1).r),
-          trailing: GestureDetector(
-            onLongPress: () => PauseBottomSheet.show(context),
-            child: AppIconButton(
-              iconAsset: IconConstant.restart,
-              semanticLabel: 'Restart match; long-press opens pause menu',
-              iconColor: AppColors.primary,
-              backgroundColor: AppColors.surfaceContainerLowest,
-              onPressed: () => context.read<GameCubit>().restart(),
-            ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.inkNavy.withValues(alpha: 0.05),
+            offset: const Offset(0, 2),
+            blurRadius: 8,
+            spreadRadius: -2,
+          ),
+        ],
+      ),
+      child: SizedBox(
+        height: 64.h,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 16.h,
+            horizontal: AppSpacing.containerPadding.w,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AppIconButton(
+                iconAsset: IconConstant.home,
+                semanticLabel: 'Back',
+                onPressed: onBack,
+                iconColor: AppColors.primary,
+                transparentMaterial: true,
+                iconSize: 22.w,
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    AppConstants.appName,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.titleMd.copyWith(
+                      color: AppColors.onSurface,
+                      height: 31 / 24,
+                      letterSpacing: 2.4,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onLongPress: () => PauseBottomSheet.show(context),
+                child: AppIconButton(
+                  iconAsset: IconConstant.restart,
+                  semanticLabel: 'Restart match; long-press opens pause menu',
+                  iconColor: AppColors.primary,
+                  transparentMaterial: true,
+                  iconSize: 22.w,
+                  onPressed: () => context.read<GameCubit>().restart(),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -145,33 +192,37 @@ class _MoveCounterPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      buildWhen: (prev, next) =>
-          prev.snapshot.turnIndex != next.snapshot.turnIndex,
-      builder: (context, state) {
-        final moves = state.snapshot.turnIndex;
-        return Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Moves',
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BlocSelector<GameCubit, GameState, int>(
+            selector: (state) => state.matchDurationMs,
+            builder: (context, matchDurationMs) {
+              return Text(
+                'Time: ${matchDurationMs ~/ 1000}s',
                 style: AppTextStyles.labelBold.copyWith(
                   color: AppColors.outline,
                   letterSpacing: 0.7,
                 ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                '$moves',
-                style: AppTextStyles.titleMd.copyWith(
-                  color: AppColors.onSurface,
-                ),
-              ),
-            ],
+              );
+            },
           ),
-        );
-      },
+          SizedBox(width: 40.h),
+          BlocSelector<GameCubit, GameState, int>(
+            selector: (state) => state.snapshot.turnIndex,
+            builder: (context, moves) {
+              return Text(
+                'Moves: $moves',
+                style: AppTextStyles.labelBold.copyWith(
+                  color: AppColors.outline,
+                  letterSpacing: 0.7,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -184,14 +235,17 @@ class _GameplayBoardArea extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.only(bottom: AppSpacing.stackMd.h),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const GameBoard(),
                 SizedBox(height: AppSpacing.stackLg.h),
+                SizedBox(height: AppSpacing.stackMd.h),
+                SizedBox(height: AppSpacing.stackMd.h),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Row(

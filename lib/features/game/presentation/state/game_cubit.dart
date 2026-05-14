@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/game_constants.dart';
 import '../../domain/logic/game_engine.dart';
+import '../../domain/models/game_status.dart';
 import '../../domain/models/position.dart';
 import 'game_state.dart';
 
@@ -11,15 +12,43 @@ import 'game_state.dart';
 class GameCubit extends Cubit<GameState> {
   GameCubit() : super(GameState.initial()) {
     _matchStopwatch.start();
+    _startMatchDurationTicker();
   }
 
   final Stopwatch _matchStopwatch = Stopwatch();
   Timer? _inputUnlockTimer;
+  Timer? _matchDurationTicker;
 
   @override
   Future<void> close() {
     _inputUnlockTimer?.cancel();
+    _matchDurationTicker?.cancel();
     return super.close();
+  }
+
+  void _startMatchDurationTicker() {
+    _matchDurationTicker?.cancel();
+    _matchDurationTicker = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _emitElapsedIfPlaying(),
+    );
+    _emitElapsedIfPlaying();
+  }
+
+  void _emitElapsedIfPlaying() {
+    if (isClosed) {
+      return;
+    }
+    if (state.snapshot.status != GameStatus.playing) {
+      _matchDurationTicker?.cancel();
+      _matchDurationTicker = null;
+      return;
+    }
+    final ms = _matchStopwatch.elapsedMilliseconds;
+    if (ms == state.matchDurationMs) {
+      return;
+    }
+    emit(state.copyWith(matchDurationMs: ms));
   }
 
   void onCellTapped(Position p) {
@@ -61,10 +90,13 @@ class GameCubit extends Cubit<GameState> {
   void restart() {
     _inputUnlockTimer?.cancel();
     _inputUnlockTimer = null;
+    _matchDurationTicker?.cancel();
+    _matchDurationTicker = null;
     _matchStopwatch
       ..reset()
       ..start();
     emit(GameState.initial());
+    _startMatchDurationTicker();
   }
 
   void clearLastEventMarkers() {

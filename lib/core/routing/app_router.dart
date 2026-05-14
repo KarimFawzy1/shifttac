@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/game/presentation/screens/gameplay_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../shared/widgets/infinity_logo.dart';
+import '../constants/image_constants.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/app_scaffold.dart';
@@ -47,7 +47,11 @@ class _PlaceholderScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const InfinityLogo(),
+            Image.asset(
+              ImageConstant.logo,
+              height: AppSpacing.stackLg * 2,
+              fit: BoxFit.contain,
+            ),
             SizedBox(height: AppSpacing.stackMd),
             Text(routeName, style: AppTextStyles.titleMd),
           ],

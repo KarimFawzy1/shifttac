@@ -13,6 +13,9 @@ class AppIconButton extends StatelessWidget {
     this.semanticLabel,
     this.backgroundColor = AppColors.surfaceContainerLowest,
     this.iconColor = AppColors.inkNavy,
+    this.size,
+    this.iconSize,
+    this.transparentMaterial = false,
   });
 
   final String iconAsset;
@@ -21,10 +24,21 @@ class AppIconButton extends StatelessWidget {
   final Color backgroundColor;
   final Color iconColor;
 
+  /// Square tap target; defaults to §ScreenHeader control (48 logical scaled).
+  final double? size;
+
+  /// SVG size; defaults to [AppSpacing.containerPadding] or half of [size].
+  final double? iconSize;
+
+  /// Ink on a clear circle (e.g. TopAppBar icon per Figma).
+  final bool transparentMaterial;
+
   @override
   Widget build(BuildContext context) {
-    final buttonSize = AppSpacing.stackLg.w + AppSpacing.stackMd.w;
-    final iconSize = AppSpacing.containerPadding.w;
+    final buttonSize =
+        size ?? (AppSpacing.stackLg.w + AppSpacing.stackMd.w);
+    final svgSize = iconSize ??
+        (size != null ? size! * 0.5 : AppSpacing.containerPadding.w);
 
     return Semantics(
       button: true,
@@ -32,7 +46,10 @@ class AppIconButton extends StatelessWidget {
       child: SizedBox.square(
         dimension: buttonSize,
         child: Material(
-          color: backgroundColor,
+          type: transparentMaterial
+              ? MaterialType.transparency
+              : MaterialType.canvas,
+          color: transparentMaterial ? Colors.transparent : backgroundColor,
           shape: const CircleBorder(),
           child: InkWell(
             customBorder: const CircleBorder(),
@@ -45,8 +62,8 @@ class AppIconButton extends StatelessWidget {
             child: Center(
               child: SvgPicture.asset(
                 iconAsset,
-                width: iconSize,
-                height: iconSize,
+                width: svgSize,
+                height: svgSize,
                 colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
               ),
             ),

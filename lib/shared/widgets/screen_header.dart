@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../core/constants/image_constants.dart';
 import '../../core/theme/app_spacing.dart';
 import 'app_icon_button.dart';
-import 'infinity_logo.dart';
 
 class ScreenHeader extends StatelessWidget {
-  const ScreenHeader({
+  ScreenHeader({
     super.key,
     this.leading,
     this.leadingIconAsset,
     this.onLeadingPressed,
     this.leadingSemanticLabel,
-    this.center = const InfinityLogo(size: AppSpacing.stackLg),
+    Widget? center,
     this.trailing,
-  });
+  }) : center = center ?? _defaultHeaderCenter();
 
   final Widget? leading;
   final String? leadingIconAsset;
@@ -22,6 +22,14 @@ class ScreenHeader extends StatelessWidget {
   final String? leadingSemanticLabel;
   final Widget center;
   final Widget? trailing;
+
+  static Widget _defaultHeaderCenter() {
+    return Image.asset(
+      ImageConstant.logo,
+      height: AppSpacing.stackLg * 1.2,
+      fit: BoxFit.contain,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

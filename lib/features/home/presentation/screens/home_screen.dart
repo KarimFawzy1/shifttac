@@ -9,7 +9,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_scaffold.dart';
-import '../../../../shared/widgets/infinity_logo.dart';
 import '../widgets/home_action_card.dart';
 
 /// Central hub (`design.md` §HOME SCREEN, `css/HomeScreen.css`).
@@ -31,9 +30,9 @@ class HomeScreen extends StatelessWidget {
                   SizedBox(height: AppSpacing.stackLg.h),
                   HomeActionCard(
                     style: HomeActionCardStyle.heroPrimary,
-                    title: 'Play Local Multiplayer',
+                    title: 'Play Local',
                     subtitle: 'Play with a friend on the same device',
-                    iconAsset: IconConstant.play,
+                    iconAsset: IconConstant.multiplayer,
                     onTap: () =>
                         Navigator.of(context).pushNamed(AppRoutes.game),
                   ),
@@ -65,29 +64,43 @@ class _BrandBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.surfaceMist,
-            borderRadius: AppSpacing.borderRadiusMd,
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x0D1D2330),
-                offset: Offset(0, 4),
-                blurRadius: 12,
+        SizedBox(
+          width: 80.w,
+          height: 80.w,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceMist,
+                    borderRadius: AppSpacing.borderRadiusMd,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x0D1D2330),
+                        offset: Offset(0, 4),
+                        blurRadius: 12,
+                      ),
+                      BoxShadow(
+                        color: Color(0x081D2330),
+                        offset: Offset(0, 8),
+                        blurRadius: 24,
+                      ),
+                    ],
+                  ),
+                  child: const SizedBox.expand(),
+                ),
               ),
-              BoxShadow(
-                color: Color(0x081D2330),
-                offset: Offset(0, 8),
-                blurRadius: 24,
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: AppSpacing.borderRadiusMd,
+                  child: Image.asset(
+                    ImageConstant.homeIcon,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
             ],
-          ),
-          child: SizedBox(
-            width: 80.w,
-            height: 80.w,
-            child: Center(
-              child: InfinityLogo(size: 44.r),
-            ),
           ),
         ),
         SizedBox(height: AppSpacing.stackMd.h),
@@ -134,15 +147,13 @@ class _SecondaryNavBar extends StatelessWidget {
               iconAsset: IconConstant.rules,
               label: 'How to Play',
               highlight: false,
-              onTap: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.howToPlay),
+              onTap: () => Navigator.of(context).pushNamed(AppRoutes.howToPlay),
             ),
             _NavLink(
               iconAsset: IconConstant.settings,
               label: 'Settings',
               highlight: false,
-              onTap: () =>
-                  Navigator.of(context).pushNamed(AppRoutes.settings),
+              onTap: () => Navigator.of(context).pushNamed(AppRoutes.settings),
             ),
           ],
         ),
@@ -201,10 +212,7 @@ class _NavLink extends StatelessWidget {
               ),
             ),
             SizedBox(height: AppSpacing.unit.h),
-            Text(
-              label,
-              style: AppTextStyles.labelSm.copyWith(color: color),
-            ),
+            Text(label, style: AppTextStyles.labelSm.copyWith(color: color)),
           ],
         ),
       ),

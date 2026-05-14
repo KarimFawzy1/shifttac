@@ -95,7 +95,6 @@ shifttac/
 │   │
 │   └── shared/
 │       ├── widgets/
-│       │   ├── infinity_logo.dart
 │       │   ├── app_icon_button.dart
 │       │   └── screen_header.dart
 │       │
