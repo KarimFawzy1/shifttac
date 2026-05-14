@@ -235,6 +235,7 @@ class _GameplayBoardArea extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
+          clipBehavior: Clip.none,
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.only(bottom: AppSpacing.stackMd.h),
           child: ConstrainedBox(
