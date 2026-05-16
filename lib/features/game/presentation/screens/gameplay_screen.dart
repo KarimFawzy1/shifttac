@@ -235,7 +235,7 @@ class _GameplayHeader extends StatelessWidget {
                 semanticLabel: 'Pause match',
                 iconColor: AppColors.primary,
                 transparentMaterial: true,
-                iconSize: 20.w,
+                iconSize: 28.w,
                 onPressed: () => unawaited(PauseBottomSheet.show(context)),
               ),
             ],

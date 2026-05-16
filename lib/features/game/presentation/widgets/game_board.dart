@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/game_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../domain/logic/game_engine.dart';
@@ -28,10 +29,13 @@ BoardCellAppearance _appearanceFor(GameState state, Position position) {
   }
 
   final playing = snap.status == GameStatus.playing;
-  final oldest = playing
+  final currentPlayerMoves = snap.movesFor(snap.currentPlayer);
+  final nextMoveWillShift =
+      playing && currentPlayerMoves.length == GameConstants.maxActiveMarks;
+  final oldest = nextMoveWillShift
       ? GameEngine.oldestPositionFor(snap.currentPlayer, snap)
       : null;
-  final faded = playing && oldest == position && occupant == snap.currentPlayer;
+  final faded = oldest == position && occupant == snap.currentPlayer;
 
   if (occupant == Player.x) {
     return faded ? BoardCellAppearance.xFaded : BoardCellAppearance.xSolid;
