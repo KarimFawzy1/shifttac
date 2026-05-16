@@ -39,12 +39,19 @@ class SecondaryButton extends StatelessWidget {
         ),
         padding: EdgeInsets.symmetric(
           horizontal: AppSpacing.containerPadding.w,
-          vertical: AppSpacing.stackMd.h,
         ),
+        alignment: Alignment.center,
         shape: RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusLg),
-        textStyle: AppTextStyles.labelBold,
+        textStyle: AppTextStyles.labelBold.copyWith(
+          height: 1,
+          color: AppColors.onSurfaceVariant,
+        ),
       ),
-      child: _ButtonContent(label: label, leading: leading),
+      child: _ButtonContent(
+        label: label,
+        labelColor: AppColors.onSurfaceVariant,
+        leading: leading,
+      ),
     );
 
     if (!expand) {
@@ -56,24 +63,44 @@ class SecondaryButton extends StatelessWidget {
 }
 
 class _ButtonContent extends StatelessWidget {
-  const _ButtonContent({required this.label, this.leading});
+  const _ButtonContent({
+    required this.label,
+    required this.labelColor,
+    this.leading,
+  });
 
   final String label;
+  final Color labelColor;
   final Widget? leading;
+
+  static const TextHeightBehavior _labelHeightBehavior = TextHeightBehavior(
+    applyHeightToFirstAscent: false,
+    applyHeightToLastDescent: false,
+  );
+
+  TextStyle get _labelStyle =>
+      AppTextStyles.labelBold.copyWith(height: 1, color: labelColor);
 
   @override
   Widget build(BuildContext context) {
+    final labelWidget = Text(
+      label,
+      style: _labelStyle,
+      textHeightBehavior: _labelHeightBehavior,
+    );
+
     if (leading == null) {
-      return Text(label);
+      return labelWidget;
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        leading!,
+        Center(child: leading!),
         SizedBox(width: AppSpacing.stackSm.w),
-        Text(label),
+        labelWidget,
       ],
     );
   }

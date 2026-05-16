@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +12,23 @@ import '../../../../core/widgets/modal_backdrop.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/secondary_button.dart';
 import '../../domain/models/player.dart';
+
+/// Winner accent tints for symbol + ambient glows (softer than board marks).
+abstract final class _WinnerPalette {
+  static Color accent(Player winner) =>
+      winner == Player.x ? AppColors.softCoral : AppColors.primary;
+
+  static Color symbol(Player winner) => accent(winner).withValues(alpha: 0.88);
+
+  static Color symbolGlow(Player winner) =>
+      accent(winner).withValues(alpha: 0.12);
+
+  static Color ambientGlow(Player winner) =>
+      accent(winner).withValues(alpha: 0.05);
+
+  static Color mutedAccent(Player winner) =>
+      accent(winner).withValues(alpha: 0.75);
+}
 
 /// Win celebration modal aligned with `css/WinDialog.css` (tokens only).
 class WinDialog extends StatelessWidget {
@@ -87,7 +106,10 @@ class WinDialog extends StatelessWidget {
       reverseCurve: Curves.easeInCubic,
     );
     final contentFade = Tween<double>(begin: 0, end: 1).animate(contentCurve);
-    final contentScale = Tween<double>(begin: 0.96, end: 1).animate(contentCurve);
+    final contentScale = Tween<double>(
+      begin: 0.96,
+      end: 1,
+    ).animate(contentCurve);
 
     return AnimatedBuilder(
       animation: backdropCurve,
@@ -143,11 +165,10 @@ class _WinDialogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final symbolSize = 72.r;
-    final symbolColor =
-        winner == Player.x ? AppColors.softCoral : AppColors.primary;
     final symbolAsset = winner == Player.x ? IconConstant.x : IconConstant.o;
 
     return Dialog(
+      clipBehavior: Clip.none,
       backgroundColor: AppColors.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
         borderRadius: AppSpacing.borderRadiusXl,
@@ -166,21 +187,23 @@ class _WinDialogCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                symbolAsset,
-                width: symbolSize,
-                height: symbolSize,
-                colorFilter: ColorFilter.mode(symbolColor, BlendMode.srcIn),
+              _WinnerSymbol(
+                asset: symbolAsset,
+                size: symbolSize,
+                color: _WinnerPalette.symbol(winner),
+                glowColor: _WinnerPalette.symbolGlow(winner),
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.displayLg.copyWith(color: AppColors.onSurface),
+                style: AppTextStyles.displayLg.copyWith(
+                  color: AppColors.onSurface,
+                ),
               ),
               SizedBox(height: AppSpacing.stackSm.h),
               Text(
-                'Victory is yours.',
+                'Strategic mastery achieved.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyLg.copyWith(color: AppColors.outline),
               ),
@@ -210,36 +233,169 @@ class _WinDialogCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: AppSpacing.stackLg.h),
-              PrimaryButton(
-                label: 'Play Again',
-                leading: SvgPicture.asset(
-                  IconConstant.restart,
-                  width: 18.w,
-                  height: 18.w,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.onPrimary,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                onPressed: onPlayAgain,
-              ),
-              SizedBox(height: AppSpacing.stackMd.h),
-              SecondaryButton(
-                label: 'Back to Home',
-                leading: SvgPicture.asset(
-                  IconConstant.home,
-                  width: 18.w,
-                  height: 18.w,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.primary,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                onPressed: onBackToHome,
+              _ActionButtonsWithAmbient(
+                winner: winner,
+                onPlayAgain: onPlayAgain,
+                onBackToHome: onBackToHome,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Play Again + Back to Home with winner-colored ambient blur (`WinDialog.css`).
+class _ActionButtonsWithAmbient extends StatelessWidget {
+  const _ActionButtonsWithAmbient({
+    required this.winner,
+    required this.onPlayAgain,
+    required this.onBackToHome,
+  });
+
+  final Player winner;
+  final VoidCallback onPlayAgain;
+  final VoidCallback onBackToHome;
+
+  static const double _orbSize = 256;
+  static const double _orbBlurSigma = 30;
+  /// `WinDialog.css` ambient orbs sit ~79px outside the action column edges.
+  static const double _orbInsetSide = 79;
+  static const double _orbInsetBottom = 74;
+
+  @override
+  Widget build(BuildContext context) {
+    final glow = _WinnerPalette.ambientGlow(winner);
+    final orb = _orbSize.r;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          left: -_orbInsetSide.w,
+          bottom: -_orbInsetBottom.h,
+          child: _BlurredOrb(
+            size: orb,
+            color: glow,
+            blurSigma: _orbBlurSigma,
+          ),
+        ),
+        Positioned(
+          right: -_orbInsetSide.w,
+          bottom: -_orbInsetBottom.h,
+          child: _BlurredOrb(
+            size: orb,
+            color: glow,
+            blurSigma: _orbBlurSigma,
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            PrimaryButton(
+              label: 'Play Again',
+              leading: SvgPicture.asset(
+                IconConstant.restart,
+                width: 18.w,
+                height: 18.w,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.onPrimary,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: onPlayAgain,
+            ),
+            SizedBox(height: AppSpacing.stackMd.h),
+            SecondaryButton(
+              label: 'Back to Home',
+              leading: SvgPicture.asset(
+                IconConstant.home,
+                width: 18.w,
+                height: 18.w,
+                colorFilter: ColorFilter.mode(
+                  _WinnerPalette.mutedAccent(winner),
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: onBackToHome,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Circular fill + Gaussian blur (`filter: blur` in `WinDialog.css`).
+class _BlurredOrb extends StatelessWidget {
+  const _BlurredOrb({
+    required this.size,
+    required this.color,
+    required this.blurSigma,
+  });
+
+  final double size;
+  final Color color;
+  final double blurSigma;
+
+  @override
+  Widget build(BuildContext context) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      ),
+    );
+  }
+}
+
+/// Large symbol with `WinDialog.css` overlay blur (`-24px` inset, `12px` blur).
+class _WinnerSymbol extends StatelessWidget {
+  const _WinnerSymbol({
+    required this.asset,
+    required this.size,
+    required this.color,
+    required this.glowColor,
+  });
+
+  final String asset;
+  final double size;
+  final Color color;
+  final Color glowColor;
+
+  static const double _glowInset = 24;
+  static const double _glowBlurSigma = 12;
+
+  @override
+  Widget build(BuildContext context) {
+    final inset = _glowInset.r;
+    final frame = size + inset * 2;
+
+    return SizedBox(
+      width: frame,
+      height: frame,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            child: _BlurredOrb(
+              size: frame,
+              color: glowColor,
+              blurSigma: _glowBlurSigma,
+            ),
+          ),
+          SvgPicture.asset(
+            asset,
+            width: size,
+            height: size,
+            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+          ),
+        ],
       ),
     );
   }
