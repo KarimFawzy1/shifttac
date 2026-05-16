@@ -18,6 +18,8 @@ class GameCubit extends Cubit<GameState> {
   final Stopwatch _matchStopwatch = Stopwatch();
   Timer? _inputUnlockTimer;
   Timer? _matchDurationTicker;
+  bool _matchPaused = false;
+  bool _pauseSheetRequestedForBackground = false;
 
   @override
   Future<void> close() {
@@ -35,11 +37,54 @@ class GameCubit extends Cubit<GameState> {
     _emitElapsedIfPlaying();
   }
 
+  void pauseMatch() {
+    if (_matchPaused) {
+      return;
+    }
+    _matchPaused = true;
+    _matchStopwatch.stop();
+    _matchDurationTicker?.cancel();
+    _matchDurationTicker = null;
+  }
+
+  void resumeMatch() {
+    if (!_matchPaused || isClosed) {
+      return;
+    }
+    _matchPaused = false;
+    _pauseSheetRequestedForBackground = false;
+    if (state.snapshot.status == GameStatus.playing) {
+      _matchStopwatch.start();
+      _startMatchDurationTicker();
+    }
+  }
+
+  /// Pauses an in-progress match when the app leaves the foreground.
+  void onAppBackgrounded() {
+    if (state.snapshot.status != GameStatus.playing) {
+      return;
+    }
+    final wasRunning = !_matchPaused;
+    pauseMatch();
+    if (wasRunning) {
+      _pauseSheetRequestedForBackground = true;
+    }
+  }
+
+  /// Whether the pause menu should open after returning from the background.
+  bool get shouldPresentPauseAfterBackground =>
+      _pauseSheetRequestedForBackground &&
+      state.snapshot.status == GameStatus.playing;
+
+  void clearPauseSheetRequestForBackground() {
+    _pauseSheetRequestedForBackground = false;
+  }
+
   void _emitElapsedIfPlaying() {
     if (isClosed) {
       return;
     }
-    if (state.snapshot.status != GameStatus.playing) {
+    if (_matchPaused || state.snapshot.status != GameStatus.playing) {
       _matchDurationTicker?.cancel();
       _matchDurationTicker = null;
       return;
@@ -88,6 +133,8 @@ class GameCubit extends Cubit<GameState> {
   }
 
   void restart() {
+    _matchPaused = false;
+    _pauseSheetRequestedForBackground = false;
     _inputUnlockTimer?.cancel();
     _inputUnlockTimer = null;
     _matchDurationTicker?.cancel();

@@ -34,11 +34,13 @@ class PlayerPanel extends StatelessWidget {
         final snap = state.snapshot;
         final isPlaying = snap.status == GameStatus.playing;
         final isWinner = snap.status == GameStatus.won && snap.winner == player;
-        final active = (isPlaying && snap.currentPlayer == player) || isWinner;
+        final isTurnActive = isPlaying && snap.currentPlayer == player;
+        final highlighted = isTurnActive || isWinner;
 
-        final subtitleUpper = isWinner
+        final subtitleText = isWinner
             ? 'WINNER'
-            : (active ? 'YOUR TURN' : 'Waiting ...');
+            : (isTurnActive ? 'YOUR TURN' : 'Waiting');
+        final showWaitingDots = isPlaying && !isTurnActive;
         final isX = player == Player.x;
         final accent = isX ? AppColors.softCoral : AppColors.primary;
 
@@ -75,12 +77,13 @@ class PlayerPanel extends StatelessWidget {
           color: accent,
         );
 
-        final padding = active
+        final padding = highlighted
             ? EdgeInsets.all(16.w)
             : EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 18.h);
 
         return _PlayerPanelCard(
-          active: active,
+          active: highlighted,
+          pulse: isTurnActive,
           accent: accent,
           padding: padding,
           child: Stack(
@@ -97,14 +100,14 @@ class PlayerPanel extends StatelessWidget {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: active ? activeAvatarBg : inactiveAvatarBg,
+                          color: highlighted ? activeAvatarBg : inactiveAvatarBg,
                         ),
                         child: Center(
                           child: AnimatedContainer(
                             duration: _panelAnimDuration,
                             curve: _panelAnimCurve,
-                            width: active ? iconSizeLarge : iconSizeSmall,
-                            height: active ? iconSizeLarge : iconSizeSmall,
+                            width: highlighted ? iconSizeLarge : iconSizeSmall,
+                            height: highlighted ? iconSizeLarge : iconSizeSmall,
                             alignment: Alignment.center,
                             child: FittedBox(
                               fit: BoxFit.contain,
@@ -125,16 +128,16 @@ class PlayerPanel extends StatelessWidget {
                     SizedBox(height: 7.h),
                     Text(
                       isX ? 'Player X' : 'Player O',
-                      style: active ? titleStyleActive : titleStyleInactive,
+                      style: highlighted ? titleStyleActive : titleStyleInactive,
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 2.h),
-                    Text(
-                      subtitleUpper,
-                      style: active
+                    _PlayerStatusLabel(
+                      label: subtitleText,
+                      style: highlighted
                           ? subtitleStyleActive
                           : subtitleStyleInactive,
-                      textAlign: TextAlign.center,
+                      showWaitingDots: showWaitingDots,
                     ),
                   ],
                 ),
@@ -147,16 +150,115 @@ class PlayerPanel extends StatelessWidget {
   }
 }
 
+class _PlayerStatusLabel extends StatelessWidget {
+  const _PlayerStatusLabel({
+    required this.label,
+    required this.style,
+    required this.showWaitingDots,
+  });
+
+  final String label;
+  final TextStyle style;
+  final bool showWaitingDots;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!showWaitingDots) {
+      return Text(label, style: style, textAlign: TextAlign.center);
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(label, style: style, textAlign: TextAlign.center),
+        SizedBox(width: 3.w),
+        _WaitingDots(color: style.color ?? AppColors.outline, dotSize: 2.5.r),
+      ],
+    );
+  }
+}
+
+class _WaitingDots extends StatefulWidget {
+  const _WaitingDots({required this.color, required this.dotSize});
+
+  final Color color;
+  final double dotSize;
+
+  @override
+  State<_WaitingDots> createState() => _WaitingDotsState();
+}
+
+class _WaitingDotsState extends State<_WaitingDots>
+    with SingleTickerProviderStateMixin {
+  static const Duration _duration = Duration(milliseconds: 1400);
+
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: _duration)
+      ..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  double _dotPulse(int index) {
+    final shifted = (_controller.value + index * 0.14) % 1;
+    final wave = shifted < 0.5 ? shifted * 2 : (1 - shifted) * 2;
+    return Curves.easeInOutSine.transform(wave);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (index) {
+            final pulse = _dotPulse(index);
+            final scale = lerpDouble(0.9, 1.06, pulse)!;
+            final alpha = lerpDouble(0.42, 0.72, pulse)!;
+
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: widget.dotSize * 0.18),
+              child: Transform.scale(
+                scale: scale,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: widget.color.withValues(alpha: alpha),
+                    shape: BoxShape.circle,
+                  ),
+                  child: SizedBox.square(dimension: widget.dotSize),
+                ),
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+}
+
 /// Card shell: smooth turn transitions on the surface, subtle pulse on active glow.
 class _PlayerPanelCard extends StatefulWidget {
   const _PlayerPanelCard({
     required this.active,
+    required this.pulse,
     required this.accent,
     required this.padding,
     required this.child,
   });
 
   final bool active;
+  final bool pulse;
   final Color accent;
   final EdgeInsets padding;
   final Widget child;
@@ -195,13 +297,13 @@ class _PlayerPanelCardState extends State<_PlayerPanelCard>
   @override
   void didUpdateWidget(_PlayerPanelCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.active != oldWidget.active) {
+    if (widget.pulse != oldWidget.pulse) {
       _syncPulse();
     }
   }
 
   void _syncPulse() {
-    if (widget.active) {
+    if (widget.pulse) {
       if (!_pulseController.isAnimating) {
         _pulseController.repeat(reverse: true);
       }

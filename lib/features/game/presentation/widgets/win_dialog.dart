@@ -6,19 +6,20 @@ import '../../../../core/constants/image_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/modal_backdrop.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/secondary_button.dart';
 import '../../domain/models/player.dart';
 
 /// Win celebration modal aligned with `css/WinDialog.css` (tokens only).
 class WinDialog extends StatelessWidget {
-  const WinDialog({
-    super.key,
+  const WinDialog._({
     required this.winner,
     required this.totalMoves,
     required this.matchDurationMs,
     required this.onPlayAgain,
     required this.onBackToHome,
+    required this.routeAnimation,
   });
 
   final Player winner;
@@ -26,6 +27,9 @@ class WinDialog extends StatelessWidget {
   final int matchDurationMs;
   final VoidCallback onPlayAgain;
   final VoidCallback onBackToHome;
+  final Animation<double> routeAnimation;
+
+  static const Duration _animationDuration = Duration(milliseconds: 300);
 
   static Future<void> show(
     BuildContext context, {
@@ -35,15 +39,17 @@ class WinDialog extends StatelessWidget {
     required VoidCallback onPlayAgain,
     required VoidCallback onBackToHome,
   }) {
-    return showDialog<void>(
+    return showGeneralDialog<void>(
       context: context,
       barrierDismissible: false,
-      barrierColor: AppColors.inkNavy.withValues(alpha: 0.35),
-      builder: (dialogContext) {
-        return WinDialog(
+      barrierColor: Colors.transparent,
+      transitionDuration: _animationDuration,
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return WinDialog._(
           winner: winner,
           totalMoves: totalMoves,
           matchDurationMs: matchDurationMs,
+          routeAnimation: animation,
           onPlayAgain: () {
             Navigator.of(dialogContext).pop();
             onPlayAgain();
@@ -54,6 +60,8 @@ class WinDialog extends StatelessWidget {
           },
         );
       },
+      transitionBuilder: (context, animation, secondaryAnimation, child) =>
+          child,
     );
   }
 
@@ -65,6 +73,72 @@ class WinDialog extends StatelessWidget {
     final s = d.inSeconds.remainder(60);
     return '${m.toString()}:${s.toString().padLeft(2, '0')}';
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final backdropCurve = CurvedAnimation(
+      parent: routeAnimation,
+      curve: Curves.easeOut,
+      reverseCurve: Curves.easeIn,
+    );
+    final contentCurve = CurvedAnimation(
+      parent: routeAnimation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final contentFade = Tween<double>(begin: 0, end: 1).animate(contentCurve);
+    final contentScale = Tween<double>(begin: 0.96, end: 1).animate(contentCurve);
+
+    return AnimatedBuilder(
+      animation: backdropCurve,
+      builder: (context, child) {
+        return Material(
+          type: MaterialType.transparency,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(
+                child: ModalBackdrop(progress: backdropCurve.value),
+              ),
+              Center(child: child),
+            ],
+          ),
+        );
+      },
+      child: FadeTransition(
+        opacity: contentFade,
+        child: ScaleTransition(
+          scale: contentScale,
+          child: _WinDialogCard(
+            title: _title,
+            winner: winner,
+            totalMoves: totalMoves,
+            matchDurationLabel: _formatDuration(),
+            onPlayAgain: onPlayAgain,
+            onBackToHome: onBackToHome,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WinDialogCard extends StatelessWidget {
+  const _WinDialogCard({
+    required this.title,
+    required this.winner,
+    required this.totalMoves,
+    required this.matchDurationLabel,
+    required this.onPlayAgain,
+    required this.onBackToHome,
+  });
+
+  final String title;
+  final Player winner;
+  final int totalMoves;
+  final String matchDurationLabel;
+  final VoidCallback onPlayAgain;
+  final VoidCallback onBackToHome;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +174,7 @@ class WinDialog extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               Text(
-                _title,
+                title,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.displayLg.copyWith(color: AppColors.onSurface),
               ),
@@ -128,7 +202,7 @@ class WinDialog extends StatelessWidget {
                       ),
                       _StatRow(
                         label: 'Match time',
-                        value: _formatDuration(),
+                        value: matchDurationLabel,
                         showDivider: false,
                       ),
                     ],

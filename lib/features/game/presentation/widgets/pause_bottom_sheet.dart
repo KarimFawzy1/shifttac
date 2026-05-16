@@ -8,6 +8,7 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/modal_backdrop.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../state/game_cubit.dart';
 
@@ -17,44 +18,259 @@ class PauseBottomSheet extends StatelessWidget {
     required this.cubit,
     required this.navigator,
     required this.sheetContext,
+    required this.resumeTimerOnClose,
+    required this.routeAnimation,
   });
 
   final GameCubit cubit;
   final NavigatorState navigator;
   final BuildContext sheetContext;
+  final ValueNotifier<bool> resumeTimerOnClose;
+  final Animation<double> routeAnimation;
+
+  static const Duration _animationDuration = Duration(milliseconds: 300);
+
+  static bool _isVisible = false;
+
+  static bool get isVisible => _isVisible;
 
   static Future<void> show(BuildContext context) {
+    if (_isVisible) {
+      return Future<void>.value();
+    }
+
     final cubit = context.read<GameCubit>();
     final navigator = Navigator.of(context);
-    return showModalBottomSheet<void>(
+    final resumeTimerOnClose = ValueNotifier(true);
+    final localizations = MaterialLocalizations.of(context);
+
+    cubit.pauseMatch();
+    cubit.clearPauseSheetRequestForBackground();
+    _isVisible = true;
+    return showGeneralDialog<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: AppColors.inkNavy.withValues(alpha: 0.2),
-      builder: (sheetContext) => PauseBottomSheet._(
-        cubit: cubit,
-        navigator: navigator,
-        sheetContext: sheetContext,
-      ),
-    );
+      barrierDismissible: true,
+      barrierLabel: localizations.modalBarrierDismissLabel,
+      barrierColor: Colors.transparent,
+      transitionDuration: _animationDuration,
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
+        return PauseBottomSheet._(
+          cubit: cubit,
+          navigator: navigator,
+          sheetContext: dialogContext,
+          resumeTimerOnClose: resumeTimerOnClose,
+          routeAnimation: animation,
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) =>
+          child,
+    ).whenComplete(() {
+      _isVisible = false;
+      if (resumeTimerOnClose.value && !cubit.isClosed) {
+        cubit.resumeMatch();
+      }
+      resumeTimerOnClose.dispose();
+    });
   }
 
-  void _popSheet() {
+  void _popSheet({bool resumeTimer = true}) {
+    resumeTimerOnClose.value = resumeTimer;
     Navigator.of(sheetContext).pop();
   }
 
   void _goHome() {
-    _popSheet();
-    navigator.pushNamedAndRemoveUntil(
-      AppRoutes.home,
-      (route) => false,
-    );
+    _popSheet(resumeTimer: false);
+    navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
   }
 
   void _openRoute(String routeName) {
-    _popSheet();
+    _popSheet(resumeTimer: false);
     navigator.pushNamed(routeName);
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final backdropCurve = CurvedAnimation(
+      parent: routeAnimation,
+      curve: Curves.easeOut,
+      reverseCurve: Curves.easeIn,
+    );
+    final sheetCurve = CurvedAnimation(
+      parent: routeAnimation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final sheetSlide = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(sheetCurve);
+
+    final sheet = _DraggablePauseSheet(
+      onDismiss: () => _popSheet(),
+      onResume: () => _popSheet(),
+      onRestart: () {
+        _popSheet(resumeTimer: false);
+        cubit.restart();
+      },
+      onHowToPlay: () => _openRoute(AppRoutes.howToPlay),
+      onSettings: () => _openRoute(AppRoutes.settings),
+      onExitHome: _goHome,
+    );
+
+    return AnimatedBuilder(
+      animation: backdropCurve,
+      builder: (context, _) {
+        final t = backdropCurve.value;
+        return Material(
+          type: MaterialType.transparency,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned.fill(
+                child: ModalBackdrop(
+                  progress: t,
+                  onTap: () => _popSheet(),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SlideTransition(position: sheetSlide, child: sheet),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Drag down on the handle or title to dismiss.
+class _DraggablePauseSheet extends StatefulWidget {
+  const _DraggablePauseSheet({
+    required this.onDismiss,
+    required this.onResume,
+    required this.onRestart,
+    required this.onHowToPlay,
+    required this.onSettings,
+    required this.onExitHome,
+  });
+
+  final VoidCallback onDismiss;
+  final VoidCallback onResume;
+  final VoidCallback onRestart;
+  final VoidCallback onHowToPlay;
+  final VoidCallback onSettings;
+  final VoidCallback onExitHome;
+
+  static const double _dismissDragThreshold = 96;
+  static const double _dismissFlingVelocity = 500;
+
+  @override
+  State<_DraggablePauseSheet> createState() => _DraggablePauseSheetState();
+}
+
+class _DraggablePauseSheetState extends State<_DraggablePauseSheet>
+    with SingleTickerProviderStateMixin {
+  static const Duration _snapBackDuration = Duration(milliseconds: 200);
+
+  late final AnimationController _snapBackController;
+
+  double _dragExtent = 0;
+  double _snapBackStart = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _snapBackController =
+        AnimationController(vsync: this, duration: _snapBackDuration)
+          ..addListener(_onSnapBackTick)
+          ..addStatusListener(_onSnapBackStatus);
+  }
+
+  void _onSnapBackStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed && mounted) {
+      setState(() => _dragExtent = 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _snapBackController.dispose();
+    super.dispose();
+  }
+
+  void _onSnapBackTick() {
+    if (!_snapBackController.isAnimating) {
+      return;
+    }
+    final t = Curves.easeOutCubic.transform(_snapBackController.value);
+    setState(() => _dragExtent = _snapBackStart * (1 - t));
+  }
+
+  void _onVerticalDragUpdate(DragUpdateDetails details) {
+    _snapBackController.stop();
+    setState(() {
+      _dragExtent = (_dragExtent + details.delta.dy).clamp(
+        0.0,
+        double.infinity,
+      );
+    });
+  }
+
+  void _onVerticalDragEnd(DragEndDetails details) {
+    final velocity = details.velocity.pixelsPerSecond.dy;
+    if (_dragExtent >= _DraggablePauseSheet._dismissDragThreshold ||
+        velocity >= _DraggablePauseSheet._dismissFlingVelocity) {
+      widget.onDismiss();
+      return;
+    }
+    if (_dragExtent <= 0) {
+      return;
+    }
+    _animateSnapBack();
+  }
+
+  void _animateSnapBack() {
+    _snapBackStart = _dragExtent;
+    _snapBackController
+      ..stop()
+      ..value = 0
+      ..forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: Offset(0, _dragExtent),
+      child: GestureDetector(
+        onVerticalDragUpdate: _onVerticalDragUpdate,
+        onVerticalDragEnd: _onVerticalDragEnd,
+        child: _PauseSheetContent(
+          onResume: widget.onResume,
+          onRestart: widget.onRestart,
+          onHowToPlay: widget.onHowToPlay,
+          onSettings: widget.onSettings,
+          onExitHome: widget.onExitHome,
+        ),
+      ),
+    );
+  }
+}
+
+class _PauseSheetContent extends StatelessWidget {
+  const _PauseSheetContent({
+    required this.onResume,
+    required this.onRestart,
+    required this.onHowToPlay,
+    required this.onSettings,
+    required this.onExitHome,
+  });
+
+  final VoidCallback onResume;
+  final VoidCallback onRestart;
+  final VoidCallback onHowToPlay;
+  final VoidCallback onSettings;
+  final VoidCallback onExitHome;
 
   @override
   Widget build(BuildContext context) {
@@ -89,18 +305,25 @@ class PauseBottomSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 48.w,
-                height: 6.h,
-                decoration: BoxDecoration(
-                  color: AppColors.outlineVariant,
-                  borderRadius: AppSpacing.borderRadiusFull,
+              Semantics(
+                label: 'Drag down to close',
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.stackSm.h),
+                  child: Container(
+                    width: 48.w,
+                    height: 6.h,
+                    decoration: BoxDecoration(
+                      color: AppColors.outlineVariant,
+                      borderRadius: AppSpacing.borderRadiusFull,
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(height: AppSpacing.stackSm.h),
               Text(
                 'Paused',
-                style: AppTextStyles.titleMd.copyWith(color: AppColors.onSurface),
+                style: AppTextStyles.titleMd.copyWith(
+                  color: AppColors.onSurface,
+                ),
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               PrimaryButton(
@@ -114,35 +337,32 @@ class PauseBottomSheet extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                 ),
-                onPressed: _popSheet,
+                onPressed: onResume,
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
                 iconAsset: IconConstant.restart,
                 label: 'Restart Match',
-                onTap: () {
-                  _popSheet();
-                  cubit.restart();
-                },
+                onTap: onRestart,
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
                 iconAsset: IconConstant.howToPlay,
                 label: 'How to Play',
-                onTap: () => _openRoute(AppRoutes.howToPlay),
+                onTap: onHowToPlay,
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
                 iconAsset: IconConstant.settings,
                 label: 'Settings',
-                onTap: () => _openRoute(AppRoutes.settings),
+                onTap: onSettings,
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
                 iconAsset: IconConstant.logout,
                 label: 'Exit to Home',
                 destructive: true,
-                onTap: _goHome,
+                onTap: onExitHome,
               ),
             ],
           ),
@@ -167,9 +387,12 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor =
-        destructive ? AppColors.errorContainer : AppColors.surfaceContainerHighest;
-    final titleColor = destructive ? AppColors.error : AppColors.onSurfaceVariant;
+    final borderColor = destructive
+        ? AppColors.errorContainer
+        : AppColors.surfaceContainerHighest;
+    final titleColor = destructive
+        ? AppColors.error
+        : AppColors.onSurfaceVariant;
     final iconBg = destructive
         ? AppColors.errorContainer.withValues(alpha: 0.5)
         : AppColors.surfaceContainerHighest;

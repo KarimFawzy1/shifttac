@@ -39,7 +39,7 @@ class GameplayScreen extends StatelessWidget {
         listener: (context, _) {
           unawaited(_presentWinDialogWhenReady(context));
         },
-        child: const _GameplayBody(),
+        child: const _GameplayLifecycleScope(),
       ),
     );
   }
@@ -70,6 +70,75 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
       ).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
     },
   );
+}
+
+/// Observes app lifecycle to pause the match in the background and reopen the
+/// pause menu when the player returns.
+class _GameplayLifecycleScope extends StatefulWidget {
+  const _GameplayLifecycleScope();
+
+  @override
+  State<_GameplayLifecycleScope> createState() =>
+      _GameplayLifecycleScopeState();
+}
+
+class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final cubit = context.read<GameCubit>();
+
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        cubit.onAppBackgrounded();
+      case AppLifecycleState.resumed:
+        _presentPauseSheetIfNeeded(cubit);
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  void _presentPauseSheetIfNeeded(GameCubit cubit) {
+    if (!cubit.shouldPresentPauseAfterBackground) {
+      return;
+    }
+    if (PauseBottomSheet.isVisible) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (!cubit.shouldPresentPauseAfterBackground) {
+        return;
+      }
+      if (PauseBottomSheet.isVisible) {
+        return;
+      }
+      if (cubit.state.snapshot.status != GameStatus.playing) {
+        return;
+      }
+      unawaited(PauseBottomSheet.show(context));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const _GameplayBody();
 }
 
 class _GameplayBody extends StatelessWidget {

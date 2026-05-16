@@ -15,7 +15,10 @@ void main() {
 
       final expected = GameState.initial();
       expect(cubit.state.snapshot.turnIndex, expected.snapshot.turnIndex);
-      expect(cubit.state.snapshot.currentPlayer, expected.snapshot.currentPlayer);
+      expect(
+        cubit.state.snapshot.currentPlayer,
+        expected.snapshot.currentPlayer,
+      );
       expect(cubit.state.snapshot.status, expected.snapshot.status);
       expect(cubit.state.inputLocked, isFalse);
       expect(cubit.state.lastPlacedPosition, isNull);
@@ -42,9 +45,7 @@ void main() {
         final cubit = GameCubit();
 
         cubit.onCellTapped(const Position(row: 0, col: 0));
-        async.elapse(
-          Duration(milliseconds: GameConstants.inputLockMs),
-        );
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
         final snap = cubit.state.snapshot;
         cubit.onCellTapped(const Position(row: 0, col: 0));
@@ -67,9 +68,7 @@ void main() {
         expect(identical(cubit.state.snapshot, afterFirst), isTrue);
         expect(cubit.state.snapshot.turnIndex, 1);
 
-        async.elapse(
-          Duration(milliseconds: GameConstants.inputLockMs),
-        );
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
         cubit.onCellTapped(const Position(row: 1, col: 1));
         expect(cubit.state.snapshot.turnIndex, 2);
@@ -85,9 +84,7 @@ void main() {
         cubit.onCellTapped(const Position(row: 2, col: 2));
         expect(cubit.state.inputLocked, isTrue);
 
-        async.elapse(
-          Duration(milliseconds: GameConstants.inputLockMs - 1),
-        );
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs - 1));
         expect(cubit.state.inputLocked, isTrue);
 
         async.elapse(const Duration(milliseconds: 1));
@@ -113,21 +110,78 @@ void main() {
         expect(cubit.state.lastRemovedPosition, isNull);
         expect(cubit.state.matchDurationMs, 0);
 
-        async.elapse(
-          Duration(milliseconds: GameConstants.inputLockMs),
-        );
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
         expect(cubit.state.inputLocked, isFalse);
         expect(cubit.state.snapshot.turnIndex, 0);
         cubit.close();
       });
     });
 
+    test(
+      'onAppBackgrounded pauses match and requests pause sheet on resume',
+      () {
+        final cubit = GameCubit();
+        addTearDown(cubit.close);
+
+        expect(cubit.shouldPresentPauseAfterBackground, isFalse);
+
+        cubit.onAppBackgrounded();
+
+        expect(cubit.shouldPresentPauseAfterBackground, isTrue);
+
+        cubit.clearPauseSheetRequestForBackground();
+        expect(cubit.shouldPresentPauseAfterBackground, isFalse);
+
+        cubit.resumeMatch();
+        cubit.onAppBackgrounded();
+        expect(cubit.shouldPresentPauseAfterBackground, isTrue);
+      },
+    );
+
+    test('onAppBackgrounded is no-op when match is not playing', () {
+      fakeAsync((async) {
+        final cubit = GameCubit();
+        void unlock() =>
+            async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+        for (var i = 0; i < 5; i++) {
+          cubit.onCellTapped(Position(row: i % 3, col: 0));
+          unlock();
+          cubit.onCellTapped(Position(row: i % 3, col: 1));
+          unlock();
+          cubit.onCellTapped(Position(row: i % 3, col: 2));
+          unlock();
+        }
+
+        expect(cubit.state.snapshot.status, GameStatus.won);
+        cubit.onAppBackgrounded();
+        expect(cubit.shouldPresentPauseAfterBackground, isFalse);
+        cubit.close();
+      });
+    });
+
+    test('pauseMatch stops match duration from advancing', () async {
+      final cubit = GameCubit();
+
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      final elapsedBeforePause = cubit.state.matchDurationMs;
+      expect(elapsedBeforePause, greaterThan(0));
+
+      cubit.pauseMatch();
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      expect(cubit.state.matchDurationMs, elapsedBeforePause);
+
+      cubit.resumeMatch();
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      expect(cubit.state.matchDurationMs, greaterThan(elapsedBeforePause));
+      await cubit.close();
+    });
+
     test('clearLastEventMarkers clears placement markers only', () {
       fakeAsync((async) {
         final cubit = GameCubit();
-        void unlock() => async.elapse(
-          Duration(milliseconds: GameConstants.inputLockMs),
-        );
+        void unlock() =>
+            async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
         cubit.onCellTapped(const Position(row: 0, col: 0));
         unlock();
