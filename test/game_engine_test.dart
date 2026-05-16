@@ -17,11 +17,11 @@ GameSnapshot _apply(GameSnapshot s, int row, int col) {
 
 void main() {
   group('GameEngine.restart', () {
-    test('returns initial playing state with X to move', () {
+    test('returns initial playing state with random starter', () {
       final s = GameEngine.restart();
       expect(s.xMoves, isEmpty);
       expect(s.oMoves, isEmpty);
-      expect(s.currentPlayer, Player.x);
+      expect([Player.x, Player.o], contains(s.currentPlayer));
       expect(s.turnIndex, 0);
       expect(s.status, GameStatus.playing);
       expect(s.winner, isNull);
@@ -31,12 +31,12 @@ void main() {
 
   group('GameEngine.oldestPositionFor', () {
     test('returns null when queue empty', () {
-      final s = GameSnapshot.initial();
+      final s = GameSnapshot.initial(startingPlayer: Player.x);
       expect(GameEngine.oldestPositionFor(Player.x, s), isNull);
     });
 
     test('returns oldest FIFO position', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 1, 1);
       s = _apply(s, 2, 2);
@@ -49,7 +49,7 @@ void main() {
 
   group('GameEngine.attemptMove — validation', () {
     test('rejects occupied cell without mutating snapshot', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 1, 1);
       final r = GameEngine.attemptMove(
         snapshot: s,
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('rejects moves after win', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 1, 0);
       s = _apply(s, 0, 1);
@@ -78,8 +78,16 @@ void main() {
   });
 
   group('GameEngine.attemptMove — turns & FIFO', () {
+    test('initial picks X or O at random when unspecified', () {
+      final starters = <Player>{};
+      for (var i = 0; i < 40; i++) {
+        starters.add(GameSnapshot.initial().currentPlayer);
+      }
+      expect(starters, containsAll([Player.x, Player.o]));
+    });
+
     test('alternates players on successful moves', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       expect(s.currentPlayer, Player.x);
       s = _apply(s, 0, 0);
       expect(s.currentPlayer, Player.o);
@@ -88,7 +96,7 @@ void main() {
     });
 
     test('increments turnIndex on accepted moves', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       expect(s.turnIndex, 1);
       s = _apply(s, 1, 1);
@@ -96,7 +104,7 @@ void main() {
     });
 
     test('does not rotate when player has fewer than 3 marks', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 1, 1);
       s = _apply(s, 1, 0);
@@ -105,7 +113,7 @@ void main() {
     });
 
     test('FIFO removes oldest when placing 4th mark for a player', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 2, 2);
       s = _apply(s, 0, 1);
@@ -124,7 +132,7 @@ void main() {
     });
 
     test('reports removedMove when rotation occurs', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 2, 2);
       s = _apply(s, 0, 1);
@@ -141,7 +149,7 @@ void main() {
     });
 
     test('never exposes more than maxActiveMarks per player', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       const seq = <(int, int)>[
         (0, 0),
         (2, 2),
@@ -180,7 +188,7 @@ void main() {
 
   group('GameEngine.attemptMove — wins', () {
     test('detects top row win on third X mark (with alternation)', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 1, 0);
       s = _apply(s, 0, 1);
@@ -200,7 +208,7 @@ void main() {
     });
 
     test('detects middle column win for O', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 0, 1);
       s = _apply(s, 1, 0);
@@ -221,7 +229,7 @@ void main() {
     });
 
     test('detects primary diagonal win', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 0, 1);
       s = _apply(s, 1, 1);
@@ -237,7 +245,7 @@ void main() {
     });
 
     test('detects anti-diagonal win', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 2);
       s = _apply(s, 0, 0);
       s = _apply(s, 1, 1);
@@ -254,7 +262,7 @@ void main() {
 
     /// Win only appears after FIFO removal + placement (`rules.md` §7).
     test('win immediately after rotation (not a line before 4th X)', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 2, 2);
       s = _apply(s, 1, 0);
@@ -282,7 +290,7 @@ void main() {
 
   group('GameEngine.attemptMove — placedMove / rules', () {
     test('placedMove uses snapshot turnIndex before increment', () {
-      final s0 = GameSnapshot.initial();
+      final s0 = GameSnapshot.initial(startingPlayer: Player.x);
       final r = GameEngine.attemptMove(
         snapshot: s0,
         position: const Position(row: 0, col: 0),
@@ -292,7 +300,7 @@ void main() {
     });
 
     test('restart clears queues and win metadata', () {
-      var s = GameSnapshot.initial();
+      var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 0, 0);
       s = _apply(s, 1, 0);
       s = _apply(s, 0, 1);

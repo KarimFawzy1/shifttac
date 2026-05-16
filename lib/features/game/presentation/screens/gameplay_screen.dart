@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/game_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -32,23 +31,12 @@ class GameplayScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => GameCubit(),
-      child: BlocListener<GameCubit, GameState>(
-        listenWhen: (prev, next) =>
-            prev.snapshot.status != GameStatus.won &&
-            next.snapshot.status == GameStatus.won,
-        listener: (context, _) {
-          unawaited(_presentWinDialogWhenReady(context));
-        },
-        child: const _GameplayLifecycleScope(),
-      ),
+      child: const _GameplayLifecycleScope(),
     );
   }
 }
 
 Future<void> _presentWinDialogWhenReady(BuildContext context) async {
-  await Future<void>.delayed(
-    const Duration(milliseconds: GameConstants.dialogEntranceMs),
-  );
   if (!context.mounted) {
     return;
   }
@@ -168,7 +156,12 @@ class _GameplayBody extends StatelessWidget {
             const _MoveCounterPill(),
             SizedBox(height: AppSpacing.stackSm.h),
             SizedBox(height: AppSpacing.stackLg.h),
-            const Expanded(child: _GameplayBoardArea()),
+            Expanded(
+              child: _GameplayBoardArea(
+                onWinRevealComplete: () =>
+                    unawaited(_presentWinDialogWhenReady(context)),
+              ),
+            ),
           ],
         ),
       ),
@@ -297,7 +290,9 @@ class _MoveCounterPill extends StatelessWidget {
 }
 
 class _GameplayBoardArea extends StatelessWidget {
-  const _GameplayBoardArea();
+  const _GameplayBoardArea({required this.onWinRevealComplete});
+
+  final VoidCallback onWinRevealComplete;
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +307,7 @@ class _GameplayBoardArea extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const GameBoard(),
+                GameBoard(onWinningLineRevealComplete: onWinRevealComplete),
                 SizedBox(height: AppSpacing.stackLg.h),
                 SizedBox(height: AppSpacing.stackMd.h),
                 SizedBox(height: AppSpacing.stackMd.h),

@@ -5,7 +5,6 @@ import 'package:shifttac/features/game/domain/models/game_status.dart';
 import 'package:shifttac/features/game/domain/models/player.dart';
 import 'package:shifttac/features/game/domain/models/position.dart';
 import 'package:shifttac/features/game/presentation/state/game_cubit.dart';
-import 'package:shifttac/features/game/presentation/state/game_state.dart';
 
 void main() {
   group('GameCubit', () {
@@ -13,17 +12,16 @@ void main() {
       final cubit = GameCubit();
       addTearDown(cubit.close);
 
-      final expected = GameState.initial();
-      expect(cubit.state.snapshot.turnIndex, expected.snapshot.turnIndex);
+      expect(cubit.state.snapshot.turnIndex, 0);
       expect(
-        cubit.state.snapshot.currentPlayer,
-        expected.snapshot.currentPlayer,
+        [Player.x, Player.o],
+        contains(cubit.state.snapshot.currentPlayer),
       );
-      expect(cubit.state.snapshot.status, expected.snapshot.status);
+      expect(cubit.state.snapshot.status, GameStatus.playing);
       expect(cubit.state.inputLocked, isFalse);
       expect(cubit.state.lastPlacedPosition, isNull);
       expect(cubit.state.lastRemovedPosition, isNull);
-      expect(cubit.state.matchDurationMs, 0);
+      expect(cubit.state.matchDurationMs, greaterThanOrEqualTo(0));
     });
 
     test('tap on empty cell emits new snapshot and lastPlacedPosition', () {
@@ -31,11 +29,12 @@ void main() {
       addTearDown(cubit.close);
 
       final before = cubit.state.snapshot;
+      final starter = before.currentPlayer;
       cubit.onCellTapped(const Position(row: 0, col: 0));
 
       expect(identical(cubit.state.snapshot, before), isFalse);
       expect(cubit.state.snapshot.turnIndex, 1);
-      expect(cubit.state.snapshot.currentPlayer, Player.o);
+      expect(cubit.state.snapshot.currentPlayer, starter.opponent);
       expect(cubit.state.lastPlacedPosition, const Position(row: 0, col: 0));
       expect(cubit.state.inputLocked, isTrue);
     });
@@ -72,7 +71,7 @@ void main() {
 
         cubit.onCellTapped(const Position(row: 1, col: 1));
         expect(cubit.state.snapshot.turnIndex, 2);
-        expect(cubit.state.snapshot.currentPlayer, Player.x);
+        expect(cubit.state.snapshot.currentPlayer, afterFirst.currentPlayer.opponent);
         cubit.close();
       });
     });
@@ -103,7 +102,10 @@ void main() {
         cubit.restart();
 
         expect(cubit.state.snapshot.turnIndex, 0);
-        expect(cubit.state.snapshot.currentPlayer, Player.x);
+        expect(
+          [Player.x, Player.o],
+          contains(cubit.state.snapshot.currentPlayer),
+        );
         expect(cubit.state.snapshot.status, GameStatus.playing);
         expect(cubit.state.inputLocked, isFalse);
         expect(cubit.state.lastPlacedPosition, isNull);

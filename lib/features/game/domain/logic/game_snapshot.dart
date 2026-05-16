@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../models/game_status.dart';
 import '../models/move.dart';
 import '../models/player.dart';
@@ -18,11 +20,14 @@ class GameSnapshot {
   }) : xMoves = List<Move>.unmodifiable(xMoves),
        oMoves = List<Move>.unmodifiable(oMoves);
 
-  factory GameSnapshot.initial() {
+  factory GameSnapshot.initial({Player? startingPlayer}) {
+    final first =
+        startingPlayer ??
+        (Random().nextBool() ? Player.x : Player.o);
     return GameSnapshot(
       xMoves: const [],
       oMoves: const [],
-      currentPlayer: Player.x,
+      currentPlayer: first,
       turnIndex: 0,
       status: GameStatus.playing,
       winningLine: null,
