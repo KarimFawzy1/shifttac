@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,41 +75,14 @@ class PlayerPanel extends StatelessWidget {
           color: accent,
         );
 
-        final decoration = active
-            ? BoxDecoration(
-                color: AppColors.surfaceContainerLowest,
-                borderRadius: AppSpacing.borderRadiusLg,
-                border: Border.all(color: accent, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: accent.withValues(alpha: 0.25),
-                    blurRadius: 16,
-                    spreadRadius: -2,
-                  ),
-                ],
-              )
-            : BoxDecoration(
-                color: AppColors.surfaceContainerLowest.withValues(alpha: 0.8),
-                borderRadius: AppSpacing.borderRadiusLg,
-                border: Border.all(color: AppColors.surfaceVariant, width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.inkNavy.withValues(alpha: 0.05),
-                    offset: const Offset(0, 2),
-                    blurRadius: 8,
-                    spreadRadius: -2,
-                  ),
-                ],
-              );
+        final padding = active
+            ? EdgeInsets.all(16.w)
+            : EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 18.h);
 
-        return AnimatedContainer(
-          duration: _panelAnimDuration,
-          curve: _panelAnimCurve,
-          clipBehavior: Clip.antiAlias,
-          padding: active
-              ? EdgeInsets.all(16.w)
-              : EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 18.h),
-          decoration: decoration,
+        return _PlayerPanelCard(
+          active: active,
+          accent: accent,
+          padding: padding,
           child: Stack(
             children: [
               Align(
@@ -168,6 +143,147 @@ class PlayerPanel extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Card shell: smooth turn transitions on the surface, subtle pulse on active glow.
+class _PlayerPanelCard extends StatefulWidget {
+  const _PlayerPanelCard({
+    required this.active,
+    required this.accent,
+    required this.padding,
+    required this.child,
+  });
+
+  final bool active;
+  final Color accent;
+  final EdgeInsets padding;
+  final Widget child;
+
+  @override
+  State<_PlayerPanelCard> createState() => _PlayerPanelCardState();
+}
+
+class _PlayerPanelCardState extends State<_PlayerPanelCard>
+    with SingleTickerProviderStateMixin {
+  static const Duration _panelAnimDuration = PlayerPanel._panelAnimDuration;
+  static const Curve _panelAnimCurve = PlayerPanel._panelAnimCurve;
+  static const Duration _pulseDuration = Duration(milliseconds: 1600);
+
+  static const double _glowBlurMin = 12;
+  static const double _glowBlurMax = 22;
+  static const double _glowSpreadMin = -4;
+  static const double _glowSpreadMax = 0;
+  static const double _glowAlphaMin = 0.26;
+  static const double _glowAlphaMax = 0.42;
+
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: _pulseDuration,
+    );
+    _pulse = CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut);
+    _syncPulse();
+  }
+
+  @override
+  void didUpdateWidget(_PlayerPanelCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.active != oldWidget.active) {
+      _syncPulse();
+    }
+  }
+
+  void _syncPulse() {
+    if (widget.active) {
+      if (!_pulseController.isAnimating) {
+        _pulseController.repeat(reverse: true);
+      }
+    } else {
+      _pulseController
+        ..stop()
+        ..value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  BoxDecoration _surfaceDecoration({required bool active}) {
+    if (active) {
+      return BoxDecoration(
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: AppSpacing.borderRadiusLg,
+        border: Border.all(color: widget.accent, width: 2),
+      );
+    }
+    return BoxDecoration(
+      color: AppColors.surfaceContainerLowest.withValues(alpha: 0.8),
+      borderRadius: AppSpacing.borderRadiusLg,
+      border: Border.all(color: AppColors.surfaceVariant, width: 1),
+    );
+  }
+
+  List<BoxShadow> _inactiveShadow() => [
+    BoxShadow(
+      color: AppColors.inkNavy.withValues(alpha: 0.05),
+      offset: const Offset(0, 2),
+      blurRadius: 8,
+      spreadRadius: -2,
+    ),
+  ];
+
+  List<BoxShadow> _activeGlowShadow(double t) => [
+    BoxShadow(
+      color: widget.accent.withValues(
+        alpha: lerpDouble(_glowAlphaMin, _glowAlphaMax, t)!,
+      ),
+      blurRadius: lerpDouble(_glowBlurMin, _glowBlurMax, t)!,
+      spreadRadius: lerpDouble(_glowSpreadMin, _glowSpreadMax, t)!,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final borderRadius = AppSpacing.borderRadiusLg;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        if (widget.active)
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _pulse,
+              builder: (context, _) {
+                return DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: borderRadius,
+                    boxShadow: _activeGlowShadow(_pulse.value),
+                  ),
+                );
+              },
+            ),
+          ),
+        AnimatedContainer(
+          duration: _panelAnimDuration,
+          curve: _panelAnimCurve,
+          clipBehavior: Clip.antiAlias,
+          padding: widget.padding,
+          decoration: _surfaceDecoration(
+            active: widget.active,
+          ).copyWith(boxShadow: widget.active ? null : _inactiveShadow()),
+          child: widget.child,
+        ),
+      ],
     );
   }
 }
