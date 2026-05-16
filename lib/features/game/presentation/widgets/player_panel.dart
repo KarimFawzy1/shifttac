@@ -20,6 +20,9 @@ class PlayerPanel extends StatelessWidget {
 
   static const Duration _panelAnimDuration = Duration(milliseconds: 220);
   static const Curve _panelAnimCurve = Curves.easeOutCubic;
+  static const Duration _contentOpacityDuration = Duration(milliseconds: 320);
+  static const Curve _contentOpacityCurve = Curves.easeInOutCubic;
+  static const double _inactiveContentOpacity = 0.55;
 
   final Player player;
 
@@ -90,56 +93,59 @@ class PlayerPanel extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.topCenter,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: avatarSize,
-                      height: avatarSize,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: highlighted ? activeAvatarBg : inactiveAvatarBg,
-                        ),
-                        child: Center(
-                          child: AnimatedContainer(
-                            duration: _panelAnimDuration,
-                            curve: _panelAnimCurve,
-                            width: highlighted ? iconSizeLarge : iconSizeSmall,
-                            height: highlighted ? iconSizeLarge : iconSizeSmall,
-                            alignment: Alignment.center,
-                            child: FittedBox(
-                              fit: BoxFit.contain,
-                              child: SvgPicture.asset(
-                                isX ? IconConstant.x : IconConstant.o,
-                                width: iconSizeLarge,
-                                height: iconSizeLarge,
-                                colorFilter: ColorFilter.mode(
-                                  accent,
-                                  BlendMode.srcIn,
+                child: _AnimatedPlayerContentOpacity(
+                  highlighted: highlighted,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: avatarSize,
+                        height: avatarSize,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: highlighted ? activeAvatarBg : inactiveAvatarBg,
+                          ),
+                          child: Center(
+                            child: AnimatedContainer(
+                              duration: _panelAnimDuration,
+                              curve: _panelAnimCurve,
+                              width: highlighted ? iconSizeLarge : iconSizeSmall,
+                              height: highlighted ? iconSizeLarge : iconSizeSmall,
+                              alignment: Alignment.center,
+                              child: FittedBox(
+                                fit: BoxFit.contain,
+                                child: SvgPicture.asset(
+                                  isX ? IconConstant.x : IconConstant.o,
+                                  width: iconSizeLarge,
+                                  height: iconSizeLarge,
+                                  colorFilter: ColorFilter.mode(
+                                    accent,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 7.h),
-                    Text(
-                      isX ? 'Player X' : 'Player O',
-                      style: highlighted ? titleStyleActive : titleStyleInactive,
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 2.h),
-                    _PlayerStatusLabel(
-                      label: subtitleText,
-                      style: highlighted
-                          ? subtitleStyleActive
-                          : subtitleStyleInactive,
-                      showWaitingDots: showWaitingDots,
-                    ),
-                  ],
+                      SizedBox(height: 7.h),
+                      Text(
+                        isX ? 'Player X' : 'Player O',
+                        style: highlighted ? titleStyleActive : titleStyleInactive,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 2.h),
+                      _PlayerStatusLabel(
+                        label: subtitleText,
+                        style: highlighted
+                            ? subtitleStyleActive
+                            : subtitleStyleInactive,
+                        showWaitingDots: showWaitingDots,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -147,6 +153,68 @@ class PlayerPanel extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _AnimatedPlayerContentOpacity extends StatefulWidget {
+  const _AnimatedPlayerContentOpacity({
+    required this.highlighted,
+    required this.child,
+  });
+
+  final bool highlighted;
+  final Widget child;
+
+  @override
+  State<_AnimatedPlayerContentOpacity> createState() =>
+      _AnimatedPlayerContentOpacityState();
+}
+
+class _AnimatedPlayerContentOpacityState
+    extends State<_AnimatedPlayerContentOpacity>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: PlayerPanel._contentOpacityDuration,
+    );
+    _opacity = Tween<double>(
+      begin: PlayerPanel._inactiveContentOpacity,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: PlayerPanel._contentOpacityCurve,
+      ),
+    );
+    _controller.value = widget.highlighted ? 1 : 0;
+  }
+
+  @override
+  void didUpdateWidget(_AnimatedPlayerContentOpacity oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.highlighted == oldWidget.highlighted) return;
+    if (widget.highlighted) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(opacity: _opacity, child: widget.child);
   }
 }
 

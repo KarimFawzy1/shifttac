@@ -11,6 +11,7 @@ class IconConstant {
   IconConstant._();
 
   static const String ai = 'assets/icons/ai.svg';
+  static const String back = 'assets/icons/back.svg';
   static const String credits = 'assets/icons/credits.svg';
   static const String dark = 'assets/icons/dark.svg';
   static const String haptic = 'assets/icons/haptic.svg';
@@ -20,6 +21,7 @@ class IconConstant {
   static const String multiplayer = 'assets/icons/multiplayer.svg';
   static const String music = 'assets/icons/music.svg';
   static const String o = 'assets/icons/o.svg';
+  static const String pause = 'assets/icons/pause.svg';
   static const String play = 'assets/icons/play.svg';
   static const String restart = 'assets/icons/restart.svg';
   static const String resume = 'assets/icons/resume.svg';

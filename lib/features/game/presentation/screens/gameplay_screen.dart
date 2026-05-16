@@ -208,12 +208,12 @@ class _GameplayHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AppIconButton(
-                iconAsset: IconConstant.home,
+                iconAsset: IconConstant.back,
                 semanticLabel: 'Back',
                 onPressed: onBack,
                 iconColor: AppColors.primary,
                 transparentMaterial: true,
-                iconSize: 22.w,
+                iconSize: 20.w,
               ),
               Expanded(
                 child: Center(
@@ -230,16 +230,13 @@ class _GameplayHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              GestureDetector(
-                onLongPress: () => PauseBottomSheet.show(context),
-                child: AppIconButton(
-                  iconAsset: IconConstant.restart,
-                  semanticLabel: 'Restart match; long-press opens pause menu',
-                  iconColor: AppColors.primary,
-                  transparentMaterial: true,
-                  iconSize: 22.w,
-                  onPressed: () => context.read<GameCubit>().restart(),
-                ),
+              AppIconButton(
+                iconAsset: IconConstant.pause,
+                semanticLabel: 'Pause match',
+                iconColor: AppColors.primary,
+                transparentMaterial: true,
+                iconSize: 20.w,
+                onPressed: () => unawaited(PauseBottomSheet.show(context)),
               ),
             ],
           ),
