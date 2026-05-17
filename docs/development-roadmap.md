@@ -268,7 +268,7 @@ Each milestone is broken into numbered phases below.
 | P8 | M3 | Win Dialog & Pause Bottom Sheet | Done |
 | P9 | M4 | Home Screen | Done |
 | P10 | M4 | Splash Screen | Done |
-| P11 | M4 | Onboarding (3 Screens) | Pending |
+| P11 | M4 | Onboarding (3 Screens) | Done |
 | P12 | M4 | How to Play Screen | Pending |
 | P13 | M4 | Settings Screen | Pending |
 | P14 | M5 | Animations & Motion Polish | Pending |
@@ -992,17 +992,17 @@ lib/features/onboarding/presentation/widgets/mini_board_preview.dart
 
 **Acceptance Criteria:**
 
-- [ ] All 3 pages render and swipe smoothly.
-- [ ] Page 2's animation visibly shows the oldest mark being removed when the 4th is placed.
-- [ ] Page 3 clearly fades the oldest mark at `fadedMarkOpacity`.
-- [ ] "Start Playing" (and Skip, if in design) calls `markOnboardingCompleted()` then navigates to `/home`.
-- [ ] After onboarding is completed once, a second cold start opens `/home` directly (no splash, no onboarding).
+- [x] All 3 pages render and swipe smoothly.
+- [x] Page 2's animation visibly shows the oldest mark being removed when the 4th is placed.
+- [x] Page 3 clearly fades the oldest mark at `fadedMarkOpacity`.
+- [x] "Start Playing" (and Skip, if in design) calls `markOnboardingCompleted()` then navigates to `/home`.
+- [x] After onboarding is completed once, a second cold start opens `/home` directly (no splash, no onboarding).
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 11** (e.g. `feat(ui): add onboarding flow with first-launch persistence`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 11** (e.g. `feat(ui): add onboarding flow with first-launch persistence`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 2, Phase 7 (so MiniBoardPreview can share visual language with the real board).
 

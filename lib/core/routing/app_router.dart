@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/game/presentation/screens/gameplay_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../constants/image_constants.dart';
 import '../launch/app_launch_gate.dart';
@@ -27,6 +28,13 @@ class AppRouter {
       return MaterialPageRoute<void>(
         settings: settings,
         builder: (_) => const SplashScreen(),
+      );
+    }
+
+    if (name == AppRoutes.onboarding) {
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const OnboardingScreen(),
       );
     }
 
