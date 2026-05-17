@@ -1,6 +1,7 @@
 class AppRoutes {
   AppRoutes._();
 
+  static const String launch = '/';
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String home = '/home';
@@ -9,6 +10,7 @@ class AppRoutes {
   static const String settings = '/settings';
 
   static const List<String> all = [
+    launch,
     splash,
     onboarding,
     home,

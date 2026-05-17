@@ -91,12 +91,13 @@ These are **fixed** for the MVP. Do not add or swap libraries during phases.
 | Responsive sizing | `flutter_screenutil` |
 | Equality / immutability | `equatable` |
 | Routing | Simple `Navigator` + named routes via `core/routing/` (no `go_router` for MVP) |
-| Persistence | **None** for MVP (no settings save, no stats save) — see Backlog |
+| Persistence | **Minimal for MVP** — `shared_preferences` stores **only** whether the user has completed first-launch onboarding (splash + onboarding are skipped on subsequent cold starts). Settings, stats, and match history remain unpersisted — see Backlog |
 | Audio | **Deferred** to **Phase 16** (Audio Layer). Earlier phases may omit SFX entirely or no-op; **Phase 14** is motion polish only. |
 | Haptics | `HapticFeedback` from `flutter/services.dart` (built-in) |
 | Testing | `flutter_test` only |
 | Fonts | Google Fonts `Poppins` (headings) + `Nunito Sans` (body) — bundled via `google_fonts` package |
 | SVG rendering | `flutter_svg` — required by `assets/icons/*.svg` (all UI glyphs). First consumed in **P2** (`AppIconButton`); see **Amendment 2026-05-12 — flutter_svg + asset inventory**. |
+| First-launch flag | `shared_preferences` — single boolean (e.g. `hasCompletedOnboarding`). Introduced in **P10**; written when onboarding finishes in **P11**. No other keys in MVP. |
 
 > **Rule:** If a phase needs something not on this list, **stop** and amend this section before adding the dependency.
 
@@ -110,6 +111,8 @@ These are **fixed** for the MVP. Do not add or swap libraries during phases.
 | `lib/features/game/domain/logic/game_snapshot.dart` | P5 | Immutable `GameSnapshot` (split from single `game_engine.dart` file if preferred). |
 | `lib/core/settings/app_settings_controller.dart` | P13 | Shared in-memory settings (`AppSettingsController`); no persistence. |
 | `lib/core/audio/app_audio.dart` | P16 | SFX wrapper; reads `soundEffectsEnabled` from `AppSettingsController`. |
+| `lib/core/launch/app_launch_prefs.dart` | P10 | Reads/writes the first-launch onboarding completion flag via `shared_preferences`. |
+| `lib/core/launch/app_launch_gate.dart` | P10 | Root launch resolver: returning users → `/home`; first-time users → `/splash`. |
 | `docs/qa-checklist.md` | P18 | Manual responsive QA log. |
 | `test/edge_cases_test.dart` | P18 | Consolidated edge-case tests (additional focused test files under `test/` are allowed if named per Section 16 and tied to an owning phase). |
 
@@ -171,7 +174,7 @@ The `assets/images/` and `assets/icons/` folders contain every brand image, illu
 
 | Asset | Type | Primary usage | Owning phase(s) |
 |-------|------|---------------|-----------------|
-| `assets/images/Logo.png` | PNG | App brand mark (infinity + X/O composition). Used on Splash, optionally on Home header, Onboarding hero slots. **Decision needed**: whether `InfinityLogo` (P2) is a hand-drawn vector or simply `Image.asset('assets/images/Logo.png')`. Clarify before starting P2. | P2 (TBD), P9, P10, P11 |
+| `assets/images/Logo.png` | PNG | App brand mark (infinity + X/O composition, 3D tactile). **P10:** primary splash hero at 280×280 logical (per `css/SplashScreen.css`) with coral→teal glow and **breathe** scale animation. **P2 `InfinityLogo`:** compact vector for headers; not the splash hero. | P2, P9, P10, P11 |
 | `assets/images/home_icon.png` | PNG | Home screen hero illustration (large illustrative block above CTAs, per `css/HomeScreen.css`). **Confirm placement** during P9 against the CSS layout. | P9 |
 | `assets/icons/x.svg` | SVG | Player X mark — used by `BoardCell` (P7), `MiniBoardPreview` (P11/P12), Win Dialog winner symbol (P8), player panels (P7). | P7, P8, P11, P12 |
 | `assets/icons/o.svg` | SVG | Player O mark — same surfaces as `x.svg`. | P7, P8, P11, P12 |
@@ -185,8 +188,8 @@ The `assets/images/` and `assets/icons/` folders contain every brand image, illu
 | `assets/icons/restart.svg` | SVG | Restart match glyph — Gameplay header (P7), Pause sheet "Restart Match", Win Dialog "Play Again". | P7, P8 |
 | `assets/icons/resume.svg` | SVG | Pause sheet "Resume" row glyph. | P8 |
 | `assets/icons/logout.svg` | SVG | Pause sheet "Exit to Home" row glyph (if CSS uses logout iconography). | P8 |
-| `assets/icons/tap.svg` | SVG | Tap-indicator glyph for the onboarding tutorial visuals. | P11 |
-| `assets/icons/xo_onboarding_background.svg` | SVG | Decorative X/O motif used as a faded background on Onboarding pages and (likely) the Splash screen. Confirm splash usage against `css/SplashScreen.css`. | P10 (TBD), P11 |
+| `assets/icons/tap.svg` | SVG | Tap-indicator glyph — **P10** splash CTA row (below uppercase label, tinted `AppColors.teal` / `#006A63`); **P11** onboarding tutorial visuals. | P10, P11 |
+| `assets/icons/xo_onboarding_background.svg` | SVG | Decorative X/O motif for **Onboarding** pages only. **Not** used on Splash — `css/SplashScreen.css` defines its own faded X/O circles and glyph positions. | P11 |
 | `assets/icons/dark.svg` | SVG | Dark-theme tile glyph in Settings (the disabled "Coming Soon" row). | P13 |
 | `assets/icons/sound.svg` | SVG | Sound effects tile glyph in Settings. | P13 |
 | `assets/icons/music.svg` | SVG | Music tile glyph in Settings. | P13 |
@@ -239,7 +242,7 @@ M0  Foundation         ─► Repo cleanup, pubspec, theme tokens, app shell, ro
 M1  Game Brain         ─► Domain models + engine + win checker (+ unit tests)
 M2  Game State Layer   ─► GameCubit + GameState (+ cubit tests)
 M3  Playable Slice     ─► Gameplay screen + board + cells + win dialog  ◄── FIRST PLAYABLE
-M4  Surrounding UX     ─► Home, Splash, Onboarding, How to Play, Settings
+M4  Surrounding UX     ─► Home, Splash + Onboarding (first launch only), How to Play, Settings
 M5  Feel & Motion      ─► Animations, faded-mark polish, input lock, haptics
 M6  Audio & Icon       ─► Sound effects, app icon, splash polish
 M7  Hardening          ─► Edge case tests, responsive QA, accessibility pass
@@ -264,7 +267,7 @@ Each milestone is broken into numbered phases below.
 | P7 | M3 | Gameplay Screen (First Playable) | Done |
 | P8 | M3 | Win Dialog & Pause Bottom Sheet | Done |
 | P9 | M4 | Home Screen | Done |
-| P10 | M4 | Splash Screen | Pending |
+| P10 | M4 | Splash Screen | Done |
 | P11 | M4 | Onboarding (3 Screens) | Pending |
 | P12 | M4 | How to Play Screen | Pending |
 | P13 | M4 | Settings Screen | Pending |
@@ -401,7 +404,7 @@ lib/core/constants/game_constants.dart
 - `core/widgets/app_scaffold.dart` — base scaffold with warm ivory background, optional header slot, safe area, consistent horizontal padding.
 - `core/widgets/primary_button.dart` — Teal CTA, Poppins SemiBold, rounded `lg`, tactile feedback.
 - `core/widgets/secondary_button.dart` — outline / muted variant.
-- `shared/widgets/infinity_logo.dart` — minimal infinity symbol with embedded X/O (static vector, no animation yet — animation added in Phase 10).
+- `shared/widgets/infinity_logo.dart` — minimal infinity symbol with embedded X/O (static vector for headers; splash hero animation uses `Logo.png` in Phase 10).
 - `shared/widgets/app_icon_button.dart` — circular icon button used in headers.
 - `shared/widgets/screen_header.dart` — header row (back · center logo · right action).
 
@@ -439,7 +442,7 @@ lib/shared/widgets/screen_header.dart
 
 **Risks:**
 
-- Premature animation in `InfinityLogo`. **Mitigation:** keep it static here; animate in Phase 10.
+- Premature animation in `InfinityLogo`. **Mitigation:** keep it static here; splash breathe lives on `Logo.png` in Phase 10.
 
 ---
 
@@ -858,63 +861,89 @@ lib/features/home/presentation/widgets/home_action_card.dart
 
 ## Phase 10 — Splash Screen
 
-**Goal:** Brand intro, 2–3 seconds, with the infinity logo animation.
+**Goal:** Brand intro on Warm Ivory — `Logo.png` with a gentle **breathe** pulse, wordmark + subtitle, and a **tap-to-continue** CTA per `css/SplashScreen.css`. Shown **only on first launch**; returning users skip straight to Home via `AppLaunchGate`.
 
-**Design Source:** `css/SplashScreen.css` (Figma export — covers the centered infinity logo, "ShiftTac" wordmark, subtitle, and the faded X/O background motif). See **§2.2 — CSS → Flutter Workflow**.
+**Design Source:** `css/SplashScreen.css` (Figma export). See **§2.2 — CSS → Flutter Workflow**. Key layout tokens to reconcile (no inline hex/px in Dart):
+
+| CSS element | Reconcile to |
+|-------------|--------------|
+| Screen background `#F7F4EC` | `AppColors.warmIvory` |
+| Decorative X/O layer `opacity: 0.03` (+ secondary shapes at `0.5`) | `Stack` of positioned X glyph / O ring widgets matching CSS absolute positions & rotations — **not** `xo_onboarding_background.svg` |
+| Bottom readability gradient `rgba(247,244,236,0)→0.8` | `DecoratedBox` / `LinearGradient` overlay |
+| Logo area `280×280`, `border-radius: 22` | `280.w` × `280.w`, `22.r` |
+| Logo glow `45deg` coral→teal, `blur(32px)`, `opacity: 0.6` | `BoxShadow` / blurred gradient behind `Logo.png` |
+| Logo image + shadow | `Image.asset('assets/images/Logo.png')` |
+| Title Poppins 600 / 32px / `#1D2330` / `letter-spacing: -0.8px` | `AppTextStyles` heading |
+| Subtitle Nunito Sans 18px / `#BCC9C6` | `AppTextStyles` body (muted) |
+| CTA label Poppins 600 / 14px / uppercase / `#006A63` / `letter-spacing: 2.8px` | Copy: **"TAP TO START"** (or exact string from design review) |
+| CTA `tap.svg` icon ~`15×18`, fill `#006A63` | `SvgPicture.asset('assets/icons/tap.svg')` + `colorFilter` |
 
 **Asset References (see §2.3):**
 
-- `assets/images/Logo.png` — centered brand mark (or `InfinityLogo` widget animation, depending on the P2 decision; see §2.3 row for `Logo.png`).
-- `assets/icons/xo_onboarding_background.svg` — faded X/O background motif **if** `css/SplashScreen.css` includes one. If the CSS shows a different background pattern, escalate per §2.3.
+- `assets/images/Logo.png` — splash hero (280 logical, coral/teal glow stack, box shadow per CSS). **Breathe** animation applied here — not on `InfinityLogo`.
+- `assets/icons/tap.svg` — CTA row indicator below the uppercase label.
 
-**Implementation Method:** Run the `/figma-implement-design` skill against `css/SplashScreen.css`, scaffolding into `splash_screen.dart`. Reuse `AppScaffold` and the enhanced animated `InfinityLogo` (extend `infinity_logo.dart` with the `animate: true` parameter described under `Scope In`). Load SVGs via `flutter_svg`; load PNGs via `Image.asset`. Reconcile all CSS hex/px to `AppColors`, `AppTextStyles`, and `AppSpacing` before commit.
+**Implementation Method:** Run the `/figma-implement-design` skill against `css/SplashScreen.css`, scaffolding into `splash_screen.dart`. Reuse `AppScaffold` (Warm Ivory). Load `Logo.png` via `Image.asset`; load `tap.svg` via `flutter_svg`. Implement decorative background and glow from CSS positions in-widget (or a private helper in the same file). Reconcile all CSS values to `AppColors`, `AppTextStyles`, and `AppSpacing` before commit.
 
 **Scope In:**
 
-- `SplashScreen`:
-  - Center: animated `InfinityLogo` (slow rotation OR flowing infinity motion).
-  - Title: "ShiftTac".
-  - Subtitle: "The board never fills.".
-  - Background: Warm Ivory with faded X/O shapes.
-  - Auto-advance to `/onboarding` (first-launch heuristic deferred; for MVP always show onboarding once via `SharedPreferences` is **out** — see Backlog. For MVP, splash always goes to `/home` and the user can revisit onboarding via "How to Play"). Decision locked: **splash → home** for MVP.
-- Enhance `InfinityLogo` with optional `animate: true` parameter, using a slow `AnimationController` (4–6s rotation).
+- `SplashScreen` (column, centered, `gap: 32` per CSS main content):
+  - **Background:** Warm Ivory + CSS-positioned faded X/O shapes (opacity `0.03` / `0.5`) + bottom gradient overlay.
+  - **Logo area:** `Logo.png` inside glow stack; **breathe** animation — slow `AnimationController` (~4–6s, `Curves.easeInOut`, `repeat(reverse: true)`) scaling ~`0.96→1.0` (tune to match design; no rotation).
+  - **Title:** `ShiftTac`.
+  - **Subtitle:** `The board never fills.`
+  - **CTA row:** uppercase teal label + `tap.svg` (`opacity: 0.8` on the CTA container per CSS).
+  - **Navigation (first-time users only):** full-screen (or CTA) tap → `pushReplacementNamed('/onboarding')`. Optional `splashMinDisplayDuration` (default **2.5s** in `app_constants.dart`) before tap is accepted — prevents instant skip; no auto-navigate without user tap once the minimum elapses.
+- **First-launch routing (binding):** Splash and onboarding are shown **once per install** (first cold start). On every later cold start the app **must not** show splash or onboarding — launch goes straight to `/home`. See **§18 — D1**.
+- `AppLaunchPrefs` — `shared_preferences` boolean `hasCompletedOnboarding` (default `false`).
+- `AppLaunchGate` — root widget/route: if `hasCompletedOnboarding` → replace with `/home`; else → `/splash`.
+- `app_router.dart` — register `SplashScreen`, `AppLaunchGate`, and wire initial route through the gate.
+- `app.dart` — `initialRoute` (or `home`) resolves via `AppLaunchGate`, not a hard-coded always-splash entry.
+- `app_constants.dart` — `splashMinDisplayDuration`, `splashLogoBreatheDuration` (if not already present).
+- `pubspec.yaml` — add `shared_preferences` (first MVP persistence use).
 
 **Scope Out:**
+- `InfinityLogo` animation changes (splash uses `Logo.png`; `InfinityLogo` stays static for headers).
+- `xo_onboarding_background.svg` on splash (onboarding only).
 
-- First-launch detection / persistence.
-- Loading real assets.
-
-**Touch Scope:** `lib/features/splash/presentation/screens/splash_screen.dart`, update `infinity_logo.dart` to support animation, update `app_router.dart`.
+**Touch Scope:** `lib/features/splash/presentation/screens/splash_screen.dart`, `lib/core/launch/app_launch_prefs.dart`, `lib/core/launch/app_launch_gate.dart`, `lib/core/constants/app_constants.dart`, `lib/core/routing/app_router.dart`, `lib/app.dart`, `pubspec.yaml` (`shared_preferences` only).
 
 **Deliverables:**
 
 ```text
 lib/features/splash/presentation/screens/splash_screen.dart
+lib/core/launch/app_launch_prefs.dart
+lib/core/launch/app_launch_gate.dart
+lib/core/constants/app_constants.dart   (splash timing constants only, if not already defined)
 ```
 
 **Acceptance Criteria:**
 
-- [ ] Splash holds for 2.5s (constant), then `pushReplacementNamed('/home')`.
-- [ ] Logo animates smoothly; no jank on a mid-range device.
-- [ ] App entry point in `main.dart` lands on `/splash`.
+- [x] Layout matches `css/SplashScreen.css`: logo glow, wordmark, subtitle, faded X/O background, bottom gradient, CTA + `tap.svg`.
+- [x] `Logo.png` **breathe** animates smoothly; no jank on a mid-range device.
+- [x] **First launch:** after `splashMinDisplayDuration` (2.5s), user tap navigates via `pushReplacementNamed('/onboarding')`.
+- [x] **Returning user:** cold start skips splash entirely — `AppLaunchGate` routes directly to `/home` with no splash flash.
+- [x] App entry in `main.dart` / `app.dart` uses `AppLaunchGate` (not a permanent always-splash entry).
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 10** (e.g. `feat(ui): add splash screen and logo animation`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 10** (e.g. `feat(ui): add splash screen with logo breathe and tap CTA`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 2, Phase 9.
 
 **Risks:**
 
-- Hard-coded delay feeling sluggish. **Mitigation:** keep at 2.5s; expose constant in `app_constants.dart`.
+- Tap CTA ignored if only the label is tappable. **Mitigation:** make the full screen (or a large `GestureDetector` over the main column) tappable after the minimum duration.
+- Breathe scale too aggressive. **Mitigation:** cap scale delta ≤4%; keep duration 4–6s.
+- Splash flash on returning users while prefs load. **Mitigation:** `AppLaunchGate` shows a minimal Warm Ivory shell until the async read completes, then replaces in one frame.
 
 ---
 
 ## Phase 11 — Onboarding (3 Screens)
 
-**Goal:** Teach the FIFO + faded-mark mechanic in under 30 seconds.
+**Goal:** Teach the FIFO + faded-mark mechanic in under 30 seconds — shown **only on first launch** (after splash); persist completion so it never auto-plays again.
 
 **Design Source:**
 
@@ -944,13 +973,14 @@ If any CSS slot does not resolve to an asset above, escalate per §2.3.
 - `OnboardingPage` widget (title, description, visual slot, page index).
 - `MiniBoardPreview` widget — reusable 3×3 preview for onboarding & how-to-play, with optional pre-baked animation steps.
 - Progress indicator + Next / Back / **Start Playing** (final page).
+- **First-launch completion:** on **Start Playing** (and on any in-flow **Skip** control if present in CSS), call `AppLaunchPrefs.markOnboardingCompleted()` then `pushReplacementNamed('/home')`. After this, splash and onboarding **never** show again on cold start (see **§18 — D1**).
+- Onboarding is **not** reachable on auto-launch for returning users; Home / How-to-Play remain the re-entry paths for rules content.
 
 **Scope Out:**
 
-- Skip-once logic (Backlog).
-- Detecting whether onboarding was seen before.
+- Re-showing splash or the full onboarding `PageView` automatically after completion (forbidden — use How-to-Play for refreshers).
 
-**Touch Scope:** `lib/features/onboarding/presentation/*`, update `app_router.dart`.
+**Touch Scope:** `lib/features/onboarding/presentation/*`, `lib/core/launch/app_launch_prefs.dart` (write completion only), update `app_router.dart`.
 
 **Deliverables:**
 
@@ -965,12 +995,13 @@ lib/features/onboarding/presentation/widgets/mini_board_preview.dart
 - [ ] All 3 pages render and swipe smoothly.
 - [ ] Page 2's animation visibly shows the oldest mark being removed when the 4th is placed.
 - [ ] Page 3 clearly fades the oldest mark at `fadedMarkOpacity`.
-- [ ] "Start Playing" navigates to `/game`.
+- [ ] "Start Playing" (and Skip, if in design) calls `markOnboardingCompleted()` then navigates to `/home`.
+- [ ] After onboarding is completed once, a second cold start opens `/home` directly (no splash, no onboarding).
 
 **Git (when this phase is Done):**
 
 - [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 11** (e.g. `feat(ui): add onboarding flow`).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 11** (e.g. `feat(ui): add onboarding flow with first-launch persistence`).
 - [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 2, Phase 7 (so MiniBoardPreview can share visual language with the real board).
@@ -1470,6 +1501,7 @@ GameState (wraps GameSnapshot for UI)
 | `lib/features/how_to_play/` | P12 | Stable |
 | `lib/features/settings/` | P13 | Stable; toggles read/write `AppSettingsController` only |
 | `lib/core/settings/` | P13 (create `app_settings_controller.dart`) | In-memory only for MVP; consumed by P15 (haptics), P16 (SFX); **no** persistence |
+| `lib/core/launch/` | P10 (`app_launch_prefs.dart`, `app_launch_gate.dart`) | First-launch flag via `shared_preferences` per **D1**; stable after P11 |
 | `lib/shared/animations/` | P14 | Stable |
 | `lib/core/audio/` | P16 | Roadmap-approved folder (Section 2.1); stable after P16 |
 | `css/` | Pre-P7 (Figma export, not authored in-phase) | **Read-only** during phases P7–P13; consumed via `/figma-implement-design` (see **§2.2**). Re-export from Figma if the design changes — never edited in place. |
@@ -1521,7 +1553,8 @@ Per `implementation-rules.md §2 Avoid Premature Complexity`:
 | FIFO + win-check order regressed | Medium | High | P5 | Unit test `win-after-rotation` |
 | Faded-mark visual confusion | Medium | High | P7 | Onboarding P11 + How-to-Play P12 reinforce it |
 | Animation blocking state | Low | High | P14 | Principle P6, code review |
-| Settings reset on cold start (expected MVP — no persistence) | Confirmed | Low | P13 | Post-MVP: Section 19 — Deferred Backlog (`SharedPreferences`) |
+| Settings reset on cold start (expected MVP — no persistence) | Confirmed | Low | P13 | Post-MVP: Section 19 — Deferred Backlog (`SharedPreferences` for settings) |
+| Splash/onboarding shown every cold start | Medium | Medium | P10 | **D1** + `AppLaunchGate` + `hasCompletedOnboarding` flag |
 | iOS build on Windows-only host | High | Low | P20 | README documents Mac requirement |
 | Scope creep into AI / online modes | High | High | All | This document's Section 0.1 |
 
@@ -1535,7 +1568,7 @@ The MVP ships when all of the following are true:
 - [ ] `flutter analyze` returns 0 errors / 0 warnings across the project.
 - [ ] All test files green.
 - [ ] A full match can be played, won, restarted, and replayed on a real Android device.
-- [ ] Home, Splash, Onboarding, How-to-Play, Settings all reachable and visually polished.
+- [ ] Home, Splash (first launch only), Onboarding (first launch only), How-to-Play, Settings all reachable and visually polished; returning users cold-start to Home without splash/onboarding.
 - [ ] App icon + native splash applied.
 - [ ] README, LICENSE present.
 - [ ] No items in `docs/qa-checklist.md` are red.
@@ -1645,8 +1678,8 @@ If any answer is "no", the phase is **not** Done.
 
 Decisions locked by this roadmap (overrides anywhere else):
 
-- **D1** — Splash always navigates to `/home`. Onboarding is reached from Home / How-to-Play, not auto-shown. (P10)
-- **D2** — User preferences for MVP are **only** in-memory on the shared `AppSettingsController` (`soundEffectsEnabled`, `musicEnabled`, `vibrationEnabled`); they reset on cold start. **No** settings persistence until Post-MVP (Backlog). (P13)
+- **D1** — **First launch only:** `AppLaunchGate` → `/splash` → (tap) → `/onboarding` → (complete) → `/home`. **Every later cold start:** `AppLaunchGate` → `/home` directly — splash and onboarding are **not** shown again. Rules refreshers use How-to-Play from Home. Persist via `AppLaunchPrefs.hasCompletedOnboarding` (`shared_preferences`). (P10, P11)
+- **D2** — User preferences for MVP are **only** in-memory on the shared `AppSettingsController` (`soundEffectsEnabled`, `musicEnabled`, `vibrationEnabled`); they reset on cold start. **No** settings persistence until Post-MVP (Backlog). **Exception:** the first-launch flag in **D1** is the only persisted MVP preference. (P13)
 - **D3** — Audio engine is `audioplayers`. (P16)
 - **D4** — No `go_router` for MVP — named `Navigator` routes only. (P2)
 - **D5** — Roadmap-approved `lib/` paths beyond `structure.md` are limited to **Section 2.1** (includes `lib/core/settings/` from P13 and `lib/core/audio/` from P16, plus domain/test/doc paths listed there).
@@ -1666,7 +1699,7 @@ Captured here so they don't pollute MVP phases:
 - Match stats persistence (`SharedPreferences` → later cloud).
 - Dark theme implementation.
 - Settings persistence (`SharedPreferences`).
-- First-launch detection for auto-onboarding.
+- ~~First-launch detection for auto-onboarding.~~ **Moved to MVP** — see **D1** (P10, P11).
 - Replay system + move history.
 - Undo (would conflict with FIFO — design decision needed).
 - Background music + per-event volume.
@@ -1713,3 +1746,21 @@ Every move on this roadmap, like every move on the board, should change the proj
 - **C4 (blocks P10):** Does `css/SplashScreen.css` reference `assets/icons/xo_onboarding_background.svg` as the background motif, or a different asset?
 
 These clarifications should be answered inline by the user (or via a future amendment) before the impacted phases are scheduled.
+
+---
+
+## Amendment 2026-05-17 — First-launch splash & onboarding only
+
+**Trigger:** Product requirement — splash and onboarding must appear **only for first-time users**, not on every app open.
+
+**Decisions:**
+
+1. **§2 Tech stack** — `shared_preferences` allowed for a single boolean: `hasCompletedOnboarding`.
+2. **§2.1** — New paths: `lib/core/launch/app_launch_prefs.dart`, `lib/core/launch/app_launch_gate.dart` (P10).
+3. **P10** — `AppLaunchGate` + prefs read; first-time splash tap → `/onboarding`; returning users skip splash → `/home`.
+4. **P11** — `markOnboardingCompleted()` on **Start Playing** / Skip; then `/home`; never auto-show onboarding again.
+5. **§18 D1** — Replaced prior “splash → home always” rule with first-launch vs returning-user flows.
+6. **§18 D2** — Explicit exception for the D1 persistence flag.
+7. **§19 Backlog** — First-launch detection removed from deferred scope (now MVP).
+
+**Impacted phases:** P10, P11, §11 shippable criteria.

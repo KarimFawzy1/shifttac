@@ -10,4 +10,10 @@ class AppConstants {
   static const String appName = 'ShiftTac';
   static const String appVersionLabel = '1.0.0';
   static const Size designSize = Size(390, 844);
+
+  /// Minimum time splash is shown before tap-to-continue is accepted.
+  static const Duration splashMinDisplayDuration = Duration(milliseconds: 2500);
+
+  /// One half-cycle of the logo breathe scale animation.
+  static const Duration splashLogoBreatheDuration = Duration(milliseconds: 5000);
 }

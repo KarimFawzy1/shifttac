@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../features/game/presentation/screens/gameplay_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../constants/image_constants.dart';
+import '../launch/app_launch_gate.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/app_scaffold.dart';
@@ -12,7 +14,21 @@ class AppRouter {
   AppRouter._();
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
-    final name = settings.name ?? AppRoutes.splash;
+    final name = settings.name ?? AppRoutes.launch;
+
+    if (name == AppRoutes.launch || name == '/') {
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const AppLaunchGate(),
+      );
+    }
+
+    if (name == AppRoutes.splash) {
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const SplashScreen(),
+      );
+    }
 
     if (name == AppRoutes.game) {
       return MaterialPageRoute<void>(
@@ -21,7 +37,7 @@ class AppRouter {
       );
     }
 
-    if (name == AppRoutes.home || name == '/' || name == AppRoutes.splash) {
+    if (name == AppRoutes.home) {
       return MaterialPageRoute<void>(
         settings: settings,
         builder: (_) => const HomeScreen(),
