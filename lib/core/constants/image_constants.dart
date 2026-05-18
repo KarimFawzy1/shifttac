@@ -13,6 +13,8 @@ class IconConstant {
   static const String ai = 'assets/icons/ai.svg';
   static const String back = 'assets/icons/back.svg';
   static const String credits = 'assets/icons/credits.svg';
+  static const String classicTicTacToe =
+      'assets/icons/bolder-classic-tic-tac-toe.svg';
   static const String dark = 'assets/icons/dark.svg';
   static const String haptic = 'assets/icons/haptic.svg';
   static const String home = 'assets/icons/home.svg';

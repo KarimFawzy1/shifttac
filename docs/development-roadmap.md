@@ -269,7 +269,7 @@ Each milestone is broken into numbered phases below.
 | P9 | M4 | Home Screen | Done |
 | P10 | M4 | Splash Screen | Done |
 | P11 | M4 | Onboarding (3 Screens) | Done |
-| P12 | M4 | How to Play Screen | Done |
+| P12 | M4 | How to Play Screen | Pending |
 | P13 | M4 | Settings Screen | Pending |
 | P14 | M5 | Animations & Motion Polish | Pending |
 | P15 | M5 | Haptics & Input Lock Hardening | Pending |
@@ -1053,15 +1053,15 @@ lib/features/how_to_play/presentation/widgets/how_to_play_step.dart
 
 **Acceptance Criteria:**
 
-- [x] All 5 steps render with their mini-board visuals.
-- [x] Reachable from Home and from Pause bottom sheet.
-- [x] No paragraph exceeds 2 short lines.
+- [ ] All 5 steps render with their mini-board visuals.
+- [ ] Reachable from Home and from Pause bottom sheet.
+- [ ] No paragraph exceeds 2 short lines.
 
 **Git (when this phase is Done):**
 
-- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 12** (e.g. `feat(ui): add how to play screen`).
-- [x] Push: `git push origin <branch>` (typically `main`).
+- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 12** (e.g. `feat(ui): add how to play screen`).
+- [ ] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 11 (`MiniBoardPreview`).
 

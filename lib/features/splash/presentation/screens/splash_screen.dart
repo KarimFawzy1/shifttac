@@ -22,8 +22,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  static const double _logoBreatheScaleMin = 0.96;
-  static const double _logoBreatheScaleMax = 1.0;
+  static const double _tapBreatheScaleMin = 0.96;
+  static const double _tapBreatheScaleMax = 1.0;
 
   late final AnimationController _breatheController;
   late final Animation<double> _breatheScale;
@@ -36,14 +36,15 @@ class _SplashScreenState extends State<SplashScreen>
     _shownAt = DateTime.now();
     _breatheController = AnimationController(
       vsync: this,
-      duration: AppConstants.splashLogoBreatheDuration,
+      duration: AppConstants.splashTapBreatheDuration,
     )..repeat(reverse: true);
-    _breatheScale = Tween<double>(
-      begin: _logoBreatheScaleMin,
-      end: _logoBreatheScaleMax,
-    ).animate(
-      CurvedAnimation(parent: _breatheController, curve: Curves.easeInOut),
-    );
+    _breatheScale =
+        Tween<double>(
+          begin: _tapBreatheScaleMin,
+          end: _tapBreatheScaleMax,
+        ).animate(
+          CurvedAnimation(parent: _breatheController, curve: Curves.easeInOut),
+        );
     _scheduleTapUnlock();
   }
 
@@ -83,15 +84,17 @@ class _SplashScreenState extends State<SplashScreen>
             SafeArea(
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.containerPadding.w),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.containerPadding.w,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _SplashLogoArea(scale: _breatheScale),
+                      const _SplashLogoArea(),
                       SizedBox(height: AppSpacing.stackLg.h),
                       const _SplashTypography(),
                       SizedBox(height: AppSpacing.stackLg.h),
-                      const _SplashTapCta(),
+                      _SplashTapCta(scale: _breatheScale),
                     ],
                   ),
                 ),
@@ -136,20 +139,14 @@ class _SplashDecorativeBackground extends StatelessWidget {
               Positioned(
                 left: 97.5.w,
                 top: 221.h,
-                child: _DecorativeORing(
-                  size: 128.w,
-                  borderWidth: 12.w,
-                ),
+                child: _DecorativeORing(size: 128.w, borderWidth: 12.w),
               ),
               Positioned(
                 right: 73.38.w,
                 bottom: 191.69.h,
                 child: Transform.rotate(
                   angle: -12 * 3.141592653589793 / 180,
-                  child: _DecorativeORing(
-                    size: 160.w,
-                    borderWidth: 16.w,
-                  ),
+                  child: _DecorativeORing(size: 160.w, borderWidth: 16.w),
                 ),
               ),
               Positioned(
@@ -176,10 +173,7 @@ class _SplashDecorativeBackground extends StatelessWidget {
           top: 530.39.h,
           child: Opacity(
             opacity: 0.5,
-            child: _DecorativeORing(
-              size: 64.w,
-              borderWidth: 6.w,
-            ),
+            child: _DecorativeORing(size: 64.w, borderWidth: 6.w),
           ),
         ),
         Positioned(
@@ -207,10 +201,7 @@ class _SplashDecorativeBackground extends StatelessWidget {
 }
 
 class _DecorativeORing extends StatelessWidget {
-  const _DecorativeORing({
-    required this.size,
-    required this.borderWidth,
-  });
+  const _DecorativeORing({required this.size, required this.borderWidth});
 
   final double size;
   final double borderWidth;
@@ -250,9 +241,7 @@ class _SplashBottomGradient extends StatelessWidget {
 }
 
 class _SplashLogoArea extends StatelessWidget {
-  const _SplashLogoArea({required this.scale});
-
-  final Animation<double> scale;
+  const _SplashLogoArea();
 
   @override
   Widget build(BuildContext context) {
@@ -261,64 +250,58 @@ class _SplashLogoArea extends StatelessWidget {
     return SizedBox(
       width: logoSize.w,
       height: logoSize.w,
-      child: AnimatedBuilder(
-        animation: scale,
-        builder: (context, child) {
-          return Transform.scale(scale: scale.value, child: child);
-        },
-        child: Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
-          children: [
-            Opacity(
-              opacity: 0.6,
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                child: Container(
-                  width: logoSize.w,
-                  height: logoSize.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.softCoral.withValues(alpha: 0.2),
-                        AppColors.teal.withValues(alpha: 0.2),
-                      ],
-                    ),
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          Opacity(
+            opacity: 0.6,
+            child: ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+              child: Container(
+                width: logoSize.w,
+                height: logoSize.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.softCoral.withValues(alpha: 0.2),
+                      AppColors.teal.withValues(alpha: 0.2),
+                    ],
                   ),
                 ),
               ),
             ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22.r),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x14000000),
-                    offset: Offset(0, 8),
-                    blurRadius: 5,
-                  ),
-                  BoxShadow(
-                    color: Color(0x08000000),
-                    offset: Offset(0, 20),
-                    blurRadius: 13,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(22.r),
-                child: Image.asset(
-                  ImageConstant.logo,
-                  width: logoSize.w,
-                  height: logoSize.w,
-                  fit: BoxFit.cover,
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22.r),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14000000),
+                  offset: Offset(0, 8),
+                  blurRadius: 5,
                 ),
+                BoxShadow(
+                  color: Color(0x08000000),
+                  offset: Offset(0, 20),
+                  blurRadius: 13,
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(22.r),
+              child: Image.asset(
+                ImageConstant.logo,
+                width: logoSize.w,
+                height: logoSize.w,
+                fit: BoxFit.cover,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -360,7 +343,9 @@ class _SplashTypography extends StatelessWidget {
 }
 
 class _SplashTapCta extends StatelessWidget {
-  const _SplashTapCta();
+  const _SplashTapCta({required this.scale});
+
+  final Animation<double> scale;
 
   @override
   Widget build(BuildContext context) {
@@ -377,13 +362,19 @@ class _SplashTapCta extends StatelessWidget {
             ),
           ),
           SizedBox(height: 3.89.h),
-          SvgPicture.asset(
-            IconConstant.tap,
-            width: 15.34.w,
-            height: 18.23.h,
-            colorFilter: const ColorFilter.mode(
-              AppColors.primary,
-              BlendMode.srcIn,
+          AnimatedBuilder(
+            animation: scale,
+            builder: (context, child) {
+              return Transform.scale(scale: scale.value, child: child);
+            },
+            child: SvgPicture.asset(
+              IconConstant.tap,
+              width: 15.34.w,
+              height: 18.23.h,
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ],

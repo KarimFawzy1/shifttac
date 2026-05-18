@@ -14,6 +14,6 @@ class AppConstants {
   /// Minimum time splash is shown before tap-to-continue is accepted.
   static const Duration splashMinDisplayDuration = Duration(milliseconds: 2500);
 
-  /// One half-cycle of the logo breathe scale animation.
-  static const Duration splashLogoBreatheDuration = Duration(milliseconds: 5000);
+  /// One half-cycle of the splash tap-icon breathe scale animation.
+  static const Duration splashTapBreatheDuration = Duration(milliseconds: 5000);
 }

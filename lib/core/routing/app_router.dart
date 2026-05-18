@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../features/game/presentation/screens/gameplay_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/home/presentation/screens/main_shell_screen.dart';
 import '../../features/how_to_play/presentation/screens/how_to_play_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
-import '../constants/image_constants.dart';
 import '../launch/app_launch_gate.dart';
-import '../theme/app_spacing.dart';
-import '../theme/app_text_styles.dart';
-import '../widgets/app_scaffold.dart';
 import 'app_routes.dart';
+import 'main_shell_tab.dart';
 
 class AppRouter {
   AppRouter._();
@@ -49,46 +47,36 @@ class AppRouter {
     if (name == AppRoutes.home) {
       return MaterialPageRoute<void>(
         settings: settings,
-        builder: (_) => const HomeScreen(),
+        builder: (_) => MainShellScreen(
+          initialTab: _tabFromArguments(settings.arguments) ?? MainShellTab.home,
+        ),
       );
     }
 
     if (name == AppRoutes.howToPlay) {
       return MaterialPageRoute<void>(
         settings: settings,
-        builder: (_) => const HowToPlayScreen(),
+        builder: (_) => const HowToPlayScreen(standalone: true),
       );
     }
 
-    return MaterialPageRoute<void>(
-      settings: settings,
-      builder: (_) => _PlaceholderScreen(routeName: name),
-    );
+    if (name == AppRoutes.settings) {
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const SettingsScreen(standalone: true),
+      );
+    }
+
+    return null;
   }
-}
 
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.routeName});
-
-  final String routeName;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppScaffold(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              ImageConstant.logo,
-              height: AppSpacing.stackLg * 2,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: AppSpacing.stackMd),
-            Text(routeName, style: AppTextStyles.titleMd),
-          ],
-        ),
-      ),
-    );
+  static MainShellTab? _tabFromArguments(Object? arguments) {
+    if (arguments is MainShellTab) {
+      return arguments;
+    }
+    if (arguments is int) {
+      return MainShellTab.fromIndex(arguments);
+    }
+    return null;
   }
 }

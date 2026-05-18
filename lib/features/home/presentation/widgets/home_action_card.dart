@@ -24,6 +24,8 @@ class HomeActionCard extends StatelessWidget {
     required this.style,
     this.onTap,
     this.badgeLabel,
+    this.iconWidth,
+    this.iconHeight,
   });
 
   final String title;
@@ -32,6 +34,8 @@ class HomeActionCard extends StatelessWidget {
   final HomeActionCardStyle style;
   final VoidCallback? onTap;
   final String? badgeLabel;
+  final double? iconWidth;
+  final double? iconHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,8 @@ class HomeActionCard extends StatelessWidget {
           title: title,
           subtitle: subtitle,
           iconAsset: iconAsset,
+          iconWidth: iconWidth,
+          iconHeight: iconHeight,
           onTap: onTap!,
         );
       case HomeActionCardStyle.disabledSecondary:
@@ -49,6 +55,8 @@ class HomeActionCard extends StatelessWidget {
           title: title,
           subtitle: subtitle,
           iconAsset: iconAsset,
+          iconWidth: iconWidth,
+          iconHeight: iconHeight,
           badgeLabel: badgeLabel ?? 'Coming Soon',
         );
     }
@@ -61,12 +69,16 @@ class _HeroPrimaryCard extends StatelessWidget {
     required this.subtitle,
     required this.iconAsset,
     required this.onTap,
+    this.iconWidth,
+    this.iconHeight,
   });
 
   final String title;
   final String subtitle;
   final String iconAsset;
   final VoidCallback onTap;
+  final double? iconWidth;
+  final double? iconHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +123,8 @@ class _HeroPrimaryCard extends StatelessWidget {
                     children: [
                       SvgPicture.asset(
                         iconAsset,
-                        width: 26.w,
-                        height: 19.h,
+                        width: iconWidth ?? 26.w,
+                        height: iconHeight ?? 19.h,
                         colorFilter: const ColorFilter.mode(
                           AppColors.onPrimary,
                           BlendMode.srcIn,
@@ -152,12 +164,16 @@ class _DisabledSecondaryCard extends StatelessWidget {
     required this.subtitle,
     required this.iconAsset,
     required this.badgeLabel,
+    this.iconWidth,
+    this.iconHeight,
   });
 
   final String title;
   final String subtitle;
   final String iconAsset;
   final String badgeLabel;
+  final double? iconWidth;
+  final double? iconHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -195,8 +211,8 @@ class _DisabledSecondaryCard extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     iconAsset,
-                    width: 16.w,
-                    height: 18.h,
+                    width: iconWidth ?? 16.w,
+                    height: iconHeight ?? 18.h,
                     colorFilter: const ColorFilter.mode(
                       AppColors.onSurfaceVariant,
                       BlendMode.srcIn,
