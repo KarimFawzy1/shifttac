@@ -207,76 +207,112 @@ class _MainNavBarState extends State<MainNavBar> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: metrics.barHeight,
-              width: double.infinity,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTapUp: (details) => _handleBarTap(details, metrics),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: metrics.horizontalPadding,
-                    right: metrics.horizontalPadding,
-                    top: metrics.barEdgePadding,
-                    bottom: metrics.barEdgePadding,
-                  ),
-                  child: SizedBox(
-                    height: metrics.itemSlotHeight,
-                    child: Stack(
-                      key: _stackKey,
-                      clipBehavior: Clip.none,
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        if (_indicatorReady)
-                          AnimatedPositioned(
-                            duration: MainNavBar.animationDuration,
-                            curve: Curves.easeOutCubic,
-                            left: _indicatorLeft,
-                            width: _indicatorWidth,
-                            top: 0,
-                            height: metrics.itemSlotHeight,
-                            child: IgnorePointer(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryContainer.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  borderRadius: AppSpacing.borderRadiusMd,
-                                ),
-                              ),
-                            ),
-                          ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            for (var i = 0; i < MainNavBar._items.length; i++)
-                              MainNavBarItem(
-                                key: _itemKeys[i],
-                                data: MainNavBar._items[i],
-                                metrics: metrics,
-                                selected: widget.selectedIndex == i,
-                                onTap: () => widget.onTabSelected(i),
-                              ),
-                          ],
+        child: Padding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          child: SizedBox(
+            height: metrics.barHeight,
+            width: double.infinity,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapUp: (details) => _handleBarTap(details, metrics),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: metrics.horizontalPadding,
+                  right: metrics.horizontalPadding,
+                  top: metrics.barEdgePadding,
+                  bottom: metrics.barEdgePadding,
+                ),
+                child: SizedBox(
+                  height: metrics.itemSlotHeight,
+                  child: Stack(
+                    key: _stackKey,
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      if (_indicatorReady)
+                        _MainNavIndicator(
+                          left: _indicatorLeft,
+                          width: _indicatorWidth,
+                          height: metrics.itemSlotHeight,
                         ),
-                      ],
-                    ),
+                      _MainNavItemsRow(
+                        itemKeys: _itemKeys,
+                        metrics: metrics,
+                        selectedIndex: widget.selectedIndex,
+                        onTabSelected: widget.onTabSelected,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          if (bottomInset > 0)
-            ColoredBox(
-              color: AppColors.surfaceContainerLowest,
-              child: SizedBox(width: double.infinity, height: bottomInset),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class _MainNavIndicator extends StatelessWidget {
+  const _MainNavIndicator({
+    required this.left,
+    required this.width,
+    required this.height,
+  });
+
+  final double left;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedPositioned(
+      duration: MainNavBar.animationDuration,
+      curve: Curves.easeOutCubic,
+      left: left,
+      width: width,
+      top: 0,
+      height: height,
+      child: IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.primaryContainer.withValues(alpha: 0.2),
+            borderRadius: AppSpacing.borderRadiusMd,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MainNavItemsRow extends StatelessWidget {
+  const _MainNavItemsRow({
+    required this.itemKeys,
+    required this.metrics,
+    required this.selectedIndex,
+    required this.onTabSelected,
+  });
+
+  final List<GlobalKey> itemKeys;
+  final MainNavMetrics metrics;
+  final int selectedIndex;
+  final ValueChanged<int> onTabSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        for (var i = 0; i < MainNavBar._items.length; i++)
+          MainNavBarItem(
+            key: itemKeys[i],
+            data: MainNavBar._items[i],
+            metrics: metrics,
+            selected: selectedIndex == i,
+            onTap: () => onTabSelected(i),
+          ),
+      ],
     );
   }
 }
