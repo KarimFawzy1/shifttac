@@ -195,7 +195,7 @@ class _MainNavBarState extends State<MainNavBar> {
       label: 'Main navigation',
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
+          color: AppColors.surfaceContainerLowest.withValues(alpha: 0.60),
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppSpacing.radiusMd.r),
           ),
@@ -346,9 +346,14 @@ class MainNavMetrics {
     final itemVerticalPadding = 4.h;
     final itemHorizontalPadding = 16.w;
     final tallestIcon = _tallestIconDp.h;
-    final labelHeight = 14.h;
+    final labelFontSize = 12.sp;
+    // Match [labelStyle] line height — must use `.sp` like the text, not `.h`.
+    final labelLineHeight = labelFontSize * (14 / 12);
     final itemSlotHeight =
-        tallestIcon + iconLabelGap + labelHeight + (itemVerticalPadding * 2);
+        tallestIcon +
+        iconLabelGap +
+        labelLineHeight +
+        (itemVerticalPadding * 2);
 
     // Total outer inset (top + bottom). `barHeight` uses 1.5× the 12dp side token.
     final barOuterVerticalInset = 12.h;
@@ -356,7 +361,7 @@ class MainNavMetrics {
     final barHeight = itemSlotHeight + barOuterVerticalInset;
 
     final labelStyle = AppTextStyles.labelSm.copyWith(
-      fontSize: 12.sp,
+      fontSize: labelFontSize,
       height: 14 / 12,
       color: AppColors.primary,
     );
@@ -455,38 +460,42 @@ class MainNavBarItem extends StatelessWidget {
                     horizontal: metrics.itemHorizontalPadding,
                     vertical: metrics.itemVerticalPadding,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TweenAnimationBuilder<Color?>(
-                        duration: MainNavBar.animationDuration,
-                        curve: Curves.easeOutCubic,
-                        tween: ColorTween(
-                          begin: inactiveColor,
-                          end: selected ? activeColor : inactiveColor,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TweenAnimationBuilder<Color?>(
+                          duration: MainNavBar.animationDuration,
+                          curve: Curves.easeOutCubic,
+                          tween: ColorTween(
+                            begin: inactiveColor,
+                            end: selected ? activeColor : inactiveColor,
+                          ),
+                          builder: (context, color, _) {
+                            return SvgPicture.asset(
+                              data.iconAsset,
+                              width: data.resolvedIconWidth.w,
+                              height: data.resolvedIconHeight.h,
+                              colorFilter: ColorFilter.mode(
+                                color ?? inactiveColor,
+                                BlendMode.srcIn,
+                              ),
+                            );
+                          },
                         ),
-                        builder: (context, color, _) {
-                          return SvgPicture.asset(
-                            data.iconAsset,
-                            width: data.resolvedIconWidth.w,
-                            height: data.resolvedIconHeight.h,
-                            colorFilter: ColorFilter.mode(
-                              color ?? inactiveColor,
-                              BlendMode.srcIn,
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: metrics.iconLabelGap),
-                      AnimatedDefaultTextStyle(
-                        duration: MainNavBar.animationDuration,
-                        curve: Curves.easeOutCubic,
-                        style: textStyle,
-                        maxLines: 1,
-                        child: Text(data.label, textAlign: TextAlign.center),
-                      ),
-                    ],
+                        SizedBox(height: metrics.iconLabelGap),
+                        AnimatedDefaultTextStyle(
+                          duration: MainNavBar.animationDuration,
+                          curve: Curves.easeOutCubic,
+                          style: textStyle,
+                          maxLines: 1,
+                          child: Text(data.label, textAlign: TextAlign.center),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -497,4 +506,3 @@ class MainNavBarItem extends StatelessWidget {
     );
   }
 }
-
