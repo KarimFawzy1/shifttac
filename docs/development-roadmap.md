@@ -1128,9 +1128,9 @@ lib/features/settings/presentation/widgets/settings_tile.dart
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated). Include `lib/core/settings/app_settings_controller.dart` and `lib/app.dart` wiring only as listed in this phase.
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 13** (e.g. `feat(settings): add in-memory settings and screen`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated). Include `lib/core/settings/app_settings_controller.dart` and `lib/app.dart` wiring only as listed in this phase.
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 13** (e.g. `feat(settings): add in-memory settings and screen`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 2.
 
