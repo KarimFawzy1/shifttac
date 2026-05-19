@@ -115,7 +115,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         description: 'It starts like classic ShiftTac…',
                         visual: MiniBoardPreview(
                           frame: _classicFrame,
-                          style: MiniBoardStyle.classic,
                           size: 302.w,
                         ),
                       ),
@@ -131,7 +130,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             'The faded mark shows which move disappears next.',
                         visual: MiniBoardPreview(
                           frame: _fadedMarkFrame,
-                          style: MiniBoardStyle.classic,
                           size: 296.w,
                           showTapIndicatorOnIndex: 6,
                         ),

@@ -30,6 +30,7 @@ class IconConstant {
   static const String rules = 'assets/icons/rules.svg';
   static const String settings = 'assets/icons/settings.svg';
   static const String sound = 'assets/icons/sound.svg';
+  static const String target = 'assets/icons/target.svg';
   static const String tap = 'assets/icons/tap.svg';
   static const String version = 'assets/icons/version.svg';
   static const String x = 'assets/icons/x.svg';

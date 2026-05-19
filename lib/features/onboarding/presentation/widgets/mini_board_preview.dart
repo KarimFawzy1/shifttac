@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/constants/game_constants.dart';
-import '../../../../core/constants/image_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../game/presentation/widgets/board_cell.dart';
-
-/// Visual shell for onboarding / how-to-play mini boards.
-enum MiniBoardStyle {
-  /// Frosted white cells (`css/Onboarding1ClassicStart.css`).
-  classic,
-
-  /// Gameplay-adjacent cells (`css/Onboarding2TheShiftMechanic.css`).
-  game,
-}
 
 /// One frame of a 3×3 board (row-major, length 9).
 class MiniBoardFrame {
@@ -31,14 +19,12 @@ class MiniBoardPreview extends StatelessWidget {
   const MiniBoardPreview({
     super.key,
     required this.frame,
-    this.style = MiniBoardStyle.game,
     this.size,
     this.highlightIndex,
     this.showTapIndicatorOnIndex,
   });
 
   final MiniBoardFrame frame;
-  final MiniBoardStyle style;
   final double? size;
   final int? highlightIndex;
   final int? showTapIndicatorOnIndex;
@@ -46,9 +32,7 @@ class MiniBoardPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final boardSide = size ?? 256.w;
-    final gap = style == MiniBoardStyle.classic
-        ? AppSpacing.stackMd.w
-        : AppSpacing.gridGutter.w;
+    final gap = AppSpacing.gridGutter.w;
 
     final grid = LayoutBuilder(
       builder: (context, constraints) {
@@ -68,7 +52,6 @@ class MiniBoardPreview extends StatelessWidget {
 
               Widget cell = _MiniBoardCell(
                 appearance: appearance,
-                style: style,
                 side: cellSide,
                 highlighted: highlightIndex == index,
               );
@@ -82,25 +65,13 @@ class MiniBoardPreview extends StatelessWidget {
                     Positioned(
                       right: -12.w,
                       bottom: -16.h,
-                      child: SvgPicture.asset(
-                        IconConstant.tap,
-                        width: 20.w,
-                        height: 24.h,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.inkNavy,
-                          BlendMode.srcIn,
-                        ),
-                      ),
+                      child: Text('👀', style: TextStyle(fontSize: 22.sp)),
                     ),
                   ],
                 );
               }
 
-              return SizedBox(
-                width: cellSide,
-                height: cellSide,
-                child: cell,
-              );
+              return SizedBox(width: cellSide, height: cellSide, child: cell);
             }),
           ),
         );
@@ -108,36 +79,9 @@ class MiniBoardPreview extends StatelessWidget {
     );
 
     final paddedGrid = Padding(
-      padding: EdgeInsets.all(
-        style == MiniBoardStyle.classic ? AppSpacing.stackMd.w : AppSpacing.stackMd.w,
-      ),
+      padding: EdgeInsets.all(AppSpacing.stackMd.w),
       child: grid,
     );
-
-    if (style == MiniBoardStyle.classic) {
-      return SizedBox(
-        width: boardSide,
-        height: boardSide,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.surfaceContainerLowest.withValues(alpha: 0.4),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXl.r),
-            border: Border.all(
-              color: AppColors.surfaceVariant.withValues(alpha: 0.3),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.inkNavy.withValues(alpha: 0.08),
-                offset: Offset(0, 12.h),
-                blurRadius: 40.r,
-                spreadRadius: -12.r,
-              ),
-            ],
-          ),
-          child: paddedGrid,
-        ),
-      );
-    }
 
     return SizedBox(
       width: boardSide,
@@ -163,26 +107,16 @@ class MiniBoardPreview extends StatelessWidget {
 class _MiniBoardCell extends StatelessWidget {
   const _MiniBoardCell({
     required this.appearance,
-    required this.style,
     required this.side,
     required this.highlighted,
   });
 
   final BoardCellAppearance appearance;
-  final MiniBoardStyle style;
   final double side;
   final bool highlighted;
 
   @override
   Widget build(BuildContext context) {
-    if (style == MiniBoardStyle.classic) {
-      return _ClassicMiniCell(
-        appearance: appearance,
-        side: side,
-        highlighted: highlighted,
-      );
-    }
-
     return DecoratedBox(
       decoration: BoxDecoration(
         color: highlighted ? AppColors.surfaceMist : AppColors.surface,
@@ -222,99 +156,26 @@ class _MiniBoardCell extends StatelessWidget {
   }
 }
 
-/// Classic onboarding cells — white tiles; marks match [BoardCell] colors/opacity.
-class _ClassicMiniCell extends StatelessWidget {
-  const _ClassicMiniCell({
-    required this.appearance,
-    required this.side,
-    required this.highlighted,
-  });
-
-  final BoardCellAppearance appearance;
-  final double side;
-  final bool highlighted;
-
-  bool get _isFaded =>
-      appearance == BoardCellAppearance.xFaded ||
-      appearance == BoardCellAppearance.oFaded;
-
-  String? get _iconAsset {
-    switch (appearance) {
-      case BoardCellAppearance.empty:
-        return null;
-      case BoardCellAppearance.xSolid:
-      case BoardCellAppearance.xFaded:
-        return IconConstant.x;
-      case BoardCellAppearance.oSolid:
-      case BoardCellAppearance.oFaded:
-        return IconConstant.o;
-    }
-  }
-
-  Color get _markColor {
-    switch (appearance) {
-      case BoardCellAppearance.empty:
-        return AppColors.onSurface;
-      case BoardCellAppearance.xSolid:
-      case BoardCellAppearance.xFaded:
-        return AppColors.secondaryContainer;
-      case BoardCellAppearance.oSolid:
-      case BoardCellAppearance.oFaded:
-        return AppColors.primary;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final icon = _iconAsset;
-    final iconSize = side * 0.32;
-    Widget? mark;
-    if (icon != null) {
-      mark = SvgPicture.asset(
-        icon,
-        width: iconSize,
-        height: iconSize,
-        colorFilter: ColorFilter.mode(_markColor, BlendMode.srcIn),
-      );
-      if (_isFaded) {
-        mark = Opacity(
-          opacity: GameConstants.fadedMarkOpacity,
-          child: mark,
-        );
-      }
-    }
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: highlighted
-            ? AppColors.surfaceMist
-            : AppColors.surfaceContainerLowest,
-        borderRadius: AppSpacing.borderRadiusMd,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.inkNavy.withValues(alpha: 0.03),
-            offset: Offset(0, 4.h),
-            blurRadius: 16.r,
-          ),
-        ],
-      ),
-      child: SizedBox(
-        width: side,
-        height: side,
-        child: Center(child: mark),
-      ),
-    );
-  }
-}
-
 /// Animated shift demo for onboarding page 2.
 class MiniBoardShiftAnimation extends StatefulWidget {
-  const MiniBoardShiftAnimation({super.key, this.size});
+  const MiniBoardShiftAnimation({
+    super.key,
+    this.size,
+    this.persistentCells = const {},
+    this.showIndicatorOnIndex,
+  });
 
   final double? size;
 
+  /// Merged into every animation frame (e.g. background marks on the board).
+  final Map<int, BoardCellAppearance> persistentCells;
+
+  /// Cell that shows the 👀 cue (e.g. the mark queued to shift away).
+  final int? showIndicatorOnIndex;
+
   @override
-  State<MiniBoardShiftAnimation> createState() => _MiniBoardShiftAnimationState();
+  State<MiniBoardShiftAnimation> createState() =>
+      _MiniBoardShiftAnimationState();
 }
 
 class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
@@ -372,9 +233,35 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
     });
   }
 
+  MiniBoardFrame _frameWithPersistentCells(MiniBoardFrame frame) {
+    final overlay = widget.persistentCells;
+    if (overlay.isEmpty) {
+      return frame;
+    }
+
+    final cells = List<BoardCellAppearance>.from(frame.cells);
+    for (final entry in overlay.entries) {
+      final index = entry.key;
+      if (index >= 0 && index < MiniBoardFrame.cellCount) {
+        cells[index] = entry.value;
+      }
+    }
+    return MiniBoardFrame(cells);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final frame = _frames[_frameIndex];
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    if (reduceMotion) {
+      return MiniBoardPreview(
+        frame: _frameWithPersistentCells(_frames.last),
+        size: widget.size,
+        highlightIndex: 8,
+        showTapIndicatorOnIndex: widget.showIndicatorOnIndex,
+      );
+    }
+
+    final frame = _frameWithPersistentCells(_frames[_frameIndex]);
     final highlightIndex = _frameIndex == 1 ? 8 : null;
 
     return AnimatedSwitcher(
@@ -384,9 +271,9 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
       child: MiniBoardPreview(
         key: ValueKey<int>(_frameIndex),
         frame: frame,
-        style: MiniBoardStyle.game,
         size: widget.size,
         highlightIndex: highlightIndex,
+        showTapIndicatorOnIndex: widget.showIndicatorOnIndex,
       ),
     );
   }

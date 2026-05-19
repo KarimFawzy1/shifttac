@@ -25,10 +25,10 @@ class _MainShellScreenState extends State<MainShellScreen> {
   late int _selectedIndex;
   int _slideDirection = 1;
 
-  static const _pages = <Widget>[
-    HomeScreen(),
-    HowToPlayScreen(),
-    SettingsScreen(),
+  late final List<Widget> _pages = [
+    const HomeScreen(),
+    HowToPlayScreen(onGoHome: () => _onTabSelected(MainShellTab.home.tabIndex)),
+    const SettingsScreen(),
   ];
 
   @override
