@@ -269,8 +269,8 @@ Each milestone is broken into numbered phases below.
 | P9 | M4 | Home Screen | Done |
 | P10 | M4 | Splash Screen | Done |
 | P11 | M4 | Onboarding (3 Screens) | Done |
-| P12 | M4 | How to Play Screen | Pending |
-| P13 | M4 | Settings Screen | Pending |
+| P12 | M4 | How to Play Screen | Done |
+| P13 | M4 | Settings Screen | Done |
 | P14 | M5 | Animations & Motion Polish | Pending |
 | P15 | M5 | Haptics & Input Lock Hardening | Pending |
 | P16 | M6 | Audio Layer | Pending |
@@ -903,6 +903,7 @@ lib/features/home/presentation/widgets/home_action_card.dart
 - `pubspec.yaml` — add `shared_preferences` (first MVP persistence use).
 
 **Scope Out:**
+
 - `InfinityLogo` animation changes (splash uses `Logo.png`; `InfinityLogo` stays static for headers).
 - `xo_onboarding_background.svg` on splash (onboarding only).
 
@@ -1053,15 +1054,15 @@ lib/features/how_to_play/presentation/widgets/how_to_play_step.dart
 
 **Acceptance Criteria:**
 
-- [ ] All 5 steps render with their mini-board visuals.
-- [ ] Reachable from Home and from Pause bottom sheet.
-- [ ] No paragraph exceeds 2 short lines.
+- [x] All 5 steps render with their mini-board visuals.
+- [x] Reachable from Home and from Pause bottom sheet.
+- [x] No paragraph exceeds 2 short lines.
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 12** (e.g. `feat(ui): add how to play screen`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 12** (e.g. `feat(ui): add how to play screen`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phase 11 (`MiniBoardPreview`).
 
@@ -1119,11 +1120,11 @@ lib/features/settings/presentation/widgets/settings_tile.dart
 
 **Acceptance Criteria:**
 
-- [ ] Settings toggles update the **shared** `AppSettingsController` (same instance across routes).
-- [ ] Toggles affect in-session behavior **where already wired** in later phases (P15 haptics reads `vibrationEnabled`; P16 SFX reads `soundEffectsEnabled`).
-- [ ] Values **do not** persist after app restart (cold start returns defaults).
-- [ ] Dark mode toggle is visibly disabled with "Coming Soon".
-- [ ] Reachable from Home and Pause sheet.
+- [x] Settings toggles update the **shared** `AppSettingsController` (same instance across routes).
+- [x] Toggles affect in-session behavior **where already wired** in later phases (P15 haptics reads `vibrationEnabled`; P16 SFX reads `soundEffectsEnabled`).
+- [x] Values **do not** persist after app restart (cold start returns defaults).
+- [x] Dark mode toggle is visibly disabled with "Coming Soon".
+- [x] Reachable from Home and Pause sheet.
 
 **Git (when this phase is Done):**
 
