@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/image_constants.dart';
@@ -55,7 +56,7 @@ class _SettingsBody extends StatelessWidget {
                 'Settings',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.titleMd.copyWith(
-                  color: AppColors.onSurface,
+                  color: AppColors.primary,
                   fontSize: 32.sp,
                   height: 38 / 32,
                   letterSpacing: -0.64,
@@ -65,9 +66,7 @@ class _SettingsBody extends StatelessWidget {
               Text(
                 'Customize your experience',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMd.copyWith(
-                  color: AppColors.outline,
-                ),
+                style: AppTextStyles.bodyMd.copyWith(color: AppColors.outline),
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               SettingsSection(
@@ -128,8 +127,7 @@ class _SettingsBody extends StatelessWidget {
                     subtitle: 'Haptic feedback on taps',
                     trailing: SettingsSwitch(
                       value: settings.vibrationEnabled,
-                      onChanged: (value) =>
-                          settings.vibrationEnabled = value,
+                      onChanged: (value) => settings.vibrationEnabled = value,
                     ),
                   ),
                 ],
@@ -149,7 +147,14 @@ class _SettingsBody extends StatelessWidget {
                     ),
                   ),
                   SettingsTile(
-                    iconAsset: IconConstant.credits,
+                    icon: SvgPicture.asset(
+                      IconConstant.credits,
+                      width: 20.w,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.onSurface,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                     title: 'Credits',
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

@@ -21,7 +21,7 @@ class SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
+        color: AppColors.surfaceContainerLowest.withValues(alpha: 0.6),
         borderRadius: AppSpacing.borderRadiusMd,
         boxShadow: const [
           BoxShadow(
@@ -55,7 +55,9 @@ class SettingsSection extends StatelessWidget {
               children[i],
               if (i < children.length - 1)
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.stackMd.w),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.stackMd.w,
+                  ),
                   child: const Divider(
                     height: 1,
                     thickness: 1,
@@ -167,7 +169,8 @@ class _SettingsIconBadge extends StatelessWidget {
         width: 40.w,
         height: 40.w,
         child: Center(
-          child: icon ??
+          child:
+              icon ??
               (iconAsset != null
                   ? SvgPicture.asset(
                       iconAsset!,

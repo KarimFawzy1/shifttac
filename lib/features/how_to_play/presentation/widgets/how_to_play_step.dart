@@ -17,7 +17,7 @@ class _HowToPlayPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
+        color: AppColors.surfaceContainerLowest.withValues(alpha: 0.6),
         borderRadius: AppSpacing.borderRadiusMd,
         border: Border.all(
           color: AppColors.outlineVariant.withValues(alpha: 0.35),

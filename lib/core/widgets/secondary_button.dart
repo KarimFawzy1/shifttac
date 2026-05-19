@@ -29,7 +29,9 @@ class SecondaryButton extends StatelessWidget {
               onPressed!();
             },
       style: OutlinedButton.styleFrom(
-        backgroundColor: AppColors.surfaceContainerLowest,
+        backgroundColor: AppColors.surfaceContainerLowest.withValues(
+          alpha: 0.6,
+        ),
         disabledBackgroundColor: AppColors.surfaceContainerLow,
         foregroundColor: AppColors.primary,
         disabledForegroundColor: AppColors.onSurfaceVariant,

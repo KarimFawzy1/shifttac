@@ -195,7 +195,7 @@ class _MainNavBarState extends State<MainNavBar> {
       label: 'Main navigation',
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest.withValues(alpha: 0.60),
+          color: AppColors.surfaceContainerLowest.withValues(alpha: 0.70),
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppSpacing.radiusMd.r),
           ),
