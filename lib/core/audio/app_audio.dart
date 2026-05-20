@@ -18,8 +18,7 @@ abstract final class SoundAssets {
 
 /// SFX + app-wide BGM. Reads [AppSettingsController] — no parallel mute flags.
 class AppAudio {
-  AppAudio(this._settings)
-      : _lastMusicEnabled = _settings.musicEnabled {
+  AppAudio(this._settings) : _lastMusicEnabled = _settings.musicEnabled {
     _settings.addListener(_onSettingsChanged);
     _bgmStateSub = _bgmPlayer.onPlayerStateChanged.listen(_onBgmStateChanged);
   }
@@ -74,11 +73,14 @@ class AppAudio {
   }
 
   void _onBgmStateChanged(PlayerState state) {
-    if (_disposing || _bgmPausedByApp || !_settings.musicEnabled || !_foreground) {
+    if (_disposing ||
+        _bgmPausedByApp ||
+        !_settings.musicEnabled ||
+        !_foreground) {
       return;
     }
     if (state == PlayerState.stopped || state == PlayerState.completed) {
-      unawaited(startMusic(forceRestart: true));
+      unawaited(startMusic());
     }
   }
 
@@ -96,7 +98,6 @@ class AppAudio {
     await _bgmPlayer.setAudioContext(bgmContext);
     await _sfxPlayer.setAudioContext(sfxContext);
     await _sfxPlayer.setReleaseMode(ReleaseMode.stop);
-    await _sfxPlayer.setPlayerMode(PlayerMode.lowLatency);
     _configured = true;
   }
 
@@ -105,13 +106,13 @@ class AppAudio {
       return;
     }
     if (_foreground && _settings.musicEnabled) {
-      await startMusic(forceRestart: true);
+      await startMusic();
     } else {
       await pauseMusic();
     }
   }
 
-  Future<void> startMusic({bool forceRestart = false}) async {
+  Future<void> startMusic() async {
     if (_disposing || !_foreground || !_settings.musicEnabled) {
       return;
     }
@@ -121,16 +122,17 @@ class AppAudio {
     await _bgmPlayer.setVolume(_bgmVolume);
 
     final state = _bgmPlayer.state;
-    if (!forceRestart && state == PlayerState.playing) {
+    if (state == PlayerState.playing) {
       return;
     }
-    if (!forceRestart && state == PlayerState.paused) {
-      await _bgmPlayer.resume();
+    if (state == PlayerState.paused) {
+      await _safeAudioCall(_bgmPlayer.resume);
       return;
     }
 
-    await _bgmPlayer.stop();
-    await _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic));
+    await _safeAudioCall(
+      () => _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic)),
+    );
   }
 
   Future<void> pauseMusic() async {
@@ -140,7 +142,7 @@ class AppAudio {
     _bgmPausedByApp = true;
     if (_bgmPlayer.state == PlayerState.playing ||
         _bgmPlayer.state == PlayerState.paused) {
-      await _bgmPlayer.pause();
+      await _safeAudioCall(_bgmPlayer.pause);
     }
   }
 
@@ -149,7 +151,7 @@ class AppAudio {
       return;
     }
     _bgmPausedByApp = true;
-    await _bgmPlayer.stop();
+    await _safeAudioCall(_bgmPlayer.stop);
   }
 
   Future<void> playTap() => _playSfx(SoundAssets.tap);
@@ -165,15 +167,21 @@ class AppAudio {
       return;
     }
     await _ensureConfigured();
-    await _sfxPlayer.setVolume(_sfxVolume);
-    await _sfxPlayer.stop();
-    await _sfxPlayer.play(AssetSource(assetPath));
+    await _safeAudioCall(() async {
+      await _sfxPlayer.setVolume(_sfxVolume);
+      // Reset the one-shot player so replay works after idle gaps on Android.
+      await _sfxPlayer.stop();
+      await _sfxPlayer.play(AssetSource(assetPath));
+    });
     unawaited(_ensureBgmAfterSfx());
   }
 
   /// Safety net when platform audio focus briefly drops BGM during a one-shot SFX.
   Future<void> _ensureBgmAfterSfx() async {
-    if (_disposing || !_foreground || !_settings.musicEnabled || _bgmPausedByApp) {
+    if (_disposing ||
+        !_foreground ||
+        !_settings.musicEnabled ||
+        _bgmPausedByApp) {
       return;
     }
     final state = _bgmPlayer.state;
@@ -182,20 +190,27 @@ class AppAudio {
     }
     if (state == PlayerState.paused) {
       _bgmPausedByApp = false;
-      await _bgmPlayer.resume();
+      await _safeAudioCall(_bgmPlayer.resume);
       return;
     }
-    await startMusic(forceRestart: true);
+    await startMusic();
+  }
+
+  Future<void> _safeAudioCall(Future<void> Function() operation) async {
+    try {
+      await operation().timeout(const Duration(seconds: 3));
+    } on TimeoutException {
+      // Native players can occasionally hang on Android. Keep the UI alive and
+      // let the next settings/lifecycle transition retry playback.
+    } catch (_) {
+      // Audio should never take down the app; failed one-shots are disposable.
+    }
   }
 }
 
 /// Exposes the root [AppAudio] to the widget tree.
 class AppAudioScope extends InheritedWidget {
-  const AppAudioScope({
-    super.key,
-    required this.audio,
-    required super.child,
-  });
+  const AppAudioScope({super.key, required this.audio, required super.child});
 
   final AppAudio audio;
 
@@ -209,6 +224,5 @@ class AppAudioScope extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(AppAudioScope oldWidget) =>
-      oldWidget.audio != audio;
+  bool updateShouldNotify(AppAudioScope oldWidget) => oldWidget.audio != audio;
 }

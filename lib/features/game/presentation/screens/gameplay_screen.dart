@@ -48,15 +48,13 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
       state.snapshot.winner == null) {
     return;
   }
+  unawaited(AppAudioScope.read(context).playWin());
   await WinDialog.show(
     context,
     winner: state.snapshot.winner!,
     totalMoves: state.snapshot.turnIndex,
     matchDurationMs: state.matchDurationMs,
-    onPlayAgain: () {
-      unawaited(AppAudioScope.read(context).playRestart());
-      cubit.restart();
-    },
+    onPlayAgain: cubit.restart,
     onBackToHome: () {
       Navigator.of(
         context,
@@ -147,35 +145,27 @@ class _GameplayBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<GameCubit, GameState>(
-      listenWhen: (previous, current) =>
-          previous.snapshot.status != GameStatus.won &&
-          current.snapshot.status == GameStatus.won,
-      listener: (context, state) {
-        unawaited(AppAudioScope.read(context).playWin());
-      },
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: _systemUi,
-        child: AppScaffold(
-          fullWidthHeader: true,
-          header: _GameplayHeader(onBack: () => _handleBack(context)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: AppSpacing.stackMd.h),
-              const PlayerTurnIndicator(),
-              SizedBox(height: AppSpacing.stackMd.h),
-              const _MoveCounterPill(),
-              SizedBox(height: AppSpacing.stackSm.h),
-              SizedBox(height: AppSpacing.stackLg.h),
-              Expanded(
-                child: _GameplayBoardArea(
-                  onWinRevealComplete: () =>
-                      unawaited(_presentWinDialogWhenReady(context)),
-                ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: _systemUi,
+      child: AppScaffold(
+        fullWidthHeader: true,
+        header: _GameplayHeader(onBack: () => _handleBack(context)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: AppSpacing.stackMd.h),
+            const PlayerTurnIndicator(),
+            SizedBox(height: AppSpacing.stackMd.h),
+            const _MoveCounterPill(),
+            SizedBox(height: AppSpacing.stackSm.h),
+            SizedBox(height: AppSpacing.stackLg.h),
+            Expanded(
+              child: _GameplayBoardArea(
+                onWinRevealComplete: () =>
+                    unawaited(_presentWinDialogWhenReady(context)),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

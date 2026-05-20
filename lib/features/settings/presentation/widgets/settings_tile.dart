@@ -231,8 +231,11 @@ class SettingsSwitch extends StatelessWidget {
       child: GestureDetector(
         onTap: enabled
             ? () {
-                _playSettingsTap(context);
-                onChanged!(!value);
+                final nextValue = !value;
+                onChanged!(nextValue);
+                if (nextValue) {
+                  _playSettingsTap(context);
+                }
               }
             : null,
         child: AnimatedContainer(

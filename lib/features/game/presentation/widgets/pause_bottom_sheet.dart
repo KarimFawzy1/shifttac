@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -113,7 +110,6 @@ class PauseBottomSheet extends StatelessWidget {
       onResume: () => _popSheet(),
       onRestart: () {
         _popSheet(resumeTimer: false);
-        unawaited(AppAudioScope.read(context).playRestart());
         cubit.restart();
       },
       onHowToPlay: () => _openRoute(AppRoutes.howToPlay),
