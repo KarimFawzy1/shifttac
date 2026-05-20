@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -215,19 +215,9 @@ class _GameplayHeader extends StatelessWidget {
                 transparentMaterial: true,
                 iconSize: 20.w,
               ),
-              Expanded(
+              const Expanded(
                 child: Center(
-                  child: Text(
-                    AppConstants.appName,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.titleMd.copyWith(
-                      color: AppColors.onSurface,
-                      height: 31 / 24,
-                      letterSpacing: 2.4,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: _NavIconRestartButton(),
                 ),
               ),
               AppIconButton(
@@ -239,6 +229,85 @@ class _GameplayHeader extends StatelessWidget {
                 onPressed: () => unawaited(PauseBottomSheet.show(context)),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Center header logo: tap restarts the match with a horizontal Y-axis spin.
+class _NavIconRestartButton extends StatefulWidget {
+  const _NavIconRestartButton();
+
+  static const Duration _spinDuration = Duration(milliseconds: 600);
+
+  @override
+  State<_NavIconRestartButton> createState() => _NavIconRestartButtonState();
+}
+
+class _NavIconRestartButtonState extends State<_NavIconRestartButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _spinController;
+  late final Animation<double> _spin;
+
+  @override
+  void initState() {
+    super.initState();
+    _spinController = AnimationController(
+      vsync: this,
+      duration: _NavIconRestartButton._spinDuration,
+    );
+    _spin = CurvedAnimation(
+      parent: _spinController,
+      curve: Curves.easeInOutCubic,
+    );
+    _spinController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _spinController.reset();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _spinController.dispose();
+    super.dispose();
+  }
+
+  void _onTap() {
+    Feedback.forTap(context);
+    context.read<GameCubit>().restart();
+    if (_spinController.isAnimating) {
+      _spinController.reset();
+    }
+    unawaited(_spinController.forward());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Restart match',
+      child: GestureDetector(
+        onTap: _onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedBuilder(
+          animation: _spin,
+          builder: (context, child) {
+            final angle = _spin.value * 2 * math.pi;
+            return Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.0015)
+                ..rotateY(angle),
+              child: child,
+            );
+          },
+          child: Image.asset(
+            ImageConstant.navIcon,
+            height: 32.h,
+            fit: BoxFit.contain,
           ),
         ),
       ),

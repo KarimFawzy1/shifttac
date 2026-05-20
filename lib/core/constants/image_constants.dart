@@ -4,6 +4,7 @@ class ImageConstant {
 
   static const String logo = 'assets/images/Logo.png';
   static const String homeIcon = 'assets/images/home_icon.png';
+  static const String navIcon = 'assets/images/nav-icon.png';
 }
 
 /// Asset paths for vector icons under [assets/icons/].
