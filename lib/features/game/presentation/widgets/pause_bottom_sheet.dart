@@ -85,7 +85,11 @@ class PauseBottomSheet extends StatelessWidget {
 
   void _openRoute(String routeName) {
     _popSheet(resumeTimer: false);
-    navigator.pushNamed(routeName);
+    navigator.pushNamed(routeName).whenComplete(() {
+      if (!cubit.isClosed) {
+        cubit.resumeMatch();
+      }
+    });
   }
 
   @override

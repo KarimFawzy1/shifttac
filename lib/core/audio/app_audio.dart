@@ -25,7 +25,7 @@ class AppAudio {
 
   final AppSettingsController _settings;
   final AudioPlayer _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm');
-  final AudioPlayer _sfxPlayer = AudioPlayer(playerId: 'shifttac_sfx');
+  final Map<String, AudioPool> _sfxPools = {};
 
   static const double _bgmVolume = 0.38;
   static const double _sfxVolume = 0.85;
@@ -34,6 +34,7 @@ class AppAudio {
   bool _disposing = false;
   bool _configured = false;
   bool _bgmPausedByApp = false;
+  bool _sfxInFlight = false;
   bool _lastMusicEnabled;
 
   late final StreamSubscription<PlayerState> _bgmStateSub;
@@ -59,7 +60,8 @@ class AppAudio {
     _settings.removeListener(_onSettingsChanged);
     await _bgmStateSub.cancel();
     await _bgmPlayer.dispose();
-    await _sfxPlayer.dispose();
+    await Future.wait(_sfxPools.values.map((pool) => pool.dispose()));
+    _sfxPools.clear();
   }
 
   /// Music toggle only — sound-effects changes do not touch BGM.
@@ -91,14 +93,42 @@ class AppAudio {
     final bgmContext = AudioContextConfig(
       focus: AudioContextConfigFocus.gain,
     ).build();
-    final sfxContext = AudioContextConfig(
-      focus: AudioContextConfigFocus.mixWithOthers,
-    ).build();
+    final sfxContext = _sfxContext();
 
     await _bgmPlayer.setAudioContext(bgmContext);
-    await _sfxPlayer.setAudioContext(sfxContext);
-    await _sfxPlayer.setReleaseMode(ReleaseMode.stop);
+    _sfxPools
+      ..clear()
+      ..addAll({
+        SoundAssets.tap: await _createSfxPool(SoundAssets.tap, sfxContext),
+        SoundAssets.wrongTap: await _createSfxPool(
+          SoundAssets.wrongTap,
+          sfxContext,
+        ),
+        SoundAssets.restart: await _createSfxPool(
+          SoundAssets.restart,
+          sfxContext,
+        ),
+        SoundAssets.win: await _createSfxPool(SoundAssets.win, sfxContext),
+      });
     _configured = true;
+  }
+
+  AudioContext _sfxContext() {
+    return AudioContextConfig(
+      focus: AudioContextConfigFocus.mixWithOthers,
+    ).build();
+  }
+
+  Future<AudioPool> _createSfxPool(
+    String assetPath,
+    AudioContext audioContext,
+  ) {
+    return AudioPool.create(
+      source: AssetSource(assetPath),
+      minPlayers: 1,
+      maxPlayers: 2,
+      audioContext: audioContext,
+    );
   }
 
   Future<void> _syncBgm() async {
@@ -163,17 +193,26 @@ class AppAudio {
   Future<void> playWin() => _playSfx(SoundAssets.win);
 
   Future<void> _playSfx(String assetPath) async {
-    if (_disposing || !_foreground || !_settings.soundEffectsEnabled) {
+    if (_disposing ||
+        !_foreground ||
+        !_settings.soundEffectsEnabled ||
+        _sfxInFlight) {
       return;
     }
-    await _ensureConfigured();
-    await _safeAudioCall(() async {
-      await _sfxPlayer.setVolume(_sfxVolume);
-      // Reset the one-shot player so replay works after idle gaps on Android.
-      await _sfxPlayer.stop();
-      await _sfxPlayer.play(AssetSource(assetPath));
-    });
-    unawaited(_ensureBgmAfterSfx());
+    _sfxInFlight = true;
+    try {
+      await _ensureConfigured();
+      final pool = _sfxPools[assetPath];
+      if (pool == null) {
+        return;
+      }
+      await _safeAudioCall(() async {
+        await pool.start(volume: _sfxVolume);
+      });
+      unawaited(_ensureBgmAfterSfx());
+    } finally {
+      _sfxInFlight = false;
+    }
   }
 
   /// Safety net when platform audio focus briefly drops BGM during a one-shot SFX.
@@ -196,14 +235,17 @@ class AppAudio {
     await startMusic();
   }
 
-  Future<void> _safeAudioCall(Future<void> Function() operation) async {
+  Future<bool> _safeAudioCall(Future<void> Function() operation) async {
     try {
       await operation().timeout(const Duration(seconds: 3));
+      return true;
     } on TimeoutException {
       // Native players can occasionally hang on Android. Keep the UI alive and
       // let the next settings/lifecycle transition retry playback.
+      return false;
     } catch (_) {
       // Audio should never take down the app; failed one-shots are disposable.
+      return false;
     }
   }
 }
