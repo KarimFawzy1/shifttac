@@ -18,22 +18,30 @@ abstract final class SoundAssets {
 
 /// SFX + app-wide BGM. Reads [AppSettingsController] — no parallel mute flags.
 class AppAudio {
-  AppAudio(this._settings) {
+  AppAudio(this._settings)
+      : _lastMusicEnabled = _settings.musicEnabled {
     _settings.addListener(_onSettingsChanged);
+    _bgmStateSub = _bgmPlayer.onPlayerStateChanged.listen(_onBgmStateChanged);
   }
 
   final AppSettingsController _settings;
-  final AudioPlayer _bgmPlayer = AudioPlayer();
-  final AudioPlayer _sfxPlayer = AudioPlayer();
+  final AudioPlayer _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm');
+  final AudioPlayer _sfxPlayer = AudioPlayer(playerId: 'shifttac_sfx');
 
   static const double _bgmVolume = 0.38;
   static const double _sfxVolume = 0.85;
 
   bool _foreground = true;
   bool _disposing = false;
+  bool _configured = false;
+  bool _bgmPausedByApp = false;
+  bool _lastMusicEnabled;
+
+  late final StreamSubscription<PlayerState> _bgmStateSub;
 
   /// Call once after the app root is mounted to begin BGM if enabled.
   Future<void> initialize() async {
+    await _ensureConfigured();
     await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
     await _syncBgm();
   }
@@ -50,12 +58,46 @@ class AppAudio {
   Future<void> dispose() async {
     _disposing = true;
     _settings.removeListener(_onSettingsChanged);
+    await _bgmStateSub.cancel();
     await _bgmPlayer.dispose();
     await _sfxPlayer.dispose();
   }
 
+  /// Music toggle only — sound-effects changes do not touch BGM.
   void _onSettingsChanged() {
+    final music = _settings.musicEnabled;
+    if (music == _lastMusicEnabled) {
+      return;
+    }
+    _lastMusicEnabled = music;
     unawaited(_syncBgm());
+  }
+
+  void _onBgmStateChanged(PlayerState state) {
+    if (_disposing || _bgmPausedByApp || !_settings.musicEnabled || !_foreground) {
+      return;
+    }
+    if (state == PlayerState.stopped || state == PlayerState.completed) {
+      unawaited(startMusic(forceRestart: true));
+    }
+  }
+
+  Future<void> _ensureConfigured() async {
+    if (_configured) {
+      return;
+    }
+    final bgmContext = AudioContextConfig(
+      focus: AudioContextConfigFocus.gain,
+    ).build();
+    final sfxContext = AudioContextConfig(
+      focus: AudioContextConfigFocus.mixWithOthers,
+    ).build();
+
+    await _bgmPlayer.setAudioContext(bgmContext);
+    await _sfxPlayer.setAudioContext(sfxContext);
+    await _sfxPlayer.setReleaseMode(ReleaseMode.stop);
+    await _sfxPlayer.setPlayerMode(PlayerMode.lowLatency);
+    _configured = true;
   }
 
   Future<void> _syncBgm() async {
@@ -63,25 +105,31 @@ class AppAudio {
       return;
     }
     if (_foreground && _settings.musicEnabled) {
-      await startMusic();
+      await startMusic(forceRestart: true);
     } else {
       await pauseMusic();
     }
   }
 
-  Future<void> startMusic() async {
+  Future<void> startMusic({bool forceRestart = false}) async {
     if (_disposing || !_foreground || !_settings.musicEnabled) {
       return;
     }
+    await _ensureConfigured();
+    _bgmPausedByApp = false;
+    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
     await _bgmPlayer.setVolume(_bgmVolume);
+
     final state = _bgmPlayer.state;
-    if (state == PlayerState.playing) {
+    if (!forceRestart && state == PlayerState.playing) {
       return;
     }
-    if (state == PlayerState.paused) {
+    if (!forceRestart && state == PlayerState.paused) {
       await _bgmPlayer.resume();
       return;
     }
+
+    await _bgmPlayer.stop();
     await _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic));
   }
 
@@ -89,7 +137,9 @@ class AppAudio {
     if (_disposing) {
       return;
     }
-    if (_bgmPlayer.state == PlayerState.playing) {
+    _bgmPausedByApp = true;
+    if (_bgmPlayer.state == PlayerState.playing ||
+        _bgmPlayer.state == PlayerState.paused) {
       await _bgmPlayer.pause();
     }
   }
@@ -98,6 +148,7 @@ class AppAudio {
     if (_disposing) {
       return;
     }
+    _bgmPausedByApp = true;
     await _bgmPlayer.stop();
   }
 
@@ -113,8 +164,28 @@ class AppAudio {
     if (_disposing || !_foreground || !_settings.soundEffectsEnabled) {
       return;
     }
+    await _ensureConfigured();
     await _sfxPlayer.setVolume(_sfxVolume);
+    await _sfxPlayer.stop();
     await _sfxPlayer.play(AssetSource(assetPath));
+    unawaited(_ensureBgmAfterSfx());
+  }
+
+  /// Safety net when platform audio focus briefly drops BGM during a one-shot SFX.
+  Future<void> _ensureBgmAfterSfx() async {
+    if (_disposing || !_foreground || !_settings.musicEnabled || _bgmPausedByApp) {
+      return;
+    }
+    final state = _bgmPlayer.state;
+    if (state == PlayerState.playing) {
+      return;
+    }
+    if (state == PlayerState.paused) {
+      _bgmPausedByApp = false;
+      await _bgmPlayer.resume();
+      return;
+    }
+    await startMusic(forceRestart: true);
   }
 }
 
