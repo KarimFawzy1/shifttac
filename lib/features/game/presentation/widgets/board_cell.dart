@@ -12,6 +12,7 @@ import '../../../../core/settings/app_settings_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../domain/models/position.dart';
+import '../gameplay_audio.dart';
 import '../state/game_cubit.dart';
 
 /// Visual state for a single board cell (driven by [GameBoard]; cells do not read queues).
@@ -89,6 +90,7 @@ class _BoardCellTapTargetState extends State<BoardCellTapTarget>
   void _onTap() {
     final result = context.read<GameCubit>().onCellTapped(widget.position);
     GameplayHaptics.onCellTapResult(context, result);
+    GameplayAudio.onCellTapResult(context, result);
     if (result == CellTapResult.rejectedInvalid) {
       unawaited(_shakeController.forward(from: 0));
     }

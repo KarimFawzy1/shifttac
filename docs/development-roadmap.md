@@ -110,7 +110,7 @@ These are **fixed** for the MVP. Do not add or swap libraries during phases.
 | `lib/features/game/domain/models/move.dart` | P3 | `Move` model (listed in `structure.md`; retained here as explicit contract anchor). |
 | `lib/features/game/domain/logic/game_snapshot.dart` | P5 | Immutable `GameSnapshot` (split from single `game_engine.dart` file if preferred). |
 | `lib/core/settings/app_settings_controller.dart` | P13 | Shared in-memory settings (`AppSettingsController`); no persistence. |
-| `lib/core/audio/app_audio.dart` | P16 | SFX wrapper; reads `soundEffectsEnabled` from `AppSettingsController`. |
+| `lib/core/audio/app_audio.dart` | P16 | SFX + BGM wrapper; reads `soundEffectsEnabled` and `musicEnabled` from `AppSettingsController`. |
 | `lib/core/launch/app_launch_prefs.dart` | P10 | Reads/writes the first-launch onboarding completion flag via `shared_preferences`. |
 | `lib/core/launch/app_launch_gate.dart` | P10 | Root launch resolver: returning users → `/home`; first-time users → `/splash`. |
 | `docs/qa-checklist.md` | P18 | Manual responsive QA log. |
@@ -244,7 +244,7 @@ M2  Game State Layer   ─► GameCubit + GameState (+ cubit tests)
 M3  Playable Slice     ─► Gameplay screen + board + cells + win dialog  ◄── FIRST PLAYABLE
 M4  Surrounding UX     ─► Home, Splash + Onboarding (first launch only), How to Play, Settings
 M5  Feel & Motion      ─► Animations, faded-mark polish, input lock, haptics
-M6  Audio & Icon       ─► Sound effects, app icon, splash polish
+M6  Audio & Icon       ─► Sound effects, background music, app icon, splash polish
 M7  Hardening          ─► Edge case tests, responsive QA, accessibility pass
 M8  Release Prep       ─► README, versioning, build configs, store-ready assets
 ```
@@ -273,7 +273,7 @@ Each milestone is broken into numbered phases below.
 | P13 | M4 | Settings Screen | Done |
 | P14 | M5 | Animations & Motion Polish | Done |
 | P15 | M5 | Haptics & Input Lock Hardening | Done |
-| P16 | M6 | Audio Layer | Pending |
+| P16 | M6 | Audio Layer | Done |
 | P17 | M6 | App Icon & Splash Polish | Pending |
 | P18 | M7 | Edge Case Tests & Responsive QA | Pending |
 | P19 | M7 | Accessibility Pass | Pending |
@@ -1228,50 +1228,66 @@ lib/shared/animations/fade_scale_transition.dart
 
 ## Phase 16 — Audio Layer
 
-**Goal:** Soft, tactile sound effects per `design.md §Audio Direction`.
+**Goal:** Soft, tactile SFX and looping background music per `design.md §Audio Direction`.
 
 **Scope In:**
 
 - Add `audioplayers` (or `just_audio` — pick one; lock here as `audioplayers`).
 - `core/audio/` (roadmap-approved folder; see Section 2.1):
-  - `app_audio.dart` — thin wrapper exposing `playPlacement()`, `playRemoval()`, `playWin()`. Before each play, consult **`AppSettingsController.soundEffectsEnabled`** (pass the same root instance used in P13 — **no** separate `muted` flag on `AppAudio`; the controller is the single source of truth for whether SFX run).
-- Wire playback triggers from `GameplayScreen` (e.g. `BlocListener` on `GameCubit`) so SFX align with resolved game events.
-- Bundle 3 small audio assets under `assets/sounds/` and register in `pubspec.yaml`.
+  - `app_audio.dart` — thin wrapper exposing:
+    - **SFX:** `playTap()`, `playWrongTap()`, `playRestart()`, `playWin()`, `playLose()` — each consults **`AppSettingsController.soundEffectsEnabled`** before playing.
+    - **BGM:** `startMusic()`, `stopMusic()`, `pauseMusic()` — consult **`AppSettingsController.musicEnabled`**; loop `background.mp3` at moderate volume.
+  - Pass the same root **`AppSettingsController`** instance used in P13 — **no** separate `muted` flags on `AppAudio`; the controller is the single source of truth for SFX and music.
+  - Use **two** `AudioPlayer` instances (one for BGM, one for SFX) so a one-shot SFX does not interrupt the music loop.
+- **BGM (app-wide):** Own `AppAudio` at the app root (`lib/app.dart`). Start looping `background.mp3` when the app is in the foreground and `musicEnabled` is true — **all screens** (Home, Splash, Onboarding, How to Play, Settings, Gameplay, etc.), not only `GameplayScreen`. Pause BGM when the app is backgrounded; resume on foreground if `musicEnabled` is still true. React to `musicEnabled` changes immediately (start/stop without requiring a navigation).
+- **SFX — gameplay** (`GameplayScreen`): wire via `BlocListener` on `GameCubit` / tap-result handling:
+  - `CellTapResult.accepted` → `playTap()`
+  - `CellTapResult.rejectedInvalid` / `rejectedLocked` / `rejectedNotPlaying` → `playWrongTap()`
+  - `GameCubit.restart()` (or restart control) → `playRestart()`
+  - `GameStatus.won` → `playWin()` for the winner; `playLose()` for the opponent (local two-player).
+- **SFX — settings UI tap** (`lib/features/settings/presentation/widgets/settings_tile.dart`): call `playTap()` alongside existing haptics on every interactive press in this file — `SettingsTile` `InkWell.onTap` and `SettingsSwitch` `GestureDetector.onTap` (mirror the `_playSettingsHaptic` pattern; pass `AppAudio` via context scope or constructor injection from `AppSettingsScope` / root — **no** duplicate mute logic in the widget).
+- **Assets (pre-staged):** six files already live under `assets/sounds/` (registered via existing `pubspec.yaml` `assets/sounds/` entry). Implementation must reference these **exact** filenames — do not rename or substitute.
 
 **Scope Out:**
 
-- Background music playback (Backlog — `musicEnabled` may exist on the controller for UI parity only until a future phase).
 - Per-event volume sliders.
-- `SharedPreferences` or any persistence for audio preferences.
+- `SharedPreferences` or any persistence for audio preferences (settings remain in-memory per **D2**).
 
-**Touch Scope:** `pubspec.yaml`, `lib/core/audio/app_audio.dart`, edits in `gameplay_screen.dart` (optional: `AppAudio` constructor receives `AppSettingsController` — **no** duplicate mute state).
+**Touch Scope:** `pubspec.yaml` (add `audioplayers` only if missing), `lib/core/audio/app_audio.dart`, `lib/app.dart` (root `AppAudio` + app-wide BGM lifecycle), `lib/features/game/presentation/screens/gameplay_screen.dart`, `lib/features/settings/presentation/widgets/settings_tile.dart` — **no** duplicate mute state.
 
 **Deliverables:**
 
 ```text
 lib/core/audio/app_audio.dart
-assets/sounds/place.wav
-assets/sounds/remove.wav
-assets/sounds/win.wav
+assets/sounds/tap.wav          # valid board placement + settings row/switch tap
+assets/sounds/wrong-tap.wav    # rejected tap
+assets/sounds/restart.wav      # match restart
+assets/sounds/win.wav          # winner chime
+assets/sounds/lose.wav         # opponent on loss
+assets/sounds/background.mp3   # looping BGM (MP3 for size)
 ```
 
 **Acceptance Criteria:**
 
-- [ ] Three SFX play at the correct moments **only when** `soundEffectsEnabled` is true on `AppSettingsController`.
-- [ ] When `soundEffectsEnabled` is false, no placement/removal/win SFX fire (controller is authoritative; `AppAudio` does not maintain a parallel mute flag).
-- [ ] No audio plays when the app is backgrounded.
+- [x] Five SFX play at the correct moments **only when** `soundEffectsEnabled` is true on `AppSettingsController`.
+- [x] When `soundEffectsEnabled` is false, no tap/wrong-tap/restart/win/lose SFX fire (`AppAudio` does not maintain a parallel SFX mute flag).
+- [x] BGM loops on **every in-app screen** when `musicEnabled` is true (persists across navigation — Home ↔ Settings ↔ Gameplay, etc.); stops or stays silent when `musicEnabled` is false.
+- [x] `tap.wav` plays on `SettingsTile` and `SettingsSwitch` taps when `soundEffectsEnabled` is true (same `playTap()` as a valid board placement).
+- [x] Toggling **Sound Effects** or **Music** in Settings takes effect immediately (listen to `AppSettingsController`).
+- [x] No SFX or BGM plays when the app is backgrounded; BGM resumes appropriately on foreground return if `musicEnabled` is still true.
 
 **Git (when this phase is Done):**
 
-- [ ] Stage `pubspec.yaml`, `lib/core/audio/app_audio.dart`, `assets/sounds/*`, gameplay wiring edits, and §4 **Status** in `docs/development-roadmap.md` if updated. Do not commit unsigned keys or unrelated native churn.
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 16** (e.g. `feat(audio): add SFX layer and assets`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage `pubspec.yaml`, `lib/core/audio/app_audio.dart`, `assets/sounds/*`, `app.dart`, `gameplay_screen.dart`, `settings_tile.dart`, and §4 **Status** in `docs/development-roadmap.md` if updated. Do not commit unsigned keys or unrelated native churn.
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 16** (e.g. `feat(audio): add SFX, BGM, and playback wiring`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phases 13, 14, 15.
 
 **Risks:**
 
-- Loud / harsh samples. **Mitigation:** select samples that are short (≤ 300 ms) and soft.
+- Loud / harsh samples. **Mitigation:** keep SFX short and soft; duck BGM slightly while SFX play if clipping occurs.
+- Large `background.mp3`. **Mitigation:** already MP3 (~1.7 MB); acceptable for MVP; re-encode at lower bitrate only if store size becomes an issue.
 
 ---
 
@@ -1703,7 +1719,7 @@ Captured here so they don't pollute MVP phases:
 - ~~First-launch detection for auto-onboarding.~~ **Moved to MVP** — see **D1** (P10, P11).
 - Replay system + move history.
 - Undo (would conflict with FIFO — design decision needed).
-- Background music + per-event volume.
+- Per-event volume sliders (master SFX/BGM toggles ship in P16).
 - Multi-language localization.
 - Analytics (Firebase Analytics) + Crashlytics.
 - Golden / widget tests.

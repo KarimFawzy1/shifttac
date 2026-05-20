@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/audio/app_audio.dart';
 import '../../../../core/settings/app_settings_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -152,6 +153,7 @@ class SettingsTile extends StatelessWidget {
       child: InkWell(
         onTap: () {
           _playSettingsHaptic(context);
+          playSettingsTapSound(context);
           onTap!();
         },
         borderRadius: AppSpacing.borderRadiusDefault,
@@ -228,6 +230,7 @@ class SettingsSwitch extends StatelessWidget {
         onTap: enabled
             ? () {
                 _playSettingsHaptic(context);
+                playSettingsTapSound(context);
                 onChanged!(!value);
               }
             : null,

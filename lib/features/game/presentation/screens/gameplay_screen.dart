@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -41,6 +42,7 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
   if (!context.mounted) {
     return;
   }
+  unawaited(AppAudioScope.read(context).playLose());
   final cubit = context.read<GameCubit>();
   final state = cubit.state;
   if (state.snapshot.status != GameStatus.won ||
@@ -143,27 +145,36 @@ class _GameplayBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: _systemUi,
-      child: AppScaffold(
-        fullWidthHeader: true,
-        header: _GameplayHeader(onBack: () => _handleBack(context)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: AppSpacing.stackMd.h),
-            const PlayerTurnIndicator(),
-            SizedBox(height: AppSpacing.stackMd.h),
-            const _MoveCounterPill(),
-            SizedBox(height: AppSpacing.stackSm.h),
-            SizedBox(height: AppSpacing.stackLg.h),
-            Expanded(
-              child: _GameplayBoardArea(
-                onWinRevealComplete: () =>
-                    unawaited(_presentWinDialogWhenReady(context)),
+    return BlocListener<GameCubit, GameState>(
+      listenWhen: (previous, current) =>
+          previous.snapshot.turnIndex > 0 && current.snapshot.turnIndex == 0,
+      listener: (context, state) {
+        unawaited(AppAudioScope.read(context).playRestart());
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _systemUi,
+        child: AppScaffold(
+          fullWidthHeader: true,
+          header: _GameplayHeader(onBack: () => _handleBack(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: AppSpacing.stackMd.h),
+              const PlayerTurnIndicator(),
+              SizedBox(height: AppSpacing.stackMd.h),
+              const _MoveCounterPill(),
+              SizedBox(height: AppSpacing.stackSm.h),
+              SizedBox(height: AppSpacing.stackLg.h),
+              Expanded(
+                child: _GameplayBoardArea(
+                  onWinRevealComplete: () {
+                    unawaited(AppAudioScope.read(context).playWin());
+                    unawaited(_presentWinDialogWhenReady(context));
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
