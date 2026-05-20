@@ -271,7 +271,7 @@ Each milestone is broken into numbered phases below.
 | P11 | M4 | Onboarding (3 Screens) | Done |
 | P12 | M4 | How to Play Screen | Done |
 | P13 | M4 | Settings Screen | Done |
-| P14 | M5 | Animations & Motion Polish | Pending |
+| P14 | M5 | Animations & Motion Polish | Done |
 | P15 | M5 | Haptics & Input Lock Hardening | Pending |
 | P16 | M6 | Audio Layer | Pending |
 | P17 | M6 | App Icon & Splash Polish | Pending |
@@ -1171,16 +1171,16 @@ lib/shared/animations/fade_scale_transition.dart
 
 **Acceptance Criteria:**
 
-- [ ] All motion durations come from `game_constants.dart` — zero magic numbers.
-- [ ] Animations never block state updates (principle P6).
-- [ ] No animation exceeds 320 ms (dialog entrance ceiling).
-- [ ] Visually smooth on a mid-range device (subjective QA).
+- [x] All motion durations come from `game_constants.dart` — zero magic numbers.
+- [x] Animations never block state updates (principle P6).
+- [x] No animation exceeds 320 ms (dialog entrance ceiling).
+- [x] Visually smooth on a mid-range device (subjective QA).
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 14** (e.g. `feat(ui): add motion polish and shared animations`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** / **Deliverables** files (and §4 **Status** for this phase in `docs/development-roadmap.md` if updated).
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 14** (e.g. `feat(ui): add motion polish and shared animations`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phases 7, 8.
 

@@ -73,22 +73,14 @@ class _SettingsBody extends StatelessWidget {
                 title: 'Theme',
                 children: [
                   SettingsTile(
-                    icon: _LightThemeIcon(),
-                    title: 'Light',
-                    subtitle: 'Warm ivory theme',
-                    trailing: Text(
-                      'Active',
-                      style: AppTextStyles.bodyMd.copyWith(
-                        color: AppColors.outline,
-                      ),
-                    ),
-                  ),
-                  SettingsTile(
                     iconAsset: IconConstant.dark,
-                    title: 'Dark',
+                    title: 'Dark mode',
                     subtitle: 'Easier on the eyes at night',
                     enabled: false,
-                    trailing: const SettingsComingSoonBadge(),
+                    trailing: const SettingsSwitch(
+                      value: false,
+                      onChanged: null,
+                    ),
                   ),
                 ],
               ),
@@ -183,21 +175,6 @@ class _SettingsBody extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-/// Light theme row icon (no dedicated SVG in asset inventory).
-class _LightThemeIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.warmIvory,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.accentGold, width: 2),
-      ),
-      child: SizedBox(width: 18.w, height: 18.w),
     );
   }
 }
