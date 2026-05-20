@@ -55,6 +55,21 @@ void main() {
       });
     });
 
+    test('ten rapid taps on same cell produce exactly one state change', () {
+      fakeAsync((async) {
+        final cubit = GameCubit();
+
+        for (var i = 0; i < 10; i++) {
+          cubit.onCellTapped(const Position(row: 0, col: 0));
+        }
+
+        expect(cubit.state.snapshot.turnIndex, 1);
+        expect(cubit.state.lastPlacedPosition, const Position(row: 0, col: 0));
+        expect(cubit.state.inputLocked, isTrue);
+        cubit.close();
+      });
+    });
+
     test('rapid taps while input locked do not apply a second move', () {
       fakeAsync((async) {
         final cubit = GameCubit();
@@ -88,6 +103,92 @@ void main() {
 
         async.elapse(const Duration(milliseconds: 1));
         expect(cubit.state.inputLocked, isFalse);
+        cubit.close();
+      });
+    });
+
+    test('restart during input lock clears markers and ignores stale unlock', () {
+      fakeAsync((async) {
+        final cubit = GameCubit();
+
+        cubit.onCellTapped(const Position(row: 0, col: 0));
+        expect(cubit.state.inputLocked, isTrue);
+        expect(cubit.state.lastPlacedPosition, isNotNull);
+
+        cubit.restart();
+
+        expect(cubit.state.inputLocked, isFalse);
+        expect(cubit.state.lastPlacedPosition, isNull);
+        expect(cubit.state.lastRemovedPosition, isNull);
+        expect(cubit.state.snapshot.turnIndex, 0);
+
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs * 2));
+        expect(cubit.state.inputLocked, isFalse);
+        expect(cubit.state.snapshot.turnIndex, 0);
+        cubit.close();
+      });
+    });
+
+    test(
+      'restart during fade-out markers leaves empty board with no ghost marks',
+      () {
+        fakeAsync((async) {
+          final cubit = GameCubit();
+          void unlock() =>
+              async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+          cubit.onCellTapped(const Position(row: 0, col: 0));
+          unlock();
+          cubit.onCellTapped(const Position(row: 2, col: 2));
+          unlock();
+          cubit.onCellTapped(const Position(row: 0, col: 1));
+          unlock();
+          cubit.onCellTapped(const Position(row: 1, col: 2));
+          unlock();
+          cubit.onCellTapped(const Position(row: 2, col: 0));
+          unlock();
+          cubit.onCellTapped(const Position(row: 1, col: 1));
+          unlock();
+          cubit.onCellTapped(const Position(row: 0, col: 2));
+
+          expect(cubit.state.lastRemovedPosition, const Position(row: 0, col: 0));
+          expect(cubit.state.inputLocked, isTrue);
+
+          cubit.restart();
+
+          expect(cubit.state.lastPlacedPosition, isNull);
+          expect(cubit.state.lastRemovedPosition, isNull);
+          expect(cubit.state.snapshot.xMoves, isEmpty);
+          expect(cubit.state.snapshot.oMoves, isEmpty);
+          unlock();
+          expect(cubit.state.snapshot.xMoves, isEmpty);
+          cubit.close();
+        });
+      },
+    );
+
+    test('tap while match is not playing is rejected', () {
+      fakeAsync((async) {
+        final cubit = GameCubit();
+        void unlock() =>
+            async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+        for (var i = 0; i < 5; i++) {
+          cubit.onCellTapped(Position(row: i % 3, col: 0));
+          unlock();
+          cubit.onCellTapped(Position(row: i % 3, col: 1));
+          unlock();
+          cubit.onCellTapped(Position(row: i % 3, col: 2));
+          unlock();
+        }
+
+        expect(cubit.state.snapshot.status, GameStatus.won);
+        final snap = cubit.state.snapshot;
+        expect(
+          cubit.onCellTapped(const Position(row: 0, col: 0)),
+          CellTapResult.rejectedNotPlaying,
+        );
+        expect(identical(cubit.state.snapshot, snap), isTrue);
         cubit.close();
       });
     });

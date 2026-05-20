@@ -17,6 +17,7 @@ import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
+import '../widgets/board_cell.dart';
 import '../widgets/game_board.dart';
 import '../widgets/pause_bottom_sheet.dart';
 import '../widgets/player_panel.dart';
@@ -276,7 +277,7 @@ class _NavIconRestartButtonState extends State<_NavIconRestartButton>
   }
 
   void _onTap() {
-    Feedback.forTap(context);
+    GameplayHaptics.onRestartTap(context);
     context.read<GameCubit>().restart();
     if (_spinController.isAnimating) {
       _spinController.reset();

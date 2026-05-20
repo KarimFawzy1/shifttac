@@ -1,12 +1,18 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/game_constants.dart';
 import '../../../../core/constants/image_constants.dart';
+import '../../../../core/settings/app_settings_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../domain/models/position.dart';
+import '../state/game_cubit.dart';
 
 /// Visual state for a single board cell (driven by [GameBoard]; cells do not read queues).
 enum BoardCellAppearance {
@@ -15,6 +21,102 @@ enum BoardCellAppearance {
   oSolid,
   xFaded,
   oFaded,
+}
+
+/// Fires gameplay haptics when [AppSettingsController.vibrationEnabled] is true.
+abstract final class GameplayHaptics {
+  GameplayHaptics._();
+
+  static void onCellTapResult(BuildContext context, CellTapResult result) {
+    if (!AppSettingsScope.read(context).vibrationEnabled) {
+      return;
+    }
+    switch (result) {
+      case CellTapResult.accepted:
+        HapticFeedback.selectionClick();
+      case CellTapResult.rejectedInvalid:
+        HapticFeedback.lightImpact();
+      case CellTapResult.rejectedLocked:
+      case CellTapResult.rejectedNotPlaying:
+        break;
+    }
+  }
+
+  static void onRestartTap(BuildContext context) {
+    if (!AppSettingsScope.read(context).vibrationEnabled) {
+      return;
+    }
+    HapticFeedback.selectionClick();
+  }
+}
+
+/// Tappable board cell: routes taps through [GameCubit], haptics, and invalid shake.
+class BoardCellTapTarget extends StatefulWidget {
+  const BoardCellTapTarget({
+    super.key,
+    required this.appearance,
+    required this.position,
+    required this.interactive,
+  });
+
+  final BoardCellAppearance appearance;
+  final Position position;
+  final bool interactive;
+
+  @override
+  State<BoardCellTapTarget> createState() => _BoardCellTapTargetState();
+}
+
+class _BoardCellTapTargetState extends State<BoardCellTapTarget>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _shakeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: GameConstants.tapFeedbackMs),
+    );
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
+  }
+
+  void _onTap() {
+    final result = context.read<GameCubit>().onCellTapped(widget.position);
+    GameplayHaptics.onCellTapResult(context, result);
+    if (result == CellTapResult.rejectedInvalid) {
+      unawaited(_shakeController.forward(from: 0));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cell = BoardCell(
+      appearance: widget.appearance,
+      interactive: widget.interactive,
+      onTap: _onTap,
+    );
+
+    return AnimatedBuilder(
+      animation: _shakeController,
+      builder: (context, child) {
+        final t = _shakeController.value;
+        final offset = t == 0
+            ? 0.0
+            : math.sin(t * math.pi * 6) * 6 * (1 - t);
+        return Transform.translate(
+          offset: Offset(offset, 0),
+          child: child,
+        );
+      },
+      child: cell,
+    );
+  }
 }
 
 class BoardCell extends StatelessWidget {

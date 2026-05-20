@@ -272,7 +272,7 @@ Each milestone is broken into numbered phases below.
 | P12 | M4 | How to Play Screen | Done |
 | P13 | M4 | Settings Screen | Done |
 | P14 | M5 | Animations & Motion Polish | Done |
-| P15 | M5 | Haptics & Input Lock Hardening | Pending |
+| P15 | M5 | Haptics & Input Lock Hardening | Done |
 | P16 | M6 | Audio Layer | Pending |
 | P17 | M6 | App Icon & Splash Polish | Pending |
 | P18 | M7 | Edge Case Tests & Responsive QA | Pending |
@@ -1210,15 +1210,15 @@ lib/shared/animations/fade_scale_transition.dart
 
 **Acceptance Criteria:**
 
-- [ ] Pressing the same cell 10× in rapid succession produces **exactly one** state change.
-- [ ] Restart during the fade-out animation does not leave a ghost mark.
-- [ ] Vibration toggle affects haptic behavior **in-session** via the shared `AppSettingsController` (off = no haptics from gameplay paths; on = haptics as specified).
+- [x] Pressing the same cell 10× in rapid succession produces **exactly one** state change.
+- [x] Restart during the fade-out animation does not leave a ghost mark.
+- [x] Vibration toggle affects haptic behavior **in-session** via the shared `AppSettingsController` (off = no haptics from gameplay paths; on = haptics as specified).
 
 **Git (when this phase is Done):**
 
-- [ ] Stage only this phase’s **Touch Scope** files (edits only — no new files per Deliverables) and §4 **Status** in `docs/development-roadmap.md` if updated.
-- [ ] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 15** (e.g. `feat(game): harden input lock and haptics`).
-- [ ] Push: `git push origin <branch>` (typically `main`).
+- [x] Stage only this phase’s **Touch Scope** files (edits only — no new files per Deliverables) and §4 **Status** in `docs/development-roadmap.md` if updated.
+- [x] Commit with a [Conventional Commits](https://www.conventionalcommits.org/) message scoped to **Phase 15** (e.g. `feat(game): harden input lock and haptics`).
+- [x] Push: `git push origin <branch>` (typically `main`).
 
 **Dependencies:** Phases 13, 14.
 

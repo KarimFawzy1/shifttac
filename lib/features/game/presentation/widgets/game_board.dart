@@ -119,11 +119,10 @@ class GameBoard extends StatelessWidget {
                             final row = index ~/ 3;
                             final col = index % 3;
                             final p = Position(row: row, col: col);
-                            return BoardCell(
+                            return BoardCellTapTarget(
                               appearance: _appearanceFor(state, p),
+                              position: p,
                               interactive: !frozen,
-                              onTap: () =>
-                                  context.read<GameCubit>().onCellTapped(p),
                             );
                           },
                         ),

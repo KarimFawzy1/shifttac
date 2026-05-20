@@ -8,6 +8,14 @@ import '../../domain/models/game_status.dart';
 import '../../domain/models/position.dart';
 import 'game_state.dart';
 
+/// Outcome of a board cell tap for haptics and UI feedback.
+enum CellTapResult {
+  accepted,
+  rejectedInvalid,
+  rejectedLocked,
+  rejectedNotPlaying,
+}
+
 /// Coordinates UI state with [GameEngine]; does not implement gameplay rules.
 class GameCubit extends Cubit<GameState> {
   GameCubit() : super(GameState.initial()) {
@@ -20,6 +28,7 @@ class GameCubit extends Cubit<GameState> {
   Timer? _matchDurationTicker;
   bool _matchPaused = false;
   bool _pauseSheetRequestedForBackground = false;
+  int _inputLockGeneration = 0;
 
   @override
   Future<void> close() {
@@ -96,9 +105,13 @@ class GameCubit extends Cubit<GameState> {
     emit(state.copyWith(matchDurationMs: ms));
   }
 
-  void onCellTapped(Position p) {
+  CellTapResult onCellTapped(Position p) {
+    if (state.snapshot.status != GameStatus.playing) {
+      return CellTapResult.rejectedNotPlaying;
+    }
+
     if (state.inputLocked) {
-      return;
+      return CellTapResult.rejectedLocked;
     }
 
     final result = GameEngine.attemptMove(
@@ -107,10 +120,11 @@ class GameCubit extends Cubit<GameState> {
     );
 
     if (!result.moveAccepted) {
-      return;
+      return CellTapResult.rejectedInvalid;
     }
 
     _inputUnlockTimer?.cancel();
+    final lockGeneration = ++_inputLockGeneration;
     emit(
       state.copyWith(
         snapshot: result.snapshot,
@@ -124,12 +138,13 @@ class GameCubit extends Cubit<GameState> {
     _inputUnlockTimer = Timer(
       const Duration(milliseconds: GameConstants.inputLockMs),
       () {
-        if (isClosed) {
+        if (isClosed || lockGeneration != _inputLockGeneration) {
           return;
         }
         emit(state.copyWith(inputLocked: false));
       },
     );
+    return CellTapResult.accepted;
   }
 
   void restart() {
@@ -137,6 +152,7 @@ class GameCubit extends Cubit<GameState> {
     _pauseSheetRequestedForBackground = false;
     _inputUnlockTimer?.cancel();
     _inputUnlockTimer = null;
+    _inputLockGeneration++;
     _matchDurationTicker?.cancel();
     _matchDurationTicker = null;
     _matchStopwatch
