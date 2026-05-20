@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +11,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-void _playSettingsHaptic(BuildContext context) {
+void _playSettingsTap(BuildContext context) {
+  unawaited(AppAudioScope.read(context).playTap());
   if (!AppSettingsScope.read(context).vibrationEnabled) {
     return;
   }
@@ -152,8 +155,7 @@ class SettingsTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          _playSettingsHaptic(context);
-          playSettingsTapSound(context);
+          _playSettingsTap(context);
           onTap!();
         },
         borderRadius: AppSpacing.borderRadiusDefault,
@@ -229,8 +231,7 @@ class SettingsSwitch extends StatelessWidget {
       child: GestureDetector(
         onTap: enabled
             ? () {
-                _playSettingsHaptic(context);
-                playSettingsTapSound(context);
+                _playSettingsTap(context);
                 onChanged!(!value);
               }
             : null,

@@ -8,6 +8,6 @@ import 'core/utils/app_initializer.dart';
 Future<void> main() async {
   await AppInitializer.initialize();
   final settings = await AppSettingsController.load();
-  final audio = AppAudio(settings: settings);
+  final audio = AppAudio(settings);
   runApp(ShiftTacApp(settings: settings, audio: audio));
 }

@@ -5,131 +5,120 @@ import 'package:flutter/widgets.dart';
 
 import '../settings/app_settings_controller.dart';
 
-/// Bundled sound paths (relative to `assets/` per [AssetSource]).
-abstract final class AppAudioAssets {
-  AppAudioAssets._();
+/// Bundled sound paths under `assets/sounds/` (pubspec asset folder).
+abstract final class SoundAssets {
+  SoundAssets._();
 
-  static const String tap = 'sounds/tap.wav';
-  static const String wrongTap = 'sounds/wrong-tap.wav';
-  static const String restart = 'sounds/restart.wav';
-  static const String win = 'sounds/win.wav';
-  static const String lose = 'sounds/lose.wav';
-  static const String background = 'sounds/background.mp3';
+  static const tap = 'sounds/tap.wav';
+  static const wrongTap = 'sounds/wrong-tap.wav';
+  static const restart = 'sounds/restart.wav';
+  static const win = 'sounds/win.wav';
+  static const backgroundMusic = 'sounds/background.mp3';
 }
 
-/// SFX + BGM; mute flags live only on [AppSettingsController].
+/// SFX + app-wide BGM. Reads [AppSettingsController] — no parallel mute flags.
 class AppAudio {
-  AppAudio({required AppSettingsController settings})
-      : _settings = settings {
-    _bgmPlayer = AudioPlayer(playerId: 'bgm');
-    _sfxPlayer = AudioPlayer(playerId: 'sfx');
-    unawaited(_bgmPlayer.setReleaseMode(ReleaseMode.loop));
-    unawaited(_bgmPlayer.setVolume(_bgmVolume));
-    unawaited(_sfxPlayer.setVolume(_sfxVolume));
+  AppAudio(this._settings) {
+    _settings.addListener(_onSettingsChanged);
   }
-
-  static const double _bgmVolume = 0.35;
-  static const double _sfxVolume = 0.7;
 
   final AppSettingsController _settings;
-  late final AudioPlayer _bgmPlayer;
-  late final AudioPlayer _sfxPlayer;
+  final AudioPlayer _bgmPlayer = AudioPlayer();
+  final AudioPlayer _sfxPlayer = AudioPlayer();
 
-  bool _appInForeground = true;
-  bool _bgmStarted = false;
+  static const double _bgmVolume = 0.38;
+  static const double _sfxVolume = 0.85;
 
-  bool get _mayPlaySfx =>
-      _appInForeground && _settings.soundEffectsEnabled;
+  bool _foreground = true;
+  bool _disposing = false;
 
-  bool get _mayPlayBgm => _appInForeground && _settings.musicEnabled;
+  /// Call once after the app root is mounted to begin BGM if enabled.
+  Future<void> initialize() async {
+    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+    await _syncBgm();
+  }
 
-  void onSettingsChanged() {
-    if (_mayPlayBgm) {
-      unawaited(startMusic());
+  void setForeground(bool inForeground) {
+    _foreground = inForeground;
+    if (inForeground) {
+      unawaited(_syncBgm());
     } else {
-      unawaited(stopMusic());
-    }
-  }
-
-  void onAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        _appInForeground = true;
-        onSettingsChanged();
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.detached:
-        _appInForeground = false;
-        unawaited(pauseMusic());
-    }
-  }
-
-  Future<void> startMusic() async {
-    if (!_mayPlayBgm) {
-      return;
-    }
-    try {
-      if (_bgmStarted) {
-        await _bgmPlayer.resume();
-        return;
-      }
-      await _bgmPlayer.play(AssetSource(AppAudioAssets.background));
-      _bgmStarted = true;
-    } on Object {
-      _bgmStarted = false;
-    }
-  }
-
-  Future<void> stopMusic() async {
-    try {
-      await _bgmPlayer.stop();
-    } on Object {
-      // Player may not be initialized yet.
-    }
-    _bgmStarted = false;
-  }
-
-  Future<void> pauseMusic() async {
-    try {
-      await _bgmPlayer.pause();
-    } on Object {
-      // Player may not be initialized yet.
-    }
-  }
-
-  Future<void> playTap() => _playSfx(AppAudioAssets.tap);
-
-  Future<void> playWrongTap() => _playSfx(AppAudioAssets.wrongTap);
-
-  Future<void> playRestart() => _playSfx(AppAudioAssets.restart);
-
-  Future<void> playWin() => _playSfx(AppAudioAssets.win);
-
-  Future<void> playLose() => _playSfx(AppAudioAssets.lose);
-
-  Future<void> _playSfx(String assetPath) async {
-    if (!_mayPlaySfx) {
-      return;
-    }
-    try {
-      await _sfxPlayer.stop();
-      await _sfxPlayer.play(AssetSource(assetPath));
-    } on Object {
-      // Ignore playback errors (missing asset, unsupported platform, etc.).
+      unawaited(pauseMusic());
     }
   }
 
   Future<void> dispose() async {
-    await Future.wait([
-      _bgmPlayer.dispose(),
-      _sfxPlayer.dispose(),
-    ]);
+    _disposing = true;
+    _settings.removeListener(_onSettingsChanged);
+    await _bgmPlayer.dispose();
+    await _sfxPlayer.dispose();
+  }
+
+  void _onSettingsChanged() {
+    unawaited(_syncBgm());
+  }
+
+  Future<void> _syncBgm() async {
+    if (_disposing) {
+      return;
+    }
+    if (_foreground && _settings.musicEnabled) {
+      await startMusic();
+    } else {
+      await pauseMusic();
+    }
+  }
+
+  Future<void> startMusic() async {
+    if (_disposing || !_foreground || !_settings.musicEnabled) {
+      return;
+    }
+    await _bgmPlayer.setVolume(_bgmVolume);
+    final state = _bgmPlayer.state;
+    if (state == PlayerState.playing) {
+      return;
+    }
+    if (state == PlayerState.paused) {
+      await _bgmPlayer.resume();
+      return;
+    }
+    await _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic));
+  }
+
+  Future<void> pauseMusic() async {
+    if (_disposing) {
+      return;
+    }
+    if (_bgmPlayer.state == PlayerState.playing) {
+      await _bgmPlayer.pause();
+    }
+  }
+
+  Future<void> stopMusic() async {
+    if (_disposing) {
+      return;
+    }
+    await _bgmPlayer.stop();
+  }
+
+  Future<void> playTap() => _playSfx(SoundAssets.tap);
+
+  Future<void> playWrongTap() => _playSfx(SoundAssets.wrongTap);
+
+  Future<void> playRestart() => _playSfx(SoundAssets.restart);
+
+  Future<void> playWin() => _playSfx(SoundAssets.win);
+
+  Future<void> _playSfx(String assetPath) async {
+    if (_disposing || !_foreground || !_settings.soundEffectsEnabled) {
+      return;
+    }
+    await _sfxPlayer.setVolume(_sfxVolume);
+    await _sfxPlayer.play(AssetSource(assetPath));
   }
 }
 
-/// Exposes root [AppAudio] to the widget tree.
+/// Exposes the root [AppAudio] to the widget tree.
 class AppAudioScope extends InheritedWidget {
   const AppAudioScope({
     super.key,
@@ -139,20 +128,11 @@ class AppAudioScope extends InheritedWidget {
 
   final AppAudio audio;
 
-  static AppAudio of(BuildContext context) {
-    final scope = context.dependOnInheritedWidgetOfExactType<AppAudioScope>();
-    assert(
-      scope != null,
-      'AppAudioScope not found. Wrap the app with AppAudioScope.',
-    );
-    return scope!.audio;
-  }
-
   static AppAudio read(BuildContext context) {
     final scope = context.getInheritedWidgetOfExactType<AppAudioScope>();
     assert(
       scope != null,
-      'AppAudioScope not found. Wrap the app with AppAudioScope.',
+      'AppAudioScope not found. Wrap MaterialApp with AppAudioScope.',
     );
     return scope!.audio;
   }
@@ -160,9 +140,4 @@ class AppAudioScope extends InheritedWidget {
   @override
   bool updateShouldNotify(AppAudioScope oldWidget) =>
       oldWidget.audio != audio;
-}
-
-/// Settings row / switch tap feedback.
-void playSettingsTapSound(BuildContext context) {
-  unawaited(AppAudioScope.read(context).playTap());
 }

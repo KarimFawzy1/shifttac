@@ -42,7 +42,6 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
   if (!context.mounted) {
     return;
   }
-  unawaited(AppAudioScope.read(context).playLose());
   final cubit = context.read<GameCubit>();
   final state = cubit.state;
   if (state.snapshot.status != GameStatus.won ||
@@ -54,7 +53,10 @@ Future<void> _presentWinDialogWhenReady(BuildContext context) async {
     winner: state.snapshot.winner!,
     totalMoves: state.snapshot.turnIndex,
     matchDurationMs: state.matchDurationMs,
-    onPlayAgain: cubit.restart,
+    onPlayAgain: () {
+      unawaited(AppAudioScope.read(context).playRestart());
+      cubit.restart();
+    },
     onBackToHome: () {
       Navigator.of(
         context,
@@ -147,9 +149,10 @@ class _GameplayBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<GameCubit, GameState>(
       listenWhen: (previous, current) =>
-          previous.snapshot.turnIndex > 0 && current.snapshot.turnIndex == 0,
+          previous.snapshot.status != GameStatus.won &&
+          current.snapshot.status == GameStatus.won,
       listener: (context, state) {
-        unawaited(AppAudioScope.read(context).playRestart());
+        unawaited(AppAudioScope.read(context).playWin());
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: _systemUi,
@@ -167,10 +170,8 @@ class _GameplayBody extends StatelessWidget {
               SizedBox(height: AppSpacing.stackLg.h),
               Expanded(
                 child: _GameplayBoardArea(
-                  onWinRevealComplete: () {
-                    unawaited(AppAudioScope.read(context).playWin());
-                    unawaited(_presentWinDialogWhenReady(context));
-                  },
+                  onWinRevealComplete: () =>
+                      unawaited(_presentWinDialogWhenReady(context)),
                 ),
               ),
             ],
@@ -227,11 +228,7 @@ class _GameplayHeader extends StatelessWidget {
                 transparentMaterial: true,
                 iconSize: 20.w,
               ),
-              const Expanded(
-                child: Center(
-                  child: _NavIconRestartButton(),
-                ),
-              ),
+              const Expanded(child: Center(child: _NavIconRestartButton())),
               AppIconButton(
                 iconAsset: IconConstant.pause,
                 semanticLabel: 'Pause match',

@@ -1235,21 +1235,22 @@ lib/shared/animations/fade_scale_transition.dart
 - Add `audioplayers` (or `just_audio` — pick one; lock here as `audioplayers`).
 - `core/audio/` (roadmap-approved folder; see Section 2.1):
   - `app_audio.dart` — thin wrapper exposing:
-    - **SFX:** `playTap()`, `playWrongTap()`, `playRestart()`, `playWin()`, `playLose()` — each consults **`AppSettingsController.soundEffectsEnabled`** before playing.
+    - **SFX:** `playTap()`, `playWrongTap()`, `playRestart()`, `playWin()` — each consults **`AppSettingsController.soundEffectsEnabled`** before playing.
     - **BGM:** `startMusic()`, `stopMusic()`, `pauseMusic()` — consult **`AppSettingsController.musicEnabled`**; loop `background.mp3` at moderate volume.
   - Pass the same root **`AppSettingsController`** instance used in P13 — **no** separate `muted` flags on `AppAudio`; the controller is the single source of truth for SFX and music.
-  - Use **two** `AudioPlayer` instances (one for BGM, one for SFX) so a one-shot SFX does not interrupt the music loop.
+  - Use **two** `AudioPlayer` instances (one for BGM, one for SFX). **BGM is continuous** — SFX play **on top of** the loop; **never** pause, stop, or duck BGM for a one-shot SFX. The only reasons BGM stops are `musicEnabled == false`, app backgrounding, or explicit `stopMusic()` on teardown.
 - **BGM (app-wide):** Own `AppAudio` at the app root (`lib/app.dart`). Start looping `background.mp3` when the app is in the foreground and `musicEnabled` is true — **all screens** (Home, Splash, Onboarding, How to Play, Settings, Gameplay, etc.), not only `GameplayScreen`. Pause BGM when the app is backgrounded; resume on foreground if `musicEnabled` is still true. React to `musicEnabled` changes immediately (start/stop without requiring a navigation).
 - **SFX — gameplay** (`GameplayScreen`): wire via `BlocListener` on `GameCubit` / tap-result handling:
   - `CellTapResult.accepted` → `playTap()`
   - `CellTapResult.rejectedInvalid` / `rejectedLocked` / `rejectedNotPlaying` → `playWrongTap()`
   - `GameCubit.restart()` (or restart control) → `playRestart()`
-  - `GameStatus.won` → `playWin()` for the winner; `playLose()` for the opponent (local two-player).
+  - `GameStatus.won` → `playWin()` once on match end (local two-player MVP).
 - **SFX — settings UI tap** (`lib/features/settings/presentation/widgets/settings_tile.dart`): call `playTap()` alongside existing haptics on every interactive press in this file — `SettingsTile` `InkWell.onTap` and `SettingsSwitch` `GestureDetector.onTap` (mirror the `_playSettingsHaptic` pattern; pass `AppAudio` via context scope or constructor injection from `AppSettingsScope` / root — **no** duplicate mute logic in the widget).
 - **Assets (pre-staged):** six files already live under `assets/sounds/` (registered via existing `pubspec.yaml` `assets/sounds/` entry). Implementation must reference these **exact** filenames — do not rename or substitute.
 
 **Scope Out:**
 
+- **`lose.wav` playback** — asset is pre-bundled but **not wired in P16**. `playLose()` ships with **Vs AI** mode (Post-MVP / near future) when the human player loses to the CPU; local two-player has no lose SFX in MVP.
 - Per-event volume sliders.
 - `SharedPreferences` or any persistence for audio preferences (settings remain in-memory per **D2**).
 
@@ -1263,15 +1264,17 @@ assets/sounds/tap.wav          # valid board placement + settings row/switch tap
 assets/sounds/wrong-tap.wav    # rejected tap
 assets/sounds/restart.wav      # match restart
 assets/sounds/win.wav          # winner chime
-assets/sounds/lose.wav         # opponent on loss
+assets/sounds/lose.wav         # bundled; Vs AI only — unwired in P16
 assets/sounds/background.mp3   # looping BGM (MP3 for size)
 ```
 
 **Acceptance Criteria:**
 
-- [x] Five SFX play at the correct moments **only when** `soundEffectsEnabled` is true on `AppSettingsController`.
-- [x] When `soundEffectsEnabled` is false, no tap/wrong-tap/restart/win/lose SFX fire (`AppAudio` does not maintain a parallel SFX mute flag).
+- [x] Four SFX (`tap`, `wrong-tap`, `restart`, `win`) play at the correct moments **only when** `soundEffectsEnabled` is true on `AppSettingsController`.
+- [x] When `soundEffectsEnabled` is false, no tap/wrong-tap/restart/win SFX fire (`AppAudio` does not maintain a parallel SFX mute flag).
+- [x] `lose.wav` is **not** played in MVP (local two-player); file may remain in `assets/sounds/` for the future Vs AI phase.
 - [x] BGM loops on **every in-app screen** when `musicEnabled` is true (persists across navigation — Home ↔ Settings ↔ Gameplay, etc.); stops or stays silent when `musicEnabled` is false.
+- [x] Playing any SFX does **not** pause, stop, or duck BGM — music continues underneath; SFX are audible on top.
 - [x] `tap.wav` plays on `SettingsTile` and `SettingsSwitch` taps when `soundEffectsEnabled` is true (same `playTap()` as a valid board placement).
 - [x] Toggling **Sound Effects** or **Music** in Settings takes effect immediately (listen to `AppSettingsController`).
 - [x] No SFX or BGM plays when the app is backgrounded; BGM resumes appropriately on foreground return if `musicEnabled` is still true.
@@ -1286,7 +1289,7 @@ assets/sounds/background.mp3   # looping BGM (MP3 for size)
 
 **Risks:**
 
-- Loud / harsh samples. **Mitigation:** keep SFX short and soft; duck BGM slightly while SFX play if clipping occurs.
+- Loud / harsh samples or SFX+BGM clipping. **Mitigation:** keep SFX short and soft; balance BGM vs SFX levels in code if needed — **do not** duck or pause BGM for SFX.
 - Large `background.mp3`. **Mitigation:** already MP3 (~1.7 MB); acceptable for MVP; re-encode at lower bitrate only if store size becomes an issue.
 
 ---
@@ -1711,7 +1714,7 @@ Decisions locked by this roadmap (overrides anywhere else):
 
 Captured here so they don't pollute MVP phases:
 
-- AI opponent (single-player vs. CPU with difficulty levels).
+- AI opponent (single-player vs. CPU with difficulty levels) — wire `lose.wav` / `playLose()` when the human loses (asset pre-bundled in P16).
 - Online multiplayer (matchmaking, real-time sync).
 - Match stats persistence (`SharedPreferences` → later cloud).
 - Dark theme implementation.

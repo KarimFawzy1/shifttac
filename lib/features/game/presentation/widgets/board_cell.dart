@@ -6,13 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/game_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/settings/app_settings_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../domain/models/position.dart';
-import '../gameplay_audio.dart';
 import '../state/game_cubit.dart';
 
 /// Visual state for a single board cell (driven by [GameBoard]; cells do not read queues).
@@ -29,21 +29,26 @@ abstract final class GameplayHaptics {
   GameplayHaptics._();
 
   static void onCellTapResult(BuildContext context, CellTapResult result) {
-    if (!AppSettingsScope.read(context).vibrationEnabled) {
-      return;
-    }
+    final audio = AppAudioScope.read(context);
     switch (result) {
       case CellTapResult.accepted:
-        HapticFeedback.selectionClick();
+        unawaited(audio.playTap());
+        if (AppSettingsScope.read(context).vibrationEnabled) {
+          HapticFeedback.selectionClick();
+        }
       case CellTapResult.rejectedInvalid:
-        HapticFeedback.lightImpact();
       case CellTapResult.rejectedLocked:
       case CellTapResult.rejectedNotPlaying:
-        break;
+        unawaited(audio.playWrongTap());
+        if (result == CellTapResult.rejectedInvalid &&
+            AppSettingsScope.read(context).vibrationEnabled) {
+          HapticFeedback.lightImpact();
+        }
     }
   }
 
   static void onRestartTap(BuildContext context) {
+    unawaited(AppAudioScope.read(context).playRestart());
     if (!AppSettingsScope.read(context).vibrationEnabled) {
       return;
     }
@@ -90,7 +95,6 @@ class _BoardCellTapTargetState extends State<BoardCellTapTarget>
   void _onTap() {
     final result = context.read<GameCubit>().onCellTapped(widget.position);
     GameplayHaptics.onCellTapResult(context, result);
-    GameplayAudio.onCellTapResult(context, result);
     if (result == CellTapResult.rejectedInvalid) {
       unawaited(_shakeController.forward(from: 0));
     }
