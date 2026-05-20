@@ -20,11 +20,11 @@ abstract final class SoundAssets {
 class AppAudio {
   AppAudio(this._settings) : _lastMusicEnabled = _settings.musicEnabled {
     _settings.addListener(_onSettingsChanged);
-    _bgmStateSub = _bgmPlayer.onPlayerStateChanged.listen(_onBgmStateChanged);
+    _attachBgmStateListener();
   }
 
   final AppSettingsController _settings;
-  final AudioPlayer _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm');
+  AudioPlayer _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm_0');
   final Map<String, AudioPool> _sfxPools = {};
 
   static const double _bgmVolume = 0.38;
@@ -32,17 +32,18 @@ class AppAudio {
 
   bool _foreground = true;
   bool _disposing = false;
-  bool _configured = false;
+  bool _bgmConfigured = false;
+  bool _sfxConfigured = false;
   bool _bgmPausedByApp = false;
   bool _sfxInFlight = false;
   bool _lastMusicEnabled;
+  int _bgmGeneration = 0;
 
-  late final StreamSubscription<PlayerState> _bgmStateSub;
+  StreamSubscription<PlayerState>? _bgmStateSub;
 
   /// Call once after the app root is mounted to begin BGM if enabled.
   Future<void> initialize() async {
-    await _ensureConfigured();
-    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+    await _ensureBgmConfigured();
     await _syncBgm();
   }
 
@@ -58,10 +59,14 @@ class AppAudio {
   Future<void> dispose() async {
     _disposing = true;
     _settings.removeListener(_onSettingsChanged);
-    await _bgmStateSub.cancel();
+    await _bgmStateSub?.cancel();
     await _bgmPlayer.dispose();
     await Future.wait(_sfxPools.values.map((pool) => pool.dispose()));
     _sfxPools.clear();
+  }
+
+  void _attachBgmStateListener() {
+    _bgmStateSub = _bgmPlayer.onPlayerStateChanged.listen(_onBgmStateChanged);
   }
 
   /// Music toggle only — sound-effects changes do not touch BGM.
@@ -86,16 +91,26 @@ class AppAudio {
     }
   }
 
-  Future<void> _ensureConfigured() async {
-    if (_configured) {
+  Future<void> _ensureBgmConfigured() async {
+    if (_bgmConfigured) {
       return;
     }
     final bgmContext = AudioContextConfig(
       focus: AudioContextConfigFocus.gain,
     ).build();
-    final sfxContext = _sfxContext();
 
     await _bgmPlayer.setAudioContext(bgmContext);
+    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+    await _bgmPlayer.setVolume(_bgmVolume);
+    _bgmConfigured = true;
+  }
+
+  Future<void> _ensureSfxConfigured() async {
+    if (_sfxConfigured) {
+      return;
+    }
+    final sfxContext = _sfxContext();
+
     _sfxPools
       ..clear()
       ..addAll({
@@ -110,7 +125,7 @@ class AppAudio {
         ),
         SoundAssets.win: await _createSfxPool(SoundAssets.win, sfxContext),
       });
-    _configured = true;
+    _sfxConfigured = true;
   }
 
   AudioContext _sfxContext() {
@@ -146,10 +161,8 @@ class AppAudio {
     if (_disposing || !_foreground || !_settings.musicEnabled) {
       return;
     }
-    await _ensureConfigured();
+    await _ensureBgmConfigured();
     _bgmPausedByApp = false;
-    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
-    await _bgmPlayer.setVolume(_bgmVolume);
 
     final state = _bgmPlayer.state;
     if (state == PlayerState.playing) {
@@ -160,9 +173,30 @@ class AppAudio {
       return;
     }
 
-    await _safeAudioCall(
+    final played = await _safeAudioCall(
       () => _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic)),
     );
+    if (!played && !_disposing && _foreground && _settings.musicEnabled) {
+      await _recreateBgmPlayer();
+      await _safeAudioCall(
+        () => _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic)),
+      );
+    }
+  }
+
+  Future<void> _recreateBgmPlayer() async {
+    final oldPlayer = _bgmPlayer;
+    await _bgmStateSub?.cancel();
+    _bgmGeneration++;
+    _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm_$_bgmGeneration');
+    _attachBgmStateListener();
+    _bgmConfigured = false;
+    await _ensureBgmConfigured();
+    try {
+      await oldPlayer.dispose().timeout(const Duration(milliseconds: 500));
+    } catch (_) {
+      // A failed native MediaPlayer can hang on dispose; abandon it safely.
+    }
   }
 
   Future<void> pauseMusic() async {
@@ -201,7 +235,7 @@ class AppAudio {
     }
     _sfxInFlight = true;
     try {
-      await _ensureConfigured();
+      await _ensureSfxConfigured();
       final pool = _sfxPools[assetPath];
       if (pool == null) {
         return;
