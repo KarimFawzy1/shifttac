@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/settings/app_settings_controller.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+
+void _playSettingsHaptic(BuildContext context) {
+  if (!AppSettingsScope.read(context).vibrationEnabled) {
+    return;
+  }
+  HapticFeedback.selectionClick();
+}
 
 /// White grouped card for a settings block (`css/SettingsScreen.css`).
 class SettingsSection extends StatelessWidget {
@@ -142,7 +151,7 @@ class SettingsTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          Feedback.forTap(context);
+          _playSettingsHaptic(context);
           onTap!();
         },
         borderRadius: AppSpacing.borderRadiusDefault,
@@ -216,7 +225,12 @@ class SettingsSwitch extends StatelessWidget {
       toggled: value,
       enabled: enabled,
       child: GestureDetector(
-        onTap: enabled ? () => onChanged!(!value) : null,
+        onTap: enabled
+            ? () {
+                _playSettingsHaptic(context);
+                onChanged!(!value);
+              }
+            : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,

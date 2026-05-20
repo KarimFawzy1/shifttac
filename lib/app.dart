@@ -8,25 +8,25 @@ import 'core/settings/app_settings_controller.dart';
 import 'core/theme/app_theme.dart';
 
 class ShiftTacApp extends StatefulWidget {
-  const ShiftTacApp({super.key});
+  const ShiftTacApp({super.key, required this.settings});
+
+  final AppSettingsController settings;
 
   @override
   State<ShiftTacApp> createState() => _ShiftTacAppState();
 }
 
 class _ShiftTacAppState extends State<ShiftTacApp> {
-  late final AppSettingsController _settings = AppSettingsController();
-
   @override
   void dispose() {
-    _settings.dispose();
+    widget.settings.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AppSettingsScope(
-      settings: _settings,
+      settings: widget.settings,
       child: ScreenUtilInit(
         designSize: AppConstants.designSize,
         minTextAdapt: true,
