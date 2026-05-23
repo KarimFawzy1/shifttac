@@ -2,8 +2,7 @@ name: shifttac
 description: >-
   ShiftTac — a Flutter tic-tac-toe variant where active marks are limited and
   every new placement shifts the board. Product specs live under docs/.
-publish_to: 'none'
-
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
