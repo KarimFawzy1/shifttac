@@ -10,6 +10,7 @@ abstract final class SoundAssets {
   SoundAssets._();
 
   static const tap = 'sounds/tap.wav';
+  static const swipe = 'sounds/swipe.wav';
   static const wrongTap = 'sounds/wrong-tap.wav';
   static const restart = 'sounds/restart.wav';
   static const win = 'sounds/win.wav';
@@ -115,6 +116,7 @@ class AppAudio {
       ..clear()
       ..addAll({
         SoundAssets.tap: await _createSfxPool(SoundAssets.tap, sfxContext),
+        SoundAssets.swipe: await _createSfxPool(SoundAssets.swipe, sfxContext),
         SoundAssets.wrongTap: await _createSfxPool(
           SoundAssets.wrongTap,
           sfxContext,
@@ -219,6 +221,8 @@ class AppAudio {
   }
 
   Future<void> playTap() => _playSfx(SoundAssets.tap);
+
+  Future<void> playSwipe() => _playSfx(SoundAssets.swipe);
 
   Future<void> playWrongTap() => _playSfx(SoundAssets.wrongTap);
 
