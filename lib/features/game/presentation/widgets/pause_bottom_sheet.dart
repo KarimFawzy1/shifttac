@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -47,6 +50,7 @@ class PauseBottomSheet extends StatelessWidget {
     cubit.pauseMatch();
     cubit.clearPauseSheetRequestForBackground();
     _isVisible = true;
+    unawaited(AppAudioScope.read(context).playSwipe());
     return showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -73,7 +77,10 @@ class PauseBottomSheet extends StatelessWidget {
     });
   }
 
-  void _popSheet({bool resumeTimer = true}) {
+  void _popSheet({bool resumeTimer = true, bool playSwipeSfx = true}) {
+    if (playSwipeSfx) {
+      unawaited(AppAudioScope.read(sheetContext).playSwipe());
+    }
     resumeTimerOnClose.value = resumeTimer;
     Navigator.of(sheetContext).pop();
   }
@@ -113,7 +120,8 @@ class PauseBottomSheet extends StatelessWidget {
       onDismiss: () => _popSheet(),
       onResume: () => _popSheet(),
       onRestart: () {
-        _popSheet(resumeTimer: false);
+        unawaited(AppAudioScope.read(sheetContext).playRestart());
+        _popSheet(resumeTimer: false, playSwipeSfx: false);
         cubit.restart();
       },
       onHowToPlay: () => _openRoute(AppRoutes.howToPlay),

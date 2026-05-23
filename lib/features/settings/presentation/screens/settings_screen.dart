@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_scaffold.dart';
+import '../../../../core/widgets/app_scroll_view.dart';
 import '../../../../shared/widgets/screen_header.dart';
 import '../widgets/settings_tile.dart';
 
@@ -47,7 +48,7 @@ class _SettingsBody extends StatelessWidget {
     return ListenableBuilder(
       listenable: settings,
       builder: (context, _) {
-        return SingleChildScrollView(
+        return AppScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

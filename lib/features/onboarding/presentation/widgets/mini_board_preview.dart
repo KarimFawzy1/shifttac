@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/app_scroll_view.dart';
 import '../../../game/presentation/widgets/board_cell.dart';
 
 /// One frame of a 3×3 board (row-major, length 9).
@@ -179,6 +180,9 @@ class MiniBoardShiftAnimation extends StatefulWidget {
 }
 
 class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
+  static const _frameDelay = Duration(milliseconds: 1400);
+  static const _resumePollDelay = Duration(milliseconds: 100);
+
   static final List<MiniBoardFrame> _frames = [
     MiniBoardFrame(const [
       BoardCellAppearance.empty,
@@ -217,20 +221,46 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
 
   int _frameIndex = 0;
 
+  /// Monotonic key for [AnimatedSwitcher]; must change on every frame advance.
+  int _switchKey = 0;
+
+  /// Cancels in-flight [Future.delayed] callbacks when a new one is scheduled.
+  int _scheduleGeneration = 0;
+
+  bool get _isPausedForOverscroll =>
+      ScrollOverscrollScope.maybeOf(context)?.isOverscrolling ?? false;
+
   @override
   void initState() {
     super.initState();
-    _scheduleNextFrame();
+    _scheduleAfter(_frameDelay);
   }
 
-  void _scheduleNextFrame() {
-    Future<void>.delayed(const Duration(milliseconds: 1400), () {
-      if (!mounted) return;
-      setState(() {
-        _frameIndex = (_frameIndex + 1) % _frames.length;
-      });
-      _scheduleNextFrame();
+  @override
+  void dispose() {
+    _scheduleGeneration++;
+    super.dispose();
+  }
+
+  void _scheduleAfter(Duration delay) {
+    final generation = ++_scheduleGeneration;
+    Future<void>.delayed(delay, () {
+      if (!mounted || generation != _scheduleGeneration) return;
+      _onFrameTick();
     });
+  }
+
+  void _onFrameTick() {
+    if (_isPausedForOverscroll) {
+      _scheduleAfter(_resumePollDelay);
+      return;
+    }
+
+    setState(() {
+      _frameIndex = (_frameIndex + 1) % _frames.length;
+      _switchKey++;
+    });
+    _scheduleAfter(_frameDelay);
   }
 
   MiniBoardFrame _frameWithPersistentCells(MiniBoardFrame frame) {
@@ -252,6 +282,8 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final freezeForScroll = _isPausedForOverscroll;
+
     if (reduceMotion) {
       return MiniBoardPreview(
         frame: _frameWithPersistentCells(_frames.last),
@@ -265,11 +297,13 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
     final highlightIndex = _frameIndex == 1 ? 8 : null;
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 400),
+      duration: freezeForScroll
+          ? Duration.zero
+          : const Duration(milliseconds: 400),
       switchInCurve: Curves.easeOut,
       switchOutCurve: Curves.easeIn,
       child: MiniBoardPreview(
-        key: ValueKey<int>(_frameIndex),
+        key: ValueKey<int>(_switchKey),
         frame: frame,
         size: widget.size,
         highlightIndex: highlightIndex,

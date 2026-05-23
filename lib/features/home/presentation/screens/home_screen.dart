@@ -7,6 +7,7 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/widgets/app_scroll_view.dart';
 import '../widgets/home_action_card.dart';
 
 /// Central hub body (`design.md` §HOME SCREEN, `css/HomeScreen.css`).
@@ -17,7 +18,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return AppScrollView(
       child: Column(
         children: [
           SizedBox(height: AppSpacing.stackLg.h),

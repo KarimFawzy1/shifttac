@@ -9,6 +9,7 @@ import 'core/launch/app_launch_gate.dart';
 import 'core/routing/app_router.dart';
 import 'core/settings/app_settings_controller.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/app_scroll_view.dart';
 
 class ShiftTacApp extends StatefulWidget {
   const ShiftTacApp({
@@ -70,6 +71,7 @@ class _ShiftTacAppState extends State<ShiftTacApp> with WidgetsBindingObserver {
               title: AppConstants.appName,
               debugShowCheckedModeBanner: false,
               theme: AppTheme.light,
+              scrollBehavior: const AppScrollBehavior(),
               home: const AppLaunchGate(),
               onGenerateRoute: AppRouter.onGenerateRoute,
             );

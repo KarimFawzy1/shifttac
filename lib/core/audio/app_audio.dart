@@ -29,8 +29,9 @@ class AppAudio {
   AudioPlayer _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm_0');
   final Map<String, AudioPool> _sfxPools = {};
 
-  static const double _bgmVolume = 0.38;
-  static const double _sfxVolume = 0.85;
+  static const double _bgmVolume = 1;
+  static const double _sfxVolume = 0.8;
+  static const double _swipeSfxVolume = 1;
   static const Duration _sfxRecycleDelay = Duration(milliseconds: 1500);
 
   bool _foreground = true;
@@ -46,10 +47,7 @@ class AppAudio {
 
   /// Call once after the app root is mounted to begin BGM if enabled.
   Future<void> initialize() async {
-    await Future.wait([
-      _ensureBgmConfigured(),
-      _ensureSfxConfigured(),
-    ]);
+    await Future.wait([_ensureBgmConfigured(), _ensureSfxConfigured()]);
     await _syncBgm();
   }
 
@@ -123,10 +121,7 @@ class AppAudio {
       final sfxContext = _sfxContext();
       final pools = {
         SoundAssets.tap: await _createSfxPool(SoundAssets.tap, sfxContext),
-        SoundAssets.swipe: await _createSfxPool(
-          SoundAssets.swipe,
-          sfxContext,
-        ),
+        SoundAssets.swipe: await _createSfxPool(SoundAssets.swipe, sfxContext),
         SoundAssets.wrongTap: await _createSfxPool(
           SoundAssets.wrongTap,
           sfxContext,
@@ -266,9 +261,10 @@ class AppAudio {
       return;
     }
 
-    final stop = await _safeAudioResult(
-      () => pool.start(volume: _sfxVolume),
-    );
+    final volume = assetPath == SoundAssets.swipe
+        ? _swipeSfxVolume
+        : _sfxVolume;
+    final stop = await _safeAudioResult(() => pool.start(volume: volume));
     if (stop == null) {
       unawaited(_recreateSfxPool(assetPath));
       return;
