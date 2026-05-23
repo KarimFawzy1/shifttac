@@ -37,17 +37,25 @@ class AppAudio {
   bool _foreground = true;
   bool _disposing = false;
   bool _bgmConfigured = false;
+  bool _bgmSourceReady = false;
   bool _sfxConfigured = false;
   bool _bgmPausedByApp = false;
   bool _lastMusicEnabled;
   int _bgmGeneration = 0;
 
   StreamSubscription<PlayerState>? _bgmStateSub;
+  Future<void>? _initializeFuture;
   Future<void>? _sfxConfigureFuture;
 
-  /// Call once after the app root is mounted to begin BGM if enabled.
-  Future<void> initialize() async {
-    await Future.wait([_ensureBgmConfigured(), _ensureSfxConfigured()]);
+  /// Warms BGM (and SFX pools in the background). Safe to call more than once.
+  Future<void> initialize() {
+    return _initializeFuture ??= _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _ensureBgmConfigured();
+    await _preloadBgmSource();
+    unawaited(_ensureSfxConfigured());
     await _syncBgm();
   }
 
@@ -109,6 +117,19 @@ class AppAudio {
     _bgmConfigured = true;
   }
 
+  /// Loads the BGM asset ahead of [resume] so first playback is not blocked on I/O.
+  Future<void> _preloadBgmSource() async {
+    if (_disposing || _bgmSourceReady) {
+      return;
+    }
+    final loaded = await _safeAudioCall(
+      () => _bgmPlayer.setSource(AssetSource(SoundAssets.backgroundMusic)),
+    );
+    if (loaded) {
+      _bgmSourceReady = true;
+    }
+  }
+
   Future<void> _ensureSfxConfigured() {
     if (_sfxConfigured) {
       return Future.value();
@@ -119,20 +140,21 @@ class AppAudio {
   Future<void> _configureSfx() async {
     try {
       final sfxContext = _sfxContext();
-      final pools = {
-        SoundAssets.tap: await _createSfxPool(SoundAssets.tap, sfxContext),
-        SoundAssets.swipe: await _createSfxPool(SoundAssets.swipe, sfxContext),
-        SoundAssets.wrongTap: await _createSfxPool(
-          SoundAssets.wrongTap,
-          sfxContext,
-        ),
-        SoundAssets.restart: await _createSfxPool(
-          SoundAssets.restart,
-          sfxContext,
-        ),
-        SoundAssets.win: await _createSfxPool(SoundAssets.win, sfxContext),
-        SoundAssets.lose: await _createSfxPool(SoundAssets.lose, sfxContext),
-      };
+      const sfxAssets = [
+        SoundAssets.tap,
+        SoundAssets.swipe,
+        SoundAssets.wrongTap,
+        SoundAssets.restart,
+        SoundAssets.win,
+        SoundAssets.lose,
+      ];
+      final createdPools = await Future.wait(
+        sfxAssets.map((path) => _createSfxPool(path, sfxContext)),
+      );
+      final pools = Map<String, AudioPool>.fromIterables(
+        sfxAssets,
+        createdPools,
+      );
 
       if (_disposing) {
         await Future.wait(pools.values.map((pool) => pool.dispose()));
@@ -194,9 +216,17 @@ class AppAudio {
       return;
     }
 
+    if (_bgmSourceReady) {
+      await _safeAudioCall(_bgmPlayer.resume);
+      return;
+    }
+
     final played = await _safeAudioCall(
       () => _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic)),
     );
+    if (played) {
+      _bgmSourceReady = true;
+    }
     if (!played && !_disposing && _foreground && _settings.musicEnabled) {
       await _recreateBgmPlayer();
       await _safeAudioCall(
@@ -212,7 +242,9 @@ class AppAudio {
     _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm_$_bgmGeneration');
     _attachBgmStateListener();
     _bgmConfigured = false;
+    _bgmSourceReady = false;
     await _ensureBgmConfigured();
+    await _preloadBgmSource();
     try {
       await oldPlayer.dispose().timeout(const Duration(milliseconds: 500));
     } catch (_) {

@@ -29,25 +29,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
   static final MiniBoardFrame _classicFrame = MiniBoardFrame(const [
-    BoardCellAppearance.empty,
+    BoardCellAppearance.xSolid,
+    BoardCellAppearance.xSolid,
+    BoardCellAppearance.oSolid,
     BoardCellAppearance.xSolid,
     BoardCellAppearance.empty,
-    BoardCellAppearance.empty,
-    BoardCellAppearance.oSolid,
-    BoardCellAppearance.empty,
-    BoardCellAppearance.empty,
-    BoardCellAppearance.empty,
-    BoardCellAppearance.empty,
-  ]);
-
-  static final MiniBoardFrame _fadedMarkFrame = MiniBoardFrame(const [
-    BoardCellAppearance.empty,
-    BoardCellAppearance.oSolid,
-    BoardCellAppearance.empty,
     BoardCellAppearance.oSolid,
     BoardCellAppearance.oSolid,
-    BoardCellAppearance.xSolid,
-    BoardCellAppearance.oFaded,
     BoardCellAppearance.empty,
     BoardCellAppearance.empty,
   ]);
@@ -108,7 +96,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Expanded(
                   child: PageView(
                     controller: _pageController,
-                    onPageChanged: (index) => setState(() => _currentPage = index),
+                    onPageChanged: (index) =>
+                        setState(() => _currentPage = index),
                     children: [
                       OnboardingPage(
                         title: 'Looks familiar?',
@@ -122,17 +111,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         title: 'Only 3 marks stay active',
                         description:
                             'Your oldest move disappears when you place a new one.',
-                        visual: const MiniBoardShiftAnimation(),
+                        visual: MiniBoardShiftAnimation.tutorial(size: 302.w),
                       ),
                       OnboardingPage(
                         title: 'Watch the faded mark',
                         description:
                             'The faded mark shows which move disappears next.',
-                        visual: MiniBoardPreview(
-                          frame: _fadedMarkFrame,
-                          size: 296.w,
-                          showTapIndicatorOnIndex: 6,
-                        ),
+                        visual: MiniBoardShiftAnimation.tutorialO(size: 302.w),
                       ),
                     ],
                   ),
@@ -152,10 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       SizedBox(height: AppSpacing.stackLg.h),
                       if (isFirstPage)
-                        PrimaryButton(
-                          label: 'Next',
-                          onPressed: _onNext,
-                        )
+                        PrimaryButton(label: 'Next', onPressed: _onNext)
                       else if (isLastPage)
                         Row(
                           children: [

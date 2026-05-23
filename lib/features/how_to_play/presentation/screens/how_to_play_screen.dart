@@ -10,7 +10,6 @@ import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_scroll_view.dart';
 import '../../../../core/widgets/secondary_button.dart';
 import '../../../../shared/widgets/screen_header.dart';
-import '../../../game/presentation/widgets/board_cell.dart';
 import '../../../onboarding/presentation/widgets/mini_board_preview.dart';
 import '../widgets/how_to_play_board_frames.dart';
 import '../widgets/how_to_play_step.dart';
@@ -111,15 +110,7 @@ class _HowToPlayBody extends StatelessWidget {
                 : 'When you already have three marks, your oldest fades. '
                       'Placing a fourth removes it and '
                       'places your new mark — we call that a shift.',
-            visual: MiniBoardShiftAnimation(
-              size: _boardSize,
-              persistentCells: const {
-                0: BoardCellAppearance.xSolid,
-                3: BoardCellAppearance.xSolid,
-                7: BoardCellAppearance.oSolid,
-              },
-              showIndicatorOnIndex: 1,
-            ),
+            visual: MiniBoardShiftAnimation.tutorial(size: _boardSize),
             semanticLabel:
                 'Step $step. Shifts and faded marks. Oldest fades then '
                 'disappears on fourth placement.',

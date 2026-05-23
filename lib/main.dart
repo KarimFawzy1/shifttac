@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -9,5 +11,6 @@ Future<void> main() async {
   await AppInitializer.initialize();
   final settings = await AppSettingsController.load();
   final audio = AppAudio(settings);
+  unawaited(audio.initialize());
   runApp(ShiftTacApp(settings: settings, audio: audio));
 }

@@ -18,35 +18,53 @@ class OnboardingPage extends StatelessWidget {
   final String description;
   final Widget visual;
 
+  /// Reserves space for up to 2 title lines + 3 description lines so the board
+  /// sits at the same Y on every onboarding step.
+  static double get _headerBlockHeight =>
+      AppTextStyles.displayLg.fontSize! * AppTextStyles.displayLg.height! * 2 +
+      AppSpacing.unit.h +
+      3 +
+      AppTextStyles.bodyLg.fontSize! * AppTextStyles.bodyLg.height! * 3;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 48.h),
+        SizedBox(height: 70.h),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.containerPadding.w),
-          child: Column(
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.displayLg.copyWith(color: AppColors.onSurface),
-              ),
-              SizedBox(height: AppSpacing.unit.h + 3),
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.bodyLg.copyWith(
-                  color: AppColors.onSurfaceVariant,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.containerPadding.w,
+          ),
+          child: SizedBox(
+            height: _headerBlockHeight,
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.displayLg.copyWith(
+                    color: AppColors.onSurface,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: AppSpacing.unit.h + 3),
+                Text(
+                  description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodyLg.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(height: AppSpacing.stackLg.h),
-        Expanded(
-          child: Center(child: visual),
-        ),
+        visual,
+        const Spacer(),
       ],
     );
   }

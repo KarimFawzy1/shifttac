@@ -30,9 +30,6 @@ class _ShiftTacAppState extends State<ShiftTacApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(widget.audio.initialize());
-    });
   }
 
   @override

@@ -157,19 +157,60 @@ class _MiniBoardCell extends StatelessWidget {
   }
 }
 
-/// Animated shift demo for onboarding page 2.
+/// Which player's mark fades and shifts in [MiniBoardShiftAnimation].
+enum MiniBoardShiftPlayer { x, o }
+
+/// Animated shift demo (onboarding page 2–3, How to Play).
 class MiniBoardShiftAnimation extends StatefulWidget {
   const MiniBoardShiftAnimation({
     super.key,
     this.size,
     this.persistentCells = const {},
+    this.player = MiniBoardShiftPlayer.x,
     this.showIndicatorOnIndex,
   });
+
+  /// Background marks for the X-shift tutorial (onboarding page 2, How to Play).
+  static const Map<int, BoardCellAppearance> tutorialPersistentCells = {
+    0: BoardCellAppearance.xSolid,
+    3: BoardCellAppearance.xSolid,
+    7: BoardCellAppearance.oSolid,
+  };
+
+  /// Background marks for the O-shift tutorial (onboarding page 3).
+  static const Map<int, BoardCellAppearance> tutorialOPersistentCells = {
+    0: BoardCellAppearance.xSolid,
+    3: BoardCellAppearance.xSolid,
+    7: BoardCellAppearance.oSolid,
+  };
+
+  /// X fades at index 1, then a new X lands at index 8.
+  factory MiniBoardShiftAnimation.tutorial({double? size}) {
+    return MiniBoardShiftAnimation(
+      size: size,
+      persistentCells: tutorialPersistentCells,
+      player: MiniBoardShiftPlayer.x,
+    );
+  }
+
+  static const int tutorialOIndicatorIndex = 2;
+
+  /// O fades at index 2, then a new O lands at index 8.
+  factory MiniBoardShiftAnimation.tutorialO({double? size}) {
+    return MiniBoardShiftAnimation(
+      size: size,
+      persistentCells: tutorialOPersistentCells,
+      player: MiniBoardShiftPlayer.o,
+      showIndicatorOnIndex: tutorialOIndicatorIndex,
+    );
+  }
 
   final double? size;
 
   /// Merged into every animation frame (e.g. background marks on the board).
   final Map<int, BoardCellAppearance> persistentCells;
+
+  final MiniBoardShiftPlayer player;
 
   /// Cell that shows the 👀 cue (e.g. the mark queued to shift away).
   final int? showIndicatorOnIndex;
@@ -183,7 +224,9 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
   static const _frameDelay = Duration(milliseconds: 1400);
   static const _resumePollDelay = Duration(milliseconds: 100);
 
-  static final List<MiniBoardFrame> _frames = [
+  static const _newMarkIndex = 8;
+
+  static final List<MiniBoardFrame> _xFrames = [
     MiniBoardFrame(const [
       BoardCellAppearance.empty,
       BoardCellAppearance.xSolid,
@@ -218,6 +261,47 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
       BoardCellAppearance.xSolid,
     ]),
   ];
+
+  static final List<MiniBoardFrame> _oFrames = [
+    MiniBoardFrame(const [
+      BoardCellAppearance.empty,
+      BoardCellAppearance.xSolid,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.empty,
+    ]),
+    MiniBoardFrame(const [
+      BoardCellAppearance.empty,
+      BoardCellAppearance.xSolid,
+      BoardCellAppearance.oFaded,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.oSolid,
+    ]),
+    MiniBoardFrame(const [
+      BoardCellAppearance.empty,
+      BoardCellAppearance.xSolid,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.empty,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.oSolid,
+      BoardCellAppearance.oSolid,
+    ]),
+  ];
+
+  List<MiniBoardFrame> get _frames => switch (widget.player) {
+    MiniBoardShiftPlayer.x => _xFrames,
+    MiniBoardShiftPlayer.o => _oFrames,
+  };
 
   int _frameIndex = 0;
 
@@ -288,13 +372,13 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
       return MiniBoardPreview(
         frame: _frameWithPersistentCells(_frames.last),
         size: widget.size,
-        highlightIndex: 8,
+        highlightIndex: _newMarkIndex,
         showTapIndicatorOnIndex: widget.showIndicatorOnIndex,
       );
     }
 
     final frame = _frameWithPersistentCells(_frames[_frameIndex]);
-    final highlightIndex = _frameIndex == 1 ? 8 : null;
+    final highlightIndex = _frameIndex == 1 ? _newMarkIndex : null;
 
     return AnimatedSwitcher(
       duration: freezeForScroll
