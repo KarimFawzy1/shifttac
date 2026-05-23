@@ -14,6 +14,7 @@ abstract final class SoundAssets {
   static const wrongTap = 'sounds/wrong-tap.wav';
   static const restart = 'sounds/restart.wav';
   static const win = 'sounds/win.wav';
+  static const lose = 'sounds/lose.wav';
   static const backgroundMusic = 'sounds/background.mp3';
 }
 
@@ -30,21 +31,25 @@ class AppAudio {
 
   static const double _bgmVolume = 0.38;
   static const double _sfxVolume = 0.85;
+  static const Duration _sfxRecycleDelay = Duration(milliseconds: 1500);
 
   bool _foreground = true;
   bool _disposing = false;
   bool _bgmConfigured = false;
   bool _sfxConfigured = false;
   bool _bgmPausedByApp = false;
-  bool _sfxInFlight = false;
   bool _lastMusicEnabled;
   int _bgmGeneration = 0;
 
   StreamSubscription<PlayerState>? _bgmStateSub;
+  Future<void>? _sfxConfigureFuture;
 
   /// Call once after the app root is mounted to begin BGM if enabled.
   Future<void> initialize() async {
-    await _ensureBgmConfigured();
+    await Future.wait([
+      _ensureBgmConfigured(),
+      _ensureSfxConfigured(),
+    ]);
     await _syncBgm();
   }
 
@@ -106,17 +111,22 @@ class AppAudio {
     _bgmConfigured = true;
   }
 
-  Future<void> _ensureSfxConfigured() async {
+  Future<void> _ensureSfxConfigured() {
     if (_sfxConfigured) {
-      return;
+      return Future.value();
     }
-    final sfxContext = _sfxContext();
+    return _sfxConfigureFuture ??= _configureSfx();
+  }
 
-    _sfxPools
-      ..clear()
-      ..addAll({
+  Future<void> _configureSfx() async {
+    try {
+      final sfxContext = _sfxContext();
+      final pools = {
         SoundAssets.tap: await _createSfxPool(SoundAssets.tap, sfxContext),
-        SoundAssets.swipe: await _createSfxPool(SoundAssets.swipe, sfxContext),
+        SoundAssets.swipe: await _createSfxPool(
+          SoundAssets.swipe,
+          sfxContext,
+        ),
         SoundAssets.wrongTap: await _createSfxPool(
           SoundAssets.wrongTap,
           sfxContext,
@@ -126,8 +136,21 @@ class AppAudio {
           sfxContext,
         ),
         SoundAssets.win: await _createSfxPool(SoundAssets.win, sfxContext),
-      });
-    _sfxConfigured = true;
+        SoundAssets.lose: await _createSfxPool(SoundAssets.lose, sfxContext),
+      };
+
+      if (_disposing) {
+        await Future.wait(pools.values.map((pool) => pool.dispose()));
+        return;
+      }
+
+      _sfxPools
+        ..clear()
+        ..addAll(pools);
+      _sfxConfigured = true;
+    } finally {
+      _sfxConfigureFuture = null;
+    }
   }
 
   AudioContext _sfxContext() {
@@ -143,8 +166,9 @@ class AppAudio {
     return AudioPool.create(
       source: AssetSource(assetPath),
       minPlayers: 1,
-      maxPlayers: 2,
+      maxPlayers: 3,
       audioContext: audioContext,
+      playerMode: PlayerMode.lowLatency,
     );
   }
 
@@ -230,26 +254,46 @@ class AppAudio {
 
   Future<void> playWin() => _playSfx(SoundAssets.win);
 
+  Future<void> playLose() => _playSfx(SoundAssets.lose);
+
   Future<void> _playSfx(String assetPath) async {
-    if (_disposing ||
-        !_foreground ||
-        !_settings.soundEffectsEnabled ||
-        _sfxInFlight) {
+    if (_disposing || !_foreground || !_settings.soundEffectsEnabled) {
       return;
     }
-    _sfxInFlight = true;
-    try {
-      await _ensureSfxConfigured();
-      final pool = _sfxPools[assetPath];
-      if (pool == null) {
-        return;
-      }
-      await _safeAudioCall(() async {
-        await pool.start(volume: _sfxVolume);
-      });
-      unawaited(_ensureBgmAfterSfx());
-    } finally {
-      _sfxInFlight = false;
+    await _ensureSfxConfigured();
+    final pool = _sfxPools[assetPath];
+    if (pool == null) {
+      return;
+    }
+
+    final stop = await _safeAudioResult(
+      () => pool.start(volume: _sfxVolume),
+    );
+    if (stop == null) {
+      unawaited(_recreateSfxPool(assetPath));
+      return;
+    }
+
+    unawaited(_recycleSfxPlayer(stop));
+    unawaited(_ensureBgmAfterSfx());
+  }
+
+  Future<void> _recycleSfxPlayer(StopFunction stop) async {
+    await Future<void>.delayed(_sfxRecycleDelay);
+    if (!_disposing) {
+      await _safeAudioCall(stop);
+    }
+  }
+
+  Future<void> _recreateSfxPool(String assetPath) async {
+    if (_disposing) {
+      return;
+    }
+    final replacement = await _createSfxPool(assetPath, _sfxContext());
+    final previous = _sfxPools[assetPath];
+    _sfxPools[assetPath] = replacement;
+    if (previous != null) {
+      unawaited(_safeAudioCall(previous.dispose));
     }
   }
 
@@ -274,16 +318,23 @@ class AppAudio {
   }
 
   Future<bool> _safeAudioCall(Future<void> Function() operation) async {
-    try {
-      await operation().timeout(const Duration(seconds: 3));
+    final completed = await _safeAudioResult(() async {
+      await operation();
       return true;
+    });
+    return completed ?? false;
+  }
+
+  Future<T?> _safeAudioResult<T>(Future<T> Function() operation) async {
+    try {
+      return await operation().timeout(const Duration(seconds: 3));
     } on TimeoutException {
       // Native players can occasionally hang on Android. Keep the UI alive and
       // let the next settings/lifecycle transition retry playback.
-      return false;
+      return null;
     } catch (_) {
       // Audio should never take down the app; failed one-shots are disposable.
-      return false;
+      return null;
     }
   }
 }
