@@ -99,6 +99,7 @@ class _SettingsBody extends StatelessWidget {
                     onChangeEnd: settings.setSfxVolume,
                     onPercentTap: settings.toggleSfxMute,
                     playTapOnToggleOff: false,
+                    playTapOnSliderStep: true,
                   ),
                   SettingsVolumeTile(
                     iconAsset: IconConstant.music,

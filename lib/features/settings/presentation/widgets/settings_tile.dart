@@ -280,18 +280,22 @@ class SettingsSwitch extends StatelessWidget {
 
 /// Volume slider styled like settings toggles (`css/SettingsScreen.css`).
 ///
-/// Snaps to [AppSettingsDefaults.volumeStep] (5%) and fires haptic on each step.
+/// Snaps to [AppSettingsDefaults.volumeStep] (5%) and feedback on each step.
 class SettingsSlider extends StatefulWidget {
   const SettingsSlider({
     super.key,
     required this.value,
     required this.onChanged,
     this.onChangeEnd,
+    this.playTapOnStep = false,
   });
 
   final double value;
   final ValueChanged<double>? onChanged;
   final ValueChanged<double>? onChangeEnd;
+
+  /// Plays [tap.wav] on each 5% step (after [onChanged]) for volume preview.
+  final bool playTapOnStep;
 
   @override
   State<SettingsSlider> createState() => _SettingsSliderState();
@@ -332,7 +336,13 @@ class _SettingsSliderState extends State<SettingsSlider> {
     final step = _stepIndex(stepped);
     if (step != _lastStepIndex) {
       _lastStepIndex = step;
-      _playSettingsHaptic(context);
+      widget.onChanged?.call(stepped);
+      if (widget.playTapOnStep) {
+        _playSettingsTap(context, playSound: stepped > 0);
+      } else {
+        _playSettingsHaptic(context);
+      }
+      return;
     }
     widget.onChanged?.call(stepped);
   }
@@ -387,6 +397,7 @@ class SettingsVolumeTile extends StatelessWidget {
     this.onChangeEnd,
     this.onPercentTap,
     this.playTapOnToggleOff = true,
+    this.playTapOnSliderStep = false,
   });
 
   final String? iconAsset;
@@ -400,6 +411,9 @@ class SettingsVolumeTile extends StatelessWidget {
 
   /// When false, [tap.wav] plays only when unmuting (toggle on), not when muting.
   final bool playTapOnToggleOff;
+
+  /// Plays [tap.wav] on each slider step for audible volume preview.
+  final bool playTapOnSliderStep;
 
   @override
   Widget build(BuildContext context) {
@@ -490,6 +504,7 @@ class SettingsVolumeTile extends StatelessWidget {
             value: steppedValue,
             onChanged: onChanged,
             onChangeEnd: onChangeEnd,
+            playTapOnStep: playTapOnSliderStep,
           ),
         ],
       ),
