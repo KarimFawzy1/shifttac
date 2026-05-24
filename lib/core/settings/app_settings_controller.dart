@@ -154,7 +154,10 @@ class AppSettingsController extends ChangeNotifier {
     }
   }
 
-  /// Updates BGM level (0–1). Zero mutes music. Persists when [persist] is true.
+  /// Updates BGM level (0–1). Zero mutes music.
+  ///
+  /// When [persist] is false (live slider drag), state updates without
+  /// [notifyListeners]. Call again with [persist] true on release to refresh UI.
   void setBgmVolume(double value, {bool persist = true}) {
     _applyVolume(
       clamped: _clampVolume(value),
@@ -170,7 +173,10 @@ class AppSettingsController extends ChangeNotifier {
     );
   }
 
-  /// Updates SFX level (0–1). Zero mutes effects. Persists when [persist] is true.
+  /// Updates SFX level (0–1). Zero mutes effects.
+  ///
+  /// When [persist] is false (live slider drag), state updates without
+  /// [notifyListeners]. Call again with [persist] true on release to refresh UI.
   void setSfxVolume(double value, {bool persist = true}) {
     _applyVolume(
       clamped: _clampVolume(value),
@@ -231,6 +237,9 @@ class AppSettingsController extends ChangeNotifier {
       }
       setVolume(clamped);
       setEnabled(enabled);
+    }
+
+    if (persist) {
       notifyListeners();
     }
 

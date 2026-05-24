@@ -15,18 +15,31 @@ void main() {
       final controller = AppSettingsController(prefs: prefs);
 
       controller.setSfxVolume(0.5, persist: false);
-      controller.setBgmVolume(0.25, persist: false);
+      controller.setBgmVolume(0.3, persist: false);
 
       controller.setSfxVolume(0.5);
-      controller.setBgmVolume(0.25);
+      controller.setBgmVolume(0.3);
 
       await Future<void>.delayed(Duration.zero);
 
       final snapshot = await prefs.load();
       expect(snapshot.sfxVolume, 0.5);
-      expect(snapshot.bgmVolume, 0.25);
+      expect(snapshot.bgmVolume, AppSettingsDefaults.snapVolume(0.3));
       expect(snapshot.soundEffectsEnabled, isTrue);
       expect(snapshot.musicEnabled, isTrue);
+    });
+
+    test('live slider updates do not notify until persist', () {
+      var notifyCount = 0;
+      final controller = AppSettingsController();
+      controller.addListener(() => notifyCount++);
+
+      controller.setSfxVolume(0.5, persist: false);
+      expect(controller.sfxVolume, 0.5);
+      expect(notifyCount, 0);
+
+      controller.setSfxVolume(0.5);
+      expect(notifyCount, 1);
     });
 
     test('zero volume persists as disabled and keeps last level', () async {
@@ -40,7 +53,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       final snapshot = await prefs.load();
-      expect(snapshot.sfxVolume, 0.45);
+      expect(snapshot.sfxVolume, 0.5);
       expect(snapshot.soundEffectsEnabled, isFalse);
     });
 

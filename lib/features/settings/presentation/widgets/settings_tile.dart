@@ -280,7 +280,7 @@ class SettingsSwitch extends StatelessWidget {
 
 /// Volume slider styled like settings toggles (`css/SettingsScreen.css`).
 ///
-/// Snaps to [AppSettingsDefaults.volumeStep] (5%) and feedback on each step.
+/// Snaps to [AppSettingsDefaults.volumeStep] (10%) and feedback on each step.
 class SettingsSlider extends StatefulWidget {
   const SettingsSlider({
     super.key,
@@ -294,7 +294,7 @@ class SettingsSlider extends StatefulWidget {
   final ValueChanged<double>? onChanged;
   final ValueChanged<double>? onChangeEnd;
 
-  /// Plays [tap.wav] on each 5% step (after [onChanged]) for volume preview.
+  /// Plays [tap.wav] on each step (after [onChanged]) for volume preview.
   final bool playTapOnStep;
 
   @override
@@ -302,7 +302,10 @@ class SettingsSlider extends StatefulWidget {
 }
 
 class _SettingsSliderState extends State<SettingsSlider> {
+  static const Duration _previewFeedbackThrottle = Duration(milliseconds: 120);
+
   int? _lastStepIndex;
+  DateTime? _lastPreviewFeedbackAt;
 
   static int _stepIndex(double volume) =>
       (AppSettingsDefaults.snapVolume(volume) / AppSettingsDefaults.volumeStep)
@@ -310,6 +313,17 @@ class _SettingsSliderState extends State<SettingsSlider> {
 
   void _syncStepIndex(double volume) {
     _lastStepIndex = _stepIndex(volume);
+  }
+
+  bool _tryThrottlePreviewFeedback() {
+    final now = DateTime.now();
+    final last = _lastPreviewFeedbackAt;
+    if (last != null &&
+        now.difference(last) < _previewFeedbackThrottle) {
+      return false;
+    }
+    _lastPreviewFeedbackAt = now;
+    return true;
   }
 
   @override
@@ -337,10 +351,12 @@ class _SettingsSliderState extends State<SettingsSlider> {
     if (step != _lastStepIndex) {
       _lastStepIndex = step;
       widget.onChanged?.call(stepped);
-      if (widget.playTapOnStep) {
-        _playSettingsTap(context, playSound: stepped > 0);
-      } else {
-        _playSettingsHaptic(context);
+      if (_tryThrottlePreviewFeedback()) {
+        if (widget.playTapOnStep) {
+          _playSettingsTap(context, playSound: stepped > 0);
+        } else {
+          _playSettingsHaptic(context);
+        }
       }
       return;
     }
@@ -350,6 +366,7 @@ class _SettingsSliderState extends State<SettingsSlider> {
   void _handleChangeEnd(double raw) {
     final stepped = AppSettingsDefaults.snapVolume(raw);
     _syncStepIndex(stepped);
+    _lastPreviewFeedbackAt = null;
     widget.onChangeEnd?.call(stepped);
   }
 
@@ -385,7 +402,7 @@ class _SettingsSliderState extends State<SettingsSlider> {
 }
 
 /// Settings row with title, subtitle, volume %, and an integrated slider.
-class SettingsVolumeTile extends StatelessWidget {
+class SettingsVolumeTile extends StatefulWidget {
   const SettingsVolumeTile({
     super.key,
     this.iconAsset,
@@ -416,8 +433,29 @@ class SettingsVolumeTile extends StatelessWidget {
   final bool playTapOnSliderStep;
 
   @override
+  State<SettingsVolumeTile> createState() => _SettingsVolumeTileState();
+}
+
+class _SettingsVolumeTileState extends State<SettingsVolumeTile> {
+  /// Local level shown while dragging; controller defers [notifyListeners].
+  double? _dragVolume;
+
+  double get _displayVolume =>
+      _dragVolume ?? AppSettingsDefaults.snapVolume(widget.value);
+
+  void _onSliderChanged(double volume) {
+    setState(() => _dragVolume = volume);
+    widget.onChanged(volume);
+  }
+
+  void _onSliderEnd(double volume) {
+    setState(() => _dragVolume = null);
+    widget.onChangeEnd?.call(volume);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final steppedValue = AppSettingsDefaults.snapVolume(value);
+    final steppedValue = _displayVolume;
     final isMuted = steppedValue == 0;
     final percentLabel = '${(steppedValue * 100).round()}%';
 
@@ -432,24 +470,24 @@ class SettingsVolumeTile extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _SettingsIconBadge(iconAsset: iconAsset, icon: icon),
+              _SettingsIconBadge(iconAsset: widget.iconAsset, icon: widget.icon),
               SizedBox(width: AppSpacing.stackMd.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      widget.title,
                       style: AppTextStyles.bodyLg.copyWith(
                         color: isMuted
                             ? AppColors.onSurfaceVariant
                             : AppColors.onSurface,
                       ),
                     ),
-                    if (subtitle != null) ...[
+                    if (widget.subtitle != null) ...[
                       SizedBox(height: 2.h),
                       Text(
-                        subtitle!,
+                        widget.subtitle!,
                         style: AppTextStyles.labelSm.copyWith(
                           color: AppColors.outline,
                         ),
@@ -461,23 +499,24 @@ class SettingsVolumeTile extends StatelessWidget {
               SizedBox(width: AppSpacing.stackSm.w),
               Semantics(
                 button: true,
-                label: isMuted ? 'Unmute $title' : 'Mute $title',
+                label: isMuted ? 'Unmute ${widget.title}' : 'Mute ${widget.title}',
                 child: GestureDetector(
-                  onTap: onPercentTap == null
+                  onTap: widget.onPercentTap == null
                       ? null
                       : () {
+                          setState(() => _dragVolume = null);
                           final unmuting = isMuted;
-                          if (unmuting && !playTapOnToggleOff) {
+                          if (unmuting && !widget.playTapOnToggleOff) {
                             // SFX is still disabled until unmute; play tap after restore.
-                            onPercentTap!();
+                            widget.onPercentTap!();
                             _playSettingsTap(context);
                             return;
                           }
                           _playSettingsTap(
                             context,
-                            playSound: unmuting || playTapOnToggleOff,
+                            playSound: unmuting || widget.playTapOnToggleOff,
                           );
-                          onPercentTap!();
+                          widget.onPercentTap!();
                         },
                   behavior: HitTestBehavior.opaque,
                   child: Padding(
@@ -502,9 +541,9 @@ class SettingsVolumeTile extends StatelessWidget {
           SizedBox(height: AppSpacing.stackSm.h),
           SettingsSlider(
             value: steppedValue,
-            onChanged: onChanged,
-            onChangeEnd: onChangeEnd,
-            playTapOnStep: playTapOnSliderStep,
+            onChanged: _onSliderChanged,
+            onChangeEnd: _onSliderEnd,
+            playTapOnStep: widget.playTapOnSliderStep,
           ),
         ],
       ),

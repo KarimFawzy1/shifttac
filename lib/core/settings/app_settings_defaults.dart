@@ -6,8 +6,8 @@ abstract final class AppSettingsDefaults {
   static const double sfxVolume = 0.8;
   static const double swipeSfxVolume = 0.8;
 
-  /// Volume slider step (5%).
-  static const double volumeStep = 0.05;
+  /// Volume slider step (10%).
+  static const double volumeStep = 0.1;
 
   static double snapVolume(double value) {
     final steps = (value / volumeStep).round();
