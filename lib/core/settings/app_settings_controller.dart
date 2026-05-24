@@ -15,18 +15,31 @@ class AppSettingsController extends ChangeNotifier {
     bool vibrationEnabled = true,
     double bgmVolume = AppSettingsDefaults.bgmVolume,
     double sfxVolume = AppSettingsDefaults.sfxVolume,
+    double? bgmVolumeBeforeMute,
+    double? sfxVolumeBeforeMute,
     AppSettingsPrefs? prefs,
   })  : _prefs = prefs,
         _soundEffectsEnabled = soundEffectsEnabled,
         _musicEnabled = musicEnabled,
         _vibrationEnabled = vibrationEnabled,
         _bgmVolume = _clampVolume(bgmVolume),
-        _sfxVolume = _clampVolume(sfxVolume);
+        _sfxVolume = _clampVolume(sfxVolume),
+        _bgmVolumeBeforeMute = _clampVolume(
+          bgmVolumeBeforeMute ??
+              (bgmVolume > 0 ? bgmVolume : AppSettingsDefaults.bgmVolume),
+        ),
+        _sfxVolumeBeforeMute = _clampVolume(
+          sfxVolumeBeforeMute ??
+              (sfxVolume > 0 ? sfxVolume : AppSettingsDefaults.sfxVolume),
+        );
 
   /// Loads persisted settings before the first frame.
   static Future<AppSettingsController> load() async {
     final prefs = AppSettingsPrefs();
     final snapshot = await prefs.load();
+    final bgmStored = _clampVolume(snapshot.bgmVolume);
+    final sfxStored = _clampVolume(snapshot.sfxVolume);
+
     return AppSettingsController(
       prefs: prefs,
       soundEffectsEnabled: snapshot.soundEffectsEnabled,
@@ -34,14 +47,20 @@ class AppSettingsController extends ChangeNotifier {
       vibrationEnabled: snapshot.vibrationEnabled,
       bgmVolume: _volumeForEnabled(
         enabled: snapshot.musicEnabled,
-        stored: snapshot.bgmVolume,
+        stored: bgmStored,
         defaultVolume: AppSettingsDefaults.bgmVolume,
       ),
       sfxVolume: _volumeForEnabled(
         enabled: snapshot.soundEffectsEnabled,
-        stored: snapshot.sfxVolume,
+        stored: sfxStored,
         defaultVolume: AppSettingsDefaults.sfxVolume,
       ),
+      bgmVolumeBeforeMute: snapshot.musicEnabled
+          ? null
+          : (bgmStored > 0 ? bgmStored : AppSettingsDefaults.bgmVolume),
+      sfxVolumeBeforeMute: snapshot.soundEffectsEnabled
+          ? null
+          : (sfxStored > 0 ? sfxStored : AppSettingsDefaults.sfxVolume),
     );
   }
 
@@ -66,6 +85,8 @@ class AppSettingsController extends ChangeNotifier {
   bool _vibrationEnabled;
   double _bgmVolume;
   double _sfxVolume;
+  double _bgmVolumeBeforeMute;
+  double _sfxVolumeBeforeMute;
 
   bool get soundEffectsEnabled => _soundEffectsEnabled;
 
@@ -83,15 +104,20 @@ class AppSettingsController extends ChangeNotifier {
     }
     _soundEffectsEnabled = value;
     if (!value) {
+      if (_sfxVolume > 0) {
+        _sfxVolumeBeforeMute = _sfxVolume;
+      }
       _sfxVolume = 0;
     } else if (_sfxVolume == 0) {
-      _sfxVolume = AppSettingsDefaults.sfxVolume;
+      _sfxVolume = _sfxVolumeBeforeMute;
     }
     notifyListeners();
     final store = _prefs;
     if (store != null) {
       unawaited(store.setSoundEffectsEnabled(value));
-      unawaited(store.setSfxVolume(_sfxVolume));
+      unawaited(
+        store.setSfxVolume(value ? _sfxVolume : _sfxVolumeBeforeMute),
+      );
     }
   }
 
@@ -101,15 +127,18 @@ class AppSettingsController extends ChangeNotifier {
     }
     _musicEnabled = value;
     if (!value) {
+      if (_bgmVolume > 0) {
+        _bgmVolumeBeforeMute = _bgmVolume;
+      }
       _bgmVolume = 0;
     } else if (_bgmVolume == 0) {
-      _bgmVolume = AppSettingsDefaults.bgmVolume;
+      _bgmVolume = _bgmVolumeBeforeMute;
     }
     notifyListeners();
     final store = _prefs;
     if (store != null) {
       unawaited(store.setMusicEnabled(value));
-      unawaited(store.setBgmVolume(_bgmVolume));
+      unawaited(store.setBgmVolume(value ? _bgmVolume : _bgmVolumeBeforeMute));
     }
   }
 
@@ -133,6 +162,8 @@ class AppSettingsController extends ChangeNotifier {
       isEnabled: () => _musicEnabled,
       setEnabled: (enabled) => _musicEnabled = enabled,
       setVolume: (volume) => _bgmVolume = volume,
+      volumeBeforeMute: _bgmVolumeBeforeMute,
+      setVolumeBeforeMute: (volume) => _bgmVolumeBeforeMute = volume,
       persistVolume: _prefs?.setBgmVolume,
       persistEnabled: _prefs?.setMusicEnabled,
       persist: persist,
@@ -147,10 +178,30 @@ class AppSettingsController extends ChangeNotifier {
       isEnabled: () => _soundEffectsEnabled,
       setEnabled: (enabled) => _soundEffectsEnabled = enabled,
       setVolume: (volume) => _sfxVolume = volume,
+      volumeBeforeMute: _sfxVolumeBeforeMute,
+      setVolumeBeforeMute: (volume) => _sfxVolumeBeforeMute = volume,
       persistVolume: _prefs?.setSfxVolume,
       persistEnabled: _prefs?.setSoundEffectsEnabled,
       persist: persist,
     );
+  }
+
+  /// Toggles SFX mute while preserving the last non-zero level for unmute.
+  void toggleSfxMute() {
+    if (_sfxVolume > 0) {
+      setSfxVolume(0);
+      return;
+    }
+    setSfxVolume(_sfxVolumeBeforeMute);
+  }
+
+  /// Toggles BGM mute while preserving the last non-zero level for unmute.
+  void toggleBgmMute() {
+    if (_bgmVolume > 0) {
+      setBgmVolume(0);
+      return;
+    }
+    setBgmVolume(_bgmVolumeBeforeMute);
   }
 
   void _applyVolume({
@@ -159,6 +210,8 @@ class AppSettingsController extends ChangeNotifier {
     required bool Function() isEnabled,
     required void Function(bool enabled) setEnabled,
     required void Function(double volume) setVolume,
+    required double volumeBeforeMute,
+    required void Function(double volume) setVolumeBeforeMute,
     required Future<void> Function(double volume)? persistVolume,
     required Future<void> Function(bool enabled)? persistEnabled,
     required bool persist,
@@ -166,8 +219,16 @@ class AppSettingsController extends ChangeNotifier {
     final enabled = clamped > 0;
     final volumeChanged = (currentVolume - clamped).abs() >= 0.001;
     final enabledChanged = isEnabled() != enabled;
+    final rememberedVolume = clamped > 0
+        ? clamped
+        : (currentVolume > 0 ? currentVolume : volumeBeforeMute);
 
     if (volumeChanged || enabledChanged) {
+      if (clamped > 0) {
+        setVolumeBeforeMute(clamped);
+      } else if (currentVolume > 0) {
+        setVolumeBeforeMute(currentVolume);
+      }
       setVolume(clamped);
       setEnabled(enabled);
       notifyListeners();
@@ -179,7 +240,7 @@ class AppSettingsController extends ChangeNotifier {
     final storeVolume = persistVolume;
     final storeEnabled = persistEnabled;
     if (storeVolume != null) {
-      unawaited(storeVolume(clamped));
+      unawaited(storeVolume(rememberedVolume));
     }
     if (storeEnabled != null) {
       unawaited(storeEnabled(enabled));

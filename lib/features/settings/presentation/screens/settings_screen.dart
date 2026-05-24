@@ -97,6 +97,8 @@ class _SettingsBody extends StatelessWidget {
                     onChanged: (value) =>
                         settings.setSfxVolume(value, persist: false),
                     onChangeEnd: settings.setSfxVolume,
+                    onPercentTap: settings.toggleSfxMute,
+                    playTapOnToggleOff: false,
                   ),
                   SettingsVolumeTile(
                     iconAsset: IconConstant.music,
@@ -106,6 +108,7 @@ class _SettingsBody extends StatelessWidget {
                     onChanged: (value) =>
                         settings.setBgmVolume(value, persist: false),
                     onChangeEnd: settings.setBgmVolume,
+                    onPercentTap: settings.toggleBgmMute,
                   ),
                 ],
               ),

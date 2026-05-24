@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shifttac/core/settings/app_settings_controller.dart';
+import 'package:shifttac/core/settings/app_settings_defaults.dart';
 import 'package:shifttac/core/settings/app_settings_prefs.dart';
 
 void main() {
@@ -28,18 +29,35 @@ void main() {
       expect(snapshot.musicEnabled, isTrue);
     });
 
-    test('zero volume persists as disabled', () async {
+    test('zero volume persists as disabled and keeps last level', () async {
       final prefs = AppSettingsPrefs();
       final controller = AppSettingsController(prefs: prefs);
 
-      controller.setSfxVolume(0, persist: false);
+      controller.setSfxVolume(0.45, persist: false);
+      controller.setSfxVolume(0);
       controller.setSfxVolume(0);
 
       await Future<void>.delayed(Duration.zero);
 
       final snapshot = await prefs.load();
-      expect(snapshot.sfxVolume, 0);
+      expect(snapshot.sfxVolume, 0.45);
       expect(snapshot.soundEffectsEnabled, isFalse);
+    });
+
+    test('toggleSfxMute restores previous level', () {
+      final controller = AppSettingsController();
+
+      controller.setSfxVolume(0.6, persist: false);
+      controller.toggleSfxMute();
+      expect(controller.sfxVolume, 0);
+      expect(controller.soundEffectsEnabled, isFalse);
+
+      controller.toggleSfxMute();
+      expect(
+        controller.sfxVolume,
+        AppSettingsDefaults.snapVolume(0.6),
+      );
+      expect(controller.soundEffectsEnabled, isTrue);
     });
   });
 }

@@ -12,8 +12,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
-void _playSettingsTap(BuildContext context) {
-  unawaited(AppAudioScope.read(context).playTap());
+void _playSettingsTap(BuildContext context, {bool playSound = true}) {
+  if (playSound) {
+    unawaited(AppAudioScope.read(context).playTap());
+  }
   if (!AppSettingsScope.read(context).vibrationEnabled) {
     return;
   }
@@ -240,10 +242,8 @@ class SettingsSwitch extends StatelessWidget {
         onTap: enabled
             ? () {
                 final nextValue = !value;
+                _playSettingsTap(context);
                 onChanged!(nextValue);
-                if (nextValue) {
-                  _playSettingsTap(context);
-                }
               }
             : null,
         child: AnimatedContainer(
@@ -385,6 +385,8 @@ class SettingsVolumeTile extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.onChangeEnd,
+    this.onPercentTap,
+    this.playTapOnToggleOff = true,
   });
 
   final String? iconAsset;
@@ -394,6 +396,10 @@ class SettingsVolumeTile extends StatelessWidget {
   final double value;
   final ValueChanged<double> onChanged;
   final ValueChanged<double>? onChangeEnd;
+  final VoidCallback? onPercentTap;
+
+  /// When false, [tap.wav] plays only when unmuting (toggle on), not when muting.
+  final bool playTapOnToggleOff;
 
   @override
   Widget build(BuildContext context) {
@@ -439,12 +445,42 @@ class SettingsVolumeTile extends StatelessWidget {
                 ),
               ),
               SizedBox(width: AppSpacing.stackSm.w),
-              Text(
-                percentLabel,
-                style: AppTextStyles.titleXs.copyWith(
-                  // style: AppTextStyles.headlineSm.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: isMuted ? AppColors.outline : AppColors.primary,
+              Semantics(
+                button: true,
+                label: isMuted ? 'Unmute $title' : 'Mute $title',
+                child: GestureDetector(
+                  onTap: onPercentTap == null
+                      ? null
+                      : () {
+                          final unmuting = isMuted;
+                          if (unmuting && !playTapOnToggleOff) {
+                            // SFX is still disabled until unmute; play tap after restore.
+                            onPercentTap!();
+                            _playSettingsTap(context);
+                            return;
+                          }
+                          _playSettingsTap(
+                            context,
+                            playSound: unmuting || playTapOnToggleOff,
+                          );
+                          onPercentTap!();
+                        },
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppSpacing.unit.w,
+                      vertical: AppSpacing.unit.h,
+                    ),
+                    child: Text(
+                      percentLabel,
+                      style: AppTextStyles.titleXs.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isMuted
+                            ? AppColors.outline
+                            : AppColors.primary,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
