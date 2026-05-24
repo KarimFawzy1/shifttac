@@ -166,13 +166,12 @@ class AppSettingsController extends ChangeNotifier {
     final enabled = clamped > 0;
     final volumeChanged = (currentVolume - clamped).abs() >= 0.001;
     final enabledChanged = isEnabled() != enabled;
-    if (!volumeChanged && !enabledChanged) {
-      return;
-    }
 
-    setVolume(clamped);
-    setEnabled(enabled);
-    notifyListeners();
+    if (volumeChanged || enabledChanged) {
+      setVolume(clamped);
+      setEnabled(enabled);
+      notifyListeners();
+    }
 
     if (!persist) {
       return;
