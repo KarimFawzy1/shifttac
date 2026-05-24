@@ -89,24 +89,23 @@ class _SettingsBody extends StatelessWidget {
               SettingsSection(
                 title: 'Audio',
                 children: [
-                  SettingsTile(
+                  SettingsVolumeTile(
                     iconAsset: IconConstant.sound,
                     title: 'Sound effects',
-                    subtitle: 'Placement, removal, and win sounds',
-                    trailing: SettingsSwitch(
-                      value: settings.soundEffectsEnabled,
-                      onChanged: (value) =>
-                          settings.soundEffectsEnabled = value,
-                    ),
+                    subtitle: 'Game feedback and interaction sounds',
+                    value: settings.sfxVolume,
+                    onChanged: (value) =>
+                        settings.setSfxVolume(value, persist: false),
+                    onChangeEnd: settings.setSfxVolume,
                   ),
-                  SettingsTile(
+                  SettingsVolumeTile(
                     iconAsset: IconConstant.music,
                     title: 'Music',
                     subtitle: 'Background music',
-                    trailing: SettingsSwitch(
-                      value: settings.musicEnabled,
-                      onChanged: (value) => settings.musicEnabled = value,
-                    ),
+                    value: settings.bgmVolume,
+                    onChanged: (value) =>
+                        settings.setBgmVolume(value, persist: false),
+                    onChangeEnd: settings.setBgmVolume,
                   ),
                 ],
               ),

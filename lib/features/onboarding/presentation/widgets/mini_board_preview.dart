@@ -184,6 +184,9 @@ class MiniBoardShiftAnimation extends StatefulWidget {
     7: BoardCellAppearance.oSolid,
   };
 
+  /// Cell with the fading X during the X-shift tutorial (frame 2).
+  static const int tutorialXIndicatorIndex = 1;
+
   /// X fades at index 1, then a new X lands at index 8.
   factory MiniBoardShiftAnimation.tutorial({double? size}) {
     return MiniBoardShiftAnimation(
@@ -311,8 +314,8 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
   /// Cancels in-flight [Future.delayed] callbacks when a new one is scheduled.
   int _scheduleGeneration = 0;
 
-  bool get _isPausedForOverscroll =>
-      ScrollOverscrollScope.maybeOf(context)?.isOverscrolling ?? false;
+  bool get _isPausedForScroll =>
+      ScrollOverscrollScope.maybeOf(context)?.pauseLinkedAnimations ?? false;
 
   @override
   void initState() {
@@ -335,7 +338,7 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
   }
 
   void _onFrameTick() {
-    if (_isPausedForOverscroll) {
+    if (_isPausedForScroll) {
       _scheduleAfter(_resumePollDelay);
       return;
     }
@@ -363,17 +366,39 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
     return MiniBoardFrame(cells);
   }
 
+  /// 👀 on [showIndicatorOnIndex] (O tutorial), or on the faded X cell (X tutorial).
+  int? _tapIndicatorIndexFor(MiniBoardFrame frame) {
+    final fixed = widget.showIndicatorOnIndex;
+    if (fixed != null) {
+      return fixed;
+    }
+
+    if (widget.player != MiniBoardShiftPlayer.x) {
+      return null;
+    }
+
+    final cells = frame.cells;
+    for (var i = 0; i < cells.length; i++) {
+      if (cells[i] == BoardCellAppearance.xFaded) {
+        return i;
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final freezeForScroll = _isPausedForOverscroll;
+    final freezeForScroll = _isPausedForScroll;
+
+    final fadedFrame = _frameWithPersistentCells(_frames[1]);
 
     if (reduceMotion) {
       return MiniBoardPreview(
         frame: _frameWithPersistentCells(_frames.last),
         size: widget.size,
         highlightIndex: _newMarkIndex,
-        showTapIndicatorOnIndex: widget.showIndicatorOnIndex,
+        showTapIndicatorOnIndex: _tapIndicatorIndexFor(fadedFrame),
       );
     }
 
@@ -391,7 +416,7 @@ class _MiniBoardShiftAnimationState extends State<MiniBoardShiftAnimation> {
         frame: frame,
         size: widget.size,
         highlightIndex: highlightIndex,
-        showTapIndicatorOnIndex: widget.showIndicatorOnIndex,
+        showTapIndicatorOnIndex: _tapIndicatorIndexFor(frame),
       ),
     );
   }

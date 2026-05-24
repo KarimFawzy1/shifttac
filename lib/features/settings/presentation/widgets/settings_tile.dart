@@ -7,12 +7,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/audio/app_audio.dart';
 import '../../../../core/settings/app_settings_controller.dart';
+import '../../../../core/settings/app_settings_defaults.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 void _playSettingsTap(BuildContext context) {
   unawaited(AppAudioScope.read(context).playTap());
+  if (!AppSettingsScope.read(context).vibrationEnabled) {
+    return;
+  }
+  HapticFeedback.selectionClick();
+}
+
+void _playSettingsHaptic(BuildContext context) {
   if (!AppSettingsScope.read(context).vibrationEnabled) {
     return;
   }
@@ -265,6 +273,189 @@ class SettingsSwitch extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Volume slider styled like settings toggles (`css/SettingsScreen.css`).
+///
+/// Snaps to [AppSettingsDefaults.volumeStep] (5%) and fires haptic on each step.
+class SettingsSlider extends StatefulWidget {
+  const SettingsSlider({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.onChangeEnd,
+  });
+
+  final double value;
+  final ValueChanged<double>? onChanged;
+  final ValueChanged<double>? onChangeEnd;
+
+  @override
+  State<SettingsSlider> createState() => _SettingsSliderState();
+}
+
+class _SettingsSliderState extends State<SettingsSlider> {
+  int? _lastStepIndex;
+
+  static int _stepIndex(double volume) =>
+      (AppSettingsDefaults.snapVolume(volume) / AppSettingsDefaults.volumeStep)
+          .round();
+
+  void _syncStepIndex(double volume) {
+    _lastStepIndex = _stepIndex(volume);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _syncStepIndex(widget.value);
+  }
+
+  @override
+  void didUpdateWidget(covariant SettingsSlider oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.onChanged == null) {
+      _syncStepIndex(widget.value);
+      return;
+    }
+    if ((oldWidget.value - widget.value).abs() >=
+        AppSettingsDefaults.volumeStep) {
+      _syncStepIndex(widget.value);
+    }
+  }
+
+  void _handleChanged(double raw) {
+    final stepped = AppSettingsDefaults.snapVolume(raw);
+    final step = _stepIndex(stepped);
+    if (step != _lastStepIndex) {
+      _lastStepIndex = step;
+      _playSettingsHaptic(context);
+    }
+    widget.onChanged?.call(stepped);
+  }
+
+  void _handleChangeEnd(double raw) {
+    final stepped = AppSettingsDefaults.snapVolume(raw);
+    _syncStepIndex(stepped);
+    widget.onChangeEnd?.call(stepped);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = widget.onChanged != null;
+    final value = AppSettingsDefaults.snapVolume(widget.value);
+
+    return SliderTheme(
+      data: SliderThemeData(
+        trackHeight: 4.h,
+        activeTrackColor: enabled
+            ? AppColors.primary
+            : AppColors.surfaceContainerHighest,
+        inactiveTrackColor: AppColors.surfaceContainerHighest,
+        thumbColor: AppColors.surfaceContainerLowest,
+        overlayColor: AppColors.primary.withValues(alpha: 0.12),
+        disabledActiveTrackColor: AppColors.surfaceContainerHighest,
+        disabledInactiveTrackColor: AppColors.surfaceContainerHighest,
+        disabledThumbColor: AppColors.surfaceContainerLow,
+        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8.r),
+        overlayShape: RoundSliderOverlayShape(overlayRadius: 16.r),
+      ),
+      child: Slider(
+        value: value,
+        min: 0,
+        max: 1,
+        onChanged: enabled ? _handleChanged : null,
+        onChangeEnd: enabled ? _handleChangeEnd : null,
+      ),
+    );
+  }
+}
+
+/// Settings row with title, subtitle, volume %, and an integrated slider.
+class SettingsVolumeTile extends StatelessWidget {
+  const SettingsVolumeTile({
+    super.key,
+    this.iconAsset,
+    this.icon,
+    required this.title,
+    this.subtitle,
+    required this.value,
+    required this.onChanged,
+    this.onChangeEnd,
+  });
+
+  final String? iconAsset;
+  final Widget? icon;
+  final String title;
+  final String? subtitle;
+  final double value;
+  final ValueChanged<double> onChanged;
+  final ValueChanged<double>? onChangeEnd;
+
+  @override
+  Widget build(BuildContext context) {
+    final steppedValue = AppSettingsDefaults.snapVolume(value);
+    final isMuted = steppedValue == 0;
+    final percentLabel = '${(steppedValue * 100).round()}%';
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.stackMd.w,
+        vertical: AppSpacing.stackMd.h,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _SettingsIconBadge(iconAsset: iconAsset, icon: icon),
+              SizedBox(width: AppSpacing.stackMd.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTextStyles.bodyLg.copyWith(
+                        color: isMuted
+                            ? AppColors.onSurfaceVariant
+                            : AppColors.onSurface,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      SizedBox(height: 2.h),
+                      Text(
+                        subtitle!,
+                        style: AppTextStyles.labelSm.copyWith(
+                          color: AppColors.outline,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(width: AppSpacing.stackSm.w),
+              Text(
+                percentLabel,
+                style: AppTextStyles.titleXs.copyWith(
+                  // style: AppTextStyles.headlineSm.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: isMuted ? AppColors.outline : AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppSpacing.stackSm.h),
+          SettingsSlider(
+            value: steppedValue,
+            onChanged: onChanged,
+            onChangeEnd: onChangeEnd,
+          ),
+        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/widgets.dart';
 
 import '../settings/app_settings_controller.dart';
+import '../settings/app_settings_defaults.dart';
 
 /// Bundled sound paths under `assets/sounds/` (pubspec asset folder).
 abstract final class SoundAssets {
@@ -20,7 +21,9 @@ abstract final class SoundAssets {
 
 /// SFX + app-wide BGM. Reads [AppSettingsController] — no parallel mute flags.
 class AppAudio {
-  AppAudio(this._settings) : _lastMusicEnabled = _settings.musicEnabled {
+  AppAudio(this._settings)
+    : _lastMusicEnabled = _settings.musicEnabled,
+      _lastBgmVolume = _settings.bgmVolume {
     _settings.addListener(_onSettingsChanged);
     _attachBgmStateListener();
   }
@@ -29,10 +32,10 @@ class AppAudio {
   AudioPlayer _bgmPlayer = AudioPlayer(playerId: 'shifttac_bgm_0');
   final Map<String, AudioPool> _sfxPools = {};
 
-  static const double _bgmVolume = 1;
-  static const double _sfxVolume = 0.8;
-  static const double _swipeSfxVolume = 1;
   static const Duration _sfxRecycleDelay = Duration(milliseconds: 1500);
+
+  static const double _swipeSfxScale =
+      AppSettingsDefaults.swipeSfxVolume / AppSettingsDefaults.sfxVolume;
 
   bool _foreground = true;
   bool _disposing = false;
@@ -41,6 +44,7 @@ class AppAudio {
   bool _sfxConfigured = false;
   bool _bgmPausedByApp = false;
   bool _lastMusicEnabled;
+  double _lastBgmVolume;
   int _bgmGeneration = 0;
 
   StreamSubscription<PlayerState>? _bgmStateSub;
@@ -81,14 +85,25 @@ class AppAudio {
     _bgmStateSub = _bgmPlayer.onPlayerStateChanged.listen(_onBgmStateChanged);
   }
 
-  /// Music toggle only — sound-effects changes do not touch BGM.
   void _onSettingsChanged() {
     final music = _settings.musicEnabled;
-    if (music == _lastMusicEnabled) {
+    if (music != _lastMusicEnabled) {
+      _lastMusicEnabled = music;
+      unawaited(_syncBgm());
+    }
+
+    final bgmVolume = _settings.bgmVolume;
+    if ((bgmVolume - _lastBgmVolume).abs() >= 0.001) {
+      _lastBgmVolume = bgmVolume;
+      unawaited(_applyBgmVolume());
+    }
+  }
+
+  Future<void> _applyBgmVolume() async {
+    if (_disposing || !_bgmConfigured) {
       return;
     }
-    _lastMusicEnabled = music;
-    unawaited(_syncBgm());
+    await _safeAudioCall(() => _bgmPlayer.setVolume(_settings.bgmVolume));
   }
 
   void _onBgmStateChanged(PlayerState state) {
@@ -113,7 +128,8 @@ class AppAudio {
 
     await _bgmPlayer.setAudioContext(bgmContext);
     await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
-    await _bgmPlayer.setVolume(_bgmVolume);
+    await _bgmPlayer.setVolume(_settings.bgmVolume);
+    _lastBgmVolume = _settings.bgmVolume;
     _bgmConfigured = true;
   }
 
@@ -294,8 +310,8 @@ class AppAudio {
     }
 
     final volume = assetPath == SoundAssets.swipe
-        ? _swipeSfxVolume
-        : _sfxVolume;
+        ? _settings.sfxVolume * _swipeSfxScale
+        : _settings.sfxVolume;
     final stop = await _safeAudioResult(() => pool.start(volume: volume));
     if (stop == null) {
       unawaited(_recreateSfxPool(assetPath));

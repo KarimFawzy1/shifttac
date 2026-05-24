@@ -21,6 +21,18 @@ class AppTextStyles {
     height: 1.3,
     color: AppColors.inkNavy,
   );
+  static TextStyle get titleSm => GoogleFonts.poppins(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    height: 1.4,
+    color: AppColors.inkNavy,
+  );
+  static TextStyle get titleXs => GoogleFonts.poppins(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 1.5,
+    color: AppColors.inkNavy,
+  );
 
   static TextStyle get headlineSm => GoogleFonts.poppins(
     fontSize: 20,
