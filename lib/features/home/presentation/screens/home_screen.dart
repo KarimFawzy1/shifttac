@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -29,7 +32,10 @@ class HomeScreen extends StatelessWidget {
             title: 'Play Local',
             subtitle: 'Play with a friend on the same device',
             iconAsset: IconConstant.multiplayer,
-            onTap: () => Navigator.of(context).pushNamed(AppRoutes.game),
+            onTap: () {
+              unawaited(AppAudioScope.read(context).playGameStart());
+              Navigator.of(context).pushNamed(AppRoutes.game);
+            },
           ),
           SizedBox(height: AppSpacing.stackMd.h),
           HomeActionCard(

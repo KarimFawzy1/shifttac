@@ -14,6 +14,7 @@ abstract final class SoundAssets {
   static const swipe = 'sounds/swipe.wav';
   static const wrongTap = 'sounds/wrong-tap.wav';
   static const restart = 'sounds/restart.wav';
+  static const gameStart = 'sounds/game-start.wav';
   static const win = 'sounds/win.wav';
   static const lose = 'sounds/lose.wav';
   static const backgroundMusic = 'sounds/background.mp3';
@@ -161,6 +162,7 @@ class AppAudio {
         SoundAssets.swipe,
         SoundAssets.wrongTap,
         SoundAssets.restart,
+        SoundAssets.gameStart,
         SoundAssets.win,
         SoundAssets.lose,
       ];
@@ -294,6 +296,8 @@ class AppAudio {
   Future<void> playWrongTap() => _playSfx(SoundAssets.wrongTap);
 
   Future<void> playRestart() => _playSfx(SoundAssets.restart);
+
+  Future<void> playGameStart() => _playSfx(SoundAssets.gameStart);
 
   Future<void> playWin() => _playSfx(SoundAssets.win);
 

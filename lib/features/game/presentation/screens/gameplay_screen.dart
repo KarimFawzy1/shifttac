@@ -19,6 +19,7 @@ import '../../domain/models/player.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
 import '../widgets/board_cell.dart';
+import '../widgets/exit_game_dialog.dart';
 import '../widgets/game_board.dart';
 import '../widgets/pause_bottom_sheet.dart';
 import '../widgets/player_panel.dart';
@@ -145,33 +146,49 @@ class _GameplayBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: _systemUi,
-      child: AppScaffold(
-        fullWidthHeader: true,
-        header: _GameplayHeader(onBack: () => _handleBack(context)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: AppSpacing.stackMd.h),
-            const PlayerTurnIndicator(),
-            SizedBox(height: AppSpacing.stackMd.h),
-            const _MoveCounterPill(),
-            SizedBox(height: AppSpacing.stackSm.h),
-            SizedBox(height: AppSpacing.stackLg.h),
-            Expanded(
-              child: _GameplayBoardArea(
-                onWinRevealComplete: () =>
-                    unawaited(_presentWinDialogWhenReady(context)),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        unawaited(_handleBack(context));
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _systemUi,
+        child: AppScaffold(
+          fullWidthHeader: true,
+          header: _GameplayHeader(onBack: () => unawaited(_handleBack(context))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: AppSpacing.stackMd.h),
+              const PlayerTurnIndicator(),
+              SizedBox(height: AppSpacing.stackMd.h),
+              const _MoveCounterPill(),
+              SizedBox(height: AppSpacing.stackSm.h),
+              SizedBox(height: AppSpacing.stackLg.h),
+              Expanded(
+                child: _GameplayBoardArea(
+                  onWinRevealComplete: () =>
+                      unawaited(_presentWinDialogWhenReady(context)),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  static void _handleBack(BuildContext context) {
+  static Future<void> _handleBack(BuildContext context) async {
+    if (PauseBottomSheet.isVisible) {
+      return;
+    }
+    final confirmed = await ExitGameDialog.show(context);
+    if (!context.mounted || !confirmed) {
+      return;
+    }
     final navigator = Navigator.of(context);
     if (navigator.canPop()) {
       navigator.pop();
