@@ -837,12 +837,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] Intermediate ShiftTac strategy exists.
-- [ ] Intermediate strategy is routed by factory.
-- [ ] Tactical priority behavior is covered by tests.
-- [ ] FIFO-specific tactical cases are covered by tests.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Intermediate ShiftTac strategy exists.
+- [x] Intermediate strategy is routed by factory.
+- [x] Tactical priority behavior is covered by tests.
+- [x] FIFO-specific tactical cases are covered by tests.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 6 Completion
+
+**Files:** `shift_intermediate_bot_strategy.dart`, `shift_bot_strategy_factory.dart`, `shift_intermediate_bot_strategy_test.dart`, `bot_strategy_factory_test.dart`.
+
+**Behavior:** Win → block → safe moves (avoid immediate human wins) → max fork-count among safe → center/corners/sides. FIFO-aware wins/blocks use `simulateShiftMove` and `findShiftImmediateThreat`.
 
 ## Phase 7 - Hard ShiftTac Bot Search
 
