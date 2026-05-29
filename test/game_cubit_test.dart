@@ -1,6 +1,7 @@
 import 'package:fake_async/fake_async.dart'; // ignore: depend_on_referenced_packages
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/game_constants.dart';
+import 'package:shifttac/features/game/domain/models/game_mode.dart';
 import 'package:shifttac/features/game/domain/models/game_status.dart';
 import 'package:shifttac/features/game/domain/models/player.dart';
 import 'package:shifttac/features/game/domain/models/position.dart';
@@ -8,9 +9,11 @@ import 'package:shifttac/features/game/presentation/state/game_cubit.dart';
 
 void main() {
   group('GameCubit', () {
-    test('initial state matches GameState.initial()', () {
-      final cubit = GameCubit();
+    test('initial state matches GameState.shift()', () {
+      final cubit = GameCubit.shift();
       addTearDown(cubit.close);
+
+      expect(cubit.mode, GameMode.shift);
 
       expect(cubit.state.snapshot.turnIndex, 0);
       expect(
@@ -25,7 +28,7 @@ void main() {
     });
 
     test('tap on empty cell emits new snapshot and lastPlacedPosition', () {
-      final cubit = GameCubit();
+      final cubit = GameCubit.shift();
       addTearDown(cubit.close);
 
       final before = cubit.state.snapshot;
@@ -41,7 +44,7 @@ void main() {
 
     test('tap on occupied cell is no-op when unlocked', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
 
         cubit.onCellTapped(const Position(row: 0, col: 0));
         async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
@@ -57,7 +60,7 @@ void main() {
 
     test('ten rapid taps on same cell produce exactly one state change', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
 
         for (var i = 0; i < 10; i++) {
           cubit.onCellTapped(const Position(row: 0, col: 0));
@@ -72,7 +75,7 @@ void main() {
 
     test('rapid taps while input locked do not apply a second move', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
 
         cubit.onCellTapped(const Position(row: 0, col: 0));
         final afterFirst = cubit.state.snapshot;
@@ -93,7 +96,7 @@ void main() {
 
     test('input lock clears after inputLockMs', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
 
         cubit.onCellTapped(const Position(row: 2, col: 2));
         expect(cubit.state.inputLocked, isTrue);
@@ -109,7 +112,7 @@ void main() {
 
     test('restart during input lock clears markers and ignores stale unlock', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
 
         cubit.onCellTapped(const Position(row: 0, col: 0));
         expect(cubit.state.inputLocked, isTrue);
@@ -133,7 +136,7 @@ void main() {
       'restart during fade-out markers leaves empty board with no ghost marks',
       () {
         fakeAsync((async) {
-          final cubit = GameCubit();
+          final cubit = GameCubit.shift();
           void unlock() =>
               async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
@@ -169,7 +172,7 @@ void main() {
 
     test('tap while match is not playing is rejected', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
         void unlock() =>
             async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
@@ -195,7 +198,7 @@ void main() {
 
     test('restart returns to initial snapshot and clears lock', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
 
         cubit.onCellTapped(const Position(row: 1, col: 1));
         expect(cubit.state.inputLocked, isTrue);
@@ -223,7 +226,7 @@ void main() {
     test(
       'onAppBackgrounded pauses match and requests pause sheet on resume',
       () {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
         addTearDown(cubit.close);
 
         expect(cubit.shouldPresentPauseAfterBackground, isFalse);
@@ -243,7 +246,7 @@ void main() {
 
     test('onAppBackgrounded is no-op when match is not playing', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
         void unlock() =>
             async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
@@ -264,7 +267,7 @@ void main() {
     });
 
     test('pauseMatch stops match duration from advancing', () async {
-      final cubit = GameCubit();
+      final cubit = GameCubit.shift();
 
       await Future<void>.delayed(const Duration(milliseconds: 1100));
       final elapsedBeforePause = cubit.state.matchDurationMs;
@@ -282,7 +285,7 @@ void main() {
 
     test('clearLastEventMarkers clears placement markers only', () {
       fakeAsync((async) {
-        final cubit = GameCubit();
+        final cubit = GameCubit.shift();
         void unlock() =>
             async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
@@ -309,6 +312,162 @@ void main() {
         expect(cubit.state.lastPlacedPosition, isNull);
         expect(cubit.state.lastRemovedPosition, isNull);
         expect(identical(cubit.state.snapshot, snapBefore), isTrue);
+        cubit.close();
+      });
+    });
+
+    test('restart preserves ShiftTac FIFO behavior', () {
+      fakeAsync((async) {
+        final cubit = GameCubit.shift();
+        void unlock() =>
+            async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+        cubit.onCellTapped(const Position(row: 0, col: 0));
+        unlock();
+        cubit.restart();
+
+        expect(cubit.mode, GameMode.shift);
+        expect(cubit.state.snapshot.turnIndex, 0);
+        expect(cubit.state.snapshot.status, GameStatus.playing);
+
+        cubit.onCellTapped(const Position(row: 0, col: 0));
+        unlock();
+        cubit.onCellTapped(const Position(row: 2, col: 2));
+        unlock();
+        cubit.onCellTapped(const Position(row: 0, col: 1));
+        unlock();
+        cubit.onCellTapped(const Position(row: 1, col: 2));
+        unlock();
+        cubit.onCellTapped(const Position(row: 2, col: 0));
+        unlock();
+        cubit.onCellTapped(const Position(row: 1, col: 1));
+        unlock();
+        cubit.onCellTapped(const Position(row: 0, col: 2));
+
+        expect(cubit.state.lastRemovedPosition, const Position(row: 0, col: 0));
+        cubit.close();
+      });
+    });
+  });
+
+  group('GameCubit — classic mode', () {
+    test('initial state uses classic rules', () {
+      final cubit = GameCubit.classic();
+      addTearDown(cubit.close);
+
+      expect(cubit.mode, GameMode.classic);
+      expect(cubit.state.snapshot.turnIndex, 0);
+      expect(cubit.state.snapshot.status, GameStatus.playing);
+      expect(cubit.state.inputLocked, isFalse);
+      expect(cubit.state.lastRemovedPosition, isNull);
+    });
+
+    test('accepted move updates snapshot', () {
+      final cubit = GameCubit.classic();
+      addTearDown(cubit.close);
+
+      final before = cubit.state.snapshot;
+      final starter = before.currentPlayer;
+      cubit.onCellTapped(const Position(row: 0, col: 0));
+
+      expect(identical(cubit.state.snapshot, before), isFalse);
+      expect(cubit.state.snapshot.turnIndex, 1);
+      expect(cubit.state.snapshot.currentPlayer, starter.opponent);
+      expect(cubit.state.lastPlacedPosition, const Position(row: 0, col: 0));
+      expect(cubit.state.lastRemovedPosition, isNull);
+      expect(cubit.state.inputLocked, isTrue);
+    });
+
+    test('occupied tap returns rejectedInvalid', () {
+      fakeAsync((async) {
+        final cubit = GameCubit.classic();
+
+        cubit.onCellTapped(const Position(row: 1, col: 1));
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+        final snap = cubit.state.snapshot;
+        expect(
+          cubit.onCellTapped(const Position(row: 1, col: 1)),
+          CellTapResult.rejectedInvalid,
+        );
+        expect(identical(cubit.state.snapshot, snap), isTrue);
+        cubit.close();
+      });
+    });
+
+    test('draw state stops further input', () {
+      fakeAsync((async) {
+        final cubit = GameCubit.classic();
+        void unlock() =>
+            async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+        cubit.onCellTapped(const Position(row: 0, col: 0));
+        unlock();
+        cubit.onCellTapped(const Position(row: 1, col: 1));
+        unlock();
+        cubit.onCellTapped(const Position(row: 0, col: 1));
+        unlock();
+        cubit.onCellTapped(const Position(row: 2, col: 2));
+        unlock();
+        cubit.onCellTapped(const Position(row: 2, col: 0));
+        unlock();
+        cubit.onCellTapped(const Position(row: 0, col: 2));
+        unlock();
+        cubit.onCellTapped(const Position(row: 2, col: 1));
+        unlock();
+        cubit.onCellTapped(const Position(row: 1, col: 0));
+        unlock();
+        cubit.onCellTapped(const Position(row: 1, col: 2));
+
+        expect(cubit.state.snapshot.status, GameStatus.draw);
+        final snap = cubit.state.snapshot;
+        expect(
+          cubit.onCellTapped(const Position(row: 0, col: 0)),
+          CellTapResult.rejectedNotPlaying,
+        );
+        expect(identical(cubit.state.snapshot, snap), isTrue);
+        cubit.close();
+      });
+    });
+
+    test('restart returns to classic initial snapshot', () {
+      fakeAsync((async) {
+        final cubit = GameCubit.classic();
+
+        cubit.onCellTapped(const Position(row: 0, col: 0));
+        expect(cubit.state.inputLocked, isTrue);
+
+        cubit.restart();
+
+        expect(cubit.mode, GameMode.classic);
+        expect(cubit.state.snapshot.turnIndex, 0);
+        expect(cubit.state.snapshot.status, GameStatus.playing);
+        expect(cubit.state.inputLocked, isFalse);
+        expect(cubit.state.lastPlacedPosition, isNull);
+        expect(cubit.state.lastRemovedPosition, isNull);
+        expect(cubit.state.matchDurationMs, 0);
+
+        async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+        expect(cubit.state.inputLocked, isFalse);
+        cubit.close();
+      });
+    });
+
+    test('lastRemovedPosition remains null after many classic moves', () {
+      fakeAsync((async) {
+        final cubit = GameCubit.classic();
+        void unlock() =>
+            async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
+
+        for (var i = 0; i < 9; i++) {
+          if (cubit.state.snapshot.status != GameStatus.playing) {
+            break;
+          }
+          cubit.onCellTapped(Position(row: i % 3, col: i ~/ 3));
+          unlock();
+          expect(cubit.state.lastRemovedPosition, isNull);
+        }
+
         cubit.close();
       });
     });

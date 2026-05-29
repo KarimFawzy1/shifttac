@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/game_constants.dart';
+import '../../domain/logic/classic_game_engine.dart';
+import '../../domain/logic/game_rules.dart';
 import '../../domain/logic/shift_game_engine.dart';
+import '../../domain/models/game_mode.dart';
 import '../../domain/models/game_status.dart';
 import '../../domain/models/position.dart';
 import 'game_state.dart';
@@ -16,12 +19,22 @@ enum CellTapResult {
   rejectedNotPlaying,
 }
 
-/// Coordinates UI state with [ShiftGameEngine]; does not implement gameplay rules.
+/// Coordinates UI lifecycle with a [GameRules] implementation.
 class GameCubit extends Cubit<GameState> {
-  GameCubit() : super(GameState.initial()) {
+  GameCubit({required GameRules rules})
+    : _rules = rules,
+      super(GameState.initialFor(rules)) {
     _matchStopwatch.start();
     _startMatchDurationTicker();
   }
+
+  GameCubit.shift() : this(rules: ShiftGameEngine.instance);
+
+  GameCubit.classic() : this(rules: ClassicGameEngine.instance);
+
+  final GameRules _rules;
+
+  GameMode get mode => _rules.mode;
 
   final Stopwatch _matchStopwatch = Stopwatch();
   Timer? _inputUnlockTimer;
@@ -114,7 +127,7 @@ class GameCubit extends Cubit<GameState> {
       return CellTapResult.rejectedLocked;
     }
 
-    final result = ShiftGameEngine.instance.attemptMove(
+    final result = _rules.attemptMove(
       snapshot: state.snapshot,
       position: p,
     );
@@ -158,7 +171,7 @@ class GameCubit extends Cubit<GameState> {
     _matchStopwatch
       ..reset()
       ..start();
-    emit(GameState.initial());
+    emit(GameState.initialFor(_rules));
     _startMatchDurationTicker();
   }
 

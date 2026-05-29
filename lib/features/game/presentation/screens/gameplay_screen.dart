@@ -33,7 +33,7 @@ class GameplayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => GameCubit(),
+      create: (_) => GameCubit.shift(),
       child: const _GameplayLifecycleScope(),
     );
   }

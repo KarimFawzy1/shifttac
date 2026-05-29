@@ -1,6 +1,9 @@
 import 'package:equatable/equatable.dart';
 
+import '../../domain/logic/classic_game_engine.dart';
+import '../../domain/logic/game_rules.dart';
 import '../../domain/logic/game_snapshot.dart';
+import '../../domain/logic/shift_game_engine.dart';
 import '../../domain/models/position.dart';
 
 class _Unset {
@@ -19,15 +22,20 @@ class GameState extends Equatable {
     required this.matchDurationMs,
   });
 
-  factory GameState.initial() {
+  factory GameState.initialFor(GameRules rules) {
     return GameState(
-      snapshot: GameSnapshot.initial(),
+      snapshot: rules.initial(),
       inputLocked: false,
       lastPlacedPosition: null,
       lastRemovedPosition: null,
       matchDurationMs: 0,
     );
   }
+
+  factory GameState.shift() => GameState.initialFor(ShiftGameEngine.instance);
+
+  factory GameState.classic() =>
+      GameState.initialFor(ClassicGameEngine.instance);
 
   final GameSnapshot snapshot;
   final bool inputLocked;

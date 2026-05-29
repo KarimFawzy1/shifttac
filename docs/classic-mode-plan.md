@@ -443,13 +443,13 @@ abstract interface class GameRules {
 
 **DoD:**
 
-- [ ] `GameCubit` can run ShiftTac and classic without duplicating lifecycle code.
-- [ ] Restart preserves the active mode.
-- [ ] Input locking behavior is unchanged.
-- [ ] Classic cubit tests cover accepted, rejected, draw, and restart paths.
-- [ ] ShiftTac cubit tests still pass.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] `GameCubit` can run ShiftTac and classic without duplicating lifecycle code.
+- [x] Restart preserves the active mode.
+- [x] Input locking behavior is unchanged.
+- [x] Classic cubit tests cover accepted, rejected, draw, and restart paths.
+- [x] ShiftTac cubit tests still pass.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 
