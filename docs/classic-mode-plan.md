@@ -29,11 +29,13 @@ The plan below keeps the game logic pure, keeps mode-specific behavior explicit,
 
 - Classic mode is local multiplayer on the same device.
 - Classic mode uses the same 3x3 board and same X/O players.
-- Classic mode should start with Player X unless the project intentionally chooses random starts for all local modes.
+- Classic mode shares ShiftTac's random starting-player behavior.
 - Classic mode has a draw terminal state.
 - ShiftTac mode keeps its "no draw" behavior.
-- The draw dialog should use the same modal foundation as `WinDialog` and `ExitGameDialog`: `ModalBackdrop`, `Dialog`, `AppSpacing`, `AppTextStyles`, `PrimaryButton`, `SecondaryButton`, and `AppColors`.
-- The draw dialog should feel calm and neutral, not celebratory. It should avoid winner-colored accents and excessive animation.
+- The draw result should use the same result dialog component used for X and O wins, not a visually separate modal pattern.
+- The draw result should use `assets/icons/draw.svg`.
+- The draw result should use shades of grey in the same role that X uses red shades and O uses green shades: symbol color, symbol glow, ambient glow, muted secondary-button icon color, and any draw-state accents.
+- The draw result should feel calm and neutral, not celebratory. It should avoid confetti and excessive animation.
 
 ## Target Architecture
 
@@ -58,9 +60,8 @@ lib/features/game/
     |   +-- game_cubit.dart
     |   +-- game_state.dart
     +-- widgets/
-    |   +-- draw_dialog.dart
+    |   +-- match_result_dialog.dart
     |   +-- game_board.dart
-    |   +-- win_dialog.dart
     |   +-- ...
     +-- screens/
         +-- gameplay_screen.dart
@@ -81,8 +82,8 @@ The exact file split can be adjusted during implementation, but the rule-set bou
 
 - Review the current game logic, game state, board rendering, routing, dialogs, and tests.
 - Confirm all existing ShiftTac behavior that must remain unchanged.
-- Confirm whether classic mode starts with X or follows the current random starter behavior.
-- Confirm draw dialog copy and tone.
+- Confirm the implementation preserves the decided random starting-player behavior.
+- Confirm draw result copy while keeping the shared result dialog design and grey palette fixed.
 - Confirm whether `GameEngine` should be renamed to `ShiftGameEngine` in this work or kept as a compatibility wrapper.
 
 **Scope Out:**
@@ -99,11 +100,126 @@ The exact file split can be adjusted during implementation, but the rule-set bou
 
 **DoD:**
 
-- [ ] Implementation direction is agreed: shared rules contract or minimal mode branch.
-- [ ] Classic starting-player behavior is decided.
-- [ ] Draw dialog title, body copy, button labels, and stats are decided.
-- [ ] Existing tests are run and current failures, if any, are documented before changes.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Implementation direction is agreed: shared rules contract or minimal mode branch.
+- [x] Classic starting-player behavior shares ShiftTac's random starter.
+- [x] Draw result title, body copy, button labels, stats, `assets/icons/draw.svg`, and grey palette roles are documented.
+- [x] Existing tests are run and current failures, if any, are documented before changes.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 0 Completion — 2026-05-29
+
+#### Locked implementation direction
+
+Use the **shared `GameRules` contract** (not ad-hoc `if (classic)` branches in widgets or the cubit). Each mode gets a pure-Dart engine implementing the contract; `GameCubit` and `GameplayScreen` delegate move/restart logic to the injected rules object.
+
+| Layer | Current baseline | Classic-mode change |
+| --- | --- | --- |
+| Domain rules | `GameEngine` (static FIFO) | `ShiftGameEngine` + `ClassicGameEngine` via `GameRules` |
+| Snapshot | FIFO queues in `GameSnapshot` | Same struct; comments updated; classic uses full move lists |
+| Win detection | `WinChecker` | Unchanged — shared by both modes |
+| Cubit lifecycle | `GameCubit` → `GameEngine` | `GameCubit({required GameRules rules})` |
+| Board visuals | `_appearanceFor` fade preview | Mode-aware mapper; classic never fades |
+| Result UI | `WinDialog` (X/O only) | `MatchResultDialog` with win + draw variants |
+| Routing | `AppRoutes.game` → `GameplayScreen()` | Same route; optional `GameMode` in `settings.arguments` |
+
+**`GameEngine` rename decision:** Rename to `ShiftGameEngine` in Phase 2. Do **not** keep a long-term `GameEngine` alias — update call sites and tests in the same phase. A temporary re-export is acceptable only if it reduces churn within a single PR and is removed before Phase 9.
+
+#### Starting-player behavior (locked)
+
+Classic mode **shares ShiftTac's random starter**. Both engines call `GameSnapshot.initial()` which uses `Random().nextBool() ? Player.x : Player.o` when no explicit starter is passed (`game_snapshot.dart`). Classic must not force Player X.
+
+#### Draw result copy and palette (locked)
+
+| Element | Value |
+| --- | --- |
+| Symbol asset | `assets/icons/draw.svg` (file exists; add `IconConstant.draw` in Phase 6) |
+| Title | `It's a Draw!` |
+| Body | `No winner this round. Try another match.` |
+| Stat row 1 label | `Total moves` |
+| Stat row 2 label | `Match time` |
+| Primary action | `Play Again` (with restart icon) |
+| Secondary action | `Back to Home` (with home icon) |
+| Animation duration | 300 ms (matches current `WinDialog`; within design.md 250–320 ms) |
+| Barrier | Non-dismissible (same as win dialog) |
+| Celebration | No confetti; calm neutral entrance only |
+
+**Grey palette roles** — mirror `_WinnerPalette` in `win_dialog.dart`, substituting grey for winner accent:
+
+| Role | X win (reference) | O win (reference) | Draw (locked) |
+| --- | --- | --- | --- |
+| Accent base | `AppColors.softCoral` | `AppColors.primary` | `AppColors.outline` |
+| Symbol color | accent @ 0.88 α | accent @ 0.88 α | accent @ 0.88 α |
+| Symbol glow | accent @ 0.12 α | accent @ 0.12 α | accent @ 0.12 α |
+| Ambient glow (orbs) | accent @ 0.05 α | accent @ 0.05 α | accent @ 0.05 α |
+| Muted secondary icon | accent @ 0.75 α | accent @ 0.75 α | accent @ 0.75 α |
+
+Draw must not use red/coral or green/teal winner accents anywhere in the result dialog.
+
+#### Test baseline (pre-implementation)
+
+Run: `flutter test` on 2026-05-29.
+
+| Result | Detail |
+| --- | --- |
+| **52 / 52 passed** | No failures |
+| `game_engine_test.dart` | 18 tests — FIFO, wins, validation, restart |
+| `game_cubit_test.dart` | 14 tests — taps, lock, restart, pause, markers |
+| `win_checker_test.dart` | 8 tests |
+| `app_settings_*` | 7 tests |
+| `widget_test.dart` | 1 test |
+
+No known flaky or skipped tests. This is the green baseline for Phases 1–9.
+
+#### Baseline audit — ShiftTac behavior to preserve unchanged
+
+**Domain (`GameEngine`):**
+
+- Reject moves when `status != playing` or cell occupied (snapshot not mutated).
+- FIFO: remove oldest mark when queue length ≥ `GameConstants.maxActiveMarks` (3) before placing.
+- Win evaluated on mover's active marks **after** rotation + placement.
+- Turn switches only when match continues; `turnIndex` increments on accepted moves.
+- `removedMove` / `placedMove` reported in `GameEngineResult`.
+- `GameEngine.restart()` → `GameSnapshot.initial()` with random starter.
+- No draw state — match ends only at `GameStatus.won` or continues playing.
+
+**Snapshot (`GameSnapshot`):**
+
+- Per-player move lists (oldest → newest); max 3 active marks per player in ShiftTac.
+- Random starter via `GameSnapshot.initial()`.
+
+**Cubit (`GameCubit`):**
+
+- Input lock for `GameConstants.inputLockMs` after accepted move.
+- `lastPlacedPosition` / `lastRemovedPosition` for board animations.
+- Timer, pause/resume, app-background pause sheet, restart clears all markers.
+- `CellTapResult` enum values unchanged.
+
+**Board (`GameBoard`):**
+
+- Faded oldest-mark preview when current player has 3 marks and it is their turn.
+- Board frozen when `status != playing`.
+- Win-line reveal animation shared.
+
+**Routing (`AppRouter`):**
+
+- `AppRoutes.game` builds `const GameplayScreen()` with no arguments → ShiftTac (must remain default after classic ships).
+- `Navigator.pushNamed(AppRoutes.game)` from home must keep opening ShiftTac.
+
+**Dialogs / panels:**
+
+- `WinDialog` for X/O wins only today; stats show `turnIndex` as total moves.
+- `PlayerTurnIndicator` / `PlayerPanel` handle `idle`, `playing`, `won` — no draw branch yet.
+- `Play Classic` on home is disabled with `Coming Soon` badge.
+
+**Assets:**
+
+- `assets/icons/draw.svg` exists and is covered by `pubspec.yaml` `assets/icons/` glob.
+- Not yet referenced in `IconConstant`.
+
+#### Route compatibility check
+
+- `AppRoutes.game` has no mode argument today — **confirmed backward compatible**.
+- Planned approach: pass `GameMode.classic` via `settings.arguments`; invalid/missing args fall back to ShiftTac.
 
 ---
 
@@ -147,7 +263,7 @@ abstract interface class GameRules {
 - Classic move implementation.
 - Routing changes.
 - UI changes.
-- Draw dialog.
+- Result dialog changes.
 
 **Implementation Notes:**
 
@@ -237,11 +353,11 @@ abstract interface class GameRules {
   8. Otherwise switch to `currentPlayer.opponent` and continue playing.
 - Ensure `removedMove` is always `null` for classic mode.
 - Classic `oldestPositionFor` returns `null`.
-- Classic initial state should use the decided starting-player policy.
+- Classic initial state should use the same random starting-player policy as ShiftTac.
 
 **Scope Out:**
 
-- Draw dialog UI.
+- Shared result dialog UI.
 - Route/home entry point.
 - AI.
 - Score history or persisted stats.
@@ -366,7 +482,7 @@ class GameplayScreen extends StatelessWidget {
 **Scope Out:**
 
 - Home card routing.
-- Draw dialog implementation.
+- Shared result dialog draw variant.
 - AI.
 
 **Implementation Notes:**
@@ -396,17 +512,19 @@ class GameplayScreen extends StatelessWidget {
 
 ---
 
-## Phase 6 - Draw Dialog Following The Design System
+## Phase 6 - Shared Result Dialog With Draw Variant
 
-**Goal:** Add a polished draw result dialog that matches the existing modal system without feeling like a winner celebration.
+**Goal:** Extend the existing win-result dialog into one shared result dialog that supports X wins, O wins, and draws through the same design-system component.
 
 **Scope In:**
 
-- Add `DrawDialog` or replace `WinDialog` with a generalized `MatchResultDialog`.
-- The preferred path is a generalized dialog if it reduces duplication without making the code harder to read:
-  - winner result: current winner symbol, winner accent, "X Wins!" / "O Wins!"
-  - draw result: neutral symbol/treatment, neutral accent, "It's a Draw!" or "Draw Game"
-- Draw dialog layout should follow the existing `WinDialog` structure:
+- Replace or refactor `WinDialog` into a shared result dialog, for example `MatchResultDialog`.
+- The same dialog component must render:
+  - X win: X symbol, red shades, `X Wins!`
+  - O win: O symbol, green shades, `O Wins!`
+  - draw: `assets/icons/draw.svg`, grey shades, `It's a Draw!` or final approved copy
+- Add the draw SVG to the existing asset constants pattern so UI code references a constant rather than a raw path.
+- Result dialog layout should keep the existing `WinDialog` structure:
   - `showGeneralDialog`
   - transparent barrier
   - `ModalBackdrop`
@@ -419,13 +537,17 @@ class GameplayScreen extends StatelessWidget {
   - stats card with total moves and match time
   - `PrimaryButton` for `Play Again`
   - `SecondaryButton` for `Back to Home`
-- Draw dialog visual language:
-  - neutral icon or balanced X/O visual
-  - no winner-colored symbol
+- Result dialog palette model:
+  - X uses the current red/coral winner shades.
+  - O uses the current green/teal winner shades.
+  - Draw uses grey shades in the same palette roles: symbol, symbol glow, ambient glow, muted accent, and secondary action icon color.
+- Draw result visual language:
+  - `assets/icons/draw.svg` as the large result symbol
+  - no red or green winner-colored symbol treatment
   - no confetti
-  - warm, calm glow using low-alpha surface/primary tones
+  - calm low-alpha grey glow
   - dialog entrance between 250ms and 320ms, matching `design.md`
-- Draw dialog copy:
+- Draw result copy:
   - title: `It's a Draw!` or final approved copy
   - body: short and neutral, for example `No winner this round. Try another match.`
   - stats: `Total moves`, `Match time`
@@ -435,7 +557,7 @@ class GameplayScreen extends StatelessWidget {
 
 - Persistent match history.
 - Scoreboard.
-- New art assets unless existing assets cannot communicate draw clearly.
+- Any result-dialog layout that diverges from the current win dialog structure.
 
 **Implementation Notes:**
 
@@ -443,25 +565,29 @@ class GameplayScreen extends StatelessWidget {
   - `design.md` specifies dialog entrance at 250-320ms.
   - `design.md` specifies win dialog stats and actions.
   - Current `WinDialog` and `ExitGameDialog` already implement the modal foundation.
-- If a new asset is needed, add it through the existing icon constants pattern.
-- The draw dialog should not use `Player` as required input.
+- The draw asset is fixed: `assets/icons/draw.svg`.
+- The shared result dialog should accept a result type or view model instead of requiring `Player` for every result.
+- Do not create a one-off draw modal with separate spacing, typography, or button treatment.
 - The dialog should be non-dismissible if win dialog is non-dismissible, keeping terminal result behavior consistent.
 
 **Tests:**
 
-- Draw dialog renders title, body, total moves, match time, Play Again, and Back to Home.
+- Shared result dialog still renders X win and O win states correctly.
+- Draw result renders `assets/icons/draw.svg`, title, body, total moves, match time, Play Again, and Back to Home.
 - Play Again dismisses dialog and restarts in classic mode.
 - Back to Home dismisses dialog and navigates home.
-- Draw dialog does not show a winner-specific X/O winner title.
+- Draw result does not show a winner-specific X/O title or red/green winner palette.
 
 **DoD:**
 
-- [ ] Draw result is presented through a design-system-compliant modal.
-- [ ] Draw dialog matches existing modal tokens, spacing, typography, buttons, backdrop, and animation timing.
-- [ ] Draw dialog uses neutral visual treatment and avoids excessive celebration.
+- [ ] X wins, O wins, and draws are presented through the same result dialog component.
+- [ ] Draw result uses `assets/icons/draw.svg`.
+- [ ] Draw result uses grey shades for the same visual roles that X and O use red/green shades.
+- [ ] Result dialog matches existing modal tokens, spacing, typography, buttons, backdrop, and animation timing.
+- [ ] Draw result avoids excessive celebration.
 - [ ] Play Again restarts classic mode.
 - [ ] Back to Home returns to the home route.
-- [ ] Draw dialog tests pass.
+- [ ] Result dialog tests pass for X win, O win, and draw variants.
 - [ ] `flutter analyze` is clean.
 - [ ] Commit and push phase changes to GitHub.
 
@@ -481,9 +607,9 @@ class GameplayScreen extends StatelessWidget {
   - remove disabled style from `Play Classic`
   - remove `Coming Soon` badge
   - add `onTap`
-  - play start audio consistently with `Play Local`
+  - play start audio consistently with `Play ShiftTac`
   - navigate to gameplay in classic mode
-- Consider renaming existing `Play Local` to `Play ShiftTac` or `Play Shift` to reduce ambiguity.
+- Consider renaming existing `Play ShiftTac` to `Play ShiftTac` or `Play Shift` to reduce ambiguity.
 - Keep `Play vs AI` disabled.
 
 **Scope Out:**
@@ -503,13 +629,13 @@ class GameplayScreen extends StatelessWidget {
 - Router creates ShiftTac gameplay with no args.
 - Router creates classic gameplay with `GameMode.classic`.
 - Home card tap navigates with classic mode argument.
-- Existing Play Local card still opens ShiftTac gameplay.
+- Existing Play ShiftTac card still opens ShiftTac gameplay.
 
 **DoD:**
 
 - [ ] `Play Classic` is enabled on the home screen.
 - [ ] `Play Classic` launches classic gameplay.
-- [ ] Existing `Play Local` behavior remains intact.
+- [ ] Existing `Play ShiftTac` behavior remains intact.
 - [ ] Invalid/missing route args are handled safely.
 - [ ] `Play vs AI` remains disabled.
 - [ ] Relevant navigation/widget tests pass.
@@ -535,24 +661,27 @@ class GameplayScreen extends StatelessWidget {
   - ShiftTac: clarify active-mark shifting if needed.
 - Review How To Play entry points:
   - Current how-to-play content teaches ShiftTac mechanics.
-  - If no classic tutorial is added yet, avoid implying the ShiftTac tutorial applies to classic.
+  - Keep How To Play ShiftTac-focused for this implementation.
+  - Avoid implying the ShiftTac tutorial applies to classic mode.
 
 **Scope Out:**
 
-- Full classic tutorial sequence unless product decides it is required for release.
+- Full classic tutorial sequence.
+- How To Play mode selector.
 - Marketing screenshots.
 
 **Implementation Notes:**
 
 - `docs/rules.md` currently says ShiftTac has no draw state. Keep that true and add classic rules separately.
 - Avoid overloading "local" to mean both modes unless UI copy is clear.
+- How To Play remains ShiftTac-focused for now; classic mode can be documented in rules/copy without adding a tutorial flow.
 
 **DoD:**
 
 - [ ] Rules docs clearly distinguish ShiftTac from classic mode.
 - [ ] Structure docs list new files if the project maintains that document manually.
 - [ ] Home copy clearly communicates the difference between modes.
-- [ ] How To Play copy does not mislead classic players.
+- [ ] How To Play remains ShiftTac-focused and does not mislead classic players.
 - [ ] Documentation links and references are accurate.
 - [ ] Commit and push phase changes to GitHub.
 
@@ -569,14 +698,14 @@ class GameplayScreen extends StatelessWidget {
   - `flutter test`
   - targeted widget tests if not included in `flutter test`
 - Manually verify on at least one emulator/device:
-  - Play Local / ShiftTac can win.
+  - Play ShiftTac / ShiftTac can win.
   - ShiftTac still rotates oldest marks.
   - ShiftTac still has no draw.
   - Play Classic can win.
   - Play Classic can draw.
   - Classic board never fades oldest marks.
   - Win dialog still looks correct.
-  - Draw dialog matches the design system.
+  - Draw result uses the shared result dialog, `assets/icons/draw.svg`, and grey palette.
   - Play Again works after win and draw.
   - Back to Home works after win and draw.
   - Pause, resume, restart, and back/exit flows work in both modes.
@@ -604,7 +733,7 @@ class GameplayScreen extends StatelessWidget {
 - [ ] Manual ShiftTac rotation flow passes.
 - [ ] Manual classic win flow passes.
 - [ ] Manual classic draw flow passes.
-- [ ] Draw dialog visually follows the existing modal system.
+- [ ] Draw result visually follows the shared result dialog system and grey palette.
 - [ ] No known regressions in home, routing, pause, restart, win, or exit flows.
 - [ ] Code review is complete.
 - [ ] Commit and push phase changes to GitHub.
@@ -620,7 +749,7 @@ Each phase can be a separate PR if the team wants small reviewable changes:
 3. Classic engine and tests.
 4. Mode-aware cubit/state.
 5. Mode-aware gameplay UI and board visuals.
-6. Draw dialog.
+6. Shared result dialog draw variant.
 7. Home/routing enablement.
 8. Docs and copy.
 9. Final regression polish.
@@ -636,10 +765,10 @@ If smaller PRs are too slow, combine Phases 1-3 into one domain PR, Phases 4-7 i
 - Board sizes other than 3x3.
 - New design language separate from the current ShiftTac system.
 
-## Open Questions
+## Resolved Decisions
 
-- Should classic mode always start with X, or should it share ShiftTac's random starter?
-- Should the current home card label `Play Local` be renamed to `Play ShiftTac` before classic mode ships?
-- Should draw use a new asset, a balanced X/O composition, or an existing neutral icon?
-- Should the result dialog be generalized now, or should `DrawDialog` be separate to minimize risk?
-- Should How To Play get a small mode selector, or remain ShiftTac-focused for now?
+- Classic mode shares ShiftTac's random starting-player behavior.
+- Draw uses `assets/icons/draw.svg`.
+- Draw uses the same result dialog component as X and O wins.
+- Draw uses grey shades in the same palette roles that X uses red shades and O uses green shades.
+- How To Play remains ShiftTac-focused for now.
