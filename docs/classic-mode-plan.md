@@ -635,13 +635,13 @@ class GameplayScreen extends StatelessWidget {
 
 **DoD:**
 
-- [ ] `Play Classic` is enabled on the home screen.
-- [ ] `Play Classic` launches classic gameplay.
-- [ ] Existing `Play ShiftTac` behavior remains intact.
-- [ ] Invalid/missing route args are handled safely.
-- [ ] `Play vs AI` remains disabled.
-- [ ] Relevant navigation/widget tests pass.
-- [ ] `flutter analyze` is clean.
+- [x] `Play Classic` is enabled on the home screen.
+- [x] `Play Classic` launches classic gameplay.
+- [x] Existing `Play ShiftTac` behavior remains intact.
+- [x] Invalid/missing route args are handled safely.
+- [x] `Play vs AI` remains disabled.
+- [x] Relevant navigation/widget tests pass.
+- [x] `flutter analyze` is clean.
 - [ ] Commit and push phase changes to GitHub.
 
 ---

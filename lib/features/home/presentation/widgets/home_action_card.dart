@@ -11,6 +11,9 @@ enum HomeActionCardStyle {
   /// Teal hero card (Play ShiftTac Multiplayer).
   heroPrimary,
 
+  /// Tappable muted card (Play Classic).
+  secondary,
+
   /// Muted disabled card (Play vs AI — Coming Soon).
   disabledSecondary,
 }
@@ -43,6 +46,16 @@ class HomeActionCard extends StatelessWidget {
       case HomeActionCardStyle.heroPrimary:
         assert(onTap != null, 'heroPrimary requires onTap');
         return _HeroPrimaryCard(
+          title: title,
+          subtitle: subtitle,
+          iconAsset: iconAsset,
+          iconWidth: iconWidth,
+          iconHeight: iconHeight,
+          onTap: onTap!,
+        );
+      case HomeActionCardStyle.secondary:
+        assert(onTap != null, 'secondary requires onTap');
+        return _SecondaryCard(
           title: title,
           subtitle: subtitle,
           iconAsset: iconAsset,
@@ -152,6 +165,100 @@ class _HeroPrimaryCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SecondaryCard extends StatelessWidget {
+  const _SecondaryCard({
+    required this.title,
+    required this.subtitle,
+    required this.iconAsset,
+    required this.onTap,
+    this.iconWidth,
+    this.iconHeight,
+  });
+
+  final String title;
+  final String subtitle;
+  final String iconAsset;
+  final VoidCallback onTap;
+  final double? iconWidth;
+  final double? iconHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surfaceContainerHighest,
+      elevation: 0,
+      borderRadius: AppSpacing.borderRadiusMd,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Feedback.forTap(context);
+          onTap();
+        },
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: AppSpacing.borderRadiusMd,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0D1D2330),
+                offset: Offset(0, 4),
+                blurRadius: 12,
+              ),
+              BoxShadow(
+                color: Color(0x081D2330),
+                offset: Offset(0, 8),
+                blurRadius: 24,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.containerPadding.w,
+              AppSpacing.containerPadding.w,
+              AppSpacing.containerPadding.w,
+              AppSpacing.containerPadding.h + 0.59,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      iconAsset,
+                      width: iconWidth ?? 16.w,
+                      height: iconHeight ?? 18.h,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.onSurface,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    SizedBox(width: AppSpacing.stackSm.w),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: AppTextStyles.headlineSm.copyWith(
+                          color: AppColors.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppSpacing.stackSm.h),
+                Text(
+                  subtitle,
+                  style: AppTextStyles.bodyMd.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

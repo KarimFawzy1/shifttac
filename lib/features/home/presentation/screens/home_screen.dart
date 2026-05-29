@@ -7,6 +7,7 @@ import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
+import '../../../game/domain/models/game_mode.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -39,13 +40,19 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.stackMd.h),
           HomeActionCard(
-            style: HomeActionCardStyle.disabledSecondary,
+            style: HomeActionCardStyle.secondary,
             title: 'Play Classic',
             subtitle: 'Traditional 3×3 — every mark stays on the board.',
             iconAsset: IconConstant.classicTicTacToe,
             iconWidth: 24.w,
             iconHeight: 24.h,
-            badgeLabel: 'Coming Soon',
+            onTap: () {
+              unawaited(AppAudioScope.read(context).playGameStart());
+              Navigator.of(context).pushNamed(
+                AppRoutes.game,
+                arguments: GameMode.classic,
+              );
+            },
           ),
           SizedBox(height: AppSpacing.stackMd.h),
           HomeActionCard(
