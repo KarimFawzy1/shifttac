@@ -475,12 +475,32 @@ No skipped tests observed in this run. Fix or wrap `match_result_dialog_test.dar
 
 **DoD:**
 
-- [ ] Session models exist and are pure Dart.
-- [ ] Existing game route behavior remains backwards compatible.
-- [ ] New AI-capable route config compiles and is covered by tests.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Session models exist and are pure Dart.
+- [x] Existing game route behavior remains backwards compatible.
+- [x] New AI-capable route config compiles and is covered by tests.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 1 Completion — 2026-05-29
+
+**Deliverables:**
+
+```text
+lib/features/game/domain/models/bot_difficulty.dart
+lib/features/game/domain/models/bot_opponent_config.dart
+lib/features/game/domain/models/game_session_config.dart
+lib/core/routing/app_router.dart
+lib/features/game/presentation/screens/gameplay_screen.dart
+test/game_session_config_test.dart
+test/app_router_test.dart
+```
+
+**Routing:** `AppRouter.sessionFromRouteArguments` accepts `GameSessionConfig`, `GameMode`, or invalid/null (ShiftTac default). `gameModeFromRouteArguments` delegates to session.mode.
+
+**Gameplay:** `GameplayScreen` takes `GameSessionConfig session`; `mode` getter preserved for existing tests. Cubit creation unchanged (bot wiring in Phase 5).
+
+**Tests:** `game_session_config_test.dart` (3) + expanded `app_router_test.dart` (session + route widget tests).
 
 ---
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/game/domain/models/game_mode.dart';
+import '../../features/game/domain/models/game_session_config.dart';
 import '../../features/game/presentation/screens/gameplay_screen.dart';
 import '../../features/home/presentation/screens/main_shell_screen.dart';
 import '../../features/how_to_play/presentation/screens/how_to_play_screen.dart';
@@ -39,10 +40,10 @@ class AppRouter {
     }
 
     if (name == AppRoutes.game) {
-      final mode = gameModeFromRouteArguments(settings.arguments);
+      final session = sessionFromRouteArguments(settings.arguments);
       return MaterialPageRoute<void>(
         settings: settings,
-        builder: (_) => GameplayScreen(mode: mode),
+        builder: (_) => GameplayScreen(session: session),
       );
     }
 
@@ -72,12 +73,20 @@ class AppRouter {
     return null;
   }
 
-  /// Resolves gameplay mode from [RouteSettings.arguments]; defaults to ShiftTac.
-  static GameMode gameModeFromRouteArguments(Object? arguments) {
-    if (arguments is GameMode) {
+  /// Resolves gameplay session from [RouteSettings.arguments]; defaults to ShiftTac.
+  static GameSessionConfig sessionFromRouteArguments(Object? arguments) {
+    if (arguments is GameSessionConfig) {
       return arguments;
     }
-    return GameMode.shift;
+    if (arguments is GameMode) {
+      return GameSessionConfig(mode: arguments);
+    }
+    return const GameSessionConfig.shift();
+  }
+
+  /// Resolves gameplay mode from [RouteSettings.arguments]; defaults to ShiftTac.
+  static GameMode gameModeFromRouteArguments(Object? arguments) {
+    return sessionFromRouteArguments(arguments).mode;
   }
 
   static MainShellTab? _tabFromArguments(Object? arguments) {
