@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
           HomeActionCard(
             style: HomeActionCardStyle.heroPrimary,
             title: 'Play ShiftTac',
-            subtitle: 'Play with a friend on the same device',
+            subtitle: 'Only 3 active marks — your oldest shifts off the board.',
             iconAsset: IconConstant.multiplayer,
             onTap: () {
               unawaited(AppAudioScope.read(context).playGameStart());
@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
           HomeActionCard(
             style: HomeActionCardStyle.secondary,
             title: 'Play Classic',
-            subtitle: 'Traditional 3×3 — every mark stays on the board.',
+            subtitle: 'Traditional 3x3. Every mark stays on the board.',
             iconAsset: IconConstant.classicTicTacToe,
             iconWidth: 24.w,
             iconHeight: 24.h,

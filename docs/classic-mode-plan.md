@@ -680,11 +680,11 @@ class GameplayScreen extends StatelessWidget {
 
 **DoD:**
 
-- [ ] Rules docs clearly distinguish ShiftTac from classic mode.
-- [ ] Structure docs list new files if the project maintains that document manually.
-- [ ] Home copy clearly communicates the difference between modes.
-- [ ] How To Play remains ShiftTac-focused and does not mislead classic players.
-- [ ] Documentation links and references are accurate.
+- [x] Rules docs clearly distinguish ShiftTac from classic mode.
+- [x] Structure docs list new files if the project maintains that document manually.
+- [x] Home copy clearly communicates the difference between modes.
+- [x] How To Play remains ShiftTac-focused and does not mislead classic players.
+- [x] Documentation links and references are accurate.
 - [ ] Commit and push phase changes to GitHub.
 
 ---

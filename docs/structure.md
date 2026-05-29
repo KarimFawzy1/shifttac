@@ -8,110 +8,93 @@ shifttac/
 │   ├── app.dart
 │   │
 │   ├── core/
+│   │   ├── audio/
+│   │   │   └── app_audio.dart
 │   │   ├── constants/
 │   │   │   ├── app_constants.dart
-│   │   │   └── game_constants.dart
-│   │   │
-│   │   ├── theme/
-│   │   │   ├── app_colors.dart
-│   │   │   ├── app_text_styles.dart
-│   │   │   ├── app_theme.dart
-│   │   │   └── app_spacing.dart
-│   │   │
+│   │   │   ├── game_constants.dart
+│   │   │   └── image_constants.dart
+│   │   ├── launch/
+│   │   │   └── app_launch_gate.dart
 │   │   ├── routing/
 │   │   │   ├── app_router.dart
-│   │   │   └── app_routes.dart
-│   │   │
-│   │   ├── widgets/
-│   │   │   ├── primary_button.dart
-│   │   │   ├── secondary_button.dart
-│   │   │   └── app_scaffold.dart
-│   │   │
-│   │   └── utils/
-│   │       └── extensions.dart
+│   │   │   ├── app_routes.dart
+│   │   │   └── main_shell_tab.dart
+│   │   ├── settings/
+│   │   ├── theme/
+│   │   └── widgets/
 │   │
 │   ├── features/
 │   │   ├── game/
 │   │   │   ├── domain/
 │   │   │   │   ├── models/
+│   │   │   │   │   ├── game_mode.dart
+│   │   │   │   │   ├── game_status.dart
 │   │   │   │   │   ├── player.dart
 │   │   │   │   │   ├── position.dart
-│   │   │   │   │   ├── cell.dart
-│   │   │   │   │   └── game_status.dart
-│   │   │   │   │
+│   │   │   │   │   ├── move.dart
+│   │   │   │   │   └── cell.dart
 │   │   │   │   └── logic/
-│   │   │   │       ├── game_engine.dart
+│   │   │   │       ├── game_rules.dart
+│   │   │   │       ├── shift_game_engine.dart
+│   │   │   │       ├── classic_game_engine.dart
+│   │   │   │       ├── game_snapshot.dart
+│   │   │   │       ├── game_engine_result.dart
 │   │   │   │       └── win_checker.dart
-│   │   │   │
 │   │   │   └── presentation/
 │   │   │       ├── state/
 │   │   │       │   ├── game_cubit.dart
 │   │   │       │   └── game_state.dart
-│   │   │       │
 │   │   │       ├── screens/
 │   │   │       │   └── gameplay_screen.dart
-│   │   │       │
 │   │   │       └── widgets/
 │   │   │           ├── game_board.dart
 │   │   │           ├── board_cell.dart
+│   │   │           ├── board_appearance_mapper.dart
+│   │   │           ├── match_presentation.dart
+│   │   │           ├── match_result.dart
+│   │   │           ├── match_result_dialog.dart
 │   │   │           ├── player_turn_indicator.dart
 │   │   │           ├── player_panel.dart
-│   │   │           ├── match_result_dialog.dart
-│   │   │           └── pause_bottom_sheet.dart
+│   │   │           ├── pause_bottom_sheet.dart
+│   │   │           └── exit_game_dialog.dart
 │   │   │
 │   │   ├── home/
 │   │   │   └── presentation/
 │   │   │       ├── screens/
-│   │   │       │   └── home_screen.dart
+│   │   │       │   ├── home_screen.dart
+│   │   │       │   └── main_shell_screen.dart
 │   │   │       └── widgets/
-│   │   │           └── home_action_card.dart
-│   │   │
-│   │   ├── onboarding/
-│   │   │   └── presentation/
-│   │   │       ├── screens/
-│   │   │       │   └── onboarding_screen.dart
-│   │   │       └── widgets/
-│   │   │           ├── onboarding_page.dart
-│   │   │           └── mini_board_preview.dart
+│   │   │           ├── home_action_card.dart
+│   │   │           └── main_nav_bar.dart
 │   │   │
 │   │   ├── how_to_play/
-│   │   │   └── presentation/
-│   │   │       ├── screens/
-│   │   │       │   └── how_to_play_screen.dart
-│   │   │       └── widgets/
-│   │   │           └── how_to_play_step.dart
-│   │   │
+│   │   ├── onboarding/
 │   │   ├── settings/
-│   │   │   └── presentation/
-│   │   │       ├── screens/
-│   │   │       │   └── settings_screen.dart
-│   │   │       └── widgets/
-│   │   │           └── settings_tile.dart
-│   │   │
 │   │   └── splash/
-│   │       └── presentation/
-│   │           └── screens/
-│   │               └── splash_screen.dart
 │   │
 │   └── shared/
-│       ├── widgets/
-│       │   ├── app_icon_button.dart
-│       │   └── screen_header.dart
-│       │
-│       └── animations/
-│           ├── app_motion.dart
-│           └── fade_scale_transition.dart
 │
-├── assets/
-│   ├── images/
-│   ├── icons/
-│   ├── sounds/
-│   └── fonts/
+├── docs/
+│   ├── rules.md              ← mode comparison (entry point)
+│   ├── shift-rules.md        ← ShiftTac mode spec
+│   ├── classic-rules.md      ← Classic mode spec
+│   ├── classic-mode-plan.md  ← implementation phases
+│   ├── design.md
+│   └── structure.md
 │
 ├── test/
-│   ├── game_engine_test.dart
-│   ├── win_checker_test.dart
-│   └── game_cubit_test.dart
+│   ├── shift_game_engine_test.dart
+│   ├── classic_game_engine_test.dart
+│   ├── game_cubit_test.dart
+│   ├── game_rules_test.dart
+│   ├── board_appearance_mapper_test.dart
+│   ├── match_presentation_test.dart
+│   ├── match_result_dialog_test.dart
+│   ├── match_result_test.dart
+│   ├── app_router_test.dart
+│   ├── home_screen_test.dart
+│   └── win_checker_test.dart
 │
 ├── pubspec.yaml
 └── README.md
@@ -137,17 +120,17 @@ But for now, it avoids unnecessary layers like repositories, use cases, data sou
 Keep the **game logic outside the UI**.
 
 ```txt
-game/domain/logic/
+features/game/domain/logic/
 ```
 
-should contain the real brain of the game.
+should contain the real brain of the game (`GameRules` implementations for ShiftTac and Classic).
 
 The UI should only ask:
 
 ```txt
 player tapped cell
 restart game
-show win dialog
+show match result dialog
 ```
 
 It should not decide:
@@ -156,6 +139,7 @@ It should not decide:
 which mark disappears
 who wins
 whose turn is next
+whether the match is a draw
 ```
 
 ## Recommended first implementation order
@@ -164,7 +148,7 @@ whose turn is next
 1. core/theme
 2. game/domain/models
 3. win_checker.dart
-4. game_engine.dart
+4. shift_game_engine.dart / classic_game_engine.dart
 5. game_state.dart
 6. game_cubit.dart
 7. gameplay_screen.dart

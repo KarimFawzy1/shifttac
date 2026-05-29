@@ -4,9 +4,16 @@
 
 ShiftTac is a modern strategic evolution of classic Tic Tac Toe built with Flutter.
 
-Unlike traditional Tic Tac Toe, players may only keep **3 active marks** on the board at any time. When a player places a fourth move, their oldest mark disappears automatically.
+The app includes two **local multiplayer** modes on the same device:
 
-This creates a constantly evolving board where prediction, timing, and adaptation matter more than static positioning.
+| Mode | Summary |
+| --- | --- |
+| **ShiftTac** | At most **3 active marks** per player; placing a fourth removes the oldest (FIFO shift). **No draws.** |
+| **Classic** | Traditional tic-tac-toe — **every mark stays** on the board until the match ends. **Draws** are possible. |
+
+See [docs/rules.md](docs/rules.md) for a full comparison, [docs/shift-rules.md](docs/shift-rules.md) for ShiftTac mode, and [docs/classic-rules.md](docs/classic-rules.md) for Classic mode.
+
+ShiftTac mode creates a constantly evolving board where prediction, timing, and adaptation matter more than static positioning.
 
 ---
 
@@ -76,7 +83,7 @@ B C D remain
 
 The board never permanently fills.
 
-There are no draw states.
+**ShiftTac mode** has no draw states. **Classic mode** can end in a draw when the board is full with no winner.
 
 ---
 
@@ -84,9 +91,9 @@ There are no draw states.
 
 ## Gameplay
 
-- Infinite Tic Tac Toe gameplay loop
-- FIFO disappearing move mechanic
-- Local multiplayer support
+- **ShiftTac mode** — FIFO disappearing move mechanic, evolving board
+- **Classic mode** — traditional 3×3 tic-tac-toe with draws
+- Local multiplayer on one device (both modes)
 - Real-time win detection
 - Animated move transitions
 - Faded oldest move indicator
@@ -171,39 +178,15 @@ These layers should only be added when the app actually requires them.
 
 # Game Rules
 
-## Board
+Rules are documented in `docs/`:
 
-- Fixed 3×3 grid
-- 2 players
-- Alternating turns
+- [rules.md](docs/rules.md) — compare ShiftTac vs Classic
+- [shift-rules.md](docs/shift-rules.md) — ShiftTac mode (3 active marks, shifts, no draw)
+- [classic-rules.md](docs/classic-rules.md) — Classic mode (permanent marks, draws)
 
-## Active Mark Limit
+Both modes use a fixed 3×3 grid, two players, and alternating turns. Win detection (row, column, diagonal) is shared; ShiftTac evaluates wins on **active** marks only after any FIFO removal.
 
-Each player may only own:
-
-```text
-3 active marks
-```
-
-## Move Rotation
-
-When a player places a move beyond the limit:
-
-```text
-Remove oldest mark
-Place new mark
-Check victory
-```
-
-## Win Condition
-
-A player wins by forming:
-
-- Horizontal line
-- Vertical line
-- Diagonal line
-
-Victory is evaluated only after the board reaches its final resolved state.
+The in-app **Rules** tab teaches **ShiftTac mode only**; it does not replace the Classic rules doc.
 
 ---
 

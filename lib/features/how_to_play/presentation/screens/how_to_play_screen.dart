@@ -14,7 +14,9 @@ import '../../../onboarding/presentation/widgets/mini_board_preview.dart';
 import '../widgets/how_to_play_board_frames.dart';
 import '../widgets/how_to_play_step.dart';
 
-/// How to Play tab / standalone screen (`design.md` §HOW TO PLAY SCREEN).
+/// ShiftTac-mode rules tab / standalone screen (`design.md` §HOW TO PLAY SCREEN).
+///
+/// Classic mode rules live in [docs/classic-rules.md]; this flow does not teach them.
 class HowToPlayScreen extends StatelessWidget {
   const HowToPlayScreen({super.key, this.standalone = false, this.onGoHome});
 
@@ -60,13 +62,13 @@ class _HowToPlayBody extends StatelessWidget {
         children: [
           SizedBox(height: AppSpacing.stackLg.h),
           Text(
-            'How to Play',
+            'How to Play ShiftTac',
             textAlign: TextAlign.center,
             style: AppTextStyles.titleMd.copyWith(color: AppColors.primary),
           ),
           SizedBox(height: AppSpacing.unit.h),
           Text(
-            'Mastering the shift mechanic.',
+            'ShiftTac mode only. Classic mode uses standard tic-tac-toe rules.',
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMd.copyWith(
               color: AppColors.onSurfaceVariant,
@@ -78,13 +80,13 @@ class _HowToPlayBody extends StatelessWidget {
               stepNumber: ++step,
               title: 'The board',
               description:
-                  'Classic 3×3 grid. Win with any row, column, or diagonal.',
+                  'Standard 3×3 grid. Win with any row, column, or diagonal.',
               visual: MiniBoardPreview(
                 frame: HowToPlayBoardFrames.classicStart,
                 size: _boardSize,
               ),
               semanticLabel:
-                  'Step $step. The board. Classic three by three grid.',
+                  'Step $step. The board. Three by three grid.',
             ),
             SizedBox(height: AppSpacing.stackMd.h),
             HowToPlayStep(
@@ -129,7 +131,9 @@ class _HowToPlayBody extends StatelessWidget {
             semanticLabel: 'Step $step. Three in a row wins the match.',
           ),
           SizedBox(height: AppSpacing.stackMd.h),
-          const HowToPlayTip(),
+          const HowToPlayTip(
+            subtitle: 'No ties in ShiftTac. The board always evolves.',
+          ),
           SizedBox(height: AppSpacing.stackMd.h),
           SecondaryButton(
             label: 'Replay tutorial',

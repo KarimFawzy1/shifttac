@@ -1,4 +1,8 @@
-# ShiftTac — Gameplay Rules Specification
+# ShiftTac Mode — Gameplay Rules Specification
+
+> **Scope:** This document describes **ShiftTac mode** only (Play ShiftTac on the home screen).  
+> For traditional rules with permanent marks and draws, see [classic-rules.md](./classic-rules.md).  
+> For a side-by-side comparison, see [rules.md](./rules.md).
 
 ## Overview
 
@@ -225,9 +229,9 @@ Only the final resolved board state is valid for win detection.
 
 ---
 
-## 8. No Draw State
+## 8. No Draw State (ShiftTac mode only)
 
-ShiftTac contains no draw condition.
+ShiftTac mode contains no draw condition. Classic mode in this app **does** allow draws; see [classic-rules.md](./classic-rules.md).
 
 Because active marks continuously rotate:
 

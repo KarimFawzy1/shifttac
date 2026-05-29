@@ -27,6 +27,22 @@ Widget _homeTestApp() {
 }
 
 void main() {
+  group('HomeScreen copy', () {
+    testWidgets('mode cards describe ShiftTac vs Classic', (tester) async {
+      await tester.pumpWidget(_homeTestApp());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Only 3 active marks — your oldest shifts off the board.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Traditional 3x3. Every mark stays on the board.'),
+        findsOneWidget,
+      );
+    });
+  });
+
   group('HomeScreen navigation', () {
     testWidgets('Play ShiftTac opens ShiftTac gameplay', (tester) async {
       await tester.pumpWidget(_homeTestApp());
