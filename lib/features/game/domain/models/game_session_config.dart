@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'bot_difficulty.dart';
 import 'bot_opponent_config.dart';
 import 'game_mode.dart';
@@ -23,15 +25,20 @@ class GameSessionConfig {
       bot = null,
       startingPlayer = null;
 
-  /// Classic vs AI: human is [Player.x], bot is [Player.o], human starts.
-  factory GameSessionConfig.classicAi(BotDifficulty difficulty) {
+  /// Classic vs AI: human is [Player.x], bot is [Player.o]; starter is random.
+  factory GameSessionConfig.classicAi(
+    BotDifficulty difficulty, {
+    Random? random,
+  }) {
+    final rng = random ?? Random();
+    final starter = rng.nextBool() ? Player.x : Player.o;
     return GameSessionConfig(
       mode: GameMode.classic,
       bot: BotOpponentConfig(
         difficulty: difficulty,
         botPlayer: Player.o,
       ),
-      startingPlayer: Player.x,
+      startingPlayer: starter,
     );
   }
 

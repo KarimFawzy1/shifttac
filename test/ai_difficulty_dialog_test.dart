@@ -132,7 +132,7 @@ void main() {
       expect(screen.session.isAiSession, isTrue);
       expect(screen.session.bot!.difficulty, BotDifficulty.easy);
       expect(screen.session.bot!.botPlayer, Player.o);
-      expect(screen.session.startingPlayer, Player.x);
+      expect(screen.session.startingPlayer, isIn([Player.x, Player.o]));
     });
 
     testWidgets('tapping Intermediate launches classic AI session', (
@@ -170,7 +170,7 @@ void main() {
 
       final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
       expect(screen.session.bot!.difficulty, BotDifficulty.intermediate);
-      expect(screen.session.startingPlayer, Player.x);
+      expect(screen.session.startingPlayer, isIn([Player.x, Player.o]));
     });
 
     testWidgets('tapping Hard launches classic AI session', (tester) async {

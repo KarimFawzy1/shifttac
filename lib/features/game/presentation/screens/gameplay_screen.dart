@@ -83,13 +83,6 @@ class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
 
     _matchResultPresenting = true;
     try {
-      final audio = AppAudioScope.read(context);
-      unawaited(
-        switch (result.kind) {
-          MatchResultKind.draw => audio.playDraw(),
-          _ => audio.playWin(),
-        },
-      );
       await MatchResultDialog.show(
         context,
         result: result,
@@ -104,6 +97,27 @@ class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
       if (mounted) {
         _matchResultPresenting = false;
       }
+    }
+  }
+
+  void _playMatchOutcomeSfx(
+    AppAudio audio,
+    GameCubit cubit,
+    MatchResultKind kind,
+  ) {
+    switch (kind) {
+      case MatchResultKind.draw:
+        unawaited(audio.playDraw());
+      case MatchResultKind.xWin:
+      case MatchResultKind.oWin:
+        if (cubit.isAiSession) {
+          final winner = kind == MatchResultKind.xWin ? Player.x : Player.o;
+          unawaited(
+            winner == cubit.botPlayer ? audio.playLose() : audio.playWin(),
+          );
+        } else {
+          unawaited(audio.playWin());
+        }
     }
   }
 
@@ -170,18 +184,35 @@ class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
     });
   }
 
+  void _onMatchEnded(BuildContext context, GameState state) {
+    final result = MatchResult.fromSnapshot(state.snapshot);
+    if (result == null) {
+      return;
+    }
+    final audio = AppAudioScope.read(context);
+    final cubit = context.read<GameCubit>();
+    _playMatchOutcomeSfx(audio, cubit, result.kind);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<GameCubit, GameState>(
       listenWhen: (previous, current) =>
-          previous.snapshot.status != GameStatus.draw &&
-          current.snapshot.status == GameStatus.draw,
-      listener: (context, state) {
-        unawaited(_presentDrawResultAfterBoardSettles(context));
-      },
-      child: _GameplayBody(
-        onMatchResultReady: () =>
-            unawaited(_presentMatchResultDialogWhenReady(context)),
+          previous.snapshot.status != GameStatus.won &&
+          current.snapshot.status == GameStatus.won,
+      listener: (context, state) => _onMatchEnded(context, state),
+      child: BlocListener<GameCubit, GameState>(
+        listenWhen: (previous, current) =>
+            previous.snapshot.status != GameStatus.draw &&
+            current.snapshot.status == GameStatus.draw,
+        listener: (context, state) {
+          _onMatchEnded(context, state);
+          unawaited(_presentDrawResultAfterBoardSettles(context));
+        },
+        child: _GameplayBody(
+          onMatchResultReady: () =>
+              unawaited(_presentMatchResultDialogWhenReady(context)),
+        ),
       ),
     );
   }

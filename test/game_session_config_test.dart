@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/bot_opponent_config.dart';
@@ -43,7 +45,21 @@ void main() {
       expect(session.isAiSession, isTrue);
       expect(session.bot!.difficulty, BotDifficulty.intermediate);
       expect(session.bot!.botPlayer, Player.o);
-      expect(session.startingPlayer, Player.x);
+      expect(session.startingPlayer, isIn([Player.x, Player.o]));
+    });
+
+    test('classicAi randomizes X or O as starting player', () {
+      final starters = <Player>{};
+      for (var seed = 0; seed < 24; seed++) {
+        starters.add(
+          GameSessionConfig.classicAi(
+            BotDifficulty.easy,
+            random: Random(seed),
+          ).startingPlayer!,
+        );
+      }
+      expect(starters, contains(Player.x));
+      expect(starters, contains(Player.o));
     });
   });
 }

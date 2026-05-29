@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -59,12 +61,15 @@ void main() {
     });
 
     test('preserves classicAi session config from route arguments', () {
-      final config = GameSessionConfig.classicAi(BotDifficulty.hard);
+      final config = GameSessionConfig.classicAi(
+        BotDifficulty.hard,
+        random: Random(0),
+      );
       final session = AppRouter.sessionFromRouteArguments(config);
       expect(session.mode, GameMode.classic);
       expect(session.bot!.difficulty, BotDifficulty.hard);
       expect(session.bot!.botPlayer, Player.o);
-      expect(session.startingPlayer, Player.x);
+      expect(session.startingPlayer, config.startingPlayer);
       expect(session.isAiSession, isTrue);
     });
   });

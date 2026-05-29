@@ -39,6 +39,7 @@ class GameCubit extends Cubit<GameState> {
          rules: rules,
          bot: bot,
          startingPlayer: startingPlayer,
+         matchRandom: botRandom,
          botStrategy: bot == null
              ? null
              : (botStrategy ??
@@ -56,11 +57,13 @@ class GameCubit extends Cubit<GameState> {
     required GameRules rules,
     required BotOpponentConfig? bot,
     required Player? startingPlayer,
+    required Random? matchRandom,
     required ClassicBotStrategy? botStrategy,
     required GameState initialState,
   }) : _rules = rules,
        _bot = bot,
        _startingPlayer = startingPlayer,
+       _matchRandom = matchRandom,
        _botStrategy = botStrategy,
        super(initialState) {
     assert(
@@ -69,6 +72,7 @@ class GameCubit extends Cubit<GameState> {
     );
     _matchStopwatch.start();
     _startMatchDurationTicker();
+    _scheduleBotMoveIfNeeded();
   }
 
   GameCubit.shift() : this(rules: ShiftGameEngine.instance);
@@ -93,6 +97,7 @@ class GameCubit extends Cubit<GameState> {
       rules: rules,
       bot: bot,
       startingPlayer: startingPlayer,
+      matchRandom: null,
       botStrategy: strategy,
       initialState: initialState,
     );
@@ -107,12 +112,10 @@ class GameCubit extends Cubit<GameState> {
       GameMode.shift => ShiftGameEngine.instance,
       GameMode.classic => ClassicGameEngine.instance,
     };
-    final startingPlayer =
-        session.startingPlayer ?? (session.isAiSession ? Player.x : null);
     return GameCubit(
       rules: rules,
       bot: session.bot,
-      startingPlayer: startingPlayer,
+      startingPlayer: session.startingPlayer,
       botRandom: botRandom,
       botStrategy: botStrategy,
     );
@@ -121,7 +124,13 @@ class GameCubit extends Cubit<GameState> {
   final GameRules _rules;
   final BotOpponentConfig? _bot;
   final Player? _startingPlayer;
+  final Random? _matchRandom;
   final ClassicBotStrategy? _botStrategy;
+
+  Player _randomAiStartingPlayer() {
+    final rng = _matchRandom ?? Random();
+    return rng.nextBool() ? humanPlayer! : botPlayer!;
+  }
 
   GameMode get mode => _rules.mode;
 
@@ -355,8 +364,10 @@ class GameCubit extends Cubit<GameState> {
     _matchStopwatch
       ..reset()
       ..start();
-    emit(GameState.initialFor(_rules, startingPlayer: _startingPlayer));
+    final startingPlayer = isAiSession ? _randomAiStartingPlayer() : _startingPlayer;
+    emit(GameState.initialFor(_rules, startingPlayer: startingPlayer));
     _startMatchDurationTicker();
+    _scheduleBotMoveIfNeeded();
   }
 
   void clearLastEventMarkers() {

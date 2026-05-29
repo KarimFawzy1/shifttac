@@ -4,7 +4,6 @@ import 'package:fake_async/fake_async.dart'; // ignore: depend_on_referenced_pac
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/game_constants.dart';
 import 'package:shifttac/features/game/domain/logic/classic_bot_strategy.dart';
-import 'package:shifttac/features/game/domain/logic/classic_easy_bot_strategy.dart';
 import 'package:shifttac/features/game/domain/logic/classic_game_engine.dart';
 import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
 import 'package:shifttac/features/game/presentation/state/game_state.dart';
@@ -46,7 +45,7 @@ GameCubit _aiCubit({Random? botRandom, ClassicBotStrategy? botStrategy}) {
 
 void main() {
   group('GameCubit — AI classic', () {
-    test('initial AI session starts with human as X', () {
+    test('initial AI session fixes human as X and bot as O', () {
       final cubit = _aiCubit();
       addTearDown(cubit.close);
 
@@ -54,6 +53,30 @@ void main() {
       expect(cubit.humanPlayer, Player.x);
       expect(cubit.botPlayer, Player.o);
       expect(cubit.state.snapshot.currentPlayer, Player.x);
+    });
+
+    test('AI session can start on bot turn and schedules opening move', () {
+      fakeAsync((async) {
+        final cubit = GameCubit.fromSession(
+          const GameSessionConfig(
+            mode: GameMode.classic,
+            bot: BotOpponentConfig(
+              difficulty: BotDifficulty.easy,
+              botPlayer: Player.o,
+            ),
+            startingPlayer: Player.o,
+          ),
+          botRandom: Random(0),
+        );
+
+        expect(cubit.state.snapshot.currentPlayer, Player.o);
+        expect(cubit.state.snapshot.oMoves, isEmpty);
+
+        async.elapse(Duration(milliseconds: GameConstants.botMoveDelayMs));
+
+        expect(cubit.state.snapshot.oMoves, isNotEmpty);
+        cubit.close();
+      });
     });
 
     test('human move schedules a bot move', () {
@@ -64,9 +87,7 @@ void main() {
         expect(cubit.state.snapshot.currentPlayer, Player.o);
         expect(cubit.state.snapshot.oMoves, isEmpty);
 
-        async.elapse(
-          Duration(milliseconds: GameConstants.botMoveDelayMs),
-        );
+        async.elapse(Duration(milliseconds: GameConstants.botMoveDelayMs));
         async.elapse(Duration(milliseconds: GameConstants.inputLockMs));
 
         expect(cubit.state.snapshot.oMoves, isNotEmpty);
@@ -253,16 +274,45 @@ void main() {
         cubit.onCellTapped(const Position(row: 1, col: 1));
         cubit.restart();
 
+        final starter = cubit.state.snapshot.currentPlayer;
         expect(cubit.state.snapshot.turnIndex, 0);
         expect(cubit.state.snapshot.oMoves, isEmpty);
-        expect(cubit.state.snapshot.currentPlayer, Player.x);
+        expect(starter, isIn([Player.x, Player.o]));
 
         async.elapse(
           Duration(milliseconds: GameConstants.botMoveDelayMs + 200),
         );
-        expect(cubit.state.snapshot.oMoves, isEmpty);
+        if (starter == Player.o) {
+          expect(cubit.state.snapshot.oMoves, isNotEmpty);
+        } else {
+          expect(cubit.state.snapshot.oMoves, isEmpty);
+        }
         cubit.close();
       });
+    });
+
+    test('restart randomizes starting player in AI sessions', () {
+      final cubit = GameCubit.fromSession(
+        const GameSessionConfig(
+          mode: GameMode.classic,
+          bot: BotOpponentConfig(
+            difficulty: BotDifficulty.easy,
+            botPlayer: Player.o,
+          ),
+          startingPlayer: Player.x,
+        ),
+        botRandom: Random(2),
+      );
+      addTearDown(cubit.close);
+
+      final starters = <Player>{cubit.state.snapshot.currentPlayer};
+      for (var i = 0; i < 12; i++) {
+        cubit.restart();
+        starters.add(cubit.state.snapshot.currentPlayer);
+      }
+
+      expect(starters, contains(Player.x));
+      expect(starters, contains(Player.o));
     });
 
     test('close cancels pending bot move', () {

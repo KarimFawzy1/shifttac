@@ -10,7 +10,6 @@ import 'package:shifttac/features/game/domain/logic/classic_game_engine.dart';
 import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
 import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/bot_opponent_config.dart';
-import 'package:shifttac/features/game/domain/models/game_mode.dart';
 import 'package:shifttac/features/game/domain/models/game_session_config.dart';
 import 'package:shifttac/features/game/domain/models/game_status.dart';
 import 'package:shifttac/features/game/domain/models/player.dart';
@@ -31,10 +30,8 @@ Widget _gameplayTestApp({required Widget home}) {
       audio: AppAudio(settings),
       child: ScreenUtilInit(
         designSize: AppConstants.designSize,
-        builder: (context, child) => MaterialApp(
-          onGenerateRoute: AppRouter.onGenerateRoute,
-          home: home,
-        ),
+        builder: (context, child) =>
+            MaterialApp(onGenerateRoute: AppRouter.onGenerateRoute, home: home),
       ),
     ),
   );
@@ -158,7 +155,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        _gameplayTestApp(home: const GameplayScreen(session: GameSessionConfig.classic())),
+        _gameplayTestApp(
+          home: const GameplayScreen(session: GameSessionConfig.classic()),
+        ),
       );
       await tester.pump();
       await tester.pump();
@@ -179,7 +178,9 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      final cubit = tester.element(find.byType(PlayerTurnIndicator)).read<GameCubit>();
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
       cubit.onCellTapped(const Position(row: 1, col: 1));
       await tester.pump();
 
@@ -198,13 +199,18 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      final cubit = tester.element(find.byType(PlayerTurnIndicator)).read<GameCubit>();
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
       cubit.onCellTapped(const Position(row: 1, col: 1));
       cubit.restart();
 
       expect(cubit.isAiSession, isTrue);
       expect(cubit.botPlayer, Player.o);
-      expect(cubit.state.snapshot.currentPlayer, Player.x);
+      expect(
+        cubit.state.snapshot.currentPlayer,
+        isIn([Player.x, Player.o]),
+      );
       expect(find.text('AI'), findsOneWidget);
     });
 
@@ -303,7 +309,9 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      final cubit = tester.element(find.byType(PlayerTurnIndicator)).read<GameCubit>();
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
       cubit.onCellTapped(const Position(row: 1, col: 1));
       await tester.pump();
 

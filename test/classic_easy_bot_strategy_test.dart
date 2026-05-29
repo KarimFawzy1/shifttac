@@ -6,7 +6,6 @@ import 'package:shifttac/features/game/domain/logic/classic_easy_bot_strategy.da
 import 'package:shifttac/features/game/domain/logic/classic_game_engine.dart';
 import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
 import 'package:shifttac/features/game/domain/models/player.dart';
-import 'package:shifttac/features/game/domain/models/position.dart';
 
 void main() {
   group('ClassicEasyBotStrategy', () {
@@ -33,14 +32,12 @@ void main() {
     test('is deterministic with a seeded random source', () {
       final snapshot = GameSnapshot.initial(startingPlayer: Player.o);
 
-      final first = ClassicEasyBotStrategy(random: Random(99)).chooseMove(
-        snapshot: snapshot,
-        botPlayer: Player.o,
-      );
-      final second = ClassicEasyBotStrategy(random: Random(99)).chooseMove(
-        snapshot: snapshot,
-        botPlayer: Player.o,
-      );
+      final first = ClassicEasyBotStrategy(
+        random: Random(99),
+      ).chooseMove(snapshot: snapshot, botPlayer: Player.o);
+      final second = ClassicEasyBotStrategy(
+        random: Random(99),
+      ).chooseMove(snapshot: snapshot, botPlayer: Player.o);
 
       expect(first, second);
       expect(availablePositions(snapshot), contains(first));
