@@ -27,15 +27,21 @@ class PlayerTurnIndicator extends StatelessWidget {
         switch (snap.status) {
           case GameStatus.won:
             label = snap.winner == Player.x ? 'X wins!' : 'O wins!';
+          case GameStatus.draw:
+            label = 'Draw';
           case GameStatus.playing:
             label = snap.currentPlayer == Player.x ? "X's turn" : "O's turn";
           case GameStatus.idle:
             label = '—';
         }
 
-        final accent = snap.status == GameStatus.won && snap.winner != null
-            ? (snap.winner == Player.x ? AppColors.softCoral : AppColors.teal)
-            : AppColors.primary;
+        final accent = switch (snap.status) {
+          GameStatus.won when snap.winner == Player.x => AppColors.softCoral,
+          GameStatus.won when snap.winner == Player.o => AppColors.teal,
+          GameStatus.draw => AppColors.outline,
+          GameStatus.playing || GameStatus.idle => AppColors.primary,
+          GameStatus.won => AppColors.primary,
+        };
 
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 220),

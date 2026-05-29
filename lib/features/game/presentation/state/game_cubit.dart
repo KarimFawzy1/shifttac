@@ -114,7 +114,7 @@ class GameCubit extends Cubit<GameState> {
       return CellTapResult.rejectedLocked;
     }
 
-    final result = GameEngine.attemptMove(
+    final result = GameEngine.instance.attemptMove(
       snapshot: state.snapshot,
       position: p,
     );

@@ -5,9 +5,10 @@ import '../models/move.dart';
 import '../models/player.dart';
 import '../models/position.dart';
 
-/// Authoritative game state: FIFO active-move queues per player (max 3 each).
+/// Authoritative game state shared by all local modes.
 ///
-/// Queue order is oldest → newest (index `0` is the oldest active mark).
+/// Move lists are ordered oldest → newest (index `0` is the oldest mark).
+/// ShiftTac caps active marks per player; classic keeps every mark on the board.
 class GameSnapshot {
   GameSnapshot({
     required List<Move> xMoves,

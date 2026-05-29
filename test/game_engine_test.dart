@@ -7,7 +7,7 @@ import 'package:shifttac/features/game/domain/models/player.dart';
 import 'package:shifttac/features/game/domain/models/position.dart';
 
 GameSnapshot _apply(GameSnapshot s, int row, int col) {
-  final r = GameEngine.attemptMove(
+  final r = GameEngine.instance.attemptMove(
     snapshot: s,
     position: Position(row: row, col: col),
   );
@@ -32,7 +32,7 @@ void main() {
   group('GameEngine.oldestPositionFor', () {
     test('returns null when queue empty', () {
       final s = GameSnapshot.initial(startingPlayer: Player.x);
-      expect(GameEngine.oldestPositionFor(Player.x, s), isNull);
+      expect(GameEngine.instance.oldestPositionFor(Player.x, s), isNull);
     });
 
     test('returns oldest FIFO position', () {
@@ -41,7 +41,7 @@ void main() {
       s = _apply(s, 1, 1);
       s = _apply(s, 2, 2);
       expect(
-        GameEngine.oldestPositionFor(Player.x, s),
+        GameEngine.instance.oldestPositionFor(Player.x, s),
         const Position(row: 0, col: 0),
       );
     });
@@ -51,7 +51,7 @@ void main() {
     test('rejects occupied cell without mutating snapshot', () {
       var s = GameSnapshot.initial(startingPlayer: Player.x);
       s = _apply(s, 1, 1);
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s,
         position: const Position(row: 1, col: 1),
       );
@@ -68,7 +68,7 @@ void main() {
       s = _apply(s, 0, 2);
       expect(s.status, GameStatus.won);
 
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s,
         position: const Position(row: 2, col: 0),
       );
@@ -139,7 +139,7 @@ void main() {
       s = _apply(s, 1, 2);
       s = _apply(s, 2, 0);
       s = _apply(s, 1, 1);
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s,
         position: const Position(row: 0, col: 2),
       );
@@ -166,7 +166,7 @@ void main() {
         if (s.status == GameStatus.won) {
           break;
         }
-        final r = GameEngine.attemptMove(
+        final r = GameEngine.instance.attemptMove(
           snapshot: s,
           position: Position(row: pair.$1, col: pair.$2),
         );
@@ -193,7 +193,7 @@ void main() {
       s = _apply(s, 1, 0);
       s = _apply(s, 0, 1);
       s = _apply(s, 2, 2);
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s,
         position: const Position(row: 0, col: 2),
       );
@@ -214,7 +214,7 @@ void main() {
       s = _apply(s, 1, 0);
       s = _apply(s, 1, 1);
       s = _apply(s, 2, 2);
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s,
         position: const Position(row: 2, col: 1),
       );
@@ -272,7 +272,7 @@ void main() {
       expect(s.currentPlayer, Player.o);
       s = _apply(s, 2, 0);
       expect(s.currentPlayer, Player.x);
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s,
         position: const Position(row: 1, col: 2),
       );
@@ -291,7 +291,7 @@ void main() {
   group('GameEngine.attemptMove — placedMove / rules', () {
     test('placedMove uses snapshot turnIndex before increment', () {
       final s0 = GameSnapshot.initial(startingPlayer: Player.x);
-      final r = GameEngine.attemptMove(
+      final r = GameEngine.instance.attemptMove(
         snapshot: s0,
         position: const Position(row: 0, col: 0),
       );

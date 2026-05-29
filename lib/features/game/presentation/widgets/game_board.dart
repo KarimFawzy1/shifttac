@@ -33,7 +33,7 @@ BoardCellAppearance _appearanceFor(GameState state, Position position) {
   final nextMoveWillShift =
       playing && currentPlayerMoves.length == GameConstants.maxActiveMarks;
   final oldest = nextMoveWillShift
-      ? GameEngine.oldestPositionFor(snap.currentPlayer, snap)
+      ? GameEngine.instance.oldestPositionFor(snap.currentPlayer, snap)
       : null;
   final faded = oldest == position && occupant == snap.currentPlayer;
 

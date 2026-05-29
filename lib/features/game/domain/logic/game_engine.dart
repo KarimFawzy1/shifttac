@@ -1,32 +1,31 @@
 import 'package:shifttac/core/constants/game_constants.dart';
+
+import '../models/game_mode.dart';
 import '../models/game_status.dart';
 import '../models/move.dart';
 import '../models/player.dart';
 import '../models/position.dart';
+import 'game_engine_result.dart';
+import 'game_rules.dart';
 import 'game_snapshot.dart';
 import 'win_checker.dart';
 
-class GameEngineResult {
-  const GameEngineResult({
-    required this.snapshot,
-    required this.moveAccepted,
-    this.removedMove,
-    this.placedMove,
-  });
+/// ShiftTac gameplay rules: FIFO rotation, then placement, then win evaluation.
+class GameEngine implements GameRules {
+  const GameEngine._();
 
-  final GameSnapshot snapshot;
-  final bool moveAccepted;
-  final Move? removedMove;
-  final Move? placedMove;
-}
+  static const GameEngine instance = GameEngine._();
 
-/// Gameplay rules: FIFO rotation, then placement, then win evaluation (`rules.md` §7).
-class GameEngine {
-  GameEngine._();
+  static GameSnapshot restart() => instance.initial();
 
-  static GameSnapshot restart() => GameSnapshot.initial();
+  @override
+  GameMode get mode => GameMode.shift;
 
-  static Position? oldestPositionFor(Player player, GameSnapshot snapshot) {
+  @override
+  GameSnapshot initial() => GameSnapshot.initial();
+
+  @override
+  Position? oldestPositionFor(Player player, GameSnapshot snapshot) {
     final q = snapshot.movesFor(player);
     if (q.isEmpty) {
       return null;
@@ -34,7 +33,8 @@ class GameEngine {
     return q.first.position;
   }
 
-  static GameEngineResult attemptMove({
+  @override
+  GameEngineResult attemptMove({
     required GameSnapshot snapshot,
     required Position position,
   }) {
@@ -115,7 +115,7 @@ class GameEngine {
     );
   }
 
-  static bool _isOccupied(GameSnapshot snapshot, Position position) {
+  bool _isOccupied(GameSnapshot snapshot, Position position) {
     for (final m in snapshot.xMoves) {
       if (m.position == position) {
         return true;

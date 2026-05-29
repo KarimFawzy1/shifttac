@@ -279,13 +279,13 @@ abstract interface class GameRules {
 
 **DoD:**
 
-- [ ] `GameMode` exists in the domain layer.
-- [ ] `GameStatus.draw` exists and all Dart switches compile.
-- [ ] A mode/rules boundary exists and is pure Dart.
-- [ ] Existing ShiftTac engine behavior remains unchanged.
-- [ ] `flutter analyze` is clean.
-- [ ] Existing tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] `GameMode` exists in the domain layer.
+- [x] `GameStatus.draw` exists and all Dart switches compile.
+- [x] A mode/rules boundary exists and is pure Dart.
+- [x] Existing ShiftTac engine behavior remains unchanged.
+- [x] `flutter analyze` is clean.
+- [x] Existing tests pass.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 
