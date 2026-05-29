@@ -642,7 +642,7 @@ class GameplayScreen extends StatelessWidget {
 - [x] `Play vs AI` remains disabled.
 - [x] Relevant navigation/widget tests pass.
 - [x] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 
