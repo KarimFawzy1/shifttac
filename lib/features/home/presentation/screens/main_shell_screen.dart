@@ -46,9 +46,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
   /// swipes are full-bleed and padding travels with each screen.
   static Widget _shellTab(Widget child) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.containerPadding.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.containerPadding.w),
       child: child,
     );
   }
@@ -110,7 +108,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
             child: PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
-              physics: const ClampingScrollPhysics(),
+              physics: const BouncingScrollPhysics(parent: PageScrollPhysics()),
               children: _pages,
             ),
           ),
