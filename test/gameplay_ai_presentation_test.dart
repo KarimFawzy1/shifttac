@@ -8,8 +8,10 @@ import 'package:shifttac/core/routing/app_router.dart';
 import 'package:shifttac/core/settings/app_settings_controller.dart';
 import 'package:shifttac/features/game/domain/logic/classic_game_engine.dart';
 import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
+import 'package:shifttac/features/game/domain/logic/shift_game_engine.dart';
 import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/bot_opponent_config.dart';
+import 'package:shifttac/features/game/domain/models/game_mode.dart';
 import 'package:shifttac/features/game/domain/models/game_session_config.dart';
 import 'package:shifttac/features/game/domain/models/game_status.dart';
 import 'package:shifttac/features/game/domain/models/player.dart';
@@ -21,6 +23,16 @@ import 'package:shifttac/features/game/presentation/widgets/match_result.dart';
 import 'package:shifttac/features/game/presentation/widgets/match_result_dialog.dart';
 import 'package:shifttac/features/game/presentation/widgets/player_panel.dart';
 import 'package:shifttac/features/game/presentation/widgets/player_turn_indicator.dart';
+
+/// Deterministic ShiftTac AI session (human X, bot O, human starts).
+const GameSessionConfig _shiftAiSession = GameSessionConfig(
+  mode: GameMode.shift,
+  bot: BotOpponentConfig(
+    difficulty: BotDifficulty.easy,
+    botPlayer: Player.o,
+  ),
+  startingPlayer: Player.x,
+);
 
 Widget _gameplayTestApp({required Widget home}) {
   final settings = AppSettingsController();
@@ -297,6 +309,162 @@ void main() {
     });
   });
 
+  group('ShiftTac AI presentation', () {
+    testWidgets('AI session shows You and AI labels', (tester) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: _shiftAiSession),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('You'), findsOneWidget);
+      expect(find.text('AI'), findsOneWidget);
+      expect(find.text('Player X'), findsNothing);
+      expect(find.text('Player O'), findsNothing);
+    });
+
+    testWidgets('local ShiftTac multiplayer does not show AI labels', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: GameSessionConfig.shift()),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Player X'), findsOneWidget);
+      expect(find.text('Player O'), findsOneWidget);
+      expect(find.text('AI'), findsNothing);
+    });
+
+    testWidgets('bot turn shows thinking indicator', (tester) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: _shiftAiSession),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
+      cubit.onCellTapped(const Position(row: 1, col: 1));
+      await tester.pump();
+
+      expect(find.text('Bot thinking...'), findsOneWidget);
+      expect(find.text('THINKING'), findsOneWidget);
+    });
+
+    testWidgets('board rejects human taps during bot turn', (tester) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: _shiftAiSession),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
+      cubit.onCellTapped(const Position(row: 1, col: 1));
+      await tester.pump();
+
+      expect(cubit.isBotTurn, isTrue);
+      final turnAfterHuman = cubit.state.snapshot.turnIndex;
+
+      final rejectResult = cubit.onCellTapped(const Position(row: 0, col: 0));
+      expect(rejectResult, CellTapResult.rejectedLocked);
+      expect(cubit.state.snapshot.turnIndex, turnAfterHuman);
+    });
+
+    testWidgets('human win shows result dialog in ShiftTac AI session', (
+      tester,
+    ) async {
+      final cubit = GameCubit.forTest(
+        rules: ShiftGameEngine.instance,
+        bot: const BotOpponentConfig(
+          difficulty: BotDifficulty.easy,
+          botPlayer: Player.o,
+        ),
+        startingPlayer: Player.x,
+        initialState: GameState(
+          snapshot: _xWinSnapshot(),
+          inputLocked: false,
+          lastPlacedPosition: null,
+          lastRemovedPosition: null,
+          matchDurationMs: 1000,
+        ),
+      );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        _gameplayTestApp(home: _AiMatchResultProbe(cubit: cubit)),
+      );
+      await tester.pump();
+      await tester.pump(MatchResultDialog.animationDuration);
+
+      expect(find.text('X Wins!'), findsOneWidget);
+      expect(find.text('Play Again'), findsOneWidget);
+    });
+
+    testWidgets('bot win shows result dialog in ShiftTac AI session', (
+      tester,
+    ) async {
+      final cubit = GameCubit.forTest(
+        rules: ShiftGameEngine.instance,
+        bot: const BotOpponentConfig(
+          difficulty: BotDifficulty.easy,
+          botPlayer: Player.o,
+        ),
+        startingPlayer: Player.x,
+        initialState: GameState(
+          snapshot: _oWinSnapshot(),
+          inputLocked: false,
+          lastPlacedPosition: null,
+          lastRemovedPosition: null,
+          matchDurationMs: 1000,
+        ),
+      );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        _gameplayTestApp(home: _AiMatchResultProbe(cubit: cubit)),
+      );
+      await tester.pump();
+      await tester.pump(MatchResultDialog.animationDuration);
+
+      expect(find.text('O Wins!'), findsOneWidget);
+    });
+
+    testWidgets('restart keeps ShiftTac AI session config', (tester) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: _shiftAiSession),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
+      expect(cubit.rules.mode, GameMode.shift);
+      cubit.onCellTapped(const Position(row: 1, col: 1));
+      cubit.restart();
+
+      expect(cubit.isAiSession, isTrue);
+      expect(cubit.botPlayer, Player.o);
+      expect(cubit.rules.mode, GameMode.shift);
+      expect(find.text('AI'), findsOneWidget);
+    });
+  });
+
   group('Gameplay AI flows', () {
     testWidgets('exit dialog can be opened during bot turn', (tester) async {
       await tester.pumpWidget(
@@ -314,6 +482,56 @@ void main() {
           .read<GameCubit>();
       cubit.onCellTapped(const Position(row: 1, col: 1));
       await tester.pump();
+
+      await tester.tap(find.bySemanticsLabel('Back'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Leave match?'), findsOneWidget);
+      expect(find.byType(GameplayScreen), findsOneWidget);
+    });
+
+    testWidgets('exit dialog can be opened during human turn in ShiftTac AI', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: _shiftAiSession),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
+      expect(cubit.isBotTurn, isFalse);
+
+      await tester.tap(find.bySemanticsLabel('Back'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Leave match?'), findsOneWidget);
+    });
+
+    testWidgets('exit dialog can be opened during bot turn in ShiftTac AI', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _gameplayTestApp(
+          home: const GameplayScreen(session: _shiftAiSession),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      final cubit = tester
+          .element(find.byType(PlayerTurnIndicator))
+          .read<GameCubit>();
+      cubit.onCellTapped(const Position(row: 1, col: 1));
+      await tester.pump();
+
+      expect(cubit.isBotTurn, isTrue);
 
       await tester.tap(find.bySemanticsLabel('Back'));
       await tester.pump();

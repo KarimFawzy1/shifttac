@@ -129,6 +129,52 @@ void main() {
         BoardCellAppearance.oSolid,
       );
     });
+
+    test('fades bot oldest mark on bot turn during AI play', () {
+      final snapshot = GameSnapshot(
+        xMoves: const [
+          Move(
+            player: Player.x,
+            position: Position(row: 0, col: 0),
+            turnIndex: 0,
+          ),
+          Move(
+            player: Player.x,
+            position: Position(row: 0, col: 1),
+            turnIndex: 2,
+          ),
+        ],
+        oMoves: const [
+          Move(
+            player: Player.o,
+            position: Position(row: 1, col: 0),
+            turnIndex: 1,
+          ),
+          Move(
+            player: Player.o,
+            position: Position(row: 1, col: 1),
+            turnIndex: 3,
+          ),
+          Move(
+            player: Player.o,
+            position: Position(row: 1, col: 2),
+            turnIndex: 5,
+          ),
+        ],
+        currentPlayer: Player.o,
+        turnIndex: 6,
+        status: GameStatus.playing,
+      );
+
+      expect(
+        boardCellAppearanceFor(
+          rules: ShiftGameEngine.instance,
+          snapshot: snapshot,
+          position: const Position(row: 1, col: 0),
+        ),
+        BoardCellAppearance.oFaded,
+      );
+    });
   });
 
   group('boardCellAppearanceFor — classic mode', () {

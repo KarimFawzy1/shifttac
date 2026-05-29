@@ -996,12 +996,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] ShiftTac AI gameplay clearly identifies the bot side.
-- [ ] Bot-thinking/input-blocked state is understandable.
-- [ ] Result dialog behavior is correct for ShiftTac AI.
-- [ ] Local multiplayer presentation remains unchanged.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] ShiftTac AI gameplay clearly identifies the bot side.
+- [x] Bot-thinking/input-blocked state is understandable.
+- [x] Result dialog behavior is correct for ShiftTac AI.
+- [x] Local multiplayer presentation remains unchanged.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 9 Completion
+
+**Files:** `gameplay_ai_presentation_test.dart`, `match_presentation_test.dart`, `board_appearance_mapper_test.dart`.
+
+**Behavior:** Verified mode-agnostic presentation (`You`/`AI` labels, bot thinking, input lock, win/lose result dialog and audio, FIFO oldest-mark fade) for ShiftTac AI without UI changes. Classic and local ShiftTac multiplayer behavior unchanged.
 
 ## Phase 10 - Full Regression And Release Readiness
 

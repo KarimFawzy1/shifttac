@@ -148,4 +148,52 @@ void main() {
       );
     });
   });
+
+  group('match presentation — AI shift', () {
+    GameSnapshot playingBotTurn() {
+      return GameSnapshot(
+        xMoves: const [],
+        oMoves: const [],
+        currentPlayer: Player.o,
+        turnIndex: 1,
+        status: GameStatus.playing,
+      );
+    }
+
+    test('panel titles distinguish you from AI', () {
+      expect(
+        playerPanelTitle(
+          player: Player.x,
+          isAiSession: true,
+          humanPlayer: Player.x,
+        ),
+        'You',
+      );
+      expect(
+        playerPanelTitle(
+          player: Player.o,
+          isAiSession: true,
+          humanPlayer: Player.x,
+        ),
+        'AI',
+      );
+    });
+
+    test('local shift panels keep Player X and Player O titles', () {
+      expect(playerPanelTitle(player: Player.x), 'Player X');
+      expect(playerPanelTitle(player: Player.o), 'Player O');
+    });
+
+    test('turn indicator shows bot thinking on bot turn', () {
+      final snapshot = playingBotTurn();
+      expect(
+        playerTurnIndicatorLabel(
+          snapshot,
+          isAiSession: true,
+          botPlayer: Player.o,
+        ),
+        'Bot thinking...',
+      );
+    });
+  });
 }
