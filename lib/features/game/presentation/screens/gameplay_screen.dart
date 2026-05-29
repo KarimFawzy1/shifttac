@@ -79,9 +79,13 @@ class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
 
     _matchResultPresenting = true;
     try {
-      if (result.kind != MatchResultKind.draw) {
-        unawaited(AppAudioScope.read(context).playWin());
-      }
+      final audio = AppAudioScope.read(context);
+      unawaited(
+        switch (result.kind) {
+          MatchResultKind.draw => audio.playDraw(),
+          _ => audio.playWin(),
+        },
+      );
       await MatchResultDialog.show(
         context,
         result: result,

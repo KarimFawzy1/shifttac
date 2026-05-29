@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -86,6 +88,7 @@ class MatchResultDialog extends StatelessWidget {
             onPlayAgain();
           },
           onBackToHome: () {
+            unawaited(AppAudioScope.read(dialogContext).playSwipe());
             Navigator.of(dialogContext).pop();
             onBackToHome();
           },

@@ -16,6 +16,7 @@ abstract final class SoundAssets {
   static const restart = 'sounds/restart.wav';
   static const gameStart = 'sounds/game-start.wav';
   static const win = 'sounds/win.wav';
+  static const draw = 'sounds/draw.wav';
   static const lose = 'sounds/lose.wav';
   static const backgroundMusic = 'sounds/background.mp3';
 }
@@ -164,6 +165,7 @@ class AppAudio {
         SoundAssets.restart,
         SoundAssets.gameStart,
         SoundAssets.win,
+        SoundAssets.draw,
         SoundAssets.lose,
       ];
       final createdPools = await Future.wait(
@@ -300,6 +302,8 @@ class AppAudio {
   Future<void> playGameStart() => _playSfx(SoundAssets.gameStart);
 
   Future<void> playWin() => _playSfx(SoundAssets.win);
+
+  Future<void> playDraw() => _playSfx(SoundAssets.draw);
 
   Future<void> playLose() => _playSfx(SoundAssets.lose);
 
