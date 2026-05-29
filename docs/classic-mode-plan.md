@@ -390,13 +390,13 @@ abstract interface class GameRules {
 
 **DoD:**
 
-- [ ] `ClassicGameEngine` exists and is pure Dart.
-- [ ] Classic mode supports win, draw, invalid move, and terminal-state rejection.
-- [ ] Draw detection cannot override a ninth-move win.
-- [ ] Classic engine tests cover all core rule paths.
-- [ ] Existing ShiftTac tests still pass.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] `ClassicGameEngine` exists and is pure Dart.
+- [x] Classic mode supports win, draw, invalid move, and terminal-state rejection.
+- [x] Draw detection cannot override a ninth-move win.
+- [x] Classic engine tests cover all core rule paths.
+- [x] Existing ShiftTac tests still pass.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 

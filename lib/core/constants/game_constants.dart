@@ -4,6 +4,7 @@ class GameConstants {
   static const int maxActiveMarks = 3;
   static const int boardRows = 3;
   static const int boardCols = 3;
+  static const int boardCellCount = boardRows * boardCols;
   static const int inputLockMs = 140;
   static const int tapFeedbackMs = 140;
   static const int movePlacementMs = 200;
