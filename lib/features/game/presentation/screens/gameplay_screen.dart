@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/audio/app_audio.dart';
+import '../../../../core/constants/game_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -25,7 +26,8 @@ import '../widgets/game_board.dart';
 import '../widgets/pause_bottom_sheet.dart';
 import '../widgets/player_panel.dart';
 import '../widgets/player_turn_indicator.dart';
-import '../widgets/win_dialog.dart';
+import '../widgets/match_result.dart';
+import '../widgets/match_result_dialog.dart';
 
 /// First playable screen: local multiplayer board driven by [GameCubit].
 class GameplayScreen extends StatelessWidget {
@@ -45,31 +47,6 @@ class GameplayScreen extends StatelessWidget {
   }
 }
 
-Future<void> _presentWinDialogWhenReady(BuildContext context) async {
-  if (!context.mounted) {
-    return;
-  }
-  final cubit = context.read<GameCubit>();
-  final state = cubit.state;
-  if (state.snapshot.status != GameStatus.won ||
-      state.snapshot.winner == null) {
-    return;
-  }
-  unawaited(AppAudioScope.read(context).playWin());
-  await WinDialog.show(
-    context,
-    winner: state.snapshot.winner!,
-    totalMoves: state.snapshot.turnIndex,
-    matchDurationMs: state.matchDurationMs,
-    onPlayAgain: cubit.restart,
-    onBackToHome: () {
-      Navigator.of(
-        context,
-      ).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
-    },
-  );
-}
-
 /// Observes app lifecycle to pause the match in the background and reopen the
 /// pause menu when the player returns.
 class _GameplayLifecycleScope extends StatefulWidget {
@@ -82,6 +59,56 @@ class _GameplayLifecycleScope extends StatefulWidget {
 
 class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
     with WidgetsBindingObserver {
+  bool _matchResultPresenting = false;
+
+  Future<void> _presentMatchResultDialogWhenReady(BuildContext context) async {
+    if (_matchResultPresenting || !context.mounted) {
+      return;
+    }
+    final cubit = context.read<GameCubit>();
+    final state = cubit.state;
+    final baseResult = MatchResult.fromSnapshot(state.snapshot);
+    if (baseResult == null) {
+      return;
+    }
+    final result = MatchResult(
+      kind: baseResult.kind,
+      totalMoves: state.snapshot.turnIndex,
+      matchDurationMs: state.matchDurationMs,
+    );
+
+    _matchResultPresenting = true;
+    try {
+      if (result.kind != MatchResultKind.draw) {
+        unawaited(AppAudioScope.read(context).playWin());
+      }
+      await MatchResultDialog.show(
+        context,
+        result: result,
+        onPlayAgain: cubit.restart,
+        onBackToHome: () {
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+        },
+      );
+    } finally {
+      if (mounted) {
+        _matchResultPresenting = false;
+      }
+    }
+  }
+
+  Future<void> _presentDrawResultAfterBoardSettles(BuildContext context) async {
+    await Future<void>.delayed(
+      const Duration(milliseconds: GameConstants.inputLockMs),
+    );
+    if (!mounted || !context.mounted) {
+      return;
+    }
+    await _presentMatchResultDialogWhenReady(context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -136,11 +163,26 @@ class _GameplayLifecycleScopeState extends State<_GameplayLifecycleScope>
   }
 
   @override
-  Widget build(BuildContext context) => const _GameplayBody();
+  Widget build(BuildContext context) {
+    return BlocListener<GameCubit, GameState>(
+      listenWhen: (previous, current) =>
+          previous.snapshot.status != GameStatus.draw &&
+          current.snapshot.status == GameStatus.draw,
+      listener: (context, state) {
+        unawaited(_presentDrawResultAfterBoardSettles(context));
+      },
+      child: _GameplayBody(
+        onMatchResultReady: () =>
+            unawaited(_presentMatchResultDialogWhenReady(context)),
+      ),
+    );
+  }
 }
 
 class _GameplayBody extends StatelessWidget {
-  const _GameplayBody();
+  const _GameplayBody({required this.onMatchResultReady});
+
+  final VoidCallback onMatchResultReady;
 
   static final SystemUiOverlayStyle _systemUi = SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -176,8 +218,7 @@ class _GameplayBody extends StatelessWidget {
               SizedBox(height: AppSpacing.stackLg.h),
               Expanded(
                 child: _GameplayBoardArea(
-                  onWinRevealComplete: () =>
-                      unawaited(_presentWinDialogWhenReady(context)),
+                  onWinRevealComplete: onMatchResultReady,
                 ),
               ),
             ],

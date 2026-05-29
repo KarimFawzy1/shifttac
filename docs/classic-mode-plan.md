@@ -582,15 +582,15 @@ class GameplayScreen extends StatelessWidget {
 
 **DoD:**
 
-- [ ] X wins, O wins, and draws are presented through the same result dialog component.
-- [ ] Draw result uses `assets/icons/draw.svg`.
-- [ ] Draw result uses grey shades for the same visual roles that X and O use red/green shades.
-- [ ] Result dialog matches existing modal tokens, spacing, typography, buttons, backdrop, and animation timing.
-- [ ] Draw result avoids excessive celebration.
-- [ ] Play Again restarts classic mode.
-- [ ] Back to Home returns to the home route.
-- [ ] Result dialog tests pass for X win, O win, and draw variants.
-- [ ] `flutter analyze` is clean.
+- [x] X wins, O wins, and draws are presented through the same result dialog component.
+- [x] Draw result uses `assets/icons/draw.svg`.
+- [x] Draw result uses grey shades for the same visual roles that X and O use red/green shades.
+- [x] Result dialog matches existing modal tokens, spacing, typography, buttons, backdrop, and animation timing.
+- [x] Draw result avoids excessive celebration.
+- [x] Play Again restarts classic mode.
+- [x] Back to Home returns to the home route.
+- [x] Result dialog tests pass for X win, O win, and draw variants.
+- [x] `flutter analyze` is clean.
 - [ ] Commit and push phase changes to GitHub.
 
 ---

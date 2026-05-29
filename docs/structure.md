@@ -56,7 +56,7 @@ shifttac/
 │   │   │           ├── board_cell.dart
 │   │   │           ├── player_turn_indicator.dart
 │   │   │           ├── player_panel.dart
-│   │   │           ├── win_dialog.dart
+│   │   │           ├── match_result_dialog.dart
 │   │   │           └── pause_bottom_sheet.dart
 │   │   │
 │   │   ├── home/
@@ -170,7 +170,7 @@ whose turn is next
 7. gameplay_screen.dart
 8. game_board.dart
 9. board_cell.dart
-10. win_dialog.dart
+10. match_result_dialog.dart
 ```
 
 ## Keep these folders empty for now

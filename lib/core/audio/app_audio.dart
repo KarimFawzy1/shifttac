@@ -124,7 +124,7 @@ class AppAudio {
       return;
     }
     final bgmContext = AudioContextConfig(
-      focus: AudioContextConfigFocus.gain,
+      focus: AudioContextConfigFocus.mixWithOthers,
     ).build();
 
     await _bgmPlayer.setAudioContext(bgmContext);

@@ -8,7 +8,7 @@ import '../../../../core/theme/app_text_styles.dart';
 
 /// Large action surface for the home hub (`css/HomeScreen.css` hero / AI rows).
 enum HomeActionCardStyle {
-  /// Teal hero card (Play Local Multiplayer).
+  /// Teal hero card (Play ShiftTac Multiplayer).
   heroPrimary,
 
   /// Muted disabled card (Play vs AI — Coming Soon).

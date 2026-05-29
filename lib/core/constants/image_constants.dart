@@ -17,6 +17,7 @@ class IconConstant {
   static const String classicTicTacToe =
       'assets/icons/bolder-classic-tic-tac-toe.svg';
   static const String dark = 'assets/icons/dark.svg';
+  static const String draw = 'assets/icons/draw.svg';
   static const String haptic = 'assets/icons/haptic.svg';
   static const String home = 'assets/icons/home.svg';
   static const String howToPlay = 'assets/icons/how_to_play.svg';

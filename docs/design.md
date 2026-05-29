@@ -728,7 +728,7 @@ Central hub.
 
 ##### Primary CTA
 
-Play Local Multiplayer
+Play ShiftTac Multiplayer
 
 Description:
 Play with a friend on the same device

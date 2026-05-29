@@ -12,49 +12,63 @@ import '../../../../core/widgets/modal_backdrop.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/secondary_button.dart';
 import '../../domain/models/player.dart';
+import 'match_result.dart';
 
-/// Winner accent tints for symbol + ambient glows (softer than board marks).
-abstract final class _WinnerPalette {
-  static Color accent(Player winner) =>
-      winner == Player.x ? AppColors.softCoral : AppColors.primary;
+/// Accent tints for result symbol + ambient glows (softer than board marks).
+abstract final class _ResultPalette {
+  Color get accent;
 
-  static Color symbol(Player winner) => accent(winner).withValues(alpha: 0.88);
+  Color get symbol => accent.withValues(alpha: 0.88);
 
-  static Color symbolGlow(Player winner) =>
-      accent(winner).withValues(alpha: 0.12);
+  Color get symbolGlow => accent.withValues(alpha: 0.12);
 
-  static Color ambientGlow(Player winner) =>
-      accent(winner).withValues(alpha: 0.05);
+  Color get ambientGlow => accent.withValues(alpha: 0.05);
 
-  static Color mutedAccent(Player winner) =>
-      accent(winner).withValues(alpha: 0.75);
+  Color get mutedAccent => accent.withValues(alpha: 0.75);
+
+  static _ResultPalette forResult(MatchResultKind kind) => switch (kind) {
+    MatchResultKind.xWin => _WinnerPalette(Player.x),
+    MatchResultKind.oWin => _WinnerPalette(Player.o),
+    MatchResultKind.draw => _DrawPalette(),
+  };
 }
 
-/// Win celebration modal aligned with `css/WinDialog.css` (tokens only).
-class WinDialog extends StatelessWidget {
-  const WinDialog._({
-    required this.winner,
-    required this.totalMoves,
-    required this.matchDurationMs,
+final class _WinnerPalette extends _ResultPalette {
+  _WinnerPalette(this.winner);
+
+  final Player winner;
+
+  @override
+  Color get accent =>
+      winner == Player.x ? AppColors.softCoral : AppColors.primary;
+}
+
+final class _DrawPalette extends _ResultPalette {
+  _DrawPalette();
+
+  @override
+  Color get accent => AppColors.outline;
+}
+
+/// Shared match result modal for X win, O win, and draw (tokens only).
+class MatchResultDialog extends StatelessWidget {
+  const MatchResultDialog._({
+    required this.result,
     required this.onPlayAgain,
     required this.onBackToHome,
     required this.routeAnimation,
   });
 
-  final Player winner;
-  final int totalMoves;
-  final int matchDurationMs;
+  final MatchResult result;
   final VoidCallback onPlayAgain;
   final VoidCallback onBackToHome;
   final Animation<double> routeAnimation;
 
-  static const Duration _animationDuration = Duration(milliseconds: 300);
+  static const Duration animationDuration = Duration(milliseconds: 300);
 
   static Future<void> show(
     BuildContext context, {
-    required Player winner,
-    required int totalMoves,
-    required int matchDurationMs,
+    required MatchResult result,
     required VoidCallback onPlayAgain,
     required VoidCallback onBackToHome,
   }) {
@@ -62,12 +76,10 @@ class WinDialog extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.transparent,
-      transitionDuration: _animationDuration,
+      transitionDuration: animationDuration,
       pageBuilder: (dialogContext, animation, secondaryAnimation) {
-        return WinDialog._(
-          winner: winner,
-          totalMoves: totalMoves,
-          matchDurationMs: matchDurationMs,
+        return MatchResultDialog._(
+          result: result,
           routeAnimation: animation,
           onPlayAgain: () {
             Navigator.of(dialogContext).pop();
@@ -84,10 +96,26 @@ class WinDialog extends StatelessWidget {
     );
   }
 
-  String get _title => winner == Player.x ? 'X Wins!' : 'O Wins!';
+  String get _title => switch (result.kind) {
+    MatchResultKind.xWin => 'X Wins!',
+    MatchResultKind.oWin => 'O Wins!',
+    MatchResultKind.draw => "It's a Draw!",
+  };
+
+  String get _body => switch (result.kind) {
+    MatchResultKind.draw => 'No winner this round. Try another match.',
+    MatchResultKind.xWin || MatchResultKind.oWin =>
+      'Strategic mastery achieved.',
+  };
+
+  String _symbolAsset() => switch (result.kind) {
+    MatchResultKind.xWin => IconConstant.x,
+    MatchResultKind.oWin => IconConstant.o,
+    MatchResultKind.draw => IconConstant.draw,
+  };
 
   String _formatDuration() {
-    final d = Duration(milliseconds: matchDurationMs);
+    final d = Duration(milliseconds: result.matchDurationMs);
     final m = d.inMinutes;
     final s = d.inSeconds.remainder(60);
     return '${m.toString()}:${s.toString().padLeft(2, '0')}';
@@ -95,6 +123,7 @@ class WinDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = _ResultPalette.forResult(result.kind);
     final backdropCurve = CurvedAnimation(
       parent: routeAnimation,
       curve: Curves.easeOut,
@@ -131,10 +160,12 @@ class WinDialog extends StatelessWidget {
         opacity: contentFade,
         child: ScaleTransition(
           scale: contentScale,
-          child: _WinDialogCard(
+          child: _MatchResultDialogCard(
             title: _title,
-            winner: winner,
-            totalMoves: totalMoves,
+            body: _body,
+            symbolAsset: _symbolAsset(),
+            palette: palette,
+            totalMoves: result.totalMoves,
             matchDurationLabel: _formatDuration(),
             onPlayAgain: onPlayAgain,
             onBackToHome: onBackToHome,
@@ -145,10 +176,12 @@ class WinDialog extends StatelessWidget {
   }
 }
 
-class _WinDialogCard extends StatelessWidget {
-  const _WinDialogCard({
+class _MatchResultDialogCard extends StatelessWidget {
+  const _MatchResultDialogCard({
     required this.title,
-    required this.winner,
+    required this.body,
+    required this.symbolAsset,
+    required this.palette,
     required this.totalMoves,
     required this.matchDurationLabel,
     required this.onPlayAgain,
@@ -156,7 +189,9 @@ class _WinDialogCard extends StatelessWidget {
   });
 
   final String title;
-  final Player winner;
+  final String body;
+  final String symbolAsset;
+  final _ResultPalette palette;
   final int totalMoves;
   final String matchDurationLabel;
   final VoidCallback onPlayAgain;
@@ -165,7 +200,6 @@ class _WinDialogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final symbolSize = 72.r;
-    final symbolAsset = winner == Player.x ? IconConstant.x : IconConstant.o;
 
     return Dialog(
       clipBehavior: Clip.none,
@@ -187,11 +221,11 @@ class _WinDialogCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _WinnerSymbol(
+              _ResultSymbol(
                 asset: symbolAsset,
                 size: symbolSize,
-                color: _WinnerPalette.symbol(winner),
-                glowColor: _WinnerPalette.symbolGlow(winner),
+                color: palette.symbol,
+                glowColor: palette.symbolGlow,
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               Text(
@@ -203,7 +237,7 @@ class _WinDialogCard extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.stackSm.h),
               Text(
-                'Strategic mastery achieved.',
+                body,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyLg.copyWith(color: AppColors.outline),
               ),
@@ -234,7 +268,7 @@ class _WinDialogCard extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               _ActionButtonsWithAmbient(
-                winner: winner,
+                palette: palette,
                 onPlayAgain: onPlayAgain,
                 onBackToHome: onBackToHome,
               ),
@@ -246,27 +280,25 @@ class _WinDialogCard extends StatelessWidget {
   }
 }
 
-/// Play Again + Back to Home with winner-colored ambient blur (`WinDialog.css`).
 class _ActionButtonsWithAmbient extends StatelessWidget {
   const _ActionButtonsWithAmbient({
-    required this.winner,
+    required this.palette,
     required this.onPlayAgain,
     required this.onBackToHome,
   });
 
-  final Player winner;
+  final _ResultPalette palette;
   final VoidCallback onPlayAgain;
   final VoidCallback onBackToHome;
 
   static const double _orbSize = 256;
   static const double _orbBlurSigma = 30;
-  /// `WinDialog.css` ambient orbs sit ~79px outside the action column edges.
   static const double _orbInsetSide = 79;
   static const double _orbInsetBottom = 74;
 
   @override
   Widget build(BuildContext context) {
-    final glow = _WinnerPalette.ambientGlow(winner);
+    final glow = palette.ambientGlow;
     final orb = _orbSize.r;
 
     return Stack(
@@ -315,7 +347,7 @@ class _ActionButtonsWithAmbient extends StatelessWidget {
                 width: 18.w,
                 height: 18.w,
                 colorFilter: ColorFilter.mode(
-                  _WinnerPalette.mutedAccent(winner),
+                  palette.mutedAccent,
                   BlendMode.srcIn,
                 ),
               ),
@@ -328,7 +360,6 @@ class _ActionButtonsWithAmbient extends StatelessWidget {
   }
 }
 
-/// Circular fill + Gaussian blur (`filter: blur` in `WinDialog.css`).
 class _BlurredOrb extends StatelessWidget {
   const _BlurredOrb({
     required this.size,
@@ -353,9 +384,8 @@ class _BlurredOrb extends StatelessWidget {
   }
 }
 
-/// Large symbol with `WinDialog.css` overlay blur (`-24px` inset, `12px` blur).
-class _WinnerSymbol extends StatelessWidget {
-  const _WinnerSymbol({
+class _ResultSymbol extends StatelessWidget {
+  const _ResultSymbol({
     required this.asset,
     required this.size,
     required this.color,

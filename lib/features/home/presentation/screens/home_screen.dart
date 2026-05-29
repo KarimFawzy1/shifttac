@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(height: AppSpacing.stackLg.h),
           HomeActionCard(
             style: HomeActionCardStyle.heroPrimary,
-            title: 'Play Local',
+            title: 'Play ShiftTac',
             subtitle: 'Play with a friend on the same device',
             iconAsset: IconConstant.multiplayer,
             onTap: () {
