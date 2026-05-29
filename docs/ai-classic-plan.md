@@ -545,13 +545,34 @@ test/app_router_test.dart
 
 **DoD:**
 
-- [ ] Bot strategy contract exists.
-- [ ] Shared helpers are pure Dart and tested.
-- [ ] Difficulty-to-strategy creation is explicit.
-- [ ] No gameplay UI behavior changes.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Bot strategy contract exists.
+- [x] Shared helpers are pure Dart and tested.
+- [x] Difficulty-to-strategy creation is explicit.
+- [x] No gameplay UI behavior changes.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 2 Completion — 2026-05-29
+
+**Deliverables:**
+
+```text
+lib/features/game/domain/logic/classic_bot_strategy.dart
+lib/features/game/domain/logic/classic_bot_helpers.dart
+lib/features/game/domain/logic/classic_bot_strategy_factory.dart
+lib/features/game/domain/logic/classic_easy_bot_strategy.dart
+lib/features/game/domain/logic/classic_intermediate_bot_strategy.dart
+lib/features/game/domain/logic/classic_hard_bot_strategy.dart
+test/classic_bot_helpers_test.dart
+test/classic_bot_strategy_factory_test.dart
+```
+
+**Helpers:** `occupiedPositions`, `availablePositions` (stable order), `sortPositionsStable`, `simulateClassicMove` (via `ClassicGameEngine`), `findImmediateWin`. `classicStableMoveOrder`: center → corners → sides.
+
+**Factory:** `ClassicBotStrategyFactory.forDifficulty` maps each `BotDifficulty` to its strategy type; `random` is wired for easy (Phase 3). Strategy `chooseMove` bodies are stubs until Phases 3–4.
+
+**Tests:** 11 passing (`classic_bot_helpers_test` + `classic_bot_strategy_factory_test`).
 
 ---
 
