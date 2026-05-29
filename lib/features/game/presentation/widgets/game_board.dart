@@ -5,57 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/constants/game_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../domain/logic/shift_game_engine.dart';
-import '../../domain/logic/game_snapshot.dart';
-import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
 import '../../domain/models/position.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
+import 'board_appearance_mapper.dart';
 import 'board_cell.dart';
 
 const Duration _winningLineRevealDuration = Duration(milliseconds: 560);
 const Duration _winningLineSettleDuration = Duration(milliseconds: 90);
-
-/// Maps engine snapshot → per-cell visuals. Queue reads stay in this file only.
-BoardCellAppearance _appearanceFor(GameState state, Position position) {
-  final snap = state.snapshot;
-  final occupant = _occupant(snap, position);
-  if (occupant == null) {
-    return BoardCellAppearance.empty;
-  }
-
-  final playing = snap.status == GameStatus.playing;
-  final currentPlayerMoves = snap.movesFor(snap.currentPlayer);
-  final nextMoveWillShift =
-      playing && currentPlayerMoves.length == GameConstants.maxActiveMarks;
-  final oldest = nextMoveWillShift
-      ? ShiftGameEngine.instance.oldestPositionFor(snap.currentPlayer, snap)
-      : null;
-  final faded = oldest == position && occupant == snap.currentPlayer;
-
-  if (occupant == Player.x) {
-    return faded ? BoardCellAppearance.xFaded : BoardCellAppearance.xSolid;
-  }
-  return faded ? BoardCellAppearance.oFaded : BoardCellAppearance.oSolid;
-}
-
-Player? _occupant(GameSnapshot snapshot, Position position) {
-  for (final m in snapshot.xMoves) {
-    if (m.position == position) {
-      return Player.x;
-    }
-  }
-  for (final m in snapshot.oMoves) {
-    if (m.position == position) {
-      return Player.o;
-    }
-  }
-  return null;
-}
 
 class GameBoard extends StatelessWidget {
   const GameBoard({super.key, this.onWinningLineRevealComplete});
@@ -69,7 +29,8 @@ class GameBoard extends StatelessWidget {
           prev.snapshot != next.snapshot ||
           prev.inputLocked != next.inputLocked,
       builder: (context, state) {
-        final frozen = state.snapshot.status != GameStatus.playing;
+        final cubit = context.read<GameCubit>();
+        final frozen = isBoardFrozen(state.snapshot.status);
         final gap = AppSpacing.gridGutter.w;
 
         return LayoutBuilder(
@@ -120,7 +81,11 @@ class GameBoard extends StatelessWidget {
                             final col = index % 3;
                             final p = Position(row: row, col: col);
                             return BoardCellTapTarget(
-                              appearance: _appearanceFor(state, p),
+                              appearance: boardCellAppearanceFor(
+                                rules: cubit.rules,
+                                snapshot: state.snapshot,
+                                position: p,
+                              ),
                               position: p,
                               interactive: !frozen,
                             );

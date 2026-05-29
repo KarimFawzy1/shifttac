@@ -13,6 +13,7 @@ import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
+import 'match_presentation.dart';
 
 /// Player card: inactive (muted white + 1px border) vs active (accent ring + glow).
 class PlayerPanel extends StatelessWidget {
@@ -35,15 +36,14 @@ class PlayerPanel extends StatelessWidget {
           prev.snapshot.winner != next.snapshot.winner,
       builder: (context, state) {
         final snap = state.snapshot;
-        final isPlaying = snap.status == GameStatus.playing;
-        final isWinner = snap.status == GameStatus.won && snap.winner == player;
-        final isTurnActive = isPlaying && snap.currentPlayer == player;
-        final highlighted = isTurnActive || isWinner;
-
-        final subtitleText = isWinner
-            ? 'WINNER'
-            : (isTurnActive ? 'YOUR TURN' : 'Waiting');
-        final showWaitingDots = isPlaying && !isTurnActive;
+        final highlighted = playerPanelHighlighted(snapshot: snap, player: player);
+        final subtitleText = playerPanelSubtitle(snapshot: snap, player: player);
+        final showWaitingDots = playerPanelShowsWaitingDots(
+          snapshot: snap,
+          player: player,
+        );
+        final isTurnActive =
+            snap.status == GameStatus.playing && snap.currentPlayer == player;
         final isX = player == Player.x;
         final accent = isX ? AppColors.softCoral : AppColors.primary;
 

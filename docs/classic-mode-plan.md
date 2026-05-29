@@ -503,14 +503,14 @@ class GameplayScreen extends StatelessWidget {
 
 **DoD:**
 
-- [ ] `GameplayScreen` can be constructed for ShiftTac or classic mode.
-- [ ] Classic board visuals do not show ShiftTac fade/oldest preview.
-- [ ] ShiftTac board visuals are unchanged.
-- [ ] Won and draw terminal states both freeze board input.
-- [ ] Indicator and player panels render draw state cleanly.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant widget/unit tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] `GameplayScreen` can be constructed for ShiftTac or classic mode.
+- [x] Classic board visuals do not show ShiftTac fade/oldest preview.
+- [x] ShiftTac board visuals are unchanged.
+- [x] Won and draw terminal states both freeze board input.
+- [x] Indicator and player panels render draw state cleanly.
+- [x] `flutter analyze` is clean.
+- [x] Relevant widget/unit tests pass.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 

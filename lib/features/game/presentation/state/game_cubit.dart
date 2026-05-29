@@ -36,6 +36,8 @@ class GameCubit extends Cubit<GameState> {
 
   GameMode get mode => _rules.mode;
 
+  GameRules get rules => _rules;
+
   final Stopwatch _matchStopwatch = Stopwatch();
   Timer? _inputUnlockTimer;
   Timer? _matchDurationTicker;

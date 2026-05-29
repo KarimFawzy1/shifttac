@@ -16,6 +16,7 @@ import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_icon_button.dart';
 import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
+import '../../domain/models/game_mode.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
 import '../widgets/board_cell.dart';
@@ -28,12 +29,17 @@ import '../widgets/win_dialog.dart';
 
 /// First playable screen: local multiplayer board driven by [GameCubit].
 class GameplayScreen extends StatelessWidget {
-  const GameplayScreen({super.key});
+  const GameplayScreen({super.key, this.mode = GameMode.shift});
+
+  final GameMode mode;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => GameCubit.shift(),
+      create: (_) => switch (mode) {
+        GameMode.shift => GameCubit.shift(),
+        GameMode.classic => GameCubit.classic(),
+      },
       child: const _GameplayLifecycleScope(),
     );
   }

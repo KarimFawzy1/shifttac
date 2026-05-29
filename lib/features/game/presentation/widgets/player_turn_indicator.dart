@@ -9,6 +9,7 @@ import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
 import '../state/game_cubit.dart';
 import '../state/game_state.dart';
+import 'match_presentation.dart';
 
 /// Animated label for current turn or win result.
 class PlayerTurnIndicator extends StatelessWidget {
@@ -23,17 +24,7 @@ class PlayerTurnIndicator extends StatelessWidget {
           prev.snapshot.winner != next.snapshot.winner,
       builder: (context, state) {
         final snap = state.snapshot;
-        final String label;
-        switch (snap.status) {
-          case GameStatus.won:
-            label = snap.winner == Player.x ? 'X wins!' : 'O wins!';
-          case GameStatus.draw:
-            label = 'Draw';
-          case GameStatus.playing:
-            label = snap.currentPlayer == Player.x ? "X's turn" : "O's turn";
-          case GameStatus.idle:
-            label = '—';
-        }
+        final label = playerTurnIndicatorLabel(snap);
 
         final accent = switch (snap.status) {
           GameStatus.won when snap.winner == Player.x => AppColors.softCoral,
