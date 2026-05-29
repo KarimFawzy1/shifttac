@@ -685,7 +685,7 @@ class GameplayScreen extends StatelessWidget {
 - [x] Home copy clearly communicates the difference between modes.
 - [x] How To Play remains ShiftTac-focused and does not mislead classic players.
 - [x] Documentation links and references are accurate.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 
