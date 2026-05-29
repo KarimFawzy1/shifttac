@@ -687,12 +687,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] ShiftTac helper functions exist and are pure.
-- [ ] Helpers use `ShiftGameEngine` for simulated moves.
-- [ ] Helper tests cover FIFO-specific behavior.
-- [ ] Helper tests cover immediate wins and threats.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] ShiftTac helper functions exist and are pure.
+- [x] Helpers use `ShiftGameEngine` for simulated moves.
+- [x] Helper tests cover FIFO-specific behavior.
+- [x] Helper tests cover immediate wins and threats.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 3 Completion
+
+**Files:** `shift_bot_helpers.dart`, `shift_bot_helpers_test.dart`.
+
+**Helpers:** Occupied/available cells, stable ordering, `simulateShiftMove`, immediate win/threat detection, winning-move lists, `countImmediateWinsFor`, `allowsOpponentImmediateWin`, corner/side subsets.
 
 ## Phase 4 - Easy ShiftTac Bot
 
