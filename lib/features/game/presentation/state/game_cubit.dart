@@ -142,10 +142,12 @@ class GameCubit extends Cubit<GameState> {
   int _inputLockGeneration = 0;
   int _botMoveGeneration = 0;
 
-  bool get _isBotTurn =>
-      _bot != null &&
-      state.snapshot.status == GameStatus.playing &&
-      state.snapshot.currentPlayer == _bot!.botPlayer;
+  bool get _isBotTurn {
+    final bot = _bot;
+    return bot != null &&
+        state.snapshot.status == GameStatus.playing &&
+        state.snapshot.currentPlayer == bot.botPlayer;
+  }
 
   @override
   Future<void> close() {
@@ -283,13 +285,14 @@ class GameCubit extends Cubit<GameState> {
   }
 
   void _scheduleBotMoveIfNeeded() {
-    if (_bot == null || _botStrategy == null || _matchPaused) {
+    final bot = _bot;
+    if (bot == null || _botStrategy == null || _matchPaused) {
       return;
     }
     if (state.snapshot.status != GameStatus.playing) {
       return;
     }
-    if (state.snapshot.currentPlayer != _bot!.botPlayer) {
+    if (state.snapshot.currentPlayer != bot.botPlayer) {
       return;
     }
 
@@ -308,19 +311,21 @@ class GameCubit extends Cubit<GameState> {
     if (_matchPaused) {
       return;
     }
-    if (_bot == null || _botStrategy == null) {
+    final bot = _bot;
+    final botStrategy = _botStrategy;
+    if (bot == null || botStrategy == null) {
       return;
     }
     if (state.snapshot.status != GameStatus.playing) {
       return;
     }
-    if (state.snapshot.currentPlayer != _bot!.botPlayer) {
+    if (state.snapshot.currentPlayer != bot.botPlayer) {
       return;
     }
 
-    final position = _botStrategy!.chooseMove(
+    final position = botStrategy.chooseMove(
       snapshot: state.snapshot,
-      botPlayer: _bot!.botPlayer,
+      botPlayer: bot.botPlayer,
     );
 
     final result = _rules.attemptMove(
