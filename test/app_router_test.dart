@@ -57,6 +57,16 @@ void main() {
       );
       expect(AppRouter.sessionFromRouteArguments(config), same(config));
     });
+
+    test('preserves classicAi session config from route arguments', () {
+      final config = GameSessionConfig.classicAi(BotDifficulty.hard);
+      final session = AppRouter.sessionFromRouteArguments(config);
+      expect(session.mode, GameMode.classic);
+      expect(session.bot!.difficulty, BotDifficulty.hard);
+      expect(session.bot!.botPlayer, Player.o);
+      expect(session.startingPlayer, Player.x);
+      expect(session.isAiSession, isTrue);
+    });
   });
 
   group('AppRouter.gameModeFromRouteArguments', () {

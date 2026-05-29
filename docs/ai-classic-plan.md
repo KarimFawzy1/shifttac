@@ -844,7 +844,7 @@ test/game_cubit_ai_test.dart
 
 **Files:** `ai_mode_selection_dialog.dart`, `ai_difficulty_dialog.dart` (UI shell; navigation in Phase 7), `home_screen.dart`, `home_screen_test.dart`, `ai_mode_selection_dialog_test.dart`.
 
-**Flow:** `Play vs AI` (secondary card) → mode dialog → `Classic` pops mode dialog and opens difficulty dialog → no `AppRoutes.game` until Phase 7.
+**Flow:** `Play vs AI` (secondary card) → mode dialog → `Classic` pops mode dialog and opens difficulty dialog → difficulty tap launches `AppRoutes.game` with `GameSessionConfig.classicAi` (Phase 7).
 
 ---
 
@@ -889,13 +889,19 @@ test/game_cubit_ai_test.dart
 
 **DoD:**
 
-- [ ] Difficulty dialog exists and follows the app design system.
-- [ ] Easy, Intermediate, and Hard launch classic AI sessions.
-- [ ] Route arguments use `GameSessionConfig`.
-- [ ] Dialog dismissal and navigation are clean.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Difficulty dialog exists and follows the app design system.
+- [x] Easy, Intermediate, and Hard launch classic AI sessions.
+- [x] Route arguments use `GameSessionConfig`.
+- [x] Dialog dismissal and navigation are clean.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 7 Completion — 2026-05-29
+
+**Files:** `game_session_config.dart` (`classicAi` factory), `ai_difficulty_dialog.dart` (tappable options + navigation), `ai_difficulty_dialog_test.dart`, `game_session_config_test.dart`, `app_router_test.dart`.
+
+**Flow:** Difficulty tap → pop dialog → `pushNamed(AppRoutes.game, arguments: GameSessionConfig.classicAi(difficulty))` with human `Player.x`, bot `Player.o`, human starts.
 
 ---
 

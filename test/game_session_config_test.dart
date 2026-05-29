@@ -36,5 +36,14 @@ void main() {
       expect(session.bot!.botPlayer, Player.o);
       expect(session.startingPlayer, Player.x);
     });
+
+    test('classicAi factory configures human X vs bot O', () {
+      final session = GameSessionConfig.classicAi(BotDifficulty.intermediate);
+      expect(session.mode, GameMode.classic);
+      expect(session.isAiSession, isTrue);
+      expect(session.bot!.difficulty, BotDifficulty.intermediate);
+      expect(session.bot!.botPlayer, Player.o);
+      expect(session.startingPlayer, Player.x);
+    });
   });
 }
