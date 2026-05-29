@@ -635,12 +635,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] ShiftTac AI session config exists.
-- [ ] ShiftTac AI session config is covered by tests.
-- [ ] Cubit no longer rejects all non-classic AI sessions.
-- [ ] Classic AI session config remains unchanged.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] ShiftTac AI session config exists.
+- [x] ShiftTac AI session config is covered by tests.
+- [x] Cubit no longer rejects all non-classic AI sessions.
+- [x] Classic AI session config remains unchanged.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 2 Completion
+
+**Files:** `game_session_config.dart` (`shiftAi` factory), `bot_opponent_config.dart` (mode-agnostic doc), `game_cubit.dart` (removed classic-only assert; `_defaultBotStrategy` defers ShiftTac until strategies ship), `game_session_config_test.dart`, `game_cubit_shift_ai_session_test.dart`, `app_router_test.dart`.
+
+**Behavior:** `GameSessionConfig.shiftAi` mirrors `classicAi` (human X, bot O, random starter). `GameCubit.fromSession` accepts ShiftTac AI with an injected `BotStrategy`; production ShiftTac sessions without injection keep `isAiSession` but do not auto-resolve a strategy until Phase 4+.
 
 ## Phase 3 - ShiftTac Bot Helpers
 

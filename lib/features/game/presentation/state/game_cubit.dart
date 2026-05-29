@@ -11,6 +11,7 @@ import '../../domain/logic/classic_game_engine.dart';
 import '../../domain/logic/game_engine_result.dart';
 import '../../domain/logic/game_rules.dart';
 import '../../domain/logic/shift_game_engine.dart';
+import '../../domain/models/bot_difficulty.dart';
 import '../../domain/models/bot_opponent_config.dart';
 import '../../domain/models/game_mode.dart';
 import '../../domain/models/game_session_config.dart';
@@ -43,7 +44,7 @@ class GameCubit extends Cubit<GameState> {
          botStrategy: bot == null
              ? null
              : (botStrategy ??
-                   BotStrategyFactory.forSession(
+                   _defaultBotStrategy(
                      mode: rules.mode,
                      difficulty: bot.difficulty,
                      random: botRandom,
@@ -67,10 +68,6 @@ class GameCubit extends Cubit<GameState> {
        _matchRandom = matchRandom,
        _botStrategy = botStrategy,
        super(initialState) {
-    assert(
-      bot == null || rules.mode == GameMode.classic,
-      'Bot opponents are only supported in classic mode',
-    );
     _matchStopwatch.start();
     _startMatchDurationTicker();
     _scheduleBotMoveIfNeeded();
@@ -93,7 +90,7 @@ class GameCubit extends Cubit<GameState> {
         bot == null
             ? null
             : (botStrategy ??
-                BotStrategyFactory.forSession(
+                _defaultBotStrategy(
                   mode: rules.mode,
                   difficulty: bot.difficulty,
                 ));
@@ -122,6 +119,23 @@ class GameCubit extends Cubit<GameState> {
       startingPlayer: session.startingPlayer,
       botRandom: botRandom,
       botStrategy: botStrategy,
+    );
+  }
+
+  /// Resolves a production bot strategy. ShiftTac returns null until strategies
+  /// ship; tests and early integration should inject [BotStrategy] explicitly.
+  static BotStrategy? _defaultBotStrategy({
+    required GameMode mode,
+    required BotDifficulty difficulty,
+    Random? random,
+  }) {
+    if (mode == GameMode.shift) {
+      return null;
+    }
+    return BotStrategyFactory.forSession(
+      mode: mode,
+      difficulty: difficulty,
+      random: random,
     );
   }
 

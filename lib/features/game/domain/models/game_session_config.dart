@@ -42,6 +42,23 @@ class GameSessionConfig {
     );
   }
 
+  /// ShiftTac vs AI: human is [Player.x], bot is [Player.o]; starter is random.
+  factory GameSessionConfig.shiftAi(
+    BotDifficulty difficulty, {
+    Random? random,
+  }) {
+    final rng = random ?? Random();
+    final starter = rng.nextBool() ? Player.x : Player.o;
+    return GameSessionConfig(
+      mode: GameMode.shift,
+      bot: BotOpponentConfig(
+        difficulty: difficulty,
+        botPlayer: Player.o,
+      ),
+      startingPlayer: starter,
+    );
+  }
+
   final GameMode mode;
   final BotOpponentConfig? bot;
   final Player? startingPlayer;

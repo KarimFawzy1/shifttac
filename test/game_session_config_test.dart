@@ -61,5 +61,28 @@ void main() {
       expect(starters, contains(Player.x));
       expect(starters, contains(Player.o));
     });
+
+    test('shiftAi factory configures ShiftTac human X vs bot O', () {
+      final session = GameSessionConfig.shiftAi(BotDifficulty.hard);
+      expect(session.mode, GameMode.shift);
+      expect(session.isAiSession, isTrue);
+      expect(session.bot!.difficulty, BotDifficulty.hard);
+      expect(session.bot!.botPlayer, Player.o);
+      expect(session.startingPlayer, isIn([Player.x, Player.o]));
+    });
+
+    test('shiftAi randomizes X or O as starting player', () {
+      final starters = <Player>{};
+      for (var seed = 0; seed < 24; seed++) {
+        starters.add(
+          GameSessionConfig.shiftAi(
+            BotDifficulty.intermediate,
+            random: Random(seed),
+          ).startingPlayer!,
+        );
+      }
+      expect(starters, contains(Player.x));
+      expect(starters, contains(Player.o));
+    });
   });
 }

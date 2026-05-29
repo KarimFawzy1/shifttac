@@ -72,6 +72,19 @@ void main() {
       expect(session.startingPlayer, config.startingPlayer);
       expect(session.isAiSession, isTrue);
     });
+
+    test('preserves shiftAi session config from route arguments', () {
+      final config = GameSessionConfig.shiftAi(
+        BotDifficulty.intermediate,
+        random: Random(0),
+      );
+      final session = AppRouter.sessionFromRouteArguments(config);
+      expect(session.mode, GameMode.shift);
+      expect(session.bot!.difficulty, BotDifficulty.intermediate);
+      expect(session.bot!.botPlayer, Player.o);
+      expect(session.startingPlayer, config.startingPlayer);
+      expect(session.isAiSession, isTrue);
+    });
   });
 
   group('AppRouter.gameModeFromRouteArguments', () {
