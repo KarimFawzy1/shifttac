@@ -4,6 +4,7 @@ import '../../domain/logic/classic_game_engine.dart';
 import '../../domain/logic/game_rules.dart';
 import '../../domain/logic/game_snapshot.dart';
 import '../../domain/logic/shift_game_engine.dart';
+import '../../domain/models/player.dart';
 import '../../domain/models/position.dart';
 
 class _Unset {
@@ -22,9 +23,12 @@ class GameState extends Equatable {
     required this.matchDurationMs,
   });
 
-  factory GameState.initialFor(GameRules rules) {
+  factory GameState.initialFor(GameRules rules, {Player? startingPlayer}) {
+    final snapshot = startingPlayer != null
+        ? GameSnapshot.initial(startingPlayer: startingPlayer)
+        : rules.initial();
     return GameState(
-      snapshot: rules.initial(),
+      snapshot: snapshot,
       inputLocked: false,
       lastPlacedPosition: null,
       lastRemovedPosition: null,

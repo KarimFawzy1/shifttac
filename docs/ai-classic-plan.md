@@ -764,14 +764,32 @@ test/classic_hard_bot_strategy_test.dart
 
 **DoD:**
 
-- [ ] `GameCubit` supports optional AI classic sessions.
-- [ ] Bot turns are scheduled and cancelled correctly.
-- [ ] Human input is blocked during bot turns.
-- [ ] Rules remain delegated to `ClassicGameEngine`.
-- [ ] Existing local modes remain unchanged.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] `GameCubit` supports optional AI classic sessions.
+- [x] Bot turns are scheduled and cancelled correctly.
+- [x] Human input is blocked during bot turns.
+- [x] Rules remain delegated to `ClassicGameEngine`.
+- [x] Existing local modes remain unchanged.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 5 Completion — 2026-05-29
+
+**Deliverables:**
+
+```text
+lib/features/game/presentation/state/game_cubit.dart
+lib/features/game/presentation/state/game_state.dart
+lib/features/game/presentation/screens/gameplay_screen.dart
+lib/core/constants/game_constants.dart
+test/game_cubit_ai_test.dart
+```
+
+**Cubit:** `GameCubit.fromSession` wires `BotOpponentConfig`, `ClassicBotStrategy`, and `startingPlayer` (AI defaults to human `Player.x`). Shared `_applyAcceptedMove`; bot moves after `botMoveDelayMs` (600 ms). Bot timers cancelled on restart, close, pause, and background.
+
+**Gameplay:** `GameplayScreen` creates cubit via `GameCubit.fromSession(session)`.
+
+**Tests:** `game_cubit_ai_test.dart` (11) + existing `game_cubit_test.dart` (unchanged).
 
 ---
 

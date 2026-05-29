@@ -45,10 +45,7 @@ class GameplayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => switch (session.mode) {
-        GameMode.shift => GameCubit.shift(),
-        GameMode.classic => GameCubit.classic(),
-      },
+      create: (_) => GameCubit.fromSession(session),
       child: const _GameplayLifecycleScope(),
     );
   }

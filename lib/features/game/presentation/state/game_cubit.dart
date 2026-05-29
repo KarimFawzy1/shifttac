@@ -1,13 +1,21 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/game_constants.dart';
+import '../../domain/logic/classic_bot_strategy.dart';
+import '../../domain/logic/classic_bot_strategy_factory.dart';
 import '../../domain/logic/classic_game_engine.dart';
+import '../../domain/logic/game_engine_result.dart';
 import '../../domain/logic/game_rules.dart';
 import '../../domain/logic/shift_game_engine.dart';
+import '../../domain/models/bot_opponent_config.dart';
 import '../../domain/models/game_mode.dart';
+import '../../domain/models/game_session_config.dart';
 import '../../domain/models/game_status.dart';
+import '../../domain/models/player.dart';
 import '../../domain/models/position.dart';
 import 'game_state.dart';
 
@@ -21,9 +29,44 @@ enum CellTapResult {
 
 /// Coordinates UI lifecycle with a [GameRules] implementation.
 class GameCubit extends Cubit<GameState> {
-  GameCubit({required GameRules rules})
-    : _rules = rules,
-      super(GameState.initialFor(rules)) {
+  GameCubit({
+    required GameRules rules,
+    BotOpponentConfig? bot,
+    Player? startingPlayer,
+    Random? botRandom,
+    ClassicBotStrategy? botStrategy,
+  }) : this._(
+         rules: rules,
+         bot: bot,
+         startingPlayer: startingPlayer,
+         botStrategy: bot == null
+             ? null
+             : (botStrategy ??
+                   ClassicBotStrategyFactory.forDifficulty(
+                     bot.difficulty,
+                     random: botRandom,
+                   )),
+         initialState: GameState.initialFor(
+           rules,
+           startingPlayer: startingPlayer,
+         ),
+       );
+
+  GameCubit._({
+    required GameRules rules,
+    required BotOpponentConfig? bot,
+    required Player? startingPlayer,
+    required ClassicBotStrategy? botStrategy,
+    required GameState initialState,
+  }) : _rules = rules,
+       _bot = bot,
+       _startingPlayer = startingPlayer,
+       _botStrategy = botStrategy,
+       super(initialState) {
+    assert(
+      bot == null || rules.mode == GameMode.classic,
+      'Bot opponents are only supported in classic mode',
+    );
     _matchStopwatch.start();
     _startMatchDurationTicker();
   }
@@ -32,21 +75,81 @@ class GameCubit extends Cubit<GameState> {
 
   GameCubit.classic() : this(rules: ClassicGameEngine.instance);
 
+  /// Test-only entry point with a prebuilt [GameState].
+  @visibleForTesting
+  factory GameCubit.forTest({
+    required GameRules rules,
+    required GameState initialState,
+    BotOpponentConfig? bot,
+    Player? startingPlayer,
+    ClassicBotStrategy? botStrategy,
+  }) {
+    final strategy =
+        bot == null
+            ? null
+            : (botStrategy ??
+                ClassicBotStrategyFactory.forDifficulty(bot.difficulty));
+    return GameCubit._(
+      rules: rules,
+      bot: bot,
+      startingPlayer: startingPlayer,
+      botStrategy: strategy,
+      initialState: initialState,
+    );
+  }
+
+  factory GameCubit.fromSession(
+    GameSessionConfig session, {
+    Random? botRandom,
+    ClassicBotStrategy? botStrategy,
+  }) {
+    final rules = switch (session.mode) {
+      GameMode.shift => ShiftGameEngine.instance,
+      GameMode.classic => ClassicGameEngine.instance,
+    };
+    final startingPlayer =
+        session.startingPlayer ?? (session.isAiSession ? Player.x : null);
+    return GameCubit(
+      rules: rules,
+      bot: session.bot,
+      startingPlayer: startingPlayer,
+      botRandom: botRandom,
+      botStrategy: botStrategy,
+    );
+  }
+
   final GameRules _rules;
+  final BotOpponentConfig? _bot;
+  final Player? _startingPlayer;
+  final ClassicBotStrategy? _botStrategy;
 
   GameMode get mode => _rules.mode;
 
   GameRules get rules => _rules;
 
+  bool get isAiSession => _bot != null;
+
+  Player? get humanPlayer => _bot?.botPlayer.opponent;
+
+  Player? get botPlayer => _bot?.botPlayer;
+
   final Stopwatch _matchStopwatch = Stopwatch();
   Timer? _inputUnlockTimer;
+  Timer? _botMoveTimer;
   Timer? _matchDurationTicker;
   bool _matchPaused = false;
   bool _pauseSheetRequestedForBackground = false;
   int _inputLockGeneration = 0;
+  int _botMoveGeneration = 0;
+
+  bool get _isBotTurn =>
+      _bot != null &&
+      state.snapshot.status == GameStatus.playing &&
+      state.snapshot.currentPlayer == _bot!.botPlayer;
 
   @override
   Future<void> close() {
+    _cancelBotMove();
     _inputUnlockTimer?.cancel();
     _matchDurationTicker?.cancel();
     return super.close();
@@ -66,6 +169,7 @@ class GameCubit extends Cubit<GameState> {
       return;
     }
     _matchPaused = true;
+    _cancelBotMove();
     _matchStopwatch.stop();
     _matchDurationTicker?.cancel();
     _matchDurationTicker = null;
@@ -80,6 +184,7 @@ class GameCubit extends Cubit<GameState> {
     if (state.snapshot.status == GameStatus.playing) {
       _matchStopwatch.start();
       _startMatchDurationTicker();
+      _scheduleBotMoveIfNeeded();
     }
   }
 
@@ -120,9 +225,19 @@ class GameCubit extends Cubit<GameState> {
     emit(state.copyWith(matchDurationMs: ms));
   }
 
+  void _cancelBotMove() {
+    _botMoveTimer?.cancel();
+    _botMoveTimer = null;
+    _botMoveGeneration++;
+  }
+
   CellTapResult onCellTapped(Position p) {
     if (state.snapshot.status != GameStatus.playing) {
       return CellTapResult.rejectedNotPlaying;
+    }
+
+    if (_isBotTurn) {
+      return CellTapResult.rejectedLocked;
     }
 
     if (state.inputLocked) {
@@ -138,6 +253,12 @@ class GameCubit extends Cubit<GameState> {
       return CellTapResult.rejectedInvalid;
     }
 
+    _applyAcceptedMove(result);
+    _scheduleBotMoveIfNeeded();
+    return CellTapResult.accepted;
+  }
+
+  void _applyAcceptedMove(GameEngineResult result) {
     _inputUnlockTimer?.cancel();
     final lockGeneration = ++_inputLockGeneration;
     emit(
@@ -159,12 +280,65 @@ class GameCubit extends Cubit<GameState> {
         emit(state.copyWith(inputLocked: false));
       },
     );
-    return CellTapResult.accepted;
+  }
+
+  void _scheduleBotMoveIfNeeded() {
+    if (_bot == null || _botStrategy == null || _matchPaused) {
+      return;
+    }
+    if (state.snapshot.status != GameStatus.playing) {
+      return;
+    }
+    if (state.snapshot.currentPlayer != _bot!.botPlayer) {
+      return;
+    }
+
+    _botMoveTimer?.cancel();
+    final generation = ++_botMoveGeneration;
+    _botMoveTimer = Timer(
+      const Duration(milliseconds: GameConstants.botMoveDelayMs),
+      () => _performBotMove(generation),
+    );
+  }
+
+  void _performBotMove(int generation) {
+    if (isClosed || generation != _botMoveGeneration) {
+      return;
+    }
+    if (_matchPaused) {
+      return;
+    }
+    if (_bot == null || _botStrategy == null) {
+      return;
+    }
+    if (state.snapshot.status != GameStatus.playing) {
+      return;
+    }
+    if (state.snapshot.currentPlayer != _bot!.botPlayer) {
+      return;
+    }
+
+    final position = _botStrategy!.chooseMove(
+      snapshot: state.snapshot,
+      botPlayer: _bot!.botPlayer,
+    );
+
+    final result = _rules.attemptMove(
+      snapshot: state.snapshot,
+      position: position,
+    );
+
+    if (!result.moveAccepted) {
+      return;
+    }
+
+    _applyAcceptedMove(result);
   }
 
   void restart() {
     _matchPaused = false;
     _pauseSheetRequestedForBackground = false;
+    _cancelBotMove();
     _inputUnlockTimer?.cancel();
     _inputUnlockTimer = null;
     _inputLockGeneration++;
@@ -173,7 +347,7 @@ class GameCubit extends Cubit<GameState> {
     _matchStopwatch
       ..reset()
       ..start();
-    emit(GameState.initialFor(_rules));
+    emit(GameState.initialFor(_rules, startingPlayer: _startingPlayer));
     _startMatchDurationTicker();
   }
 
