@@ -122,21 +122,23 @@ class GameCubit extends Cubit<GameState> {
     );
   }
 
-  /// Resolves a production bot strategy. Unimplemented ShiftTac difficulties
-  /// return null until those strategies ship.
+  /// Resolves a production bot strategy via [BotStrategyFactory].
+  ///
+  /// Returns null when the requested mode/difficulty is not implemented yet.
   static BotStrategy? _defaultBotStrategy({
     required GameMode mode,
     required BotDifficulty difficulty,
     Random? random,
   }) {
-    if (mode == GameMode.shift && difficulty != BotDifficulty.easy) {
+    try {
+      return BotStrategyFactory.forSession(
+        mode: mode,
+        difficulty: difficulty,
+        random: random,
+      );
+    } on UnimplementedError {
       return null;
     }
-    return BotStrategyFactory.forSession(
-      mode: mode,
-      difficulty: difficulty,
-      random: random,
-    );
   }
 
   final GameRules _rules;

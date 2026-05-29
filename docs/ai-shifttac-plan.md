@@ -785,12 +785,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] ShiftTac AI can run through `GameCubit` in tests.
-- [ ] Bot move timing and input lock behavior match classic AI expectations.
-- [ ] Pause/resume/restart behavior is covered.
-- [ ] FIFO removal through bot move is covered.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] ShiftTac AI can run through `GameCubit` in tests.
+- [x] Bot move timing and input lock behavior match classic AI expectations.
+- [x] Pause/resume/restart behavior is covered.
+- [x] FIFO removal through bot move is covered.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 5 Completion
+
+**Files:** `game_cubit.dart` (`_defaultBotStrategy` always uses `BotStrategyFactory`, catches `UnimplementedError`), `game_cubit_shift_ai_test.dart`, `game_cubit_shift_ai_session_test.dart` (updated for easy auto-resolve).
+
+**Behavior:** `GameSessionConfig.shiftAi` + easy difficulty runs end-to-end through `GameCubit` with `ShiftEasyBotStrategy`, including bot delay, input lock, pause/resume, restart, win terminal guard, and FIFO removal via `ShiftGameEngine`.
 
 ## Phase 6 - Intermediate ShiftTac Bot
 

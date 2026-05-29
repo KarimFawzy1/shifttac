@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fake_async/fake_async.dart'; // ignore: depend_on_referenced_packages
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shifttac/core/constants/game_constants.dart';
 import 'package:shifttac/features/game/domain/logic/bot_strategy.dart';
 import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
 import 'package:shifttac/features/game/domain/logic/shift_game_engine.dart';
@@ -49,21 +50,24 @@ void main() {
       expect(cubit.state.snapshot.status, GameStatus.playing);
     });
 
-    test('fromSession without injected strategy does not apply bot moves', () {
+    test('fromSession without injected strategy schedules easy bot moves', () {
       fakeAsync((async) {
-        final session = GameSessionConfig(
-          mode: GameMode.shift,
-          bot: const BotOpponentConfig(
-            difficulty: BotDifficulty.easy,
-            botPlayer: Player.o,
+        final cubit = GameCubit.fromSession(
+          GameSessionConfig.shiftAi(
+            BotDifficulty.easy,
+            random: Random(1),
           ),
-          startingPlayer: Player.o,
+          botRandom: Random(1),
         );
-        final cubit = GameCubit.fromSession(session);
 
-        async.elapse(const Duration(milliseconds: 1200));
+        if (cubit.state.snapshot.currentPlayer != Player.o) {
+          cubit.close();
+          return;
+        }
 
-        expect(cubit.state.snapshot.oMoves, isEmpty);
+        async.elapse(Duration(milliseconds: GameConstants.botMoveDelayMs));
+
+        expect(cubit.state.snapshot.oMoves, isNotEmpty);
         cubit.close();
       });
     });
