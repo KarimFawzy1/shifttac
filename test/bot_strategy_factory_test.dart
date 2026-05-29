@@ -5,6 +5,7 @@ import 'package:shifttac/features/game/domain/logic/bot_strategy_factory.dart';
 import 'package:shifttac/features/game/domain/logic/classic_easy_bot_strategy.dart';
 import 'package:shifttac/features/game/domain/logic/classic_hard_bot_strategy.dart';
 import 'package:shifttac/features/game/domain/logic/classic_intermediate_bot_strategy.dart';
+import 'package:shifttac/features/game/domain/logic/shift_easy_bot_strategy.dart';
 import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/game_mode.dart';
 
@@ -35,11 +36,27 @@ void main() {
       expect(strategy, isA<ClassicHardBotStrategy>());
     });
 
-    test('throws for shift mode until ShiftTac strategies exist', () {
+    test('returns ShiftEasyBotStrategy for shift easy', () {
+      final strategy = BotStrategyFactory.forSession(
+        mode: GameMode.shift,
+        difficulty: BotDifficulty.easy,
+        random: Random(0),
+      );
+      expect(strategy, isA<ShiftEasyBotStrategy>());
+    });
+
+    test('throws for shift intermediate and hard', () {
       expect(
         () => BotStrategyFactory.forSession(
           mode: GameMode.shift,
-          difficulty: BotDifficulty.easy,
+          difficulty: BotDifficulty.intermediate,
+        ),
+        throwsA(isA<UnimplementedError>()),
+      );
+      expect(
+        () => BotStrategyFactory.forSession(
+          mode: GameMode.shift,
+          difficulty: BotDifficulty.hard,
         ),
         throwsA(isA<UnimplementedError>()),
       );

@@ -4,6 +4,7 @@ import '../models/bot_difficulty.dart';
 import '../models/game_mode.dart';
 import 'bot_strategy.dart';
 import 'classic_bot_strategy_factory.dart';
+import 'shift_bot_strategy_factory.dart';
 
 /// Maps [GameMode] and [BotDifficulty] to a [BotStrategy] implementation.
 abstract final class BotStrategyFactory {
@@ -19,8 +20,9 @@ abstract final class BotStrategyFactory {
         difficulty,
         random: random,
       ),
-      GameMode.shift => throw UnimplementedError(
-        'ShiftTac bot strategies are not implemented yet',
+      GameMode.shift => ShiftBotStrategyFactory.forDifficulty(
+        difficulty,
+        random: random,
       ),
     };
   }

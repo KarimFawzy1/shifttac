@@ -735,12 +735,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] Easy ShiftTac strategy exists.
-- [ ] Shift strategy factory can return easy strategy.
-- [ ] Easy strategy is covered by focused tests.
-- [ ] Classic easy strategy remains unchanged.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Easy ShiftTac strategy exists.
+- [x] Shift strategy factory can return easy strategy.
+- [x] Easy strategy is covered by focused tests.
+- [x] Classic easy strategy remains unchanged.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 4 Completion
+
+**Files:** `shift_bot_strategy.dart`, `shift_easy_bot_strategy.dart`, `shift_bot_strategy_factory.dart`, `bot_strategy_factory.dart`, `game_cubit.dart` (easy ShiftTac auto-resolve), `shift_easy_bot_strategy_test.dart`, `bot_strategy_factory_test.dart`.
+
+**Behavior:** `ShiftEasyBotStrategy` picks a random legal cell from `shiftAvailablePositions`. `BotStrategyFactory` routes shift easy; intermediate/hard still throw until later phases. `GameCubit` resolves easy ShiftTac AI without injection.
 
 ## Phase 5 - ShiftTac AI Cubit Flow
 
