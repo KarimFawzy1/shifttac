@@ -13,6 +13,7 @@ import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_scroll_view.dart';
 import '../../../../core/widgets/secondary_button.dart';
 import '../../../../shared/widgets/screen_header.dart';
+import '../widgets/credits_dialog.dart';
 import '../widgets/settings_tile.dart';
 
 /// Settings tab / standalone screen (`design.md` §SETTINGS SCREEN).
@@ -154,11 +155,12 @@ class _SettingsBody extends StatelessWidget {
                       ),
                     ),
                     title: 'Credits',
+                    onTap: () => CreditsDialog.show(context),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'AllTerrainTech',
+                          'Karim Fawzy',
                           style: AppTextStyles.bodyMd.copyWith(
                             color: AppColors.outline,
                           ),
