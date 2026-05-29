@@ -80,3 +80,54 @@ Position? findImmediateWin({
   }
   return null;
 }
+
+/// Cells [threateningPlayer] could play to win on their turn (used to block).
+Position? findImmediateThreat({
+  required GameSnapshot snapshot,
+  required Player threateningPlayer,
+}) {
+  if (snapshot.status != GameStatus.playing) {
+    return null;
+  }
+
+  final asThreatTurn = GameSnapshot(
+    xMoves: snapshot.xMoves,
+    oMoves: snapshot.oMoves,
+    currentPlayer: threateningPlayer,
+    turnIndex: snapshot.turnIndex,
+    status: GameStatus.playing,
+    winningLine: null,
+    winner: null,
+  );
+  return findImmediateWin(snapshot: asThreatTurn, player: threateningPlayer);
+}
+
+/// First empty cell from [order] on [snapshot], or null if none match.
+Position? firstAvailableInOrder(
+  GameSnapshot snapshot,
+  List<Position> order,
+) {
+  final available = occupiedPositions(snapshot);
+  for (final position in order) {
+    if (!available.contains(position)) {
+      return position;
+    }
+  }
+  return null;
+}
+
+/// Corner cells in stable order (subset of [classicStableMoveOrder]).
+const List<Position> classicCornerPositions = [
+  Position(row: 0, col: 0),
+  Position(row: 0, col: 2),
+  Position(row: 2, col: 0),
+  Position(row: 2, col: 2),
+];
+
+/// Side cells in stable order (subset of [classicStableMoveOrder]).
+const List<Position> classicSidePositions = [
+  Position(row: 0, col: 1),
+  Position(row: 1, col: 0),
+  Position(row: 1, col: 2),
+  Position(row: 2, col: 1),
+];

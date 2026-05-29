@@ -618,13 +618,31 @@ test/classic_bot_strategy_factory_test.dart
 
 **DoD:**
 
-- [ ] Easy strategy is implemented and tested.
-- [ ] Intermediate strategy is implemented and tested.
-- [ ] Intermediate behavior matches documented priority order.
-- [ ] Strategies do not mutate input snapshots.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Easy strategy is implemented and tested.
+- [x] Intermediate strategy is implemented and tested.
+- [x] Intermediate behavior matches documented priority order.
+- [x] Strategies do not mutate input snapshots.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 3 Completion — 2026-05-29
+
+**Deliverables:**
+
+```text
+lib/features/game/domain/logic/classic_easy_bot_strategy.dart
+lib/features/game/domain/logic/classic_intermediate_bot_strategy.dart
+lib/features/game/domain/logic/classic_bot_helpers.dart (findImmediateThreat, firstAvailableInOrder)
+test/classic_easy_bot_strategy_test.dart
+test/classic_intermediate_bot_strategy_test.dart
+```
+
+**Easy:** Random choice among `availablePositions` with injectable `Random`.
+
+**Intermediate:** Win → block (`findImmediateThreat`) → center → corners → sides → stable fallback.
+
+**Tests:** 9 new strategy tests + existing helper tests (16 total in Phase 3 scope).
 
 ---
 
