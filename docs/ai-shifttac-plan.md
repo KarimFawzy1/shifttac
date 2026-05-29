@@ -943,12 +943,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] ShiftTac AI is selectable from `Play vs AI`.
-- [ ] Difficulty dialog supports both AI modes.
-- [ ] Classic AI flow is not regressed.
-- [ ] UI tests cover ShiftTac mode selection.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] ShiftTac AI is selectable from `Play vs AI`.
+- [x] Difficulty dialog supports both AI modes.
+- [x] Classic AI flow is not regressed.
+- [x] UI tests cover ShiftTac mode selection.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 8 Completion
+
+**Files:** `ai_mode_selection_dialog.dart`, `ai_difficulty_dialog.dart`, `ai_mode_selection_dialog_test.dart`, `ai_difficulty_dialog_test.dart`.
+
+**Behavior:** ShiftTac is enabled in the mode dialog; selecting either mode opens `AiDifficultyDialog` with the chosen `GameMode`; difficulty picks launch `GameSessionConfig.shiftAi` or `classicAi`. Mode-specific helper copy and widget keys support deterministic tests.
 
 ## Phase 9 - Gameplay Presentation Polish
 

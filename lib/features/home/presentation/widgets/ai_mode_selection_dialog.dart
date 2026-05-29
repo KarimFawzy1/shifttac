@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/modal_backdrop.dart';
+import '../../../game/domain/models/game_mode.dart';
 import 'ai_difficulty_dialog.dart';
 
 /// First step after tapping **Play vs AI** on the home screen.
@@ -17,12 +18,12 @@ class AiModeSelectionDialog extends StatelessWidget {
   const AiModeSelectionDialog._({
     required this.routeAnimation,
     required this.onDismiss,
-    required this.onClassicSelected,
+    required this.onModeSelected,
   });
 
   final Animation<double> routeAnimation;
   final VoidCallback onDismiss;
-  final VoidCallback onClassicSelected;
+  final void Function(GameMode mode) onModeSelected;
 
   static const Duration animationDuration = Duration(milliseconds: 300);
 
@@ -46,14 +47,14 @@ class AiModeSelectionDialog extends StatelessWidget {
             unawaited(AppAudioScope.read(dialogContext).playSwipe());
             Navigator.of(dialogContext).pop();
           },
-          onClassicSelected: () {
+          onModeSelected: (mode) {
             unawaited(AppAudioScope.read(dialogContext).playGameStart());
             Navigator.of(dialogContext).pop();
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!hostContext.mounted) {
                 return;
               }
-              unawaited(AiDifficultyDialog.show(hostContext));
+              unawaited(AiDifficultyDialog.show(hostContext, mode: mode));
             });
           },
         );
@@ -106,7 +107,7 @@ class AiModeSelectionDialog extends StatelessWidget {
           scale: contentScale,
           child: _AiModeSelectionDialogCard(
             onDismiss: onDismiss,
-            onClassicSelected: onClassicSelected,
+            onModeSelected: onModeSelected,
           ),
         ),
       ),
@@ -117,11 +118,11 @@ class AiModeSelectionDialog extends StatelessWidget {
 class _AiModeSelectionDialogCard extends StatelessWidget {
   const _AiModeSelectionDialogCard({
     required this.onDismiss,
-    required this.onClassicSelected,
+    required this.onModeSelected,
   });
 
   final VoidCallback onDismiss;
-  final VoidCallback onClassicSelected;
+  final void Function(GameMode mode) onModeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -155,25 +156,27 @@ class _AiModeSelectionDialogCard extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.stackSm.h),
               Text(
-                'AI opponents are available in classic mode for now.',
+                'Choose classic or ShiftTac rules against the bot.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyLg.copyWith(color: AppColors.outline),
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               _AiModeOptionCard(
+                key: const Key('ai-mode-classic'),
                 title: 'Classic',
                 subtitle: 'Traditional 3x3 against the bot.',
                 iconAsset: IconConstant.classicTicTacToe,
                 enabled: true,
-                onTap: onClassicSelected,
+                onTap: () => onModeSelected(GameMode.classic),
               ),
               SizedBox(height: AppSpacing.stackMd.h),
               _AiModeOptionCard(
+                key: const Key('ai-mode-shift'),
                 title: 'ShiftTac',
-                subtitle: 'AI for shifting marks will arrive later.',
+                subtitle: 'Three active marks with FIFO rotation.',
                 iconAsset: IconConstant.multiplayer,
-                enabled: false,
-                badgeLabel: 'Coming Soon',
+                enabled: true,
+                onTap: () => onModeSelected(GameMode.shift),
               ),
               SizedBox(height: AppSpacing.stackLg.h),
               Align(
@@ -198,12 +201,12 @@ class _AiModeSelectionDialogCard extends StatelessWidget {
 
 class _AiModeOptionCard extends StatelessWidget {
   const _AiModeOptionCard({
+    super.key,
     required this.title,
     required this.subtitle,
     required this.iconAsset,
     required this.enabled,
     this.onTap,
-    this.badgeLabel,
   });
 
   final String title;
@@ -211,7 +214,6 @@ class _AiModeOptionCard extends StatelessWidget {
   final String iconAsset;
   final bool enabled;
   final VoidCallback? onTap;
-  final String? badgeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -250,28 +252,6 @@ class _AiModeOptionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (badgeLabel != null)
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceContainer,
-                    borderRadius: AppSpacing.borderRadiusFull,
-                    border: Border.all(color: AppColors.outlineVariant),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppSpacing.stackSm.w,
-                      vertical: 3.5.h,
-                    ),
-                    child: Text(
-                      badgeLabel!,
-                      style: AppTextStyles.labelSm.copyWith(
-                        color: AppColors.outline,
-                        letterSpacing: 0.6,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
           SizedBox(height: AppSpacing.stackSm.h),

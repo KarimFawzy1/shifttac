@@ -37,27 +37,71 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('shows Easy, Intermediate, and Hard', (tester) async {
-      await pumpDialogHost(
-        tester,
-        Builder(
-          builder: (context) {
-            return Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () => AiDifficultyDialog.show(context),
-                  child: const Text('Open'),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-
-      await tester.tap(find.text('Open'));
+    Future<void> openClassicDialog(WidgetTester tester) async {
+      await tester.tap(find.text('Open Classic'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
+    }
 
+    Future<void> openShiftDialog(WidgetTester tester) async {
+      await tester.tap(find.text('Open Shift'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    Future<void> tapDifficulty(
+      WidgetTester tester,
+      GameMode mode,
+      BotDifficulty difficulty,
+    ) async {
+      final option = find.byKey(
+        Key('ai-difficulty-${mode.name}-${difficulty.name}'),
+      );
+      await tester.ensureVisible(option);
+      await tester.tap(option);
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+    }
+
+    Widget _host() {
+      return Builder(
+        builder: (context) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => AiDifficultyDialog.show(
+                      context,
+                      mode: GameMode.classic,
+                    ),
+                    child: const Text('Open Classic'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => AiDifficultyDialog.show(
+                      context,
+                      mode: GameMode.shift,
+                    ),
+                    child: const Text('Open Shift'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    testWidgets('classic mode shows classic difficulty copy', (tester) async {
+      await pumpDialogHost(tester, _host());
+      await openClassicDialog(tester);
+
+      expect(
+        find.byKey(const ValueKey('ai-difficulty-dialog-classic')),
+        findsOneWidget,
+      );
       expect(find.text('Choose Difficulty'), findsOneWidget);
       expect(find.text('Easy'), findsOneWidget);
       expect(find.text('Intermediate'), findsOneWidget);
@@ -67,65 +111,43 @@ void main() {
       expect(find.text('Optimal classic Tic Tac Toe.'), findsOneWidget);
     });
 
-    testWidgets('Cancel does not navigate to gameplay', (tester) async {
-      await pumpDialogHost(
-        tester,
-        Builder(
-          builder: (context) {
-            return Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () => AiDifficultyDialog.show(context),
-                  child: const Text('Open'),
-                ),
-              ),
-            );
-          },
-        ),
-      );
+    testWidgets('shift mode shows ShiftTac difficulty copy', (tester) async {
+      await pumpDialogHost(tester, _host());
+      await openShiftDialog(tester);
 
-      await tester.tap(find.text('Open'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      expect(
+        find.byKey(const ValueKey('ai-difficulty-dialog-shift')),
+        findsOneWidget,
+      );
+      expect(find.text('Random legal moves for relaxed practice.'), findsOneWidget);
+      expect(
+        find.text('Wins, blocks, and avoids obvious FIFO traps.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Deep search with tactical evaluation.'),
+        findsOneWidget,
+      );
+      expect(find.text('Optimal classic Tic Tac Toe.'), findsNothing);
+    });
+
+    testWidgets('Cancel does not navigate to gameplay', (tester) async {
+      await pumpDialogHost(tester, _host());
+      await openClassicDialog(tester);
 
       await tester.tap(find.byKey(const Key('ai-difficulty-cancel')));
       await tester.pumpAndSettle();
 
       expect(find.text('Choose Difficulty'), findsNothing);
       expect(find.byType(GameplayScreen), findsNothing);
-      expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Open Classic'), findsOneWidget);
     });
 
     testWidgets('tapping Easy launches classic AI session', (tester) async {
-      await pumpDialogHost(
-        tester,
-        Builder(
-          builder: (context) {
-            return Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () => AiDifficultyDialog.show(context),
-                  child: const Text('Open'),
-                ),
-              ),
-            );
-          },
-        ),
-      );
+      await pumpDialogHost(tester, _host());
+      await openClassicDialog(tester);
 
-      await tester.tap(find.text('Open'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-
-      final easyOption = find.ancestor(
-        of: find.text('Easy'),
-        matching: find.byType(InkWell),
-      );
-      await tester.ensureVisible(easyOption);
-      await tester.tap(easyOption);
-      await tester.pump();
-      await tester.pump();
-      await tester.pump();
+      await tapDifficulty(tester, GameMode.classic, BotDifficulty.easy);
 
       final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
       expect(screen.mode, GameMode.classic);
@@ -138,75 +160,71 @@ void main() {
     testWidgets('tapping Intermediate launches classic AI session', (
       tester,
     ) async {
-      await pumpDialogHost(
+      await pumpDialogHost(tester, _host());
+      await openClassicDialog(tester);
+
+      await tapDifficulty(
         tester,
-        Builder(
-          builder: (context) {
-            return Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () => AiDifficultyDialog.show(context),
-                  child: const Text('Open'),
-                ),
-              ),
-            );
-          },
-        ),
+        GameMode.classic,
+        BotDifficulty.intermediate,
       );
-
-      await tester.tap(find.text('Open'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-
-      final intermediateOption = find.ancestor(
-        of: find.text('Intermediate'),
-        matching: find.byType(InkWell),
-      );
-      await tester.ensureVisible(intermediateOption);
-      await tester.tap(intermediateOption);
-      await tester.pump();
-      await tester.pump();
-      await tester.pump();
 
       final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.classic);
       expect(screen.session.bot!.difficulty, BotDifficulty.intermediate);
       expect(screen.session.startingPlayer, isIn([Player.x, Player.o]));
     });
 
     testWidgets('tapping Hard launches classic AI session', (tester) async {
-      await pumpDialogHost(
-        tester,
-        Builder(
-          builder: (context) {
-            return Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () => AiDifficultyDialog.show(context),
-                  child: const Text('Open'),
-                ),
-              ),
-            );
-          },
-        ),
-      );
+      await pumpDialogHost(tester, _host());
+      await openClassicDialog(tester);
 
-      await tester.tap(find.text('Open'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-
-      final hardOption = find.ancestor(
-        of: find.text('Hard'),
-        matching: find.byType(InkWell),
-      );
-      await tester.ensureVisible(hardOption);
-      await tester.tap(hardOption);
-      await tester.pump();
-      await tester.pump();
-      await tester.pump();
+      await tapDifficulty(tester, GameMode.classic, BotDifficulty.hard);
 
       final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.classic);
       expect(screen.session.bot!.difficulty, BotDifficulty.hard);
       expect(screen.session.bot!.botPlayer, Player.o);
+    });
+
+    testWidgets('tapping Easy launches ShiftTac AI session', (tester) async {
+      await pumpDialogHost(tester, _host());
+      await openShiftDialog(tester);
+
+      await tapDifficulty(tester, GameMode.shift, BotDifficulty.easy);
+
+      final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.shift);
+      expect(screen.session.isAiSession, isTrue);
+      expect(screen.session.bot!.difficulty, BotDifficulty.easy);
+    });
+
+    testWidgets('tapping Intermediate launches ShiftTac AI session', (
+      tester,
+    ) async {
+      await pumpDialogHost(tester, _host());
+      await openShiftDialog(tester);
+
+      await tapDifficulty(
+        tester,
+        GameMode.shift,
+        BotDifficulty.intermediate,
+      );
+
+      final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.shift);
+      expect(screen.session.bot!.difficulty, BotDifficulty.intermediate);
+    });
+
+    testWidgets('tapping Hard launches ShiftTac AI session', (tester) async {
+      await pumpDialogHost(tester, _host());
+      await openShiftDialog(tester);
+
+      await tapDifficulty(tester, GameMode.shift, BotDifficulty.hard);
+
+      final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.shift);
+      expect(screen.session.bot!.difficulty, BotDifficulty.hard);
     });
   });
 }

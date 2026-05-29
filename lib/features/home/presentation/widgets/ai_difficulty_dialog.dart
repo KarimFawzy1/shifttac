@@ -10,23 +10,26 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/modal_backdrop.dart';
 import '../../../game/domain/models/bot_difficulty.dart';
+import '../../../game/domain/models/game_mode.dart';
 import '../../../game/domain/models/game_session_config.dart';
 
-/// Second step after choosing **Classic** in [AiModeSelectionDialog].
+/// Second step after choosing a mode in [AiModeSelectionDialog].
 class AiDifficultyDialog extends StatelessWidget {
   const AiDifficultyDialog._({
     required this.routeAnimation,
+    required this.mode,
     required this.onDismiss,
     required this.onDifficultySelected,
   });
 
   final Animation<double> routeAnimation;
+  final GameMode mode;
   final VoidCallback onDismiss;
   final void Function(BotDifficulty difficulty) onDifficultySelected;
 
   static const Duration animationDuration = Duration(milliseconds: 300);
 
-  static Future<void> show(BuildContext context) {
+  static Future<void> show(BuildContext context, {required GameMode mode}) {
     final hostContext = context;
     unawaited(AppAudioScope.read(context).playSwipe());
     final barrierLabel = MaterialLocalizations.of(
@@ -42,6 +45,7 @@ class AiDifficultyDialog extends StatelessWidget {
       pageBuilder: (dialogContext, animation, secondaryAnimation) {
         return AiDifficultyDialog._(
           routeAnimation: animation,
+          mode: mode,
           onDismiss: () {
             unawaited(AppAudioScope.read(dialogContext).playSwipe());
             Navigator.of(dialogContext).pop();
@@ -53,9 +57,13 @@ class AiDifficultyDialog extends StatelessWidget {
               if (!hostContext.mounted) {
                 return;
               }
+              final session = switch (mode) {
+                GameMode.classic => GameSessionConfig.classicAi(difficulty),
+                GameMode.shift => GameSessionConfig.shiftAi(difficulty),
+              };
               Navigator.of(hostContext).pushNamed(
                 AppRoutes.game,
-                arguments: GameSessionConfig.classicAi(difficulty),
+                arguments: session,
               );
             });
           },
@@ -108,6 +116,7 @@ class AiDifficultyDialog extends StatelessWidget {
         child: ScaleTransition(
           scale: contentScale,
           child: _AiDifficultyDialogCard(
+            mode: mode,
             onDismiss: onDismiss,
             onDifficultySelected: onDifficultySelected,
           ),
@@ -119,31 +128,51 @@ class AiDifficultyDialog extends StatelessWidget {
 
 class _AiDifficultyDialogCard extends StatelessWidget {
   const _AiDifficultyDialogCard({
+    required this.mode,
     required this.onDismiss,
     required this.onDifficultySelected,
   });
 
+  final GameMode mode;
   final VoidCallback onDismiss;
   final void Function(BotDifficulty difficulty) onDifficultySelected;
 
-  static const _options = <({BotDifficulty difficulty, String helper})>[
-    (
-      difficulty: BotDifficulty.easy,
-      helper: 'Random moves for relaxed practice.',
-    ),
-    (
-      difficulty: BotDifficulty.intermediate,
-      helper: 'Blocks threats and takes wins.',
-    ),
-    (
-      difficulty: BotDifficulty.hard,
-      helper: 'Optimal classic Tic Tac Toe.',
-    ),
-  ];
+  List<({BotDifficulty difficulty, String helper})> get _options =>
+      switch (mode) {
+        GameMode.classic => const [
+          (
+            difficulty: BotDifficulty.easy,
+            helper: 'Random moves for relaxed practice.',
+          ),
+          (
+            difficulty: BotDifficulty.intermediate,
+            helper: 'Blocks threats and takes wins.',
+          ),
+          (
+            difficulty: BotDifficulty.hard,
+            helper: 'Optimal classic Tic Tac Toe.',
+          ),
+        ],
+        GameMode.shift => const [
+          (
+            difficulty: BotDifficulty.easy,
+            helper: 'Random legal moves for relaxed practice.',
+          ),
+          (
+            difficulty: BotDifficulty.intermediate,
+            helper: 'Wins, blocks, and avoids obvious FIFO traps.',
+          ),
+          (
+            difficulty: BotDifficulty.hard,
+            helper: 'Deep search with tactical evaluation.',
+          ),
+        ],
+      };
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      key: ValueKey('ai-difficulty-dialog-${mode.name}'),
       clipBehavior: Clip.none,
       backgroundColor: AppColors.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
@@ -175,6 +204,9 @@ class _AiDifficultyDialogCard extends StatelessWidget {
                 for (var i = 0; i < _options.length; i++) ...[
                   if (i > 0) SizedBox(height: AppSpacing.stackMd.h),
                   _AiDifficultyOptionCard(
+                    key: Key(
+                      'ai-difficulty-${mode.name}-${_options[i].difficulty.name}',
+                    ),
                     title: _titleFor(_options[i].difficulty),
                     subtitle: _options[i].helper,
                     onTap: () => onDifficultySelected(_options[i].difficulty),
@@ -210,6 +242,7 @@ class _AiDifficultyDialogCard extends StatelessWidget {
 
 class _AiDifficultyOptionCard extends StatelessWidget {
   const _AiDifficultyOptionCard({
+    super.key,
     required this.title,
     required this.subtitle,
     required this.onTap,
