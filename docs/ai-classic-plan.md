@@ -831,14 +831,20 @@ test/game_cubit_ai_test.dart
 
 **DoD:**
 
-- [ ] Home `Play vs AI` card opens mode selection.
-- [ ] Mode dialog follows the app design system.
-- [ ] Classic option is enabled.
-- [ ] ShiftTac option is clearly marked `Coming Soon`.
-- [ ] No route starts until difficulty is chosen.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant widget tests pass where practical.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Home `Play vs AI` card opens mode selection.
+- [x] Mode dialog follows the app design system.
+- [x] Classic option is enabled.
+- [x] ShiftTac option is clearly marked `Coming Soon`.
+- [x] No route starts until difficulty is chosen.
+- [x] `flutter analyze` is clean.
+- [x] Relevant widget tests pass where practical.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 6 Completion — 2026-05-29
+
+**Files:** `ai_mode_selection_dialog.dart`, `ai_difficulty_dialog.dart` (UI shell; navigation in Phase 7), `home_screen.dart`, `home_screen_test.dart`, `ai_mode_selection_dialog_test.dart`.
+
+**Flow:** `Play vs AI` (secondary card) → mode dialog → `Classic` pops mode dialog and opens difficulty dialog → no `AppRoutes.game` until Phase 7.
 
 ---
 

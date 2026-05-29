@@ -63,8 +63,6 @@ void main() {
       await tester.pumpWidget(_homeTestApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Coming Soon'), findsOneWidget);
-
       await tester.tap(find.text('Play Classic'));
       await tester.pump();
       await tester.pump();
@@ -83,7 +81,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Play Classic'), findsOneWidget);
-      expect(find.text('Coming Soon'), findsOneWidget);
+      expect(find.text('Coming Soon'), findsNothing);
 
       expect(
         find.ancestor(
@@ -94,18 +92,37 @@ void main() {
       );
     });
 
-    testWidgets('Play vs AI remains disabled with Coming Soon', (tester) async {
+    testWidgets('Play vs AI is tappable and opens mode selection', (
+      tester,
+    ) async {
       await tester.pumpWidget(_homeTestApp());
       await tester.pumpAndSettle();
 
       expect(find.text('Play vs AI'), findsOneWidget);
-      expect(find.text('Coming Soon'), findsOneWidget);
+      expect(find.text('Coming Soon'), findsNothing);
 
-      final aiTitle = find.text('Play vs AI');
       expect(
-        find.ancestor(of: aiTitle, matching: find.byType(InkWell)),
-        findsNothing,
+        find.ancestor(
+          of: find.text('Play vs AI'),
+          matching: find.byType(InkWell),
+        ),
+        findsOneWidget,
       );
+
+      final playVsAi = find.text('Play vs AI');
+      await tester.ensureVisible(playVsAi);
+      await tester.pumpAndSettle();
+      await tester.tap(playVsAi);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Traditional 3x3 against the bot.'), findsOneWidget);
+      expect(find.text('Classic'), findsOneWidget);
+      expect(
+        find.text('AI for shifting marks will arrive later.'),
+        findsOneWidget,
+      );
+      expect(find.text('Coming Soon'), findsOneWidget);
+      expect(find.byType(GameplayScreen), findsNothing);
     });
   });
 }

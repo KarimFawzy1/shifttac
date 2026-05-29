@@ -12,6 +12,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_scroll_view.dart';
+import '../widgets/ai_mode_selection_dialog.dart';
 import '../widgets/home_action_card.dart';
 
 /// Central hub body (`design.md` §HOME SCREEN, `css/HomeScreen.css`).
@@ -56,13 +57,16 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.stackMd.h),
           HomeActionCard(
-            style: HomeActionCardStyle.disabledSecondary,
+            style: HomeActionCardStyle.secondary,
             title: 'Play vs AI',
-            subtitle: 'Practice solo when it ships.',
+            subtitle: 'Practice against the bot in classic mode.',
             iconAsset: IconConstant.ai,
             iconWidth: 20.w,
             iconHeight: 20.h,
-            badgeLabel: 'Coming Soon',
+            onTap: () {
+              unawaited(AppAudioScope.read(context).playGameStart());
+              unawaited(AiModeSelectionDialog.show(context));
+            },
           ),
           SizedBox(height: AppSpacing.stackLg.h),
         ],
