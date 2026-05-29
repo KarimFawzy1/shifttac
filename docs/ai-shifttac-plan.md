@@ -893,12 +893,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] Hard ShiftTac strategy exists.
-- [ ] Hard strategy uses bounded search.
-- [ ] Hard strategy is routed by factory.
-- [ ] Hard strategy is covered by tactical and FIFO-specific tests.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Hard ShiftTac strategy exists.
+- [x] Hard strategy uses bounded search.
+- [x] Hard strategy is routed by factory.
+- [x] Hard strategy is covered by tactical and FIFO-specific tests.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 7 Completion
+
+**Files:** `shift_hard_bot_strategy.dart`, `shift_bot_strategy_factory.dart`, `shift_hard_bot_strategy_test.dart`, `bot_strategy_factory_test.dart`.
+
+**Behavior:** Depth-8 negamax with alpha-beta pruning, terminal scores (`±100000 ∓ depth`), heuristic weights from plan (immediate threats, forks, two-in-line, positional ownership, critical oldest marks, mobility). Move ordering: wins → blocks → stable order. Factory routes `BotDifficulty.hard` for ShiftTac.
 
 ## Phase 8 - AI Mode Selection UI
 
