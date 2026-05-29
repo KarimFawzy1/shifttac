@@ -23,8 +23,13 @@ class PlayerTurnIndicator extends StatelessWidget {
           prev.snapshot.status != next.snapshot.status ||
           prev.snapshot.winner != next.snapshot.winner,
       builder: (context, state) {
+        final cubit = context.read<GameCubit>();
         final snap = state.snapshot;
-        final label = playerTurnIndicatorLabel(snap);
+        final label = playerTurnIndicatorLabel(
+          snap,
+          isAiSession: cubit.isAiSession,
+          botPlayer: cubit.botPlayer,
+        );
 
         final accent = switch (snap.status) {
           GameStatus.won when snap.winner == Player.x => AppColors.softCoral,

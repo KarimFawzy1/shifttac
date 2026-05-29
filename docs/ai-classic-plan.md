@@ -948,14 +948,20 @@ test/game_cubit_ai_test.dart
 
 **DoD:**
 
-- [ ] AI matches clearly identify the bot side.
-- [ ] Bot thinking/input-blocked state is understandable.
-- [ ] Result dialog behavior is correct for AI sessions.
-- [ ] Pause, restart, and exit flows work in AI sessions.
-- [ ] Local multiplayer UI remains unchanged.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] AI matches clearly identify the bot side.
+- [x] Bot thinking/input-blocked state is understandable.
+- [x] Result dialog behavior is correct for AI sessions.
+- [x] Pause, restart, and exit flows work in AI sessions.
+- [x] Local multiplayer UI remains unchanged.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 8 Completion — 2026-05-29
+
+**Presentation:** `match_presentation.dart` adds AI-aware titles (`You` / `AI`), `Bot thinking...` turn pill, `THINKING` bot subtitle with waiting dots. `PlayerPanel`, `PlayerTurnIndicator`, and `GameBoard` read `GameCubit.isAiSession` / `isBotTurn` (board non-interactive + light scrim during bot turn).
+
+**Tests:** `match_presentation_test.dart` (AI unit cases), `gameplay_ai_presentation_test.dart` (labels, thinking, restart, result dialogs, exit during bot turn).
 
 ---
 

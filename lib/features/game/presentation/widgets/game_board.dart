@@ -31,6 +31,7 @@ class GameBoard extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<GameCubit>();
         final frozen = isBoardFrozen(state.snapshot.status);
+        final botThinking = cubit.isBotTurn;
         final gap = AppSpacing.gridGutter.w;
 
         return LayoutBuilder(
@@ -87,11 +88,22 @@ class GameBoard extends StatelessWidget {
                                 position: p,
                               ),
                               position: p,
-                              interactive: !frozen,
+                              interactive: !frozen && !botThinking,
                             );
                           },
                         ),
                       ),
+                      if (botThinking)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: AppColors.inkNavy.withValues(alpha: 0.05),
+                                borderRadius: AppSpacing.borderRadiusXl,
+                              ),
+                            ),
+                          ),
+                        ),
                       if (state.snapshot.winningLine case final winningLine?)
                         if (state.snapshot.winner case final winner?)
                           Positioned.fill(

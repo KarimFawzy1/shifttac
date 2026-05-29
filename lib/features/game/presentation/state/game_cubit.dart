@@ -149,6 +149,9 @@ class GameCubit extends Cubit<GameState> {
         state.snapshot.currentPlayer == bot.botPlayer;
   }
 
+  /// Whether the human cannot place a mark because the bot is deciding.
+  bool get isBotTurn => _isBotTurn;
+
   @override
   Future<void> close() {
     _cancelBotMove();

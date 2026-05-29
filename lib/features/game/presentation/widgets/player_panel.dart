@@ -35,12 +35,27 @@ class PlayerPanel extends StatelessWidget {
           prev.snapshot.status != next.snapshot.status ||
           prev.snapshot.winner != next.snapshot.winner,
       builder: (context, state) {
+        final cubit = context.read<GameCubit>();
         final snap = state.snapshot;
+        final isAiSession = cubit.isAiSession;
+        final botPlayer = cubit.botPlayer;
         final highlighted = playerPanelHighlighted(snapshot: snap, player: player);
-        final subtitleText = playerPanelSubtitle(snapshot: snap, player: player);
+        final titleText = playerPanelTitle(
+          player: player,
+          isAiSession: isAiSession,
+          humanPlayer: cubit.humanPlayer,
+        );
+        final subtitleText = playerPanelSubtitle(
+          snapshot: snap,
+          player: player,
+          isAiSession: isAiSession,
+          botPlayer: botPlayer,
+        );
         final showWaitingDots = playerPanelShowsWaitingDots(
           snapshot: snap,
           player: player,
+          isAiSession: isAiSession,
+          botPlayer: botPlayer,
         );
         final isTurnActive =
             snap.status == GameStatus.playing && snap.currentPlayer == player;
@@ -132,7 +147,7 @@ class PlayerPanel extends StatelessWidget {
                       ),
                       SizedBox(height: 7.h),
                       Text(
-                        isX ? 'Player X' : 'Player O',
+                        titleText,
                         style: highlighted ? titleStyleActive : titleStyleInactive,
                         textAlign: TextAlign.center,
                       ),
