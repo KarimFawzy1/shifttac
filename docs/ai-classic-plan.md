@@ -686,13 +686,28 @@ test/classic_intermediate_bot_strategy_test.dart
 
 **DoD:**
 
-- [ ] Hard strategy is implemented with minimax.
-- [ ] Hard mode is unbeatable under tested scenarios.
-- [ ] Minimax simulations use `ClassicGameEngine`.
-- [ ] Tie-break behavior is deterministic.
-- [ ] `flutter analyze` is clean.
-- [ ] Relevant tests pass.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Hard strategy is implemented with minimax.
+- [x] Hard mode is unbeatable under tested scenarios.
+- [x] Minimax simulations use `ClassicGameEngine`.
+- [x] Tie-break behavior is deterministic.
+- [x] `flutter analyze` is clean.
+- [x] Relevant tests pass.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 4 Completion — 2026-05-29
+
+**Deliverables:**
+
+```text
+lib/features/game/domain/logic/classic_hard_bot_strategy.dart
+test/classic_hard_bot_strategy_test.dart
+```
+
+**Minimax:** Maximizes on bot turns, minimizes on human turns. Terminal scores: bot win `10 - depth`, human win `depth - 10`, draw `0`. All moves via `simulateClassicMove` → `ClassicGameEngine`.
+
+**Tie-break:** Root and child moves iterate `availablePositions` (stable center → corners → sides order); first move with strictly better score wins.
+
+**Tests:** 8 passing — win, block, optimal opening, legal cells, determinism, one-cell win/draw, full game vs tactical human (bot O never loses).
 
 ---
 
