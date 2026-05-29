@@ -326,12 +326,14 @@ abstract interface class GameRules {
 
 **DoD:**
 
-- [ ] Current FIFO behavior lives in `ShiftGameEngine` or an equivalent clearly named rule class.
-- [ ] Current ShiftTac tests are updated and passing.
-- [ ] Any temporary compatibility wrapper is documented and scheduled for removal if not intended long term.
-- [ ] No classic logic is mixed into the ShiftTac engine.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Current FIFO behavior lives in `ShiftGameEngine` or an equivalent clearly named rule class.
+- [x] Current ShiftTac tests are updated and passing.
+- [x] Any temporary compatibility wrapper is documented and scheduled for removal if not intended long term.
+- [x] No classic logic is mixed into the ShiftTac engine.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+**Phase 2 note:** No `GameEngine` compatibility wrapper was kept; all call sites use `ShiftGameEngine` directly.
 
 ---
 

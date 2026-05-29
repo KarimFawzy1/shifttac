@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/game_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../domain/logic/game_engine.dart';
+import '../../domain/logic/shift_game_engine.dart';
 import '../../domain/logic/game_snapshot.dart';
 import '../../domain/models/game_status.dart';
 import '../../domain/models/player.dart';
@@ -33,7 +33,7 @@ BoardCellAppearance _appearanceFor(GameState state, Position position) {
   final nextMoveWillShift =
       playing && currentPlayerMoves.length == GameConstants.maxActiveMarks;
   final oldest = nextMoveWillShift
-      ? GameEngine.instance.oldestPositionFor(snap.currentPlayer, snap)
+      ? ShiftGameEngine.instance.oldestPositionFor(snap.currentPlayer, snap)
       : null;
   final faded = oldest == position && occupant == snap.currentPlayer;
 

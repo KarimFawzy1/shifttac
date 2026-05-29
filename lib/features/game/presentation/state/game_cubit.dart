@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/game_constants.dart';
-import '../../domain/logic/game_engine.dart';
+import '../../domain/logic/shift_game_engine.dart';
 import '../../domain/models/game_status.dart';
 import '../../domain/models/position.dart';
 import 'game_state.dart';
@@ -16,7 +16,7 @@ enum CellTapResult {
   rejectedNotPlaying,
 }
 
-/// Coordinates UI state with [GameEngine]; does not implement gameplay rules.
+/// Coordinates UI state with [ShiftGameEngine]; does not implement gameplay rules.
 class GameCubit extends Cubit<GameState> {
   GameCubit() : super(GameState.initial()) {
     _matchStopwatch.start();
@@ -114,7 +114,7 @@ class GameCubit extends Cubit<GameState> {
       return CellTapResult.rejectedLocked;
     }
 
-    final result = GameEngine.instance.attemptMove(
+    final result = ShiftGameEngine.instance.attemptMove(
       snapshot: state.snapshot,
       position: p,
     );

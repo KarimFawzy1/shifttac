@@ -11,10 +11,10 @@ import 'game_snapshot.dart';
 import 'win_checker.dart';
 
 /// ShiftTac gameplay rules: FIFO rotation, then placement, then win evaluation.
-class GameEngine implements GameRules {
-  const GameEngine._();
+class ShiftGameEngine implements GameRules {
+  const ShiftGameEngine._();
 
-  static const GameEngine instance = GameEngine._();
+  static const ShiftGameEngine instance = ShiftGameEngine._();
 
   static GameSnapshot restart() => instance.initial();
 
