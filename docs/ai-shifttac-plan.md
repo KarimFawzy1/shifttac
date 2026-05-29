@@ -589,12 +589,18 @@ Manual smoke tests:
 
 **DoD:**
 
-- [ ] `GameCubit` uses a generic bot strategy type.
-- [ ] Classic AI easy/intermediate/hard behavior is unchanged.
-- [ ] Bot strategy selection is centralized.
-- [ ] Existing classic AI tests pass.
-- [ ] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] `GameCubit` uses a generic bot strategy type.
+- [x] Classic AI easy/intermediate/hard behavior is unchanged.
+- [x] Bot strategy selection is centralized.
+- [x] Existing classic AI tests pass.
+- [x] `flutter analyze` is clean.
+- [x] Commit and push phase changes to GitHub.
+
+### Phase 1 Completion
+
+**Files:** `bot_strategy.dart`, `bot_strategy_factory.dart`, `classic_bot_strategy.dart` (implements `BotStrategy`), `game_cubit.dart`, `bot_strategy_factory_test.dart`, `game_cubit_ai_test.dart`.
+
+**Behavior:** `GameCubit` resolves strategies via `BotStrategyFactory.forSession(mode:, difficulty:)`, which delegates classic mode to `ClassicBotStrategyFactory`. Shift mode throws `UnimplementedError` until Phase 4+ strategies exist. Classic-only bot assert remains until Phase 2.
 
 ## Phase 2 - ShiftTac Session Model
 

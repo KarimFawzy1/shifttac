@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/game_constants.dart';
-import '../../domain/logic/classic_bot_strategy.dart';
-import '../../domain/logic/classic_bot_strategy_factory.dart';
+import '../../domain/logic/bot_strategy.dart';
+import '../../domain/logic/bot_strategy_factory.dart';
 import '../../domain/logic/classic_game_engine.dart';
 import '../../domain/logic/game_engine_result.dart';
 import '../../domain/logic/game_rules.dart';
@@ -34,7 +34,7 @@ class GameCubit extends Cubit<GameState> {
     BotOpponentConfig? bot,
     Player? startingPlayer,
     Random? botRandom,
-    ClassicBotStrategy? botStrategy,
+    BotStrategy? botStrategy,
   }) : this._(
          rules: rules,
          bot: bot,
@@ -43,8 +43,9 @@ class GameCubit extends Cubit<GameState> {
          botStrategy: bot == null
              ? null
              : (botStrategy ??
-                   ClassicBotStrategyFactory.forDifficulty(
-                     bot.difficulty,
+                   BotStrategyFactory.forSession(
+                     mode: rules.mode,
+                     difficulty: bot.difficulty,
                      random: botRandom,
                    )),
          initialState: GameState.initialFor(
@@ -58,7 +59,7 @@ class GameCubit extends Cubit<GameState> {
     required BotOpponentConfig? bot,
     required Player? startingPlayer,
     required Random? matchRandom,
-    required ClassicBotStrategy? botStrategy,
+    required BotStrategy? botStrategy,
     required GameState initialState,
   }) : _rules = rules,
        _bot = bot,
@@ -86,13 +87,16 @@ class GameCubit extends Cubit<GameState> {
     required GameState initialState,
     BotOpponentConfig? bot,
     Player? startingPlayer,
-    ClassicBotStrategy? botStrategy,
+    BotStrategy? botStrategy,
   }) {
     final strategy =
         bot == null
             ? null
             : (botStrategy ??
-                ClassicBotStrategyFactory.forDifficulty(bot.difficulty));
+                BotStrategyFactory.forSession(
+                  mode: rules.mode,
+                  difficulty: bot.difficulty,
+                ));
     return GameCubit._(
       rules: rules,
       bot: bot,
@@ -106,7 +110,7 @@ class GameCubit extends Cubit<GameState> {
   factory GameCubit.fromSession(
     GameSessionConfig session, {
     Random? botRandom,
-    ClassicBotStrategy? botStrategy,
+    BotStrategy? botStrategy,
   }) {
     final rules = switch (session.mode) {
       GameMode.shift => ShiftGameEngine.instance,
@@ -125,7 +129,7 @@ class GameCubit extends Cubit<GameState> {
   final BotOpponentConfig? _bot;
   final Player? _startingPlayer;
   final Random? _matchRandom;
-  final ClassicBotStrategy? _botStrategy;
+  final BotStrategy? _botStrategy;
 
   Player _randomAiStartingPlayer() {
     final rng = _matchRandom ?? Random();

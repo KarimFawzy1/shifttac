@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:fake_async/fake_async.dart'; // ignore: depend_on_referenced_packages
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/game_constants.dart';
-import 'package:shifttac/features/game/domain/logic/classic_bot_strategy.dart';
+import 'package:shifttac/features/game/domain/logic/bot_strategy.dart';
 import 'package:shifttac/features/game/domain/logic/classic_game_engine.dart';
 import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
 import 'package:shifttac/features/game/presentation/state/game_state.dart';
@@ -16,7 +16,7 @@ import 'package:shifttac/features/game/domain/models/player.dart';
 import 'package:shifttac/features/game/domain/models/position.dart';
 import 'package:shifttac/features/game/presentation/state/game_cubit.dart';
 
-final class _NoOpBotStrategy implements ClassicBotStrategy {
+final class _NoOpBotStrategy implements BotStrategy {
   const _NoOpBotStrategy();
 
   @override
@@ -28,7 +28,7 @@ final class _NoOpBotStrategy implements ClassicBotStrategy {
   }
 }
 
-GameCubit _aiCubit({Random? botRandom, ClassicBotStrategy? botStrategy}) {
+GameCubit _aiCubit({Random? botRandom, BotStrategy? botStrategy}) {
   return GameCubit.fromSession(
     const GameSessionConfig(
       mode: GameMode.classic,
