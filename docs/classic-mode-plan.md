@@ -591,7 +591,7 @@ class GameplayScreen extends StatelessWidget {
 - [x] Back to Home returns to the home route.
 - [x] Result dialog tests pass for X win, O win, and draw variants.
 - [x] `flutter analyze` is clean.
-- [ ] Commit and push phase changes to GitHub.
+- [x] Commit and push phase changes to GitHub.
 
 ---
 
