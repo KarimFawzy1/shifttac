@@ -44,9 +44,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Assets (local / not tracked in VCS)
-/assets/
-
 # Internal docs (not shared in VCS)
 docs/development-roadmap.md
 docs/implementation-rules.md
+
+# Large / local datasets and ETL (not tracked in VCS)
+transfermarkt-datasets/
+tool/
+assets/db/
