@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 512 512"
+    fill="none"
+>
+
+    <!-- Grid -->
+    <g
+        stroke="#000"
+        stroke-width="16"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    >
+        <!-- Vertical lines -->
+        <line x1="170" y1="16" x2="170" y2="496"/>
+        <line x1="342" y1="16" x2="342" y2="496"/>
+
+        <!-- Horizontal lines -->
+        <line x1="16" y1="170" x2="496" y2="170"/>
+        <line x1="16" y1="342" x2="496" y2="342"/>
+    </g>
+
+    <!-- O Marks -->
+    <g
+        stroke="#000"
+        stroke-width="16"
+        fill="none"
+    >
+        <circle cx="256" cy="256" r="50"/>
+        <circle cx="256" cy="84" r="50"/>
+        <circle cx="428" cy="256" r="50"/>
+        <circle cx="84" cy="428" r="50"/>
+    </g>
+
+    <!-- X Marks -->
+    <g
+        stroke="#000"
+        stroke-width="16"
+        stroke-linecap="round"
+    >
+        <!-- Top Left -->
+        <line x1="44" y1="44" x2="124" y2="124"/>
+        <line x1="124" y1="44" x2="44" y2="124"/>
+
+        <!-- Middle Left -->
+        <line x1="44" y1="216" x2="124" y2="296"/>
+        <line x1="124" y1="216" x2="44" y2="296"/>
+
+        <!-- Top Right -->
+        <line x1="388" y1="44" x2="468" y2="124"/>
+        <line x1="468" y1="44" x2="388" y2="124"/>
+
+        <!-- Bottom Center -->
+        <line x1="216" y1="388" x2="296" y2="468"/>
+        <line x1="296" y1="388" x2="216" y2="468"/>
+
+        <!-- Bottom Right -->
+        <line x1="388" y1="388" x2="468" y2="468"/>
+        <line x1="468" y1="388" x2="388" y2="468"/>
+    </g>
+
+</svg>
