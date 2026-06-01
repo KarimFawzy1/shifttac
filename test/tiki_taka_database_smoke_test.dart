@@ -1,0 +1,48 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+/// Phase D11 DoD: shipped [assets/db/tiki_taka.db] opens read-only.
+void main() {
+  sqfliteFfiInit();
+  final databaseFactory = databaseFactoryFfi;
+
+  test('tiki_taka.db opens read-only with expected tables', () async {
+    final dbFile = File('assets/db/tiki_taka.db');
+    expect(dbFile.existsSync(), isTrue, reason: 'Run tool/etl/build_database.py first');
+
+    // sqflite_common_ffi prefixes relative paths with its cache dir; use absolute.
+    final db = await databaseFactory.openDatabase(
+      dbFile.absolute.path,
+      options: OpenDatabaseOptions(readOnly: true),
+    );
+
+    try {
+      final players = await db.rawQuery('SELECT COUNT(*) AS c FROM players');
+      final boards = await db.rawQuery('SELECT COUNT(*) AS c FROM boards');
+      final attributes = await db.rawQuery('SELECT COUNT(*) AS c FROM attributes');
+      final schema = await db.query(
+        'meta',
+        where: 'key = ?',
+        whereArgs: ['schema_version'],
+      );
+
+      expect((players.first['c'] as int?) ?? 0, greaterThan(0));
+      expect((boards.first['c'] as int?) ?? 0, greaterThanOrEqualTo(20));
+      expect((attributes.first['c'] as int?) ?? 0, greaterThan(0));
+      expect(schema.first['value'], '1');
+
+      await expectLater(
+        db.insert('players', {
+          'id': 'tm:smoke',
+          'display_name': 'Should Fail',
+          'search_text': 'should fail',
+        }),
+        throwsA(isA<DatabaseException>()),
+      );
+    } finally {
+      await db.close();
+    }
+  });
+}
