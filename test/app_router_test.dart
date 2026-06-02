@@ -14,6 +14,54 @@ import 'package:shifttac/features/game/domain/models/player.dart';
 import 'package:shifttac/features/game/presentation/screens/gameplay_screen.dart';
 
 void main() {
+  group('AppRouter.pageBuilderFor', () {
+    test('returns null for unknown route names', () {
+      expect(
+        AppRouter.pageBuilderFor(const RouteSettings(name: '/unknown')),
+        isNull,
+      );
+    });
+
+    test('returns builders for morph-enabled routes', () {
+      expect(
+        AppRouter.pageBuilderFor(
+          const RouteSettings(name: AppRoutes.howToPlay),
+        ),
+        isNotNull,
+      );
+      expect(
+        AppRouter.pageBuilderFor(
+          const RouteSettings(name: AppRoutes.settings),
+        ),
+        isNotNull,
+      );
+    });
+
+    testWidgets('builds game route with sessionFromRouteArguments', (
+      tester,
+    ) async {
+      const settings = RouteSettings(
+        name: AppRoutes.game,
+        arguments: GameMode.classic,
+      );
+      final builder = AppRouter.pageBuilderFor(settings);
+      expect(builder, isNotNull);
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: AppConstants.designSize,
+          builder: (_, child) => MaterialApp(
+            home: Builder(builder: builder!),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.classic);
+    });
+  });
+
   group('AppRouter.sessionFromRouteArguments', () {
     test('defaults to ShiftTac local session when arguments are missing', () {
       expect(

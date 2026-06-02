@@ -16,58 +16,52 @@ class AppRouter {
   AppRouter._();
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    final builder = pageBuilderFor(settings);
+    if (builder == null) {
+      return null;
+    }
+    return MaterialPageRoute<void>(
+      settings: settings,
+      builder: builder,
+    );
+  }
+
+  /// Returns the destination widget builder for [settings.name], or `null` if
+  /// the route is not registered.
+  ///
+  /// Shared by [onGenerateRoute] and [MorphNavigator.pushNamedFrom].
+  static WidgetBuilder? pageBuilderFor(RouteSettings settings) {
     final name = settings.name ?? AppRoutes.launch;
 
     if (name == AppRoutes.launch || name == '/') {
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => const AppLaunchGate(),
-      );
+      return (_) => const AppLaunchGate();
     }
 
     if (name == AppRoutes.splash) {
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => const SplashScreen(),
-      );
+      return (_) => const SplashScreen();
     }
 
     if (name == AppRoutes.onboarding) {
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => const OnboardingScreen(),
-      );
+      return (_) => const OnboardingScreen();
     }
 
     if (name == AppRoutes.game) {
       final session = sessionFromRouteArguments(settings.arguments);
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => GameplayScreen(session: session),
-      );
+      return (_) => GameplayScreen(session: session);
     }
 
     if (name == AppRoutes.home) {
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => MainShellScreen(
-          initialTab: _tabFromArguments(settings.arguments) ?? MainShellTab.home,
-        ),
-      );
+      final initialTab =
+          _tabFromArguments(settings.arguments) ?? MainShellTab.home;
+      return (_) => MainShellScreen(initialTab: initialTab);
     }
 
     if (name == AppRoutes.howToPlay) {
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => const HowToPlayScreen(standalone: true),
-      );
+      return (_) => const HowToPlayScreen(standalone: true);
     }
 
     if (name == AppRoutes.settings) {
-      return MaterialPageRoute<void>(
-        settings: settings,
-        builder: (_) => const SettingsScreen(standalone: true),
-      );
+      return (_) => const SettingsScreen(standalone: true);
     }
 
     return null;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_router.dart';
 import 'morph_page_route.dart';
 import 'morph_route_config.dart';
 import 'morph_source_rect.dart';
@@ -7,6 +8,32 @@ import 'morph_source_rect.dart';
 /// Pushes routes with an optional morph transition from a source widget.
 class MorphNavigator {
   MorphNavigator._();
+
+  /// Pushes a named route using [AppRouter.pageBuilderFor] and a morph transition
+  /// when [sourceKey] can be measured.
+  ///
+  /// Falls back to [Navigator.pushNamed] when the route is unknown, or to a
+  /// standard [MaterialPageRoute] when the source cannot be measured.
+  static Future<T?> pushNamedFrom<T>({
+    required BuildContext context,
+    required GlobalKey sourceKey,
+    required String routeName,
+    Object? arguments,
+    MorphRouteConfig config = const MorphRouteConfig(),
+  }) {
+    final settings = RouteSettings(name: routeName, arguments: arguments);
+    final builder = AppRouter.pageBuilderFor(settings);
+    if (builder == null) {
+      return Navigator.of(context).pushNamed<T>(routeName, arguments: arguments);
+    }
+    return pushFrom<T>(
+      context: context,
+      sourceKey: sourceKey,
+      builder: builder,
+      settings: settings,
+      config: config,
+    );
+  }
 
   /// Pushes [builder] using a morph transition when [sourceKey] can be measured.
   ///

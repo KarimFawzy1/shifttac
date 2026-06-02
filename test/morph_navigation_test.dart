@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shifttac/core/audio/app_audio.dart';
+import 'package:shifttac/core/constants/app_constants.dart';
+import 'package:shifttac/core/routing/app_routes.dart';
+import 'package:shifttac/core/settings/app_settings_controller.dart';
 import 'package:shifttac/core/routing/morph_navigator.dart';
 import 'package:shifttac/core/routing/morph_page_route.dart';
 import 'package:shifttac/core/routing/morph_source_rect.dart';
+import 'package:shifttac/features/game/domain/models/game_mode.dart';
+import 'package:shifttac/features/game/domain/models/game_session_config.dart';
+import 'package:shifttac/features/game/presentation/screens/gameplay_screen.dart';
+import 'package:shifttac/features/settings/presentation/screens/settings_screen.dart';
 
 void main() {
   group('MorphSourceRect.tryMeasure', () {
@@ -166,6 +175,133 @@ void main() {
       expect(route, isA<MorphPageRoute<void>>());
       expect((route! as MorphPageRoute<void>).sourceRect,
           const Rect.fromLTWH(24, 48, 100, 50));
+    });
+  });
+
+  group('MorphNavigator.pushNamedFrom', () {
+    Future<void> pumpMorphHost(
+      WidgetTester tester, {
+      required GlobalKey sourceKey,
+      required VoidCallback onOpen,
+    }) async {
+      final settings = AppSettingsController();
+      await tester.pumpWidget(
+        AppSettingsScope(
+          settings: settings,
+          child: AppAudioScope(
+            audio: AppAudio(settings),
+            child: ScreenUtilInit(
+              designSize: AppConstants.designSize,
+              builder: (context, child) => MaterialApp(
+                home: Builder(
+                  builder: (context) {
+                    return Scaffold(
+                      body: Column(
+                        children: [
+                          SizedBox(
+                            key: sourceKey,
+                            width: 160,
+                            height: 72,
+                            child: const ColoredBox(color: Colors.teal),
+                          ),
+                          ElevatedButton(
+                            onPressed: onOpen,
+                            child: const Text('open'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('opens gameplay with route arguments', (tester) async {
+      final sourceKey = GlobalKey();
+      late BuildContext hostContext;
+
+      await pumpMorphHost(
+        tester,
+        sourceKey: sourceKey,
+        onOpen: () {
+          MorphNavigator.pushNamedFrom<void>(
+            context: hostContext,
+            sourceKey: sourceKey,
+            routeName: AppRoutes.game,
+            arguments: GameMode.classic,
+          );
+        },
+      );
+
+      hostContext = tester.element(find.text('open'));
+      await tester.tap(find.text('open'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+
+      final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.mode, GameMode.classic);
+      final route = ModalRoute.of(tester.element(find.byType(GameplayScreen)));
+      expect(route, isA<MorphPageRoute<void>>());
+      expect(route!.settings.name, AppRoutes.game);
+      expect(route.settings.arguments, GameMode.classic);
+    });
+
+    testWidgets('opens gameplay with GameSessionConfig', (tester) async {
+      final sourceKey = GlobalKey();
+      late BuildContext hostContext;
+      const config = GameSessionConfig(mode: GameMode.shift);
+
+      await pumpMorphHost(
+        tester,
+        sourceKey: sourceKey,
+        onOpen: () {
+          MorphNavigator.pushNamedFrom<void>(
+            context: hostContext,
+            sourceKey: sourceKey,
+            routeName: AppRoutes.game,
+            arguments: config,
+          );
+        },
+      );
+
+      hostContext = tester.element(find.text('open'));
+      await tester.tap(find.text('open'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+
+      final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
+      expect(screen.session, same(config));
+    });
+
+    testWidgets('opens SettingsScreen', (tester) async {
+      final sourceKey = GlobalKey();
+      late BuildContext hostContext;
+
+      await pumpMorphHost(
+        tester,
+        sourceKey: sourceKey,
+        onOpen: () {
+          MorphNavigator.pushNamedFrom<void>(
+            context: hostContext,
+            sourceKey: sourceKey,
+            routeName: AppRoutes.settings,
+          );
+        },
+      );
+
+      hostContext = tester.element(find.text('open'));
+      await tester.tap(find.text('open'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(SettingsScreen), findsOneWidget);
+      final route = ModalRoute.of(tester.element(find.byType(SettingsScreen)));
+      expect(route, isA<MorphPageRoute<void>>());
+      expect(route!.settings.name, AppRoutes.settings);
     });
   });
 }

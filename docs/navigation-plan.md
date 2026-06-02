@@ -194,7 +194,7 @@ Definition of Done:
 
 **Implemented in:** `morph_source_rect.dart`, `morph_route_config.dart`, `morph_page_route.dart`, `morph_navigator.dart`, `test/morph_navigation_test.dart`.
 
-## Phase 2: AppRouter Reuse
+## Phase 2: AppRouter Reuse — Done
 
 Make morph named-route navigation reuse the same page construction as normal navigation.
 
@@ -213,14 +213,16 @@ Implementation notes:
 
 Definition of Done:
 
-- `Navigator.pushNamed` behavior is unchanged.
-- `MorphNavigator.pushNamedFrom` can navigate to game, how-to-play, and settings.
-- Existing router tests still pass.
-- New router or morph navigator tests cover route arguments for gameplay.
-- `flutter analyze` passes.
-- Relevant tests pass.
-- Commit created with a message such as `Reuse app route builders for morph navigation`.
-- Branch pushed to GitHub.
+- [x] `Navigator.pushNamed` behavior is unchanged.
+- [x] `MorphNavigator.pushNamedFrom` can navigate to game, how-to-play, and settings.
+- [x] Existing router tests still pass.
+- [x] New router or morph navigator tests cover route arguments for gameplay.
+- [x] `flutter analyze` passes.
+- [x] Relevant tests pass.
+- [x] Commit created with a message such as `Reuse app route builders for morph navigation`.
+- [x] Branch pushed to GitHub.
+
+**Implemented in:** `AppRouter.pageBuilderFor`, `MorphNavigator.pushNamedFrom`, extended `app_router_test.dart` and `morph_navigation_test.dart`.
 
 ## Phase 3: HomeActionCard to Gameplay
 
