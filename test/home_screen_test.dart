@@ -5,16 +5,17 @@ import 'package:shifttac/core/audio/app_audio.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/core/routing/app_router.dart';
 import 'package:shifttac/core/settings/app_settings_controller.dart';
+import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/game_mode.dart';
 import 'package:shifttac/features/game/presentation/screens/gameplay_screen.dart';
 import 'package:shifttac/features/home/presentation/screens/home_screen.dart';
 
-Widget _homeTestApp() {
-  final settings = AppSettingsController();
+Widget _homeTestApp({AppSettingsController? settings}) {
+  final appSettings = settings ?? AppSettingsController();
   return AppSettingsScope(
-    settings: settings,
+    settings: appSettings,
     child: AppAudioScope(
-      audio: AppAudio(settings),
+      audio: AppAudio(appSettings),
       child: ScreenUtilInit(
         designSize: AppConstants.designSize,
         builder: (context, child) => MaterialApp(
@@ -92,37 +93,68 @@ void main() {
       );
     });
 
-    testWidgets('Play vs AI is tappable and opens mode selection', (
+    testWidgets('VS AI has in-card pills and opens AI gameplay', (
       tester,
     ) async {
       await tester.pumpWidget(_homeTestApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Play vs AI'), findsOneWidget);
+      expect(find.text('VS AI'), findsOneWidget);
       expect(find.text('Coming Soon'), findsNothing);
+      expect(find.byKey(const Key('ai-pill-mode')), findsOneWidget);
+      expect(find.byKey(const Key('ai-pill-difficulty')), findsOneWidget);
 
-      expect(
-        find.ancestor(
-          of: find.text('Play vs AI'),
-          matching: find.byType(InkWell),
-        ),
-        findsOneWidget,
-      );
-
-      final playVsAi = find.text('Play vs AI');
+      final playVsAi = find.text('VS AI');
       await tester.ensureVisible(playVsAi);
       await tester.pumpAndSettle();
       await tester.tap(playVsAi);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byType(GameplayScreen), findsOneWidget);
+      final gameplay = tester.widget<GameplayScreen>(
+        find.byType(GameplayScreen),
+      );
+      expect(gameplay.session.mode, GameMode.shift);
+      expect(gameplay.session.bot?.difficulty, BotDifficulty.easy);
+    });
+
+    testWidgets('AI pills update defaults and only one pill opens', (
+      tester,
+    ) async {
+      final settings = AppSettingsController();
+      await tester.pumpWidget(_homeTestApp(settings: settings));
       await tester.pumpAndSettle();
 
-      expect(find.text('Traditional 3x3 against the bot.'), findsOneWidget);
-      expect(find.text('Classic'), findsOneWidget);
-      expect(
-        find.text('AI for shifting marks will arrive later.'),
-        findsOneWidget,
+      final playVsAi = find.text('VS AI');
+      await tester.ensureVisible(playVsAi);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('ai-pill-mode')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('ai-option-classic')), findsOneWidget);
+
+      await tester.tapAt(const Offset(8, 8));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('ai-pill-difficulty')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('ai-option-classic')), findsNothing);
+      expect(find.byKey(const Key('ai-option-easy')), findsOneWidget);
+
+      await tester.tapAt(const Offset(8, 8));
+      await tester.pumpAndSettle();
+      settings.setAiGameMode(GameMode.classic);
+
+      await tester.tap(playVsAi);
+      await tester.pump();
+      await tester.pump();
+
+      final gameplay = tester.widget<GameplayScreen>(
+        find.byType(GameplayScreen),
       );
-      expect(find.text('Coming Soon'), findsOneWidget);
-      expect(find.byType(GameplayScreen), findsNothing);
+      expect(gameplay.session.mode, GameMode.classic);
+      expect(gameplay.session.bot?.difficulty, BotDifficulty.easy);
     });
   });
 }

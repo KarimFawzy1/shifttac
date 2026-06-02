@@ -29,6 +29,7 @@ class HomeActionCard extends StatelessWidget {
     this.badgeLabel,
     this.iconWidth,
     this.iconHeight,
+    this.topRightAccessory,
   });
 
   final String title;
@@ -39,6 +40,7 @@ class HomeActionCard extends StatelessWidget {
   final String? badgeLabel;
   final double? iconWidth;
   final double? iconHeight;
+  final Widget? topRightAccessory;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +64,7 @@ class HomeActionCard extends StatelessWidget {
           iconWidth: iconWidth,
           iconHeight: iconHeight,
           onTap: onTap!,
+          topRightAccessory: topRightAccessory,
         );
       case HomeActionCardStyle.disabledSecondary:
         return _DisabledSecondaryCard(
@@ -179,6 +182,7 @@ class _SecondaryCard extends StatelessWidget {
     required this.onTap,
     this.iconWidth,
     this.iconHeight,
+    this.topRightAccessory,
   });
 
   final String title;
@@ -187,6 +191,7 @@ class _SecondaryCard extends StatelessWidget {
   final VoidCallback onTap;
   final double? iconWidth;
   final double? iconHeight;
+  final Widget? topRightAccessory;
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +252,10 @@ class _SecondaryCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (topRightAccessory != null) ...[
+                      SizedBox(width: AppSpacing.stackSm.w),
+                      topRightAccessory!,
+                    ],
                   ],
                 ),
                 SizedBox(height: AppSpacing.stackSm.h),

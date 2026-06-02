@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shifttac/core/settings/app_settings_controller.dart';
 import 'package:shifttac/core/settings/app_settings_defaults.dart';
 import 'package:shifttac/core/settings/app_settings_prefs.dart';
+import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
+import 'package:shifttac/features/game/domain/models/game_mode.dart';
 
 void main() {
   group('AppSettingsController volume', () {
@@ -66,11 +68,28 @@ void main() {
       expect(controller.soundEffectsEnabled, isFalse);
 
       controller.toggleSfxMute();
-      expect(
-        controller.sfxVolume,
-        AppSettingsDefaults.snapVolume(0.6),
-      );
+      expect(controller.sfxVolume, AppSettingsDefaults.snapVolume(0.6));
       expect(controller.soundEffectsEnabled, isTrue);
+    });
+  });
+
+  group('AppSettingsController AI defaults', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test('setAiGameMode and setAiDifficulty persist values', () async {
+      final prefs = AppSettingsPrefs();
+      final controller = AppSettingsController(prefs: prefs);
+
+      controller.setAiGameMode(GameMode.classic);
+      controller.setAiDifficulty(BotDifficulty.hard);
+
+      await Future<void>.delayed(Duration.zero);
+      final snapshot = await prefs.load();
+
+      expect(snapshot.aiGameMode, GameMode.classic);
+      expect(snapshot.aiDifficulty, BotDifficulty.hard);
     });
   });
 }

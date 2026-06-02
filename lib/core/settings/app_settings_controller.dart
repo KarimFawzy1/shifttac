@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import '../../features/game/domain/models/bot_difficulty.dart';
+import '../../features/game/domain/models/game_mode.dart';
 import 'app_settings_defaults.dart';
 import 'app_settings_prefs.dart';
 
@@ -15,23 +17,27 @@ class AppSettingsController extends ChangeNotifier {
     bool vibrationEnabled = true,
     double bgmVolume = AppSettingsDefaults.bgmVolume,
     double sfxVolume = AppSettingsDefaults.sfxVolume,
+    GameMode aiGameMode = GameMode.shift,
+    BotDifficulty aiDifficulty = BotDifficulty.easy,
     double? bgmVolumeBeforeMute,
     double? sfxVolumeBeforeMute,
     AppSettingsPrefs? prefs,
-  })  : _prefs = prefs,
-        _soundEffectsEnabled = soundEffectsEnabled,
-        _musicEnabled = musicEnabled,
-        _vibrationEnabled = vibrationEnabled,
-        _bgmVolume = _clampVolume(bgmVolume),
-        _sfxVolume = _clampVolume(sfxVolume),
-        _bgmVolumeBeforeMute = _clampVolume(
-          bgmVolumeBeforeMute ??
-              (bgmVolume > 0 ? bgmVolume : AppSettingsDefaults.bgmVolume),
-        ),
-        _sfxVolumeBeforeMute = _clampVolume(
-          sfxVolumeBeforeMute ??
-              (sfxVolume > 0 ? sfxVolume : AppSettingsDefaults.sfxVolume),
-        );
+  }) : _prefs = prefs,
+       _soundEffectsEnabled = soundEffectsEnabled,
+       _musicEnabled = musicEnabled,
+       _vibrationEnabled = vibrationEnabled,
+       _bgmVolume = _clampVolume(bgmVolume),
+       _sfxVolume = _clampVolume(sfxVolume),
+       _aiGameMode = aiGameMode,
+       _aiDifficulty = aiDifficulty,
+       _bgmVolumeBeforeMute = _clampVolume(
+         bgmVolumeBeforeMute ??
+             (bgmVolume > 0 ? bgmVolume : AppSettingsDefaults.bgmVolume),
+       ),
+       _sfxVolumeBeforeMute = _clampVolume(
+         sfxVolumeBeforeMute ??
+             (sfxVolume > 0 ? sfxVolume : AppSettingsDefaults.sfxVolume),
+       );
 
   /// Loads persisted settings before the first frame.
   static Future<AppSettingsController> load() async {
@@ -55,6 +61,8 @@ class AppSettingsController extends ChangeNotifier {
         stored: sfxStored,
         defaultVolume: AppSettingsDefaults.sfxVolume,
       ),
+      aiGameMode: snapshot.aiGameMode,
+      aiDifficulty: snapshot.aiDifficulty,
       bgmVolumeBeforeMute: snapshot.musicEnabled
           ? null
           : (bgmStored > 0 ? bgmStored : AppSettingsDefaults.bgmVolume),
@@ -85,6 +93,8 @@ class AppSettingsController extends ChangeNotifier {
   bool _vibrationEnabled;
   double _bgmVolume;
   double _sfxVolume;
+  GameMode _aiGameMode;
+  BotDifficulty _aiDifficulty;
   double _bgmVolumeBeforeMute;
   double _sfxVolumeBeforeMute;
 
@@ -97,6 +107,32 @@ class AppSettingsController extends ChangeNotifier {
   double get bgmVolume => _bgmVolume;
 
   double get sfxVolume => _sfxVolume;
+  GameMode get aiGameMode => _aiGameMode;
+  BotDifficulty get aiDifficulty => _aiDifficulty;
+
+  void setAiGameMode(GameMode value) {
+    if (_aiGameMode == value) {
+      return;
+    }
+    _aiGameMode = value;
+    notifyListeners();
+    final store = _prefs;
+    if (store != null) {
+      unawaited(store.setAiGameMode(value));
+    }
+  }
+
+  void setAiDifficulty(BotDifficulty value) {
+    if (_aiDifficulty == value) {
+      return;
+    }
+    _aiDifficulty = value;
+    notifyListeners();
+    final store = _prefs;
+    if (store != null) {
+      unawaited(store.setAiDifficulty(value));
+    }
+  }
 
   set soundEffectsEnabled(bool value) {
     if (_soundEffectsEnabled == value) {
@@ -115,9 +151,7 @@ class AppSettingsController extends ChangeNotifier {
     final store = _prefs;
     if (store != null) {
       unawaited(store.setSoundEffectsEnabled(value));
-      unawaited(
-        store.setSfxVolume(value ? _sfxVolume : _sfxVolumeBeforeMute),
-      );
+      unawaited(store.setSfxVolume(value ? _sfxVolume : _sfxVolumeBeforeMute));
     }
   }
 
@@ -266,8 +300,8 @@ class AppSettingsScope extends InheritedNotifier<AppSettingsController> {
   }) : super(notifier: settings);
 
   static AppSettingsController of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<AppSettingsScope>();
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<AppSettingsScope>();
     assert(
       scope != null,
       'AppSettingsScope not found. Wrap MaterialApp with AppSettingsScope.',
