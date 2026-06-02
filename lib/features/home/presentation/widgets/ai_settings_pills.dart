@@ -95,7 +95,7 @@ class _AiSettingsPillsState extends State<AiSettingsPills> {
 
 enum _PillKind { mode, difficulty }
 
-const double _sheetOptionRowHeight = 32;
+const double _sheetOptionRowHeight = 40;
 const double _sheetVerticalPadding = 0;
 
 class _MorphSelectionPill<T> extends StatefulWidget {
@@ -473,7 +473,7 @@ class _SheetOptionRow extends StatelessWidget {
                   : null,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Row(
                 children: [
                   Expanded(
@@ -489,12 +489,13 @@ class _SheetOptionRow extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(width: 8.w),
                   AnimatedOpacity(
                     opacity: selected ? 1 : 0,
                     duration: const Duration(milliseconds: 120),
                     child: Icon(
                       Icons.check_rounded,
-                      size: 16.w,
+                      size: 18.w,
                       color: AppColors.primary,
                     ),
                   ),
