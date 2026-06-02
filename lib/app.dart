@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'core/audio/app_audio.dart';
 import 'core/constants/app_constants.dart';
@@ -30,11 +31,13 @@ class _ShiftTacAppState extends State<ShiftTacApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(WakelockPlus.enable());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    unawaited(WakelockPlus.disable());
     unawaited(widget.audio.dispose());
     widget.settings.dispose();
     super.dispose();
@@ -45,6 +48,7 @@ class _ShiftTacAppState extends State<ShiftTacApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         widget.audio.setForeground(true);
+        unawaited(WakelockPlus.enable());
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.paused:

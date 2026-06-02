@@ -20,6 +20,7 @@ dependencies:
   flutter_svg: ^2.3.0
   shared_preferences: ^2.5.3
   audioplayers: ^6.6.0
+  wakelock_plus: ^1.4.0
 
 dev_dependencies:
   flutter_test:
