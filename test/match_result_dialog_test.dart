@@ -18,7 +18,7 @@ void main() {
     await tester.pumpWidget(
       ScreenUtilInit(
         designSize: AppConstants.designSize,
-        builder: (_, __) => MaterialApp(
+        builder: (context, _) => MaterialApp(
           home: Builder(
             builder: (context) {
               return Scaffold(
@@ -192,7 +192,7 @@ void main() {
       await tester.pumpWidget(
         ScreenUtilInit(
           designSize: AppConstants.designSize,
-          builder: (_, __) => MaterialApp(
+          builder: (context, _) => MaterialApp(
             routes: {
               AppRoutes.home: (_) =>
                   const Scaffold(body: Center(child: Text('home screen'))),

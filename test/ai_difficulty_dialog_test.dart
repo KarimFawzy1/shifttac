@@ -64,7 +64,7 @@ void main() {
       await tester.pump();
     }
 
-    Widget _host() {
+    Widget host() {
       return Builder(
         builder: (context) {
           return Scaffold(
@@ -95,7 +95,7 @@ void main() {
     }
 
     testWidgets('classic mode shows classic difficulty copy', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openClassicDialog(tester);
 
       expect(
@@ -112,7 +112,7 @@ void main() {
     });
 
     testWidgets('shift mode shows ShiftTac difficulty copy', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openShiftDialog(tester);
 
       expect(
@@ -132,7 +132,7 @@ void main() {
     });
 
     testWidgets('Cancel does not navigate to gameplay', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openClassicDialog(tester);
 
       await tester.tap(find.byKey(const Key('ai-difficulty-cancel')));
@@ -144,7 +144,7 @@ void main() {
     });
 
     testWidgets('tapping Easy launches classic AI session', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openClassicDialog(tester);
 
       await tapDifficulty(tester, GameMode.classic, BotDifficulty.easy);
@@ -160,7 +160,7 @@ void main() {
     testWidgets('tapping Intermediate launches classic AI session', (
       tester,
     ) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openClassicDialog(tester);
 
       await tapDifficulty(
@@ -176,7 +176,7 @@ void main() {
     });
 
     testWidgets('tapping Hard launches classic AI session', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openClassicDialog(tester);
 
       await tapDifficulty(tester, GameMode.classic, BotDifficulty.hard);
@@ -188,7 +188,7 @@ void main() {
     });
 
     testWidgets('tapping Easy launches ShiftTac AI session', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openShiftDialog(tester);
 
       await tapDifficulty(tester, GameMode.shift, BotDifficulty.easy);
@@ -202,7 +202,7 @@ void main() {
     testWidgets('tapping Intermediate launches ShiftTac AI session', (
       tester,
     ) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openShiftDialog(tester);
 
       await tapDifficulty(
@@ -217,7 +217,7 @@ void main() {
     });
 
     testWidgets('tapping Hard launches ShiftTac AI session', (tester) async {
-      await pumpDialogHost(tester, _host());
+      await pumpDialogHost(tester, host());
       await openShiftDialog(tester);
 
       await tapDifficulty(tester, GameMode.shift, BotDifficulty.hard);
