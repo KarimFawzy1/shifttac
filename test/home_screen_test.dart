@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/audio/app_audio.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/core/routing/app_router.dart';
+import 'package:shifttac/core/routing/app_routes.dart';
+import 'package:shifttac/core/routing/morph_page_route.dart';
 import 'package:shifttac/core/settings/app_settings_controller.dart';
 import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/game_mode.dart';
@@ -45,34 +47,46 @@ void main() {
   });
 
   group('HomeScreen navigation', () {
-    testWidgets('Play ShiftTac opens ShiftTac gameplay', (tester) async {
+    MorphPageRoute<void>? gameplayMorphRoute(WidgetTester tester) {
+      final element = tester.element(find.byType(GameplayScreen));
+      final route = ModalRoute.of(element);
+      return route is MorphPageRoute<void> ? route : null;
+    }
+
+    testWidgets('Play ShiftTac morphs into ShiftTac gameplay', (tester) async {
       await tester.pumpWidget(_homeTestApp());
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Play ShiftTac'));
       await tester.pump();
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(GameplayScreen), findsOneWidget);
       expect(
         tester.widget<GameplayScreen>(find.byType(GameplayScreen)).mode,
         GameMode.shift,
       );
+      final route = gameplayMorphRoute(tester);
+      expect(route, isNotNull);
+      expect(route!.settings.name, AppRoutes.game);
     });
 
-    testWidgets('Play Classic opens classic gameplay', (tester) async {
+    testWidgets('Play Classic morphs into classic gameplay', (tester) async {
       await tester.pumpWidget(_homeTestApp());
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Play Classic'));
       await tester.pump();
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(GameplayScreen), findsOneWidget);
       expect(
         tester.widget<GameplayScreen>(find.byType(GameplayScreen)).mode,
         GameMode.classic,
       );
+      final route = gameplayMorphRoute(tester);
+      expect(route, isNotNull);
+      expect(route!.settings.arguments, GameMode.classic);
     });
 
     testWidgets('Play Classic is tappable and has no Coming Soon badge', (
@@ -109,7 +123,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(playVsAi);
       await tester.pump();
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(GameplayScreen), findsOneWidget);
       final gameplay = tester.widget<GameplayScreen>(
@@ -117,6 +131,7 @@ void main() {
       );
       expect(gameplay.session.mode, GameMode.shift);
       expect(gameplay.session.bot?.difficulty, BotDifficulty.easy);
+      expect(gameplayMorphRoute(tester), isNotNull);
     });
 
     testWidgets('AI pills update defaults and only one pill opens', (
@@ -148,13 +163,14 @@ void main() {
 
       await tester.tap(playVsAi);
       await tester.pump();
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
 
       final gameplay = tester.widget<GameplayScreen>(
         find.byType(GameplayScreen),
       );
       expect(gameplay.session.mode, GameMode.classic);
       expect(gameplay.session.bot?.difficulty, BotDifficulty.easy);
+      expect(gameplayMorphRoute(tester), isNotNull);
     });
   });
 }

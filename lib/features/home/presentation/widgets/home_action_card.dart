@@ -30,6 +30,7 @@ class HomeActionCard extends StatelessWidget {
     this.iconWidth,
     this.iconHeight,
     this.topRightAccessory,
+    this.morphKey,
   });
 
   final String title;
@@ -41,6 +42,7 @@ class HomeActionCard extends StatelessWidget {
   final double? iconWidth;
   final double? iconHeight;
   final Widget? topRightAccessory;
+  final GlobalKey? morphKey;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,7 @@ class HomeActionCard extends StatelessWidget {
       case HomeActionCardStyle.heroPrimary:
         assert(onTap != null, 'heroPrimary requires onTap');
         return _HeroPrimaryCard(
+          morphKey: morphKey,
           title: title,
           subtitle: subtitle,
           iconAsset: iconAsset,
@@ -58,6 +61,7 @@ class HomeActionCard extends StatelessWidget {
       case HomeActionCardStyle.secondary:
         assert(onTap != null, 'secondary requires onTap');
         return _SecondaryCard(
+          morphKey: morphKey,
           title: title,
           subtitle: subtitle,
           iconAsset: iconAsset,
@@ -85,10 +89,12 @@ class _HeroPrimaryCard extends StatelessWidget {
     required this.subtitle,
     required this.iconAsset,
     required this.onTap,
+    this.morphKey,
     this.iconWidth,
     this.iconHeight,
   });
 
+  final GlobalKey? morphKey;
   final String title;
   final String subtitle;
   final String iconAsset;
@@ -99,6 +105,7 @@ class _HeroPrimaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      key: morphKey,
       color: AppColors.primary,
       elevation: AppSpacing.unit,
       shadowColor: AppColors.primary.withValues(alpha: 0.15),
@@ -180,11 +187,13 @@ class _SecondaryCard extends StatelessWidget {
     required this.subtitle,
     required this.iconAsset,
     required this.onTap,
+    this.morphKey,
     this.iconWidth,
     this.iconHeight,
     this.topRightAccessory,
   });
 
+  final GlobalKey? morphKey;
   final String title;
   final String subtitle;
   final String iconAsset;
@@ -196,6 +205,7 @@ class _SecondaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      key: morphKey,
       color: AppColors.surfaceContainerHighest,
       elevation: 0,
       borderRadius: AppSpacing.borderRadiusMd,

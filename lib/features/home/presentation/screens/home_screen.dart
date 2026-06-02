@@ -7,6 +7,8 @@ import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
+import '../../../../core/routing/morph_navigator.dart';
+import '../../../../core/routing/morph_route_config.dart';
 import '../../../../core/settings/app_settings_controller.dart';
 import '../../../game/domain/models/game_mode.dart';
 import '../../../game/domain/models/game_session_config.dart';
@@ -20,8 +22,41 @@ import '../widgets/home_action_card.dart';
 /// Central hub body (`design.md` §HOME SCREEN, `css/HomeScreen.css`).
 ///
 /// Rendered inside [MainShellScreen]; does not include scaffold or bottom nav.
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey _playShiftTacMorphKey = GlobalKey();
+  final GlobalKey _playClassicMorphKey = GlobalKey();
+  final GlobalKey _playVsAiMorphKey = GlobalKey();
+
+  static const MorphRouteConfig _heroMorphConfig = MorphRouteConfig(
+    surfaceColor: AppColors.primary,
+  );
+
+  static const MorphRouteConfig _secondaryMorphConfig = MorphRouteConfig(
+    surfaceColor: AppColors.surfaceContainerHighest,
+  );
+
+  Future<void> _openGameplay(
+    BuildContext context, {
+    required GlobalKey morphKey,
+    Object? arguments,
+    MorphRouteConfig config = _secondaryMorphConfig,
+  }) {
+    unawaited(AppAudioScope.read(context).playGameStart());
+    return MorphNavigator.pushNamedFrom<void>(
+      context: context,
+      sourceKey: morphKey,
+      routeName: AppRoutes.game,
+      arguments: arguments,
+      config: config,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +68,22 @@ class HomeScreen extends StatelessWidget {
           const _BrandBlock(),
           SizedBox(height: AppSpacing.stackLg.h),
           HomeActionCard(
+            morphKey: _playShiftTacMorphKey,
             style: HomeActionCardStyle.heroPrimary,
             title: 'Play ShiftTac',
             subtitle: 'Only 3 active marks — your oldest shifts off the board.',
             iconAsset: IconConstant.multiplayer,
             onTap: () {
-              unawaited(AppAudioScope.read(context).playGameStart());
-              Navigator.of(context).pushNamed(AppRoutes.game);
+              _openGameplay(
+                context,
+                morphKey: _playShiftTacMorphKey,
+                config: _heroMorphConfig,
+              );
             },
           ),
           SizedBox(height: AppSpacing.stackMd.h),
           HomeActionCard(
+            morphKey: _playClassicMorphKey,
             style: HomeActionCardStyle.secondary,
             title: 'Play Classic',
             subtitle: 'Traditional 3x3. Every mark stays on the board.',
@@ -51,14 +91,16 @@ class HomeScreen extends StatelessWidget {
             iconWidth: 24.w,
             iconHeight: 24.h,
             onTap: () {
-              unawaited(AppAudioScope.read(context).playGameStart());
-              Navigator.of(
+              _openGameplay(
                 context,
-              ).pushNamed(AppRoutes.game, arguments: GameMode.classic);
+                morphKey: _playClassicMorphKey,
+                arguments: GameMode.classic,
+              );
             },
           ),
           SizedBox(height: AppSpacing.stackMd.h),
           HomeActionCard(
+            morphKey: _playVsAiMorphKey,
             style: HomeActionCardStyle.secondary,
             title: 'VS AI',
             subtitle: 'Practice against the bot with your saved setup.',
@@ -72,7 +114,6 @@ class HomeScreen extends StatelessWidget {
               onDifficultyChanged: settings.setAiDifficulty,
             ),
             onTap: () {
-              unawaited(AppAudioScope.read(context).playGameStart());
               final session = switch (settings.aiGameMode) {
                 GameMode.classic => GameSessionConfig.classicAi(
                   settings.aiDifficulty,
@@ -81,9 +122,11 @@ class HomeScreen extends StatelessWidget {
                   settings.aiDifficulty,
                 ),
               };
-              Navigator.of(
+              _openGameplay(
                 context,
-              ).pushNamed(AppRoutes.game, arguments: session);
+                morphKey: _playVsAiMorphKey,
+                arguments: session,
+              );
             },
           ),
           SizedBox(height: AppSpacing.stackLg.h),

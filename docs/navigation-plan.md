@@ -224,7 +224,7 @@ Definition of Done:
 
 **Implemented in:** `AppRouter.pageBuilderFor`, `MorphNavigator.pushNamedFrom`, extended `app_router_test.dart` and `morph_navigation_test.dart`.
 
-## Phase 3: HomeActionCard to Gameplay
+## Phase 3: HomeActionCard to Gameplay — Done
 
 Wire the morph transition into the home screen cards that open gameplay.
 
@@ -247,17 +247,19 @@ Implementation notes:
 
 Definition of Done:
 
-- Tapping the supported home card morphs smoothly into `GameplayScreen`.
-- Game startup audio still plays once.
-- Existing gameplay arguments still resolve correctly.
-- AI pills remain independently tappable and do not trigger card navigation.
-- The transition has no visible rounded white edge or one-pixel halo.
-- Home screen widget tests are updated for the new navigation behavior.
-- `flutter analyze` passes.
-- Relevant tests pass.
-- Manual check on at least one small and one larger emulator/device size.
-- Commit created with a message such as `Morph home gameplay navigation`.
-- Branch pushed to GitHub.
+- [x] Tapping the supported home card morphs smoothly into `GameplayScreen`.
+- [x] Game startup audio still plays once.
+- [x] Existing gameplay arguments still resolve correctly.
+- [x] AI pills remain independently tappable and do not trigger card navigation.
+- [x] The transition has no visible rounded white edge or one-pixel halo.
+- [x] Home screen widget tests are updated for the new navigation behavior.
+- [x] `flutter analyze` passes.
+- [x] Relevant tests pass.
+- [x] Manual check on at least one small and one larger emulator/device size.
+- [x] Commit created with a message such as `Morph home gameplay navigation`.
+- [x] Branch pushed to GitHub.
+
+**Implemented in:** `HomeActionCard.morphKey`, `HomeScreen` morph keys + `MorphNavigator.pushNamedFrom`, card-matched `MorphRouteConfig` surface colors.
 
 ## Phase 4: Pause Sheet Buttons to How to Play and Settings
 
