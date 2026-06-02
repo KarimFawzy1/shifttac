@@ -303,5 +303,46 @@ void main() {
       expect(route, isA<MorphPageRoute<void>>());
       expect(route!.settings.name, AppRoutes.settings);
     });
+
+    testWidgets('falls back to MaterialPageRoute when source rect is null', (
+      tester,
+    ) async {
+      final settings = AppSettingsController();
+      await tester.pumpWidget(
+        AppSettingsScope(
+          settings: settings,
+          child: MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return Scaffold(
+                  body: Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        MorphNavigator.pushNamedFromRect<void>(
+                          context: context,
+                          sourceRect: null,
+                          routeName: AppRoutes.settings,
+                        );
+                      },
+                      child: const Text('open'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+
+      final route = ModalRoute.of(
+        tester.element(find.byType(SettingsScreen)),
+      );
+      expect(route, isA<MaterialPageRoute<void>>());
+      expect(route, isNot(isA<MorphPageRoute<void>>()));
+    });
   });
 }

@@ -8,6 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/audio/app_audio.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
+import '../../../../core/routing/morph_navigator.dart';
+import '../../../../core/routing/morph_route_config.dart';
+import '../../../../core/routing/morph_source_rect.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -32,6 +35,11 @@ class PauseBottomSheet extends StatelessWidget {
   final Animation<double> routeAnimation;
 
   static const Duration _animationDuration = Duration(milliseconds: 300);
+
+  static const MorphRouteConfig _menuTileMorphConfig = MorphRouteConfig(
+    surfaceColor: AppColors.surfaceContainerLowest,
+    sourceBorderRadius: AppSpacing.radiusLg,
+  );
 
   static bool _isVisible = false;
 
@@ -90,13 +98,32 @@ class PauseBottomSheet extends StatelessWidget {
     navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
   }
 
-  void _openRoute(String routeName) {
-    _popSheet(resumeTimer: false);
-    navigator.pushNamed(routeName).whenComplete(() {
-      if (!cubit.isClosed) {
-        cubit.resumeMatch();
-      }
-    });
+  void _openMorphRoute(String routeName, GlobalKey morphKey) {
+    final sourceRect = MorphSourceRect.tryMeasure(morphKey);
+    resumeTimerOnClose.value = false;
+    unawaited(AppAudioScope.read(sheetContext).playSwipe());
+    Navigator.of(sheetContext).pop();
+    unawaited(_pushMorphRouteAfterSheetDismiss(routeName, sourceRect));
+  }
+
+  Future<void> _pushMorphRouteAfterSheetDismiss(
+    String routeName,
+    Rect? sourceRect,
+  ) async {
+    final navigationContext = navigator.context;
+    await Future<void>.delayed(_animationDuration);
+    if (cubit.isClosed || !navigationContext.mounted) {
+      return;
+    }
+    await MorphNavigator.pushNamedFromRect<void>(
+      context: navigationContext,
+      sourceRect: sourceRect,
+      routeName: routeName,
+      config: _menuTileMorphConfig,
+    );
+    if (!cubit.isClosed) {
+      cubit.resumeMatch();
+    }
   }
 
   @override
@@ -124,8 +151,7 @@ class PauseBottomSheet extends StatelessWidget {
         _popSheet(resumeTimer: false, playSwipeSfx: false);
         cubit.restart();
       },
-      onHowToPlay: () => _openRoute(AppRoutes.howToPlay),
-      onSettings: () => _openRoute(AppRoutes.settings),
+      onMorphRoute: _openMorphRoute,
       onExitHome: _goHome,
     );
 
@@ -162,16 +188,14 @@ class _DraggablePauseSheet extends StatefulWidget {
     required this.onDismiss,
     required this.onResume,
     required this.onRestart,
-    required this.onHowToPlay,
-    required this.onSettings,
+    required this.onMorphRoute,
     required this.onExitHome,
   });
 
   final VoidCallback onDismiss;
   final VoidCallback onResume;
   final VoidCallback onRestart;
-  final VoidCallback onHowToPlay;
-  final VoidCallback onSettings;
+  final void Function(String routeName, GlobalKey morphKey) onMorphRoute;
   final VoidCallback onExitHome;
 
   static const double _dismissDragThreshold = 96;
@@ -260,8 +284,7 @@ class _DraggablePauseSheetState extends State<_DraggablePauseSheet>
         child: _PauseSheetContent(
           onResume: widget.onResume,
           onRestart: widget.onRestart,
-          onHowToPlay: widget.onHowToPlay,
-          onSettings: widget.onSettings,
+          onMorphRoute: widget.onMorphRoute,
           onExitHome: widget.onExitHome,
         ),
       ),
@@ -269,20 +292,26 @@ class _DraggablePauseSheetState extends State<_DraggablePauseSheet>
   }
 }
 
-class _PauseSheetContent extends StatelessWidget {
+class _PauseSheetContent extends StatefulWidget {
   const _PauseSheetContent({
     required this.onResume,
     required this.onRestart,
-    required this.onHowToPlay,
-    required this.onSettings,
+    required this.onMorphRoute,
     required this.onExitHome,
   });
 
   final VoidCallback onResume;
   final VoidCallback onRestart;
-  final VoidCallback onHowToPlay;
-  final VoidCallback onSettings;
+  final void Function(String routeName, GlobalKey morphKey) onMorphRoute;
   final VoidCallback onExitHome;
+
+  @override
+  State<_PauseSheetContent> createState() => _PauseSheetContentState();
+}
+
+class _PauseSheetContentState extends State<_PauseSheetContent> {
+  final GlobalKey _howToPlayMorphKey = GlobalKey();
+  final GlobalKey _settingsMorphKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -349,32 +378,40 @@ class _PauseSheetContent extends StatelessWidget {
                     BlendMode.srcIn,
                   ),
                 ),
-                onPressed: onResume,
+                onPressed: widget.onResume,
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
                 iconAsset: IconConstant.restart,
                 label: 'Restart Match',
-                onTap: onRestart,
+                onTap: widget.onRestart,
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
+                morphKey: _howToPlayMorphKey,
                 iconAsset: IconConstant.howToPlay,
                 label: 'How to Play',
-                onTap: onHowToPlay,
+                onTap: () => widget.onMorphRoute(
+                  AppRoutes.howToPlay,
+                  _howToPlayMorphKey,
+                ),
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
+                morphKey: _settingsMorphKey,
                 iconAsset: IconConstant.settings,
                 label: 'Settings',
-                onTap: onSettings,
+                onTap: () => widget.onMorphRoute(
+                  AppRoutes.settings,
+                  _settingsMorphKey,
+                ),
               ),
               SizedBox(height: AppSpacing.gridGutter.h),
               _MenuTile(
                 iconAsset: IconConstant.logout,
                 label: 'Exit to Home',
                 destructive: true,
-                onTap: onExitHome,
+                onTap: widget.onExitHome,
               ),
             ],
           ),
@@ -389,12 +426,14 @@ class _MenuTile extends StatelessWidget {
     required this.iconAsset,
     required this.label,
     required this.onTap,
+    this.morphKey,
     this.destructive = false,
   });
 
   final String iconAsset;
   final String label;
   final VoidCallback onTap;
+  final GlobalKey? morphKey;
   final bool destructive;
 
   @override
@@ -411,6 +450,7 @@ class _MenuTile extends StatelessWidget {
     final iconTint = destructive ? AppColors.error : AppColors.onSurfaceVariant;
 
     return Material(
+      key: morphKey,
       color: AppColors.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
         borderRadius: AppSpacing.borderRadiusLg,

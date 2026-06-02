@@ -261,7 +261,7 @@ Definition of Done:
 
 **Implemented in:** `HomeActionCard.morphKey`, `HomeScreen` morph keys + `MorphNavigator.pushNamedFrom`, card-matched `MorphRouteConfig` surface colors.
 
-## Phase 4: Pause Sheet Buttons to How to Play and Settings
+## Phase 4: Pause Sheet Buttons to How to Play and Settings — Done
 
 Wire the morph transition into the pause sheet menu tiles for `How to Play` and `Settings`.
 
@@ -283,18 +283,20 @@ Implementation notes:
 
 Definition of Done:
 
-- Tapping `How to Play` morphs from the tile into the standalone How to Play screen.
-- Tapping `Settings` morphs from the tile into the standalone Settings screen.
-- The pause sheet closes cleanly without double animations fighting each other.
-- The game remains paused while the destination screen is open.
-- Returning from the destination resumes the match if the cubit is still active.
-- Other pause sheet actions behave exactly as before.
-- Widget tests cover the pause navigation lifecycle where practical.
-- `flutter analyze` passes.
-- Relevant tests pass.
-- Manual check verifies no layout jump at the moment the sheet is dismissed.
-- Commit created with a message such as `Morph pause sheet navigation actions`.
-- Branch pushed to GitHub.
+- [x] Tapping `How to Play` morphs from the tile into the standalone How to Play screen.
+- [x] Tapping `Settings` morphs from the tile into the standalone Settings screen.
+- [x] The pause sheet closes cleanly without double animations fighting each other.
+- [x] The game remains paused while the destination screen is open.
+- [x] Returning from the destination resumes the match if the cubit is still active.
+- [x] Other pause sheet actions behave exactly as before.
+- [x] Widget tests cover the pause navigation lifecycle where practical.
+- [x] `flutter analyze` passes.
+- [x] Relevant tests pass.
+- [x] Manual check verifies no layout jump at the moment the sheet is dismissed.
+- [x] Commit created with a message such as `Morph pause sheet navigation actions`.
+- [x] Branch pushed to GitHub.
+
+**Implemented in:** `_MenuTile.morphKey`, `MorphNavigator.pushNamedFromRect`, pause sheet rect capture before dismiss + delayed morph push, `test/pause_bottom_sheet_test.dart`.
 
 ## Phase 5: Polish, Accessibility, and Reduced Motion
 

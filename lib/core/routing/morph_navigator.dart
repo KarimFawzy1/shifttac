@@ -62,6 +62,38 @@ class MorphNavigator {
     );
   }
 
+  /// Pushes a named route with a morph transition from a pre-measured [sourceRect].
+  ///
+  /// Falls back to [Navigator.pushNamed] when the route is unknown, or to a
+  /// standard [MaterialPageRoute] when [sourceRect] is `null`.
+  static Future<T?> pushNamedFromRect<T>({
+    required BuildContext context,
+    required Rect? sourceRect,
+    required String routeName,
+    Object? arguments,
+    MorphRouteConfig config = const MorphRouteConfig(),
+  }) {
+    final settings = RouteSettings(name: routeName, arguments: arguments);
+    final builder = AppRouter.pageBuilderFor(settings);
+    if (builder == null) {
+      return Navigator.of(context).pushNamed<T>(routeName, arguments: arguments);
+    }
+    if (sourceRect == null) {
+      return _pushMaterial<T>(
+        context: context,
+        builder: builder,
+        settings: settings,
+      );
+    }
+    return pushFromRect<T>(
+      context: context,
+      sourceRect: sourceRect,
+      builder: builder,
+      settings: settings,
+      config: config,
+    );
+  }
+
   /// Pushes [builder] with a morph transition from a pre-measured [sourceRect].
   static Future<T?> pushFromRect<T>({
     required BuildContext context,
