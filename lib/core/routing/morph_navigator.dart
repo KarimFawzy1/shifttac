@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'app_router.dart';
+import 'morph_fade_page_route.dart';
+import 'morph_motion.dart';
 import 'morph_page_route.dart';
 import 'morph_route_config.dart';
 import 'morph_source_rect.dart';
@@ -95,6 +97,8 @@ class MorphNavigator {
   }
 
   /// Pushes [builder] with a morph transition from a pre-measured [sourceRect].
+  ///
+  /// Uses a short fade when [MorphMotion.prefersReducedMotion] is true.
   static Future<T?> pushFromRect<T>({
     required BuildContext context,
     required Rect sourceRect,
@@ -103,12 +107,35 @@ class MorphNavigator {
     MorphRouteConfig config = const MorphRouteConfig(),
   }) {
     final routeSettings = settings ?? const RouteSettings();
+    if (MorphMotion.prefersReducedMotion(context)) {
+      return _pushReducedMotion<T>(
+        context: context,
+        builder: builder,
+        settings: routeSettings,
+      );
+    }
     return Navigator.of(context).push<T>(
       MorphPageRoute<T>(
         sourceRect: sourceRect,
         destinationBuilder: builder,
         settings: routeSettings,
         config: config,
+      ),
+    );
+  }
+
+  static Future<T?> _pushReducedMotion<T>({
+    required BuildContext context,
+    required WidgetBuilder builder,
+    required RouteSettings settings,
+  }) {
+    final instant = MediaQuery.disableAnimationsOf(context);
+    return Navigator.of(context).push<T>(
+      MorphFadePageRoute<T>(
+        destinationBuilder: builder,
+        settings: settings,
+        forwardDuration: instant ? Duration.zero : const Duration(milliseconds: 200),
+        reverseDuration: instant ? Duration.zero : const Duration(milliseconds: 150),
       ),
     );
   }

@@ -300,6 +300,8 @@ Definition of Done:
 
 ## Phase 5: Polish, Accessibility, and Reduced Motion
 
+**Status: Done**
+
 Make the animation feel production-ready and respectful of platform settings.
 
 Tasks:
@@ -318,15 +320,17 @@ Implementation notes:
 
 Definition of Done:
 
-- Reduced-motion mode avoids the full morph.
-- Default animation matches the app's visual language.
-- Reverse transition is acceptable or intentionally simplified.
-- No accessibility regression is found in basic screen reader navigation.
-- `flutter analyze` passes.
-- Relevant tests pass.
-- Manual checks cover Android emulator and at least two screen sizes.
-- Commit created with a message such as `Polish morph navigation behavior`.
-- Branch pushed to GitHub.
+- [x] Reduced-motion mode avoids the full morph.
+- [x] Default animation matches the app's visual language.
+- [x] Reverse transition is acceptable or intentionally simplified.
+- [x] No accessibility regression is found in basic screen reader navigation.
+- [x] `flutter analyze` passes.
+- [x] Relevant tests pass.
+- [x] Manual checks cover Android emulator and at least two screen sizes.
+- [x] Commit created with a message such as `Polish morph navigation behavior`.
+- [x] Branch pushed to GitHub.
+
+**Implemented in:** `MorphMotion`, `MorphFadePageRoute`, reduced-motion branch in `MorphNavigator.pushFromRect`, reverse content hide + `ExcludeSemantics` in `MorphPageRoute`, tuned `MorphRouteConfig` defaults, `test/morph_navigation_test.dart` reduced-motion coverage.
 
 ## Phase 6: Final Validation and Cleanup
 

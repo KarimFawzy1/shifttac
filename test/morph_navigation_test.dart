@@ -5,6 +5,8 @@ import 'package:shifttac/core/audio/app_audio.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/core/routing/app_routes.dart';
 import 'package:shifttac/core/settings/app_settings_controller.dart';
+import 'package:shifttac/core/routing/morph_fade_page_route.dart';
+import 'package:shifttac/core/routing/morph_motion.dart';
 import 'package:shifttac/core/routing/morph_navigator.dart';
 import 'package:shifttac/core/routing/morph_page_route.dart';
 import 'package:shifttac/core/routing/morph_source_rect.dart';
@@ -14,6 +16,118 @@ import 'package:shifttac/features/game/presentation/screens/gameplay_screen.dart
 import 'package:shifttac/features/settings/presentation/screens/settings_screen.dart';
 
 void main() {
+  group('MorphMotion', () {
+    testWidgets('prefersReducedMotion follows MediaQuery.disableAnimations', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(disableAnimations: true),
+            child: _ReduceMotionProbe(),
+          ),
+        ),
+      );
+
+      expect(
+        MorphMotion.prefersReducedMotion(
+          tester.element(find.byType(_ReduceMotionProbe)),
+        ),
+        isTrue,
+      );
+    });
+  });
+
+  group('MorphNavigator reduced motion', () {
+    testWidgets('pushFromRect uses MorphFadePageRoute when animations disabled', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(disableAnimations: true),
+            child: Builder(
+              builder: (context) {
+                return Scaffold(
+                  body: Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        MorphNavigator.pushFromRect<void>(
+                          context: context,
+                          sourceRect: const Rect.fromLTWH(0, 0, 100, 50),
+                          builder: (_) => const Scaffold(
+                            body: Center(child: Text('destination')),
+                          ),
+                        );
+                      },
+                      child: const Text('open'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+
+      expect(find.text('destination'), findsOneWidget);
+      final route = ModalRoute.of(tester.element(find.text('destination')));
+      expect(route, isA<MorphFadePageRoute<void>>());
+      expect(route, isNot(isA<MorphPageRoute<void>>()));
+    });
+
+    testWidgets('pushFrom uses fade route when animations disabled', (
+      tester,
+    ) async {
+      final sourceKey = GlobalKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(disableAnimations: true),
+            child: Builder(
+              builder: (context) {
+                return Scaffold(
+                  body: Column(
+                    children: [
+                      SizedBox(
+                        key: sourceKey,
+                        width: 160,
+                        height: 72,
+                        child: const ColoredBox(color: Colors.teal),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          MorphNavigator.pushFrom<void>(
+                            context: context,
+                            sourceKey: sourceKey,
+                            builder: (_) => const Scaffold(
+                              body: Center(child: Text('destination')),
+                            ),
+                          );
+                        },
+                        child: const Text('open'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+
+      final route = ModalRoute.of(tester.element(find.text('destination')));
+      expect(route, isA<MorphFadePageRoute<void>>());
+    });
+  });
+
   group('MorphSourceRect.tryMeasure', () {
     test('returns null when key has no context', () {
       final key = GlobalKey();
@@ -345,4 +459,11 @@ void main() {
       expect(route, isNot(isA<MorphPageRoute<void>>()));
     });
   });
+}
+
+class _ReduceMotionProbe extends StatelessWidget {
+  const _ReduceMotionProbe();
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
 }

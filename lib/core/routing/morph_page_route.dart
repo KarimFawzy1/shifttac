@@ -51,6 +51,9 @@ class MorphPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
+    if (MediaQuery.disableAnimationsOf(context)) {
+      return child;
+    }
     return _MorphRouteTransition(
       animation: animation,
       sourceRect: sourceRect,
@@ -84,16 +87,20 @@ class _MorphRouteTransition extends StatelessWidget {
         config.surfaceColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return AnimatedBuilder(
-      animation: curved,
+      animation: Listenable.merge([curved, animation]),
       builder: (context, child) {
         final t = curved.value;
         final screenSize = MediaQuery.sizeOf(context);
         final targetRect = Offset.zero & screenSize;
         final rect = Rect.lerp(sourceRect, targetRect, t)!;
         final radius = lerpDouble(config.sourceBorderRadius, 0, t)!;
-        final contentT = config.contentRevealInterval.transform(t);
+        final isReversing = animation.status == AnimationStatus.reverse;
+        final contentT = isReversing
+            ? config.reverseContentHideInterval.transform(t)
+            : config.contentRevealInterval.transform(t);
         final opacity = contentT.clamp(0.0, 1.0);
         final scale = lerpDouble(config.contentScaleBegin, 1.0, contentT)!;
+        final revealSemantics = t >= config.semanticRevealThreshold;
 
         return Stack(
           fit: StackFit.expand,
@@ -112,7 +119,10 @@ class _MorphRouteTransition extends StatelessWidget {
                     child: Transform.scale(
                       scale: scale,
                       alignment: Alignment.center,
-                      child: child,
+                      child: ExcludeSemantics(
+                        excluding: !revealSemantics,
+                        child: child,
+                      ),
                     ),
                   ),
                 ),
