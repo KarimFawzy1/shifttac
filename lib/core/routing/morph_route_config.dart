@@ -10,11 +10,29 @@ import '../theme/app_spacing.dart';
 class MorphRouteConfig {
   const MorphRouteConfig({
     this.forwardDuration = const Duration(milliseconds: 460),
-    this.reverseDuration = const Duration(milliseconds: 320),
+    this.reverseDuration = const Duration(milliseconds: 380),
     this.positionCurve = Curves.easeOutCubic,
-    this.reversePositionCurve = Curves.easeInCubic,
-    this.contentRevealInterval = const Interval(0.32, 1.0, curve: Curves.easeOut),
-    this.reverseContentHideInterval = const Interval(0.0, 0.65, curve: Curves.easeIn),
+    this.reversePositionCurve = Curves.easeInOutCubic,
+    this.contentRevealInterval = const Interval(
+      0.32,
+      1.0,
+      curve: Curves.easeOut,
+    ),
+    this.reverseContentHideInterval = const Interval(
+      0.0,
+      0.42,
+      curve: Curves.easeOut,
+    ),
+    this.forwardRadiusSoftenInterval = const Interval(
+      0.94,
+      1.0,
+      curve: Curves.easeInCubic,
+    ),
+    this.reverseRadiusGrowInterval = const Interval(
+      0.0,
+      0.9,
+      curve: Curves.easeOutCubic,
+    ),
     this.sourceBorderRadius = AppSpacing.radiusMd,
     this.surfaceColor,
     this.contentScaleBegin = 0.98,
@@ -31,6 +49,14 @@ class MorphRouteConfig {
 
   /// Reverse content fade keyed to route progress `t` in `[0, 1]` (early hide).
   final Interval reverseContentHideInterval;
+
+  /// When expanding, corners stay at [sourceBorderRadius] until size progress
+  /// enters this interval, then soften toward square.
+  final Interval forwardRadiusSoftenInterval;
+
+  /// When collapsing, corners stay square until shrink progress enters this
+  /// interval, then grow toward [sourceBorderRadius].
+  final Interval reverseRadiusGrowInterval;
 
   final double sourceBorderRadius;
   final Color? surfaceColor;

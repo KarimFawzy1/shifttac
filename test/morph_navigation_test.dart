@@ -154,6 +154,41 @@ void main() {
       expect(rect!.width, 120);
       expect(rect.height, 48);
     });
+
+    testWidgets('resolveForMorph waits until key is laid out', (tester) async {
+      final key = GlobalKey();
+      late Rect? resolved;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                resolved = await MorphSourceRect.resolveForMorph(key);
+              });
+              return Center(
+                child: SizedBox(
+                  key: key,
+                  width: 200,
+                  height: 80,
+                  child: const ColoredBox(color: Colors.green),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.pump();
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      final rect = resolved;
+      expect(rect, isNotNull);
+      expect(rect!.width, 200);
+      expect(rect.height, 80);
+    });
   });
 
   group('MorphNavigator.pushFrom', () {
@@ -194,7 +229,9 @@ void main() {
 
       await tester.tap(find.text('open'));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 16));
+      for (var i = 0; i < 12; i++) {
+        await tester.pump();
+      }
 
       expect(find.text('destination'), findsOneWidget);
       final route = routeForDestination(tester);
@@ -247,6 +284,63 @@ void main() {
       expect(find.text('destination'), findsOneWidget);
       final route = routeForDestination(tester);
       expect(route, isA<MorphPageRoute<void>>());
+    });
+
+    testWidgets('mid-transition does not overflow column destinations', (
+      tester,
+    ) async {
+      final sourceKey = GlobalKey();
+      await tester.binding.setSurfaceSize(const Size(400, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: Column(
+                  children: [
+                    SizedBox(
+                      key: sourceKey,
+                      width: 320,
+                      height: 120,
+                      child: const ColoredBox(color: Colors.teal),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        MorphNavigator.pushFrom<void>(
+                          context: context,
+                          sourceKey: sourceKey,
+                          builder: (_) => const Scaffold(
+                            body: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                SizedBox(height: 48),
+                                SizedBox(height: 40),
+                                SizedBox(height: 24),
+                                Expanded(
+                                  child: ColoredBox(color: Colors.blue),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('open'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 180));
+
+      expect(tester.takeException(), isNull);
     });
   });
 

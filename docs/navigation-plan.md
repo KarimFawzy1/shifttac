@@ -298,9 +298,7 @@ Definition of Done:
 
 **Implemented in:** `_MenuTile.morphKey`, `MorphNavigator.pushNamedFromRect`, pause sheet rect capture before dismiss + delayed morph push, `test/pause_bottom_sheet_test.dart`.
 
-## Phase 5: Polish, Accessibility, and Reduced Motion
-
-**Status: Done**
+## Phase 5: Polish, Accessibility, and Reduced Motion — Done
 
 Make the animation feel production-ready and respectful of platform settings.
 

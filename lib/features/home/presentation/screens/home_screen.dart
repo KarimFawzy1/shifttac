@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/audio/app_audio.dart';
+import '../../../../core/debug/startup_timing_log.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -48,7 +49,24 @@ class _HomeScreenState extends State<HomeScreen> {
     Object? arguments,
     MorphRouteConfig config = _secondaryMorphConfig,
   }) {
-    unawaited(AppAudioScope.read(context).playGameStart());
+    final audio = AppAudioScope.read(context);
+    StartupTimingLog.log('Morph', 'tap.openGameplay');
+    if (audio.isSfxReady) {
+      StartupTimingLog.log('SFX', 'gameStart.schedule immediate');
+      unawaited(audio.playGameStart());
+    } else {
+      StartupTimingLog.log(
+        'SFX',
+        'gameStart.schedule delayed ${config.forwardDuration.inMilliseconds}ms',
+      );
+      unawaited(
+        Future<void>.delayed(config.forwardDuration).then((_) {
+          if (audio.isSfxReady) {
+            return audio.playGameStart();
+          }
+        }),
+      );
+    }
     return MorphNavigator.pushNamedFrom<void>(
       context: context,
       sourceKey: morphKey,

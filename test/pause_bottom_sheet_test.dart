@@ -69,9 +69,7 @@ Future<void> _openPauseSheet(WidgetTester tester) async {
 
 void main() {
   group('PauseBottomSheet morph navigation', () {
-    testWidgets('Settings morphs from menu tile and resumes match after return', (
-      tester,
-    ) async {
+    testWidgets('Settings returns to pause sheet after back', (tester) async {
       final cubit = GameCubit.shift();
       addTearDown(() {
         _stopMatchTicker(cubit);
@@ -92,10 +90,10 @@ void main() {
 
       await tester.tap(find.text('Settings'));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(observer.lastPushed, isA<MorphPageRoute<void>>());
+      await tester.pump(const Duration(milliseconds: 450));
 
-      expect(find.text('Paused'), findsNothing);
       expect(find.byType(SettingsScreen), findsOneWidget);
       expect(observer.lastPushed, isA<MorphPageRoute<void>>());
       expect(observer.lastPushed!.settings.name, AppRoutes.settings);
@@ -105,6 +103,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(find.byType(SettingsScreen), findsNothing);
+      expect(find.text('Paused'), findsOneWidget);
+
+      await tester.tap(find.text('Resume'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(find.text('Paused'), findsNothing);
+
       _stopMatchTicker(cubit);
     });
 

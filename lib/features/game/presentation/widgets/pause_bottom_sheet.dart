@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/audio/app_audio.dart';
+import '../../../../core/debug/startup_timing_log.dart';
 import '../../../../core/constants/image_constants.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/routing/morph_navigator.dart';
@@ -99,31 +100,26 @@ class PauseBottomSheet extends StatelessWidget {
   }
 
   void _openMorphRoute(String routeName, GlobalKey morphKey) {
+    StartupTimingLog.log('Morph', 'pauseSheet.tap $routeName');
     final sourceRect = MorphSourceRect.tryMeasure(morphKey);
     resumeTimerOnClose.value = false;
     unawaited(AppAudioScope.read(sheetContext).playSwipe());
-    Navigator.of(sheetContext).pop();
-    unawaited(_pushMorphRouteAfterSheetDismiss(routeName, sourceRect));
+    unawaited(_pushMorphRoute(routeName, sourceRect));
   }
 
-  Future<void> _pushMorphRouteAfterSheetDismiss(
-    String routeName,
-    Rect? sourceRect,
-  ) async {
+  /// Pushes How to Play / Settings above the pause sheet so back returns here.
+  Future<void> _pushMorphRoute(String routeName, Rect? sourceRect) async {
     final navigationContext = navigator.context;
-    await Future<void>.delayed(_animationDuration);
     if (cubit.isClosed || !navigationContext.mounted) {
       return;
     }
+    StartupTimingLog.log('Morph', 'pauseSheet.push.begin $routeName');
     await MorphNavigator.pushNamedFromRect<void>(
       context: navigationContext,
       sourceRect: sourceRect,
       routeName: routeName,
       config: _menuTileMorphConfig,
     );
-    if (!cubit.isClosed) {
-      cubit.resumeMatch();
-    }
   }
 
   @override

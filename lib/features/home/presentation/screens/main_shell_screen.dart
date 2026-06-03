@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/audio/app_audio.dart';
+import '../../../../core/debug/startup_timing_log.dart';
 import '../../../../core/routing/main_shell_tab.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_scaffold.dart';
@@ -56,6 +57,11 @@ class _MainShellScreenState extends State<MainShellScreen> {
     super.initState();
     _selectedIndex = widget.initialTab.tabIndex;
     _pageController = PageController(initialPage: _selectedIndex);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      StartupTimingLog.log('SFX', 'prewarm.scheduled (shell frame 1)');
+      unawaited(AppAudioScope.read(context).ensureSfxReady());
+    });
   }
 
   @override

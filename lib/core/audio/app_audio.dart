@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import '../debug/startup_timing_log.dart';
 import '../settings/app_settings_controller.dart';
 import '../settings/app_settings_defaults.dart';
 
@@ -51,18 +53,42 @@ class AppAudio {
 
   StreamSubscription<PlayerState>? _bgmStateSub;
   Future<void>? _initializeFuture;
-  Future<void>? _sfxConfigureFuture;
+  Future<void>? _sfxReadyFuture;
 
-  /// Warms BGM (and SFX pools in the background). Safe to call more than once.
+  /// Whether all SFX [AudioPool]s were created and decoded.
+  bool get isSfxReady => _sfxConfigured;
+
+  /// Warms BGM on startup. SFX pools are warmed via [ensureSfxReady] from home.
   Future<void> initialize() {
     return _initializeFuture ??= _initialize();
   }
 
   Future<void> _initialize() async {
+    StartupTimingLog.log('BGM', 'init.begin');
     await _ensureBgmConfigured();
+    StartupTimingLog.log('BGM', 'preload.begin');
     await _preloadBgmSource();
-    unawaited(_ensureSfxConfigured());
+    StartupTimingLog.log('BGM', 'preload.end ready=$_bgmSourceReady');
     await _syncBgm();
+    StartupTimingLog.log('BGM', 'init.end');
+  }
+
+  /// Pre-creates and decodes SFX pools. Safe to call more than once.
+  ///
+  /// Call after the first stable home frame so the first gameplay morph does not
+  /// pay SoundPool / MediaCodec cost on the UI thread.
+  Future<void> ensureSfxReady() {
+    return _sfxReadyFuture ??= _prewarmSfx();
+  }
+
+  Future<void> _prewarmSfx() async {
+    if (_sfxConfigured) {
+      StartupTimingLog.log('SFX', 'prewarm.skip alreadyReady');
+      return;
+    }
+    StartupTimingLog.log('SFX', 'prewarm.begin');
+    await _ensureSfxConfigured();
+    StartupTimingLog.log('SFX', 'prewarm.end ready=$_sfxConfigured');
   }
 
   void setForeground(bool inForeground) {
@@ -148,46 +174,38 @@ class AppAudio {
     }
   }
 
-  Future<void> _ensureSfxConfigured() {
-    if (_sfxConfigured) {
-      return Future.value();
+  Future<void> _ensureSfxConfigured() async {
+    if (_sfxConfigured || _disposing) {
+      return;
     }
-    return _sfxConfigureFuture ??= _configureSfx();
-  }
+    final sfxContext = _sfxContext();
+    const sfxAssets = [
+      SoundAssets.tap,
+      SoundAssets.swipe,
+      SoundAssets.wrongTap,
+      SoundAssets.restart,
+      SoundAssets.gameStart,
+      SoundAssets.win,
+      SoundAssets.draw,
+      SoundAssets.lose,
+    ];
+    final createdPools = await Future.wait(
+      sfxAssets.map((path) => _createSfxPool(path, sfxContext)),
+    );
+    final pools = Map<String, AudioPool>.fromIterables(
+      sfxAssets,
+      createdPools,
+    );
 
-  Future<void> _configureSfx() async {
-    try {
-      final sfxContext = _sfxContext();
-      const sfxAssets = [
-        SoundAssets.tap,
-        SoundAssets.swipe,
-        SoundAssets.wrongTap,
-        SoundAssets.restart,
-        SoundAssets.gameStart,
-        SoundAssets.win,
-        SoundAssets.draw,
-        SoundAssets.lose,
-      ];
-      final createdPools = await Future.wait(
-        sfxAssets.map((path) => _createSfxPool(path, sfxContext)),
-      );
-      final pools = Map<String, AudioPool>.fromIterables(
-        sfxAssets,
-        createdPools,
-      );
-
-      if (_disposing) {
-        await Future.wait(pools.values.map((pool) => pool.dispose()));
-        return;
-      }
-
-      _sfxPools
-        ..clear()
-        ..addAll(pools);
-      _sfxConfigured = true;
-    } finally {
-      _sfxConfigureFuture = null;
+    if (_disposing) {
+      await Future.wait(pools.values.map((pool) => pool.dispose()));
+      return;
     }
+
+    _sfxPools
+      ..clear()
+      ..addAll(pools);
+    _sfxConfigured = true;
   }
 
   AudioContext _sfxContext() {
@@ -229,18 +247,22 @@ class AppAudio {
 
     final state = _bgmPlayer.state;
     if (state == PlayerState.playing) {
+      StartupTimingLog.log('BGM', 'startMusic.skip alreadyPlaying');
       return;
     }
     if (state == PlayerState.paused) {
+      StartupTimingLog.log('BGM', 'startMusic.resume paused');
       await _safeAudioCall(_bgmPlayer.resume);
       return;
     }
 
     if (_bgmSourceReady) {
+      StartupTimingLog.log('BGM', 'startMusic.resume preloaded');
       await _safeAudioCall(_bgmPlayer.resume);
       return;
     }
 
+    StartupTimingLog.log('BGM', 'startMusic.play cold');
     final played = await _safeAudioCall(
       () => _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic)),
     );
@@ -248,6 +270,7 @@ class AppAudio {
       _bgmSourceReady = true;
     }
     if (!played && !_disposing && _foreground && _settings.musicEnabled) {
+      StartupTimingLog.log('BGM', 'startMusic.play retry after recreate');
       await _recreateBgmPlayer();
       await _safeAudioCall(
         () => _bgmPlayer.play(AssetSource(SoundAssets.backgroundMusic)),
@@ -299,7 +322,14 @@ class AppAudio {
 
   Future<void> playRestart() => _playSfx(SoundAssets.restart);
 
-  Future<void> playGameStart() => _playSfx(SoundAssets.gameStart);
+  /// Plays game-start only when SFX pools are already warm (never lazy-inits).
+  Future<void> playGameStart() {
+    StartupTimingLog.log(
+      'SFX',
+      'gameStart.request ready=$isSfxReady',
+    );
+    return _playSfx(SoundAssets.gameStart);
+  }
 
   Future<void> playWin() => _playSfx(SoundAssets.win);
 
@@ -308,13 +338,27 @@ class AppAudio {
   Future<void> playLose() => _playSfx(SoundAssets.lose);
 
   Future<void> _playSfx(String assetPath) async {
-    if (_disposing || !_foreground || !_settings.soundEffectsEnabled) {
+    if (_disposing ||
+        !_foreground ||
+        !_settings.soundEffectsEnabled ||
+        !_sfxConfigured) {
+      if (kDebugMode && assetPath == SoundAssets.gameStart) {
+        StartupTimingLog.log(
+          'SFX',
+          'gameStart.skip disposing=$_disposing '
+          'foreground=$_foreground sfxEnabled=${_settings.soundEffectsEnabled} '
+          'ready=$_sfxConfigured',
+        );
+      }
       return;
     }
-    await _ensureSfxConfigured();
     final pool = _sfxPools[assetPath];
     if (pool == null) {
       return;
+    }
+
+    if (assetPath == SoundAssets.gameStart) {
+      StartupTimingLog.log('SFX', 'gameStart.play pool.start');
     }
 
     final volume = assetPath == SoundAssets.swipe
