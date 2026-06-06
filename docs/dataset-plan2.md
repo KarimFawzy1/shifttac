@@ -788,13 +788,13 @@ test/features/tiki_taka/presentation/widgets/tiki_attribute_header_test.dart
 
 **DoD:**
 
-- [ ] Club header displays SVG.
-- [ ] Nation header displays SVG.
-- [ ] League header displays SVG.
-- [ ] Position header displays text only.
-- [ ] Missing asset has a graceful fallback.
-- [ ] Header labels remain accessible to screen readers.
-- [ ] Widget tests pass for all attribute types.
+- [x] Club header displays SVG.
+- [x] Nation header displays SVG.
+- [x] League header displays SVG.
+- [x] Position header displays text only.
+- [x] Missing asset has a graceful fallback.
+- [x] Header labels remain accessible to screen readers.
+- [x] Widget tests pass for all attribute types.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
 
