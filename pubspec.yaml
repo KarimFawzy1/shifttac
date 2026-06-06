@@ -35,4 +35,5 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/sounds/
+    - assets/fonts/
     - assets/db/tiki_taka.db
