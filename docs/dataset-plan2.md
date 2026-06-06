@@ -275,14 +275,32 @@ These phases close the pre-Flutter gaps listed above. Do not start T1 until G1-G
 4. Document manifest format in this file or a short comment at the top of `manifest.json`.
 5. Register `manifest.json` in `pubspec.yaml` if not already covered by a parent asset entry.
 
+**Manifest format** (`assets/tiki_taka/attrs/manifest.json`):
+
+Flat JSON object mapping `attributes.icon_key` → Flutter asset path. Position rows are omitted.
+
+```json
+{
+  "club_31": "assets/tiki_taka/attrs/clubs/Liverpool.svg",
+  "league_gb1": "assets/tiki_taka/attrs/leagues/Premier-League.svg",
+  "nation_egypt": "assets/tiki_taka/attrs/nations/Egypt.svg"
+}
+```
+
+**Generation:** `python tool/etl/generate_attribute_asset_manifest.py`
+
+- Input: shipped `assets/db/tiki_taka.db`, bundled SVG filenames, optional `tool/etl/config/attribute_asset_overrides.yaml`.
+- Slug rule: `display_name` with spaces replaced by hyphens under `clubs/`, `nations/`, or `leagues/`.
+- Output: `assets/tiki_taka/attrs/manifest.json` (84 entries for v1).
+
 **DoD:**
 
-- [ ] Every shipped `club`, `nation`, and `league` `icon_key` maps to exactly one asset path.
-- [ ] `position` attributes are excluded from the manifest (text-only in UI).
-- [ ] Manifest is generated or maintained reproducibly (script or documented manual process).
-- [ ] No runtime resolution by raw `display_name` alone.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Every shipped `club`, `nation`, and `league` `icon_key` maps to exactly one asset path.
+- [x] `position` attributes are excluded from the manifest (text-only in UI).
+- [x] Manifest is generated or maintained reproducibly (script or documented manual process).
+- [x] No runtime resolution by raw `display_name` alone.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

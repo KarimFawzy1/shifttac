@@ -1,0 +1,5 @@
+# Optional icon_key -> bundled asset path overrides.
+# Used when display_name slug rules cannot derive the SVG filename.
+# Regenerate manifest after edits:
+#   python tool/etl/generate_attribute_asset_manifest.py
+overrides: {}
