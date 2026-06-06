@@ -795,8 +795,8 @@ test/features/tiki_taka/presentation/widgets/tiki_attribute_header_test.dart
 - [x] Missing asset has a graceful fallback.
 - [x] Header labels remain accessible to screen readers.
 - [x] Widget tests pass for all attribute types.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
