@@ -37,3 +37,6 @@ flutter:
     - assets/sounds/
     - assets/fonts/
     - assets/db/tiki_taka.db
+    - assets/tiki_taka/attrs/clubs/
+    - assets/tiki_taka/attrs/leagues/
+    - assets/tiki_taka/attrs/nations/

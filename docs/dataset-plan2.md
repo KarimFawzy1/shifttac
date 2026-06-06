@@ -248,11 +248,11 @@ These phases close the pre-Flutter gaps listed above. Do not start T1 until G1-G
 
 **DoD:**
 
-- [ ] `pubspec.yaml` lists all required Tiki-Taka attribute asset paths.
-- [ ] `flutter pub get` succeeds.
-- [ ] At least one club, league, and nation SVG loads without asset-not-found errors.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `pubspec.yaml` lists all required Tiki-Taka attribute asset paths.
+- [x] `flutter pub get` succeeds.
+- [x] At least one club, league, and nation SVG loads without asset-not-found errors.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
