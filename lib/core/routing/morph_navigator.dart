@@ -52,7 +52,9 @@ class MorphNavigator {
     MorphRouteConfig config = const MorphRouteConfig(),
   }) async {
     await waitForHostRouteSettled(context);
+    if (!context.mounted) return null;
     final rect = await MorphSourceRect.resolveForMorph(sourceKey);
+    if (!context.mounted) return null;
     if (rect == null) {
       _log('pushFrom: material fallback (source not measurable)');
       return _pushMaterial<T>(
@@ -155,6 +157,7 @@ class MorphNavigator {
     const maxFrames = 60;
     final stopwatch = Stopwatch()..start();
     for (var frame = 0; frame < maxFrames; frame++) {
+      if (!context.mounted) return;
       final route = ModalRoute.of(context);
       final animation = route?.animation;
       if (route == null || animation == null) {
@@ -177,6 +180,7 @@ class MorphNavigator {
       }
       await SchedulerBinding.instance.endOfFrame;
     }
+    if (!context.mounted) return;
     final route = ModalRoute.of(context);
     _log('waitForHostRouteSettled: timed out after $maxFrames frames');
     StartupTimingLog.log(
