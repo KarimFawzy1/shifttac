@@ -60,7 +60,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 
 - **G5** — DB contract in `data/local/`
 - **T1** — `DefaultTikiTakaDatabase` (copy-on-first-use, read-only open)
-- **T2+** — DAOs
+- **T2** — `BoardDao`, `PlayerSearchDao`, `ValidationDao` + models
 - **T3–T4** — Domain engine + cubit
 - **T6–T9** — UI, routing, home entry
 

@@ -633,16 +633,16 @@ lib/features/tiki_taka/data/local/daos/validation_dao.dart
 
 **DoD:**
 
-- [ ] Board DAO loads a board with exactly 3 row attributes and 3 column attributes.
-- [ ] Attribute order matches `slot_kind` and `slot_index`.
-- [ ] Search supports full names and aliases.
-- [ ] Search is accent-insensitive through existing normalized DB fields.
-- [ ] Validation passes Salah Egypt x Liverpool.
-- [ ] Validation fails a known invalid case.
-- [ ] Duplicate search results are deduped by `player_id`.
-- [ ] Tests pass.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Board DAO loads a board with exactly 3 row attributes and 3 column attributes.
+- [x] Attribute order matches `slot_kind` and `slot_index`.
+- [x] Search supports full names and aliases.
+- [x] Search is accent-insensitive through existing normalized DB fields.
+- [x] Validation passes Salah Egypt x Liverpool.
+- [x] Validation fails a known invalid case.
+- [x] Duplicate search results are deduped by `player_id`.
+- [x] Tests pass.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
