@@ -11,7 +11,7 @@ This document is the **single source of truth** for how football trivia data is 
 
 Raw CSV files are **build-time inputs only**. The Flutter app opens a **read-only** `tiki_taka.db` asset at runtime.
 
-**Related (future):** gameplay rules doc, `lib/features/tiki_taka/` implementation, home entry point.
+**Related:** [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) (gameplay rules), `lib/features/tiki_taka/` implementation, home entry point.
 
 ---
 
@@ -657,7 +657,7 @@ Same `player_attributes` table; validation query unchanged.
 4. **Default board template:** club×nation vs league×club vs mixed.
 5. **MIN_INTERSECTION:** 3 vs 5 for “hard” mode.
 
-Document answers in `docs/tiki-taka-rules.md` when gameplay is specified.
+Document answers in [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) (Section 30 — Resolved Product Decisions).
 
 ---
 
@@ -669,6 +669,7 @@ Document answers in `docs/tiki-taka-rules.md` when gameplay is specified.
 | `tool/etl/` | Build scripts (to be created) |
 | `assets/db/tiki_taka.db` | Shipped database |
 | `docs/dataset-plan.md` | This file |
+| `docs/tiki-taka-toe-rules.md` | Gameplay rules specification |
 
 ---
 
