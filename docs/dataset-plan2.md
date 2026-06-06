@@ -486,14 +486,16 @@ Aligned with [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) Appendix A and S
    - forbidden reuse: X/O turn UI, move counter, AI session config.
 3. Do **not** add home entry or routing yet (that is Phase T9).
 
+**Scaffold:** `lib/features/tiki_taka/README.md` documents layout, allowed reuse, and forbidden Classic/Shift coupling.
+
 **DoD:**
 
-- [ ] `lib/features/tiki_taka/` scaffold exists.
-- [ ] README states Tiki-Taka is separate from Classic/Shift engines.
-- [ ] No changes to Classic/Shift gameplay behavior in this phase.
-- [ ] `flutter analyze` passes.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `lib/features/tiki_taka/` scaffold exists.
+- [x] README states Tiki-Taka is separate from Classic/Shift engines.
+- [x] No changes to Classic/Shift gameplay behavior in this phase.
+- [x] `flutter analyze` passes.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
