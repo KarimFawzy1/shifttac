@@ -743,16 +743,16 @@ test/features/tiki_taka/presentation/state/tiki_taka_cubit_test.dart
 
 **DoD:**
 
-- [ ] Cubit loads a playable board.
-- [ ] Cubit exposes row and column header data.
-- [ ] Timer starts after board load.
-- [ ] Timer stops on lost/completed/exit.
-- [ ] Invalid selection reduces hearts through state.
-- [ ] Valid selection fills cell through state.
-- [ ] Restart clears cells, used players, timer, and hearts.
-- [ ] State tests cover lifecycle and edge cases.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Cubit loads a playable board.
+- [x] Cubit exposes row and column header data.
+- [x] Timer starts after board load.
+- [x] Timer stops on lost/completed/exit.
+- [x] Invalid selection reduces hearts through state.
+- [x] Valid selection fills cell through state.
+- [x] Restart clears cells, used players, timer, and hearts.
+- [x] State tests cover lifecycle and edge cases.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

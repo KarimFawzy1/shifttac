@@ -1,0 +1,402 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
+import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
+import 'package:shifttac/features/tiki_taka/data/local/daos/validation_dao.dart';
+import 'package:shifttac/features/tiki_taka/data/models/tiki_board.dart';
+import 'package:shifttac/features/tiki_taka/data/models/tiki_player_search_result.dart';
+import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.dart';
+import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_state.dart';
+import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart';
+import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
+import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
+import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
+
+import '../../data/local/tiki_taka_dao_test_support.dart';
+
+TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
+  return TikiTakaDependencies(
+    boardDao: BoardDao(handle.database),
+    playerSearchDao: PlayerSearchDao(handle.database),
+    answerValidator: AnswerValidator(ValidationDao(handle.database)),
+  );
+}
+
+TikiTakaCubit _createCubit(TikiTakaTestDatabaseHandle handle) {
+  return TikiTakaCubit(dependencies: _dependencies(handle));
+}
+
+Future<(int row, int col, TikiPlayerSearchResult player)?> _findAnyValidCell({
+  required TikiTakaTestDatabaseHandle databaseHandle,
+  required TikiBoard board,
+}) async {
+  for (var row = 0; row < 3; row++) {
+    for (var col = 0; col < 3; col++) {
+      final player = await _findValidPlayer(
+        databaseHandle: databaseHandle,
+        board: board,
+        row: row,
+        col: col,
+      );
+      if (player != null) {
+        return (row, col, player);
+      }
+    }
+  }
+  return null;
+}
+
+Future<(int row, int col, TikiPlayerSearchResult player)?>
+_findInvalidCellForPlayer({
+  required ValidationDao validationDao,
+  required TikiBoard board,
+  required TikiPlayerSearchResult player,
+}) async {
+  for (var row = 0; row < 3; row++) {
+    for (var col = 0; col < 3; col++) {
+      final match = await validationDao.validatePlayer(
+        playerId: player.id,
+        rowAttributeId: board.rowAttributes[row].id,
+        colAttributeId: board.columnAttributes[col].id,
+      );
+      if (match == null) {
+        return (row, col, player);
+      }
+    }
+  }
+  return null;
+}
+
+Future<TikiPlayerSearchResult?> _findValidPlayer({
+  required TikiTakaTestDatabaseHandle databaseHandle,
+  required TikiBoard board,
+  required int row,
+  required int col,
+}) async {
+  final matches = await databaseHandle.database.rawQuery(
+    '''
+    SELECT DISTINCT p.id, p.display_name, p.position, p.nation
+    FROM players p
+    INNER JOIN player_attributes a
+      ON a.player_id = p.id AND a.attribute_id = ?
+    INNER JOIN player_attributes b
+      ON b.player_id = p.id AND b.attribute_id = ?
+    LIMIT 1
+    ''',
+    [board.rowAttributes[row].id, board.columnAttributes[col].id],
+  );
+
+  if (matches.isEmpty) {
+    return null;
+  }
+
+  return TikiPlayerSearchResult.fromMap(matches.first);
+}
+
+void main() {
+  late TikiTakaTestDatabaseHandle handle;
+
+  setUpAll(ensureTikiTakaDaoTestInit);
+
+  setUp(() async {
+    handle = await openTikiTakaTestDatabase();
+  });
+
+  tearDown(() async {
+    await handle.close();
+  });
+
+  group('TikiTakaCubit', () {
+    test('loadBoard exposes a playable board with row and column headers', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+
+      await cubit.loadBoard();
+
+      expect(cubit.state.status, TikiGameStatus.ongoing);
+      expect(cubit.state.rowHeaders, hasLength(3));
+      expect(cubit.state.columnHeaders, hasLength(3));
+      expect(cubit.state.rowHeaders.every((attr) => attr.type == 'club'), isTrue);
+      expect(
+        cubit.state.columnHeaders.every((attr) => attr.type == 'nation'),
+        isTrue,
+      );
+      expect(cubit.state.game.cells, hasLength(9));
+      expect(cubit.state.hearts, TikiGameState.startingHearts);
+    });
+
+    test('timer starts after board load', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+
+      await cubit.loadBoard();
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      cubit.refreshElapsedForTest();
+
+      expect(cubit.state.elapsedMs, greaterThanOrEqualTo(1000));
+    });
+
+    test('timer stops on exit and lost', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      final validationDao = ValidationDao(handle.database);
+
+      await cubit.loadBoard();
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
+      cubit.exitMatch();
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      expect(cubit.state.elapsedMs, 0);
+
+      await cubit.loadBoard();
+      final board = cubit.state.game.board!;
+      final validCell = await _findAnyValidCell(
+        databaseHandle: handle,
+        board: board,
+      );
+      expect(validCell, isNotNull);
+
+      final invalidCell = await _findInvalidCellForPlayer(
+        validationDao: validationDao,
+        board: board,
+        player: validCell!.$3,
+      );
+      expect(invalidCell, isNotNull);
+
+      for (var i = 0; i < 5; i++) {
+        cubit.onCellTapped(invalidCell!.$1, invalidCell.$2);
+        await cubit.selectPlayer(invalidCell.$3);
+      }
+
+      expect(cubit.state.status, TikiGameStatus.lost);
+      final elapsedAtLoss = cubit.state.elapsedMs;
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      expect(cubit.state.elapsedMs, elapsedAtLoss);
+    });
+
+    test('timer keeps running during firstWin and after continue', () async {
+      final board = await BoardDao(handle.database).loadDefaultBoard();
+      expect(board, isNotNull);
+
+      final rowPlayers = <TikiPlayerSearchResult>[];
+      for (var col = 0; col < 3; col++) {
+        final player = await _findValidPlayer(
+          databaseHandle: handle,
+          board: board!,
+          row: 0,
+          col: col,
+        );
+        expect(player, isNotNull);
+        rowPlayers.add(player!);
+      }
+
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
+      for (var col = 0; col < 3; col++) {
+        cubit.onCellTapped(0, col);
+        await cubit.selectPlayer(rowPlayers[col]);
+      }
+
+      expect(cubit.state.status, TikiGameStatus.firstWin);
+      final elapsedAtFirstWin = cubit.state.elapsedMs;
+
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      cubit.refreshElapsedForTest();
+      expect(cubit.state.elapsedMs, greaterThan(elapsedAtFirstWin));
+
+      cubit.continueAfterFirstWin();
+      expect(cubit.state.status, TikiGameStatus.continuing);
+
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      cubit.refreshElapsedForTest();
+      expect(cubit.state.elapsedMs, greaterThan(elapsedAtFirstWin));
+    });
+
+    test('pauseTimer and resumeTimer control elapsed updates', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+
+      await cubit.loadBoard();
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      cubit.refreshElapsedForTest();
+
+      cubit.pauseTimer();
+      final elapsedPaused = cubit.state.elapsedMs;
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      expect(cubit.state.elapsedMs, elapsedPaused);
+
+      cubit.resumeTimer();
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      cubit.refreshElapsedForTest();
+      expect(cubit.state.elapsedMs, greaterThan(elapsedPaused));
+    });
+
+    test('valid selection fills cell through state', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+
+      final board = cubit.state.game.board!;
+      final cell = await _findAnyValidCell(
+        databaseHandle: handle,
+        board: board,
+      );
+      expect(cell, isNotNull);
+
+      expect(
+        cubit.onCellTapped(cell!.$1, cell.$2),
+        TikiCellTapResult.openedSearch,
+      );
+
+      final result = await cubit.selectPlayer(cell.$3);
+
+      expect(result, TikiSelectPlayerResult.accepted);
+      expect(
+        cubit.state.game.cellAt(cell.$1, cell.$2).player?.displayName,
+        cell.$3.displayName,
+      );
+      expect(cubit.state.activeCell, isNull);
+      expect(cubit.state.game.usedPlayerIds, contains(cell.$3.id));
+    });
+
+    test('invalid selection reduces hearts through state', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+
+      final board = cubit.state.game.board!;
+      final validCell = await _findAnyValidCell(
+        databaseHandle: handle,
+        board: board,
+      );
+      expect(validCell, isNotNull);
+
+      final invalidCell = await _findInvalidCellForPlayer(
+        validationDao: ValidationDao(handle.database),
+        board: board,
+        player: validCell!.$3,
+      );
+      expect(invalidCell, isNotNull);
+
+      cubit.onCellTapped(invalidCell!.$1, invalidCell.$2);
+      final result = await cubit.selectPlayer(invalidCell.$3);
+
+      expect(result, TikiSelectPlayerResult.rejectedInvalid);
+      expect(cubit.state.hearts, 4);
+      expect(
+        cubit.state.game.cellAt(invalidCell.$1, invalidCell.$2).isEmpty,
+        isTrue,
+      );
+    });
+
+    test('restart clears cells, used players, timer, and hearts', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+
+      await cubit.loadBoard();
+      await Future<void>.delayed(const Duration(milliseconds: 1500));
+
+      final board = cubit.state.game.board!;
+      final cell = await _findAnyValidCell(
+        databaseHandle: handle,
+        board: board,
+      );
+      expect(cell, isNotNull);
+
+      cubit.onCellTapped(cell!.$1, cell.$2);
+      await cubit.selectPlayer(cell.$3);
+      expect(cubit.state.game.filledCellCount, 1);
+
+      await cubit.restart();
+
+      expect(cubit.state.hearts, TikiGameState.startingHearts);
+      expect(cubit.state.game.usedPlayerIds, isEmpty);
+      expect(cubit.state.game.filledCellCount, 0);
+      expect(cubit.state.elapsedMs, lessThan(500));
+    });
+
+    test('rapid cell taps only open one search dialog', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+
+      final results = [
+        cubit.onCellTapped(0, 0),
+        cubit.onCellTapped(1, 1),
+        cubit.onCellTapped(2, 2),
+      ];
+
+      expect(results.first, TikiCellTapResult.openedSearch);
+      expect(
+        results.skip(1),
+        everyElement(TikiCellTapResult.rejectedDialogOpen),
+      );
+      expect(cubit.state.activeCell, const TikiActiveCell(row: 0, col: 0));
+    });
+
+    test('concurrent selectPlayer calls only apply one answer', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+
+      final board = cubit.state.game.board!;
+      final cell = await _findAnyValidCell(
+        databaseHandle: handle,
+        board: board,
+      );
+      expect(cell, isNotNull);
+
+      cubit.onCellTapped(cell!.$1, cell.$2);
+
+      final first = cubit.selectPlayer(cell.$3);
+      final second = await cubit.selectPlayer(cell.$3);
+      await first;
+
+      expect(second, TikiSelectPlayerResult.rejectedLocked);
+      expect(
+        cubit.state.game.cellAt(cell.$1, cell.$2).player?.displayName,
+        cell.$3.displayName,
+      );
+    });
+
+    test('searchPlayers returns prefix matches', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+      cubit.onCellTapped(0, 0);
+
+      await cubit.searchPlayers('mohamed s');
+
+      expect(cubit.state.searchResults, isNotEmpty);
+      expect(
+        cubit.state.searchResults.any(
+          (player) => player.displayName == 'Mohamed Salah',
+        ),
+        isTrue,
+      );
+    });
+
+    test('continueAfterFirstWin transitions to continuing', () async {
+      final board = await BoardDao(handle.database).loadDefaultBoard();
+      expect(board, isNotNull);
+
+      final engine = TikiTakaGameEngine.instance;
+      final cubit = TikiTakaCubit.forTest(
+        dependencies: _dependencies(handle),
+        initialState: TikiTakaState.initial(
+          engine.boardLoaded(engine.initial(), board!).copyWith(
+            status: TikiGameStatus.firstWin,
+          ),
+        ),
+      );
+      addTearDown(cubit.close);
+
+      cubit.continueAfterFirstWin();
+
+      expect(cubit.state.status, TikiGameStatus.continuing);
+      expect(cubit.state.isPlayable, isTrue);
+    });
+  });
+}

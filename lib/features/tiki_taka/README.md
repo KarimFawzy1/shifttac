@@ -62,7 +62,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T1** — `DefaultTikiTakaDatabase` (copy-on-first-use, read-only open)
 - **T2** — `BoardDao`, `PlayerSearchDao`, `ValidationDao` + models
 - **T3** — `TikiTakaGameEngine`, `AnswerValidator`, domain models (`TikiGameState`, hearts, win/completion)
-- **T4** — Cubit/state controller
+- **T4** — `TikiTakaCubit` (board load, search, validation, timer, hearts, lifecycle)
 - **T6–T9** — UI, routing, home entry
 
 Home navigation and routes are **not** added until Phase T9.
