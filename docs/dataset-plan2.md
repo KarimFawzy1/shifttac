@@ -365,12 +365,12 @@ python tool/etl/validate_attribute_assets.py
 
 **DoD:**
 
-- [ ] `sqflite`, `path`, and `path_provider` are runtime dependencies.
-- [ ] `sqflite_common_ffi` remains dev-only.
-- [ ] `flutter pub get` succeeds.
-- [ ] App still builds (`flutter analyze` clean or no new errors from dependency add).
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `sqflite`, `path`, and `path_provider` are runtime dependencies.
+- [x] `sqflite_common_ffi` remains dev-only.
+- [x] `flutter pub get` succeeds.
+- [x] App still builds (`flutter analyze` clean or no new errors from dependency add).
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
