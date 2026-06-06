@@ -695,18 +695,18 @@ test/features/tiki_taka/domain/logic/tiki_taka_game_engine_test.dart
 
 **DoD:**
 
-- [ ] Starting hearts = 5.
-- [ ] Valid answer fills the selected cell.
-- [ ] Invalid answer leaves cell empty and removes one heart.
-- [ ] Duplicate player is invalid and removes one heart.
-- [ ] Occupied cell cannot be edited.
-- [ ] Hearts reaching 0 produces `lost`.
-- [ ] First line produces `firstWin`.
-- [ ] Continue keeps existing board and cells.
-- [ ] Completing all 9 cells produces `completed`.
-- [ ] Engine tests pass.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Starting hearts = 5.
+- [x] Valid answer fills the selected cell.
+- [x] Invalid answer leaves cell empty and removes one heart.
+- [x] Duplicate player is invalid and removes one heart.
+- [x] Occupied cell cannot be edited.
+- [x] Hearts reaching 0 produces `lost`.
+- [x] First line produces `firstWin`.
+- [x] Continue keeps existing board and cells.
+- [x] Completing all 9 cells produces `completed`.
+- [x] Engine tests pass.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
