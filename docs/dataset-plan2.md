@@ -395,14 +395,16 @@ python tool/etl/validate_attribute_assets.py
    - `lib/features/tiki_taka/data/local/tiki_taka_database_paths.dart`.
 4. Align contract with [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) Section 19 (local DB, no live APIs).
 
+**Contract:** [tiki-taka-database-contract.md](./tiki-taka-database-contract.md)
+
 **DoD:**
 
-- [ ] DB opening strategy is written and reviewed.
-- [ ] Copy-on-first-use and schema/hash invalidation rules are explicit.
-- [ ] Stub files exist under `lib/features/tiki_taka/data/local/`.
-- [ ] Contract states app never writes to SQLite.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] DB opening strategy is written and reviewed.
+- [x] Copy-on-first-use and schema/hash invalidation rules are explicit.
+- [x] Stub files exist under `lib/features/tiki_taka/data/local/`.
+- [x] Contract states app never writes to SQLite.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
