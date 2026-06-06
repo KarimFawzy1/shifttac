@@ -1,0 +1,166 @@
+{
+  "phase": "T0",
+  "gate": "tiki_taka_preflight",
+  "run_at": "2026-06-06T13:11:20+00:00",
+  "status": "pass",
+  "blocking_gaps_before_t1": 0,
+  "gap_closure_checks": [
+    {
+      "id": "G1_pubspec_attribute_assets",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G2_attribute_manifest",
+      "path": "assets/tiki_taka/attrs/manifest.json",
+      "passed": true
+    },
+    {
+      "id": "G2_manifest_generator",
+      "path": "tool/etl/generate_attribute_asset_manifest.py",
+      "passed": true
+    },
+    {
+      "id": "G3_asset_validator",
+      "path": "tool/etl/validate_attribute_assets.py",
+      "passed": true
+    },
+    {
+      "id": "G4_pubspec_lock",
+      "path": "pubspec.lock",
+      "passed": true
+    },
+    {
+      "id": "G5_db_contract",
+      "path": "docs/tiki-taka-database-contract.md",
+      "passed": true
+    },
+    {
+      "id": "G5_db_stub",
+      "path": "lib/features/tiki_taka/data/local/tiki_taka_database.dart",
+      "passed": true
+    },
+    {
+      "id": "G5_paths_stub",
+      "path": "lib/features/tiki_taka/data/local/tiki_taka_database_paths.dart",
+      "passed": true
+    },
+    {
+      "id": "G6_rules_doc",
+      "path": "docs/tiki-taka-toe-rules.md",
+      "passed": true
+    },
+    {
+      "id": "G7_feature_readme",
+      "path": "lib/features/tiki_taka/README.md",
+      "passed": true
+    },
+    {
+      "id": "G7_feature_scaffold",
+      "path": "lib/features/tiki_taka/presentation/screens",
+      "passed": true
+    },
+    {
+      "id": "shipped_db",
+      "path": "assets/db/tiki_taka.db",
+      "passed": true
+    },
+    {
+      "id": "G4_runtime_sqflite",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G4_runtime_path",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G4_runtime_path_provider",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G4_sqflite_common_ffi_dev_only",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G1_asset_assets/tiki_taka/attrs/clubs/",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G1_asset_assets/tiki_taka/attrs/leagues/",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G1_asset_assets/tiki_taka/attrs/nations/",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G1_asset_assets/tiki_taka/attrs/manifest.json",
+      "path": "pubspec.yaml",
+      "passed": true
+    },
+    {
+      "id": "G2_manifest_entry_count",
+      "path": "assets\\tiki_taka\\attrs\\manifest.json",
+      "passed": true,
+      "count": 84
+    }
+  ],
+  "automated_steps": [
+    {
+      "id": "D12_validation_cases",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "D12 validation OK: 10/10 cases\n  db: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db\n  report: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\run_validation_cases_summary.json",
+      "stderr": ""
+    },
+    {
+      "id": "G3_asset_coverage",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "G3 asset validation OK: 84 attributes, 84 manifest entries\n  report: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\validate_attribute_assets_summary.json",
+      "stderr": ""
+    }
+  ],
+  "flutter_verification": [
+    {
+      "id": "test/tiki_taka_database_smoke_test.dart",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "id": "test/tiki_taka_attribute_assets_test.dart",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "id": "test/tiki_taka_attribute_manifest_test.dart",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "id": "flutter_analyze",
+      "passed": true,
+      "exit_code": 0
+    }
+  ],
+  "d12_case_count": 10,
+  "d12_passed_count": 10,
+  "g1_g7_checklist": {
+    "G1_pubspec_assets_registered": true,
+    "G2_manifest_complete": true,
+    "G3_asset_validation_passes": true,
+    "G4_runtime_deps_added": true,
+    "G5_db_contract_documented": true,
+    "G6_rules_locked": true,
+    "G7_feature_scaffold_present": true
+  },
+  "errors": [],
+  "next_phase": "T1"
+}

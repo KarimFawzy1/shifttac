@@ -519,24 +519,32 @@ Aligned with [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) Appendix A and S
    ```
 
 3. Manually confirm checklist:
-   - [ ] G1 pubspec assets registered
-   - [ ] G2 manifest complete
-   - [ ] G3 asset validation passes
-   - [ ] G4 runtime deps added
-   - [ ] G5 DB contract documented
-   - [ ] G6 rules locked
-   - [ ] G7 feature scaffold present
+   - [x] G1 pubspec assets registered
+   - [x] G2 manifest complete
+   - [x] G3 asset validation passes
+   - [x] G4 runtime deps added
+   - [x] G5 DB contract documented
+   - [x] G6 rules locked
+   - [x] G7 feature scaffold present
 4. Record gate result in `tool/etl/reports/tiki_taka_preflight_gate.json` (optional script or manual note in commit message).
+
+**Gate runner:**
+
+```bash
+python tool/etl/run_tiki_taka_preflight_gate.py
+```
+
+Runs D12 validation, G3 asset coverage, G1–G7 artifact checks, and Tiki-Taka Flutter tests. Writes `tool/etl/reports/tiki_taka_preflight_gate.json`.
 
 **DoD:**
 
-- [ ] D12 validation passes (10/10 or current case count).
-- [ ] DB smoke test passes.
-- [ ] Asset coverage validation passes.
-- [ ] All G1-G7 DoD items checked.
-- [ ] No blocking gaps remain before T1.
-- [ ] Phase changes are committed (gate report or checklist update).
-- [ ] Commit is pushed to remote.
+- [x] D12 validation passes (10/10 or current case count).
+- [x] DB smoke test passes.
+- [x] Asset coverage validation passes.
+- [x] All G1-G7 DoD items checked.
+- [x] No blocking gaps remain before T1.
+- [x] Phase changes are committed (gate report or checklist update).
+- [x] Commit is pushed to remote.
 
 ---
 
