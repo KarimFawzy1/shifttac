@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/audio/app_audio.dart';
@@ -10,6 +11,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../how_to_play/presentation/screens/how_to_play_screen.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
+import '../widgets/exit_app_dialog.dart';
 import '../widgets/main_nav_bar.dart';
 import 'home_screen.dart';
 
@@ -102,27 +104,44 @@ class _MainShellScreenState extends State<MainShellScreen> {
     setState(() => _syncingPageFromNavTap = false);
   }
 
+  Future<void> _handleBack() async {
+    final confirmed = await ExitAppDialog.show(context);
+    if (!mounted || !confirmed) {
+      return;
+    }
+    await SystemNavigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      safeAreaBottom: false,
-      padding: EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              physics: const BouncingScrollPhysics(parent: PageScrollPhysics()),
-              children: _pages,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        unawaited(_handleBack());
+      },
+      child: AppScaffold(
+        safeAreaBottom: false,
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                physics: const BouncingScrollPhysics(parent: PageScrollPhysics()),
+                children: _pages,
+              ),
             ),
-          ),
-          MainNavBar(
-            selectedIndex: _selectedIndex,
-            onTabSelected: _onTabSelected,
-          ),
-        ],
+            MainNavBar(
+              selectedIndex: _selectedIndex,
+              onTabSelected: _onTabSelected,
+            ),
+          ],
+        ),
       ),
     );
   }
