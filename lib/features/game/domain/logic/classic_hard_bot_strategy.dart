@@ -1,6 +1,7 @@
 import '../models/game_status.dart';
 import '../models/player.dart';
 import '../models/position.dart';
+import 'bot_opening_helpers.dart';
 import 'classic_bot_helpers.dart';
 import 'classic_bot_strategy.dart';
 import 'game_snapshot.dart';
@@ -23,6 +24,14 @@ class ClassicHardBotStrategy implements ClassicBotStrategy {
     }
     if (snapshot.currentPlayer != botPlayer) {
       throw StateError('ClassicHardBotStrategy: not the bot turn');
+    }
+
+    final opening = forcedOBotCenterOpening(
+      snapshot: snapshot,
+      botPlayer: botPlayer,
+    );
+    if (opening != null) {
+      return opening;
     }
 
     final humanPlayer = botPlayer.opponent;

@@ -1,6 +1,7 @@
 import '../models/game_status.dart';
 import '../models/player.dart';
 import '../models/position.dart';
+import 'bot_opening_helpers.dart';
 import 'classic_bot_helpers.dart';
 import 'classic_bot_strategy.dart';
 import 'game_snapshot.dart';
@@ -21,6 +22,14 @@ class ClassicIntermediateBotStrategy implements ClassicBotStrategy {
     }
     if (snapshot.currentPlayer != botPlayer) {
       throw StateError('ClassicIntermediateBotStrategy: not the bot turn');
+    }
+
+    final opening = forcedOBotCenterOpening(
+      snapshot: snapshot,
+      botPlayer: botPlayer,
+    );
+    if (opening != null) {
+      return opening;
     }
 
     final win = findImmediateWin(snapshot: snapshot, player: botPlayer);

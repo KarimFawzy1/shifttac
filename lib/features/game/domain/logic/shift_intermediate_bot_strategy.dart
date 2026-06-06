@@ -1,6 +1,7 @@
 import '../models/game_status.dart';
 import '../models/player.dart';
 import '../models/position.dart';
+import 'bot_opening_helpers.dart';
 import 'game_snapshot.dart';
 import 'shift_bot_helpers.dart';
 import 'shift_bot_strategy.dart';
@@ -21,6 +22,14 @@ class ShiftIntermediateBotStrategy implements ShiftBotStrategy {
     }
     if (snapshot.currentPlayer != botPlayer) {
       throw StateError('ShiftIntermediateBotStrategy: not the bot turn');
+    }
+
+    final opening = forcedOBotCenterOpening(
+      snapshot: snapshot,
+      botPlayer: botPlayer,
+    );
+    if (opening != null) {
+      return opening;
     }
 
     final win = findShiftImmediateWin(snapshot: snapshot, player: botPlayer);
