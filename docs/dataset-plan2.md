@@ -323,19 +323,27 @@ Flat JSON object mapping `attributes.icon_key` → Flutter asset path. Position 
 4. Exit non-zero on missing assets.
 5. Optionally wire into `build_database.py` post-step or document as a required command before Flutter work.
 
-**DoD:**
-
-- [ ] Validation script passes on the current repo (84 SVGs + full attribute set).
-- [ ] Removing or breaking one mapped asset causes validation to fail.
-- [ ] Report JSON is written on each run.
-- [ ] Command is documented in this file:
+**Validation command** (required before Flutter asset work):
 
 ```bash
 python tool/etl/validate_attribute_assets.py
 ```
 
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+Writes `tool/etl/reports/validate_attribute_assets_summary.json` with pass/fail status, counts, and any missing manifest entries or SVG files.
+
+**DoD:**
+
+- [x] Validation script passes on the current repo (84 SVGs + full attribute set).
+- [x] Removing or breaking one mapped asset causes validation to fail.
+- [x] Report JSON is written on each run.
+- [x] Command is documented in this file:
+
+```bash
+python tool/etl/validate_attribute_assets.py
+```
+
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
