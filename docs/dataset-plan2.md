@@ -577,13 +577,13 @@ Runs D12 validation, G3 asset coverage, G1–G7 artifact checks, and Tiki-Taka F
 
 **DoD:**
 
-- [ ] DB opens on Flutter runtime code path.
-- [ ] `meta.schema_version` is readable.
-- [ ] Missing DB asset returns a controlled error state.
-- [ ] Unit test verifies DB open and core table availability.
-- [ ] `flutter test` passes for new and existing Tiki-Taka DB tests.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] DB opens on Flutter runtime code path.
+- [x] `meta.schema_version` is readable.
+- [x] Missing DB asset returns a controlled error state.
+- [x] Unit test verifies DB open and core table availability.
+- [x] `flutter test` passes for new and existing Tiki-Taka DB tests.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

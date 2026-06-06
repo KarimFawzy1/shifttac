@@ -92,7 +92,7 @@ search · validate · load board
 
 | File | Role |
 | --- | --- |
-| `lib/features/tiki_taka/data/local/tiki_taka_database.dart` | Service interface + G5 stub |
+| `lib/features/tiki_taka/data/local/tiki_taka_database.dart` | `DefaultTikiTakaDatabase` service (T1) |
 | `lib/features/tiki_taka/data/local/tiki_taka_database_paths.dart` | Asset/local paths and fingerprint keys |
 | `test/tiki_taka_database_smoke_test.dart` | Dev smoke test (FFI, read-only) |
 | `docs/dataset-plan.md` | ETL schema and table definitions |
