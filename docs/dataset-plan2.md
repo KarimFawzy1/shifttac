@@ -426,13 +426,32 @@ python tool/etl/validate_attribute_assets.py
    - first win + optional full-board completion.
 4. Mark any remaining open questions as **post-v1** explicitly.
 
+### v1 Rules Checklist (locked)
+
+Aligned with [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) Appendix A and Section 30.
+
+| Rule | v1 |
+| --- | --- |
+| 1 player | Yes — no opponent |
+| 5 hearts | Yes — invalid guess costs 1 |
+| Timer | Yes — continues after first win if user continues |
+| No AI | Yes |
+| No turns | Yes — no X/O, turn indicator, or move counter |
+| Failed answer | Removes heart; cell stays empty |
+| Duplicate player | Banned once per board |
+| Search | Must select a player from DB search results |
+| First win | First 3-in-a-row |
+| Full-board completion | Optional after Continue Playing |
+
+**Deferred post-v1:** local multiplayer (F1), AI opponent (F2), coach attributes (F3), national-team nation edges, dual citizenship, edit filled cells, rich board browser (F4).
+
 **DoD:**
 
-- [ ] No unresolved v1 gameplay decisions block Flutter implementation.
-- [ ] [dataset-plan.md](./dataset-plan.md), [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md), and this file agree on v1 scope.
-- [ ] Multiplayer and coach attributes are marked deferred.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] No unresolved v1 gameplay decisions block Flutter implementation.
+- [x] [dataset-plan.md](./dataset-plan.md), [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md), and this file agree on v1 scope.
+- [x] Multiplayer and coach attributes are marked deferred.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

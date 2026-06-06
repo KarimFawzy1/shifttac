@@ -649,15 +649,24 @@ Same `player_attributes` table; validation query unchanged.
 
 ---
 
-## Open Product Decisions (resolve before D10)
+## Resolved Product Decisions (v1)
 
-1. **Nation rule:** citizenship only vs national-team caps.
-2. **Failed answer:** empty cell + pass turn vs opponent claims cell.
-3. **Reuse player:** ban same `player_id` twice per match (recommended: yes).
-4. **Default board template:** club×nation vs league×club vs mixed.
-5. **MIN_INTERSECTION:** 3 vs 5 for “hard” mode.
+All gameplay decisions that blocked ETL board curation (D10) and Flutter implementation are **locked**.
 
-Document answers in [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) (Section 30 — Resolved Product Decisions).
+**Source of truth:** [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) — Section 30 (Resolved Product Decisions) and Appendix A (v1 Rules Checklist).
+
+| Decision | v1 answer |
+| --- | --- |
+| Nation rule | Citizenship from player profile (`country_of_citizenship`) |
+| Failed answer (1P) | Remove one heart; cell stays empty |
+| Reuse player | Banned — same `player_id` once per board |
+| Default board template | Clubs × Nations |
+| `MIN_INTERSECTION` | 3 (medium default) |
+| Data source | Bundled `tiki_taka.db` only |
+| Coach attributes | Deferred post-v1 |
+| Local multiplayer | Deferred post-v1 |
+
+Post-v1 topics (national-team caps, dual citizenship, multiplayer steal rules, AI, coach ETL) are documented in the rules doc **Post-v1** table and [dataset-plan2.md](./dataset-plan2.md) — Future Phases.
 
 ---
 
@@ -673,4 +682,4 @@ Document answers in [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md) (Section 
 
 ---
 
-*Last updated: 2026-06-01 — initial dataset clean/merge plan.*
+*Last updated: 2026-06-06 — open product decisions resolved; points to tiki-taka-toe-rules Section 30.*

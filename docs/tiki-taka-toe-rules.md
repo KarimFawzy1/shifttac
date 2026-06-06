@@ -275,29 +275,11 @@ The timer should stop when:
 * User completes the full board
 * User exits the match
 
-When the user achieves the first 3-in-a-row win, the timer behavior can follow one of two options:
-
-### Recommended Option
-
-Continue timer if the user chooses:
-
-```text
-Continue Playing
-```
-
-Stop timer only when the user chooses:
-
-```text
-Restart
-```
-
-or
-
-```text
-Go Home
-```
+**v1 (locked):** when the user achieves the first 3-in-a-row win, the timer **keeps running** if they choose **Continue Playing**. The timer stops only when they choose **Restart**, **Go Home**, lose, complete the full board, or exit the match.
 
 This supports full-board completion as a challenge.
+
+**Post-v1 alternative:** stop the timer immediately on first win (not used in v1).
 
 ---
 
@@ -1097,7 +1079,7 @@ But it will add:
 
 Multiplayer is NOT part of the first implementation priority.
 
-**Open product note (multiplayer only):** on a failed answer, decide whether the cell stays empty and turn passes vs opponent claims the cell — irrelevant to 1 Player Mode, where failed answers only cost a heart.
+**Post-v1 (multiplayer only):** on a failed answer, decide whether the cell stays empty and turn passes vs opponent claims the cell. Irrelevant to 1 Player Mode, where failed answers only cost a heart.
 
 ---
 
@@ -1135,15 +1117,60 @@ The full board proves mastery.
 
 ## 30. Resolved Product Decisions (v1)
 
+Locked for Flutter implementation. See also [dataset-plan2.md](./dataset-plan2.md) — Phase G6 v1 rules checklist.
+
 | Decision | Answer |
 | --- | --- |
-| Nation rule | Citizenship from player profile (v1); national-team caps deferred |
+| Mode scope | **1 player only** — no AI, no local multiplayer, no turns, no X/O marks |
+| Hearts | **5** at match start; invalid guess removes **1**; `0` hearts = lose |
+| Timer | Active from board playable; stops on lose, full-board completion, or exit |
+| Timer after first win | **Continue** while user chooses Continue Playing (v1 locked) |
 | Failed answer (1P) | Remove one heart; cell stays empty; user retries freely |
-| Reuse player | **Banned** — same `player_id` once per board |
+| Duplicate player | **Banned** — same `player_id` once per board |
+| Player search | User must **select a DB player** from search results (`players` + `player_aliases`) |
+| First win | First **3-in-a-row** triggers win dialog |
+| Continue after win | **Optional** — same board, hearts, and timer continue |
+| Full-board completion | All **9** cells filled triggers completion win dialog |
+| Edit filled cells | **No** in v1 |
+| Nation rule | Citizenship from player profile (v1); national-team caps deferred |
 | Default board template | **Clubs × Nations** (alternate: Leagues × Clubs) |
 | Default `MIN_INTERSECTION` | **3** (medium); easy = 5, hard = 1 with manual QA |
-| Data source | Transfermarkt CSV → ETL → `tiki_taka.db` (not live Wikidata) |
-| Coach attributes | Deferred post-v1 |
+| Data source | Transfermarkt CSV → ETL → bundled `tiki_taka.db` (not live Wikidata) |
+| Coach attributes | **Deferred post-v1** |
+| Local multiplayer | **Deferred post-v1** (see dataset-plan2 Future F1) |
+
+### Post-v1 (does not block v1 Flutter work)
+
+| Topic | Status |
+| --- | --- |
+| Local multiplayer turn/steal rules | Future F1 |
+| AI opponent | Future F2 |
+| Coach attributes and ETL | Future F3 |
+| National-team citizenship edges | v1.1 |
+| Dual citizenship (both nation edges) | v1.1+ |
+| Stop timer on first win (non-continue path) | Optional future tweak |
+| Edit filled cells | Future feature |
+| Rich board browser | Future F4 |
+| Live APIs (Wikidata, etc.) | Out of scope |
+
+---
+
+## Appendix A — v1 Rules Checklist (1 Player Mode)
+
+Use this list for implementation gates and doc alignment.
+
+- [x] **1 player** — single user, no opponent
+- [x] **5 hearts** — invalid guesses cost 1 heart
+- [x] **Timer** — runs during playable match; v1 continues after first win if user continues
+- [x] **No AI** — no bot opponent
+- [x] **No turns** — no X/O switching, turn indicator, or move counter
+- [x] **Failed answer** — removes heart; cell stays empty
+- [x] **Duplicate player banned** — same `player_id` cannot be reused on the board
+- [x] **Search must select DB player** — prefix search on `players` / `player_aliases`; free-text without selection is not a valid answer
+- [x] **First win** — first 3-in-a-row shows win dialog (Restart / Go Home / Continue Playing)
+- [x] **Optional full-board completion** — Continue Playing toward all 9 cells filled
+- [x] **Coach attributes deferred**
+- [x] **Multiplayer deferred**
 
 ---
 
@@ -1157,4 +1184,4 @@ The full board proves mastery.
 
 ---
 
-*Last updated: 2026-06-06 — initial gameplay rules; data source aligned with dataset-plan.*
+*Last updated: 2026-06-06 — v1 rules locked (G6); Section 30 and Appendix A aligned with dataset-plan2.*
