@@ -1159,18 +1159,18 @@ Locked for Flutter implementation. See also [dataset-plan2.md](./dataset-plan2.m
 
 Use this list for implementation gates and doc alignment.
 
-- [x] **1 player** — single user, no opponent
-- [x] **5 hearts** — invalid guesses cost 1 heart
-- [x] **Timer** — runs during playable match; v1 continues after first win if user continues
-- [x] **No AI** — no bot opponent
-- [x] **No turns** — no X/O switching, turn indicator, or move counter
-- [x] **Failed answer** — removes heart; cell stays empty
-- [x] **Duplicate player banned** — same `player_id` cannot be reused on the board
-- [x] **Search must select DB player** — prefix search on `players` / `player_aliases`; free-text without selection is not a valid answer
-- [x] **First win** — first 3-in-a-row shows win dialog (Restart / Go Home / Continue Playing)
-- [x] **Optional full-board completion** — Continue Playing toward all 9 cells filled
-- [x] **Coach attributes deferred**
-- [x] **Multiplayer deferred**
+* [x] **1 player** — single user, no opponent
+* [x] **5 hearts** — invalid guesses cost 1 heart
+* [x] **Timer** — runs during playable match; v1 continues after first win if user continues
+* [x] **No AI** — no bot opponent
+* [x] **No turns** — no X/O switching, turn indicator, or move counter
+* [x] **Failed answer** — removes heart; cell stays empty
+* [x] **Duplicate player banned** — same `player_id` cannot be reused on the board
+* [x] **Search must select DB player** — prefix search on `players` / `player_aliases`; free-text without selection is not a valid answer
+* [x] **First win** — first 3-in-a-row shows win dialog (Restart / Go Home / Continue Playing)
+* [x] **Optional full-board completion** — Continue Playing toward all 9 cells filled
+* [x] **Coach attributes deferred**
+* [x] **Multiplayer deferred**
 
 ---
 
