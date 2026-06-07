@@ -64,7 +64,8 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T3** — `TikiTakaGameEngine`, `AnswerValidator`, domain models (`TikiGameState`, hearts, win/completion)
 - **T4** — `TikiTakaCubit` (board load, search, validation, timer, hearts, lifecycle)
 - **T5** — `TikiAttributeHeader`, `TikiAttributeIcon`, `TikiBoardFrame`, `TikiAttributeAssetManifest` (G2 manifest SVG headers, position text, fallbacks, semantics)
-- **T6–T9** — UI, routing, home entry
+- **T6** — `TikiTakaGameplayScreen`, `TikiTakaBoard`, `TikiTakaCell`, `TikiTakaHud` (SQLite board skeleton, headers, hearts, timer, placeholder search)
+- **T7–T9** — Search dialog, routing, home entry
 
 Home navigation and routes are **not** added until Phase T9.
 

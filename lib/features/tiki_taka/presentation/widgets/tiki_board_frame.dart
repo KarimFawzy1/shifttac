@@ -34,7 +34,7 @@ class TikiBoardFrame extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(
               height: band,

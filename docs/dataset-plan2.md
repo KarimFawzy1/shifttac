@@ -831,16 +831,16 @@ lib/features/tiki_taka/presentation/widgets/tiki_taka_hud.dart
 
 **DoD:**
 
-- [ ] Board screen renders from a real board loaded from SQLite.
-- [ ] 3 row headers and 3 column headers appear.
-- [ ] Hearts and timer appear.
-- [ ] No Classic/Shift turn UI appears.
-- [ ] Empty cell tap is handled.
-- [ ] Occupied cell tap is ignored or explained.
-- [ ] Long player names do not overflow.
-- [ ] Basic widget/golden/layout tests pass where practical.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Board screen renders from a real board loaded from SQLite.
+- [x] 3 row headers and 3 column headers appear.
+- [x] Hearts and timer appear.
+- [x] No Classic/Shift turn UI appears.
+- [x] Empty cell tap is handled.
+- [x] Occupied cell tap is ignored or explained.
+- [x] Long player names do not overflow.
+- [x] Basic widget/golden/layout tests pass where practical.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
