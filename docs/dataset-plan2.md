@@ -1031,13 +1031,13 @@ test/features/how_to_play/
 
 **DoD:**
 
-- [ ] How-to-play includes Tiki-Taka.
-- [ ] Copy matches [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md).
-- [ ] Rules do not conflict with implemented behavior.
-- [ ] Existing how-to-play sections still render correctly.
-- [ ] How-to-play tests do not mount live Tiki-Taka gameplay state.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] How-to-play includes Tiki-Taka.
+- [x] Copy matches [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md).
+- [x] Rules do not conflict with implemented behavior.
+- [x] Existing how-to-play sections still render correctly.
+- [x] How-to-play tests do not mount live Tiki-Taka gameplay state.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

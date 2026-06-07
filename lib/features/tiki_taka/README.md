@@ -68,6 +68,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback)
 - **T8** — `TikiTakaFirstWinDialog`, `TikiTakaCompletionDialog`, `TikiTakaLostDialog`, `TikiTakaPauseSheet` (outcome flows, pause, restart, exit)
 - **T9** — `AppRoutes.tikiTaka`, `TikiTakaEntryScreen`, home card (routing and home entry; dedicated route, not `GameMode`)
+- **T10** — `HowToPlayTikiTakaSection`, static rules copy in How to Play tab
 
 Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 

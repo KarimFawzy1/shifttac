@@ -13,10 +13,9 @@ import '../../../../shared/widgets/screen_header.dart';
 import '../../../onboarding/presentation/widgets/mini_board_preview.dart';
 import '../widgets/how_to_play_board_frames.dart';
 import '../widgets/how_to_play_step.dart';
+import '../widgets/how_to_play_tiki_taka_section.dart';
 
-/// ShiftTac-mode rules tab / standalone screen (`design.md` §HOW TO PLAY SCREEN).
-///
-/// Classic mode rules live in [docs/classic-rules.md]; this flow does not teach them.
+/// Rules for ShiftTac and Tiki-Taka (`design.md` §HOW TO PLAY SCREEN).
 class HowToPlayScreen extends StatelessWidget {
   const HowToPlayScreen({super.key, this.standalone = false, this.onGoHome});
 
@@ -62,17 +61,22 @@ class _HowToPlayBody extends StatelessWidget {
         children: [
           SizedBox(height: AppSpacing.stackLg.h),
           Text(
-            'How to Play ShiftTac',
+            'How to Play',
             textAlign: TextAlign.center,
             style: AppTextStyles.titleMd.copyWith(color: AppColors.primary),
           ),
           SizedBox(height: AppSpacing.unit.h),
           Text(
-            'ShiftTac mode only. Classic mode uses standard tic-tac-toe rules.',
+            'ShiftTac and Tiki-Taka rules.',
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMd.copyWith(
               color: AppColors.onSurfaceVariant,
             ),
+          ),
+          SizedBox(height: AppSpacing.stackLg.h),
+          const _HowToPlayModeTitle(
+            title: 'ShiftTac',
+            subtitle: 'Classic tic-tac-toe with shifting marks — local play.',
           ),
           SizedBox(height: AppSpacing.stackLg.h),
           if (!compact) ...[
@@ -134,6 +138,8 @@ class _HowToPlayBody extends StatelessWidget {
           const HowToPlayTip(
             subtitle: 'No ties in ShiftTac. The board always evolves.',
           ),
+          SizedBox(height: AppSpacing.stackLg.h),
+          HowToPlayTikiTakaSection(compact: compact),
           SizedBox(height: AppSpacing.stackMd.h),
           SecondaryButton(
             label: 'Replay tutorial',
@@ -144,6 +150,35 @@ class _HowToPlayBody extends StatelessWidget {
           SizedBox(height: AppSpacing.stackMd.h),
         ],
       ),
+    );
+  }
+}
+
+class _HowToPlayModeTitle extends StatelessWidget {
+  const _HowToPlayModeTitle({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: AppTextStyles.titleMd.copyWith(color: AppColors.primary),
+        ),
+        SizedBox(height: AppSpacing.unit.h),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: AppTextStyles.bodyMd.copyWith(
+            color: AppColors.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }
