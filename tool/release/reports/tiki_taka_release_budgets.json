@@ -1,0 +1,20 @@
+{
+  "database": {
+    "path": "assets/db/tiki_taka.db",
+    "bytes": 18481152,
+    "max_bytes": 20971520,
+    "within_budget": true
+  },
+  "attribute_svgs": {
+    "count": 84,
+    "bytes": 3161631,
+    "max_bytes": 8388608,
+    "within_budget": true
+  },
+  "manifest_json_bytes": 5377,
+  "offline": true,
+  "notes": [
+    "Tiki-Taka v1 uses bundled SQLite and SVG assets only; no runtime network.",
+    "SQLite runtime deps: sqflite, path, path_provider, shared_preferences."
+  ]
+}
