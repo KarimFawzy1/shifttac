@@ -164,7 +164,7 @@ void main() {
   });
 
   group('TikiTakaBoard', () {
-    testWidgets('empty cell tap opens placeholder search action', (tester) async {
+    testWidgets('empty cell tap activates search on cubit', (tester) async {
       final cubit = _cubitWithBoard(databaseHandle);
 
       await tester.pumpWidget(
@@ -179,10 +179,7 @@ void main() {
       await tester.pump();
 
       expect(cubit.state.activeCell, isNotNull);
-      expect(
-        find.text('Player search placeholder — row 1, column 1'),
-        findsOneWidget,
-      );
+      expect(cubit.state.activeCell, const TikiActiveCell(row: 0, col: 0));
     });
 
     testWidgets('occupied cell tap is explained', (tester) async {

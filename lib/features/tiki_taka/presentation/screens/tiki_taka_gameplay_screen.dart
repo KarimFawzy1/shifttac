@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,11 +14,12 @@ import '../../../../shared/widgets/app_icon_button.dart';
 import '../../domain/models/tiki_game_status.dart';
 import '../state/tiki_taka_cubit.dart';
 import '../state/tiki_taka_state.dart';
+import '../widgets/player_search_dialog.dart';
 import '../widgets/tiki_board_frame.dart';
 import '../widgets/tiki_taka_board.dart';
 import '../widgets/tiki_taka_hud.dart';
 
-/// Playable Tiki-Taka 1P board screen (search/dialog polish in Phase T7).
+/// Playable Tiki-Taka 1P board screen.
 class TikiTakaGameplayScreen extends StatelessWidget {
   const TikiTakaGameplayScreen({
     super.key,
@@ -57,7 +60,14 @@ class _TikiTakaGameplayBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
+    return BlocListener<TikiTakaCubit, TikiTakaState>(
+      listenWhen: (previous, current) =>
+          previous.activeCell != current.activeCell &&
+          current.activeCell != null,
+      listener: (context, state) {
+        unawaited(PlayerSearchDialog.show(context));
+      },
+      child: PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
@@ -110,19 +120,6 @@ class _TikiTakaGameplayBody extends StatelessWidget {
                               board: const TikiTakaBoard(),
                             ),
                           ),
-                          BlocBuilder<TikiTakaCubit, TikiTakaState>(
-                            buildWhen: (previous, current) =>
-                                previous.activeCell != current.activeCell,
-                            builder: (context, state) {
-                              if (state.activeCell == null) {
-                                return const SizedBox.shrink();
-                              }
-                              return Padding(
-                                padding: EdgeInsets.only(top: AppSpacing.stackSm.h),
-                                child: const _SearchPlaceholderBanner(),
-                              );
-                            },
-                          ),
                         ],
                       ),
                     )
@@ -137,6 +134,7 @@ class _TikiTakaGameplayBody extends StatelessWidget {
             },
           ),
         ),
+      ),
       ),
     );
   }
@@ -187,29 +185,6 @@ class _TikiTakaHeader extends StatelessWidget {
               SizedBox(width: 48.w),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SearchPlaceholderBanner extends StatelessWidget {
-  const _SearchPlaceholderBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.primaryContainer.withValues(alpha: 0.25),
-        borderRadius: AppSpacing.borderRadiusMd,
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-        child: Text(
-          'Player search opens here (Phase T7)',
-          style: AppTextStyles.bodyMd.copyWith(color: AppColors.onSurface),
-          textAlign: TextAlign.center,
         ),
       ),
     );

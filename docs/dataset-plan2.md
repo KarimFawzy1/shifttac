@@ -868,14 +868,14 @@ lib/features/tiki_taka/presentation/widgets/player_search_result_tile.dart
 
 **DoD:**
 
-- [ ] Dialog shows cell context.
-- [ ] Search returns players by full name.
-- [ ] Search returns players by alias.
-- [ ] Empty search state is clear.
-- [ ] User cannot submit unselected free text.
-- [ ] Selecting valid player fills the cell.
-- [ ] Selecting invalid player removes one heart and leaves cell empty.
-- [ ] Dialog/cubit tests pass.
+- [x] Dialog shows cell context.
+- [x] Search returns players by full name.
+- [x] Search returns players by alias.
+- [x] Empty search state is clear.
+- [x] User cannot submit unselected free text.
+- [x] Selecting valid player fills the cell.
+- [x] Selecting invalid player removes one heart and leaves cell empty.
+- [x] Dialog/cubit tests pass.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
 

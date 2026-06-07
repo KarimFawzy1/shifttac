@@ -11,8 +11,8 @@ import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dar
 import 'package:shifttac/features/tiki_taka/presentation/screens/tiki_taka_gameplay_screen.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_attribute_header.dart';
+import 'package:shifttac/features/tiki_taka/presentation/widgets/player_search_dialog.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
-import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_cell.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_hud.dart';
 
 import '../../data/local/tiki_taka_dao_test_support.dart';
@@ -45,6 +45,11 @@ Future<void> _pumpScreen(WidgetTester tester, Widget child) async {
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 100));
   await tester.pump(const Duration(milliseconds: 400));
+  for (var attempt = 0;
+      attempt < 20 && find.byType(TikiTakaBoard).evaluate().isEmpty;
+      attempt++) {
+    await tester.pump(const Duration(milliseconds: 200));
+  }
 }
 
 void main() {
@@ -54,6 +59,7 @@ void main() {
   late TikiTakaCubit cubit;
 
   setUp(() async {
+    PlayerSearchDialog.resetVisibilityForTest();
     databaseHandle = await openTikiTakaTestDatabase();
     cubit = TikiTakaCubit(dependencies: _dependencies(databaseHandle));
     await cubit.loadBoard();
@@ -61,6 +67,8 @@ void main() {
   });
 
   tearDown(() async {
+    cubit.closeSearch();
+    PlayerSearchDialog.resetVisibilityForTest();
     await cubit.close();
     await databaseHandle.close();
   });
@@ -72,35 +80,27 @@ void main() {
     expect(cubit.state.status.name, 'ongoing');
   });
 
-  group('TikiTakaGameplayScreen', () {
-    testWidgets('renders board with headers, hearts, and timer', (tester) async {
-      await _pumpScreen(tester, TikiTakaGameplayScreen(cubit: cubit));
+  testWidgets('TikiTakaGameplayScreen renders board and opens search dialog',
+      (tester) async {
+    await _pumpScreen(tester, TikiTakaGameplayScreen(cubit: cubit));
 
-      expect(find.byType(TikiTakaBoard), findsOneWidget);
-      expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
-      expect(find.byType(TikiTakaHud), findsOneWidget);
-      expect(find.byIcon(Icons.favorite), findsNWidgets(5));
-      expect(find.text('00:00'), findsOneWidget);
-    });
+    expect(find.byType(TikiTakaBoard), findsOneWidget);
+    expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
+    expect(find.byType(TikiTakaHud), findsOneWidget);
+    expect(find.byIcon(Icons.favorite), findsNWidgets(5));
+    expect(find.text('00:00'), findsOneWidget);
 
-    testWidgets('does not show Classic or Shift turn UI', (tester) async {
-      await _pumpScreen(tester, TikiTakaGameplayScreen(cubit: cubit));
+    expect(find.byType(PlayerTurnIndicator), findsNothing);
+    expect(find.byType(PlayerPanel), findsNothing);
+    expect(find.textContaining('Moves:'), findsNothing);
 
-      expect(find.byType(PlayerTurnIndicator), findsNothing);
-      expect(find.byType(PlayerPanel), findsNothing);
-      expect(find.textContaining('Moves:'), findsNothing);
-    });
+    await tester.tap(find.bySemanticsLabel('Empty cell row 1 column 1'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 400));
 
-    testWidgets('empty cell tap opens search placeholder state', (tester) async {
-      expect(cubit.onCellTapped(0, 0), TikiCellTapResult.openedSearch);
-
-      await _pumpScreen(tester, TikiTakaGameplayScreen(cubit: cubit));
-
-      expect(cubit.state.activeCell, isNotNull);
-      expect(
-        find.textContaining('Player search opens here'),
-        findsOneWidget,
-      );
-    });
+    expect(cubit.state.activeCell, isNotNull);
+    expect(find.text('Find a player'), findsOneWidget);
+    expect(PlayerSearchDialog.isVisible, isTrue);
   });
 }

@@ -81,16 +81,7 @@ class TikiTakaBoard extends StatelessWidget {
 
     switch (result) {
       case TikiCellTapResult.openedSearch:
-        messenger
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(
-                'Player search placeholder — row ${row + 1}, column ${col + 1}',
-              ),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+        break;
       case TikiCellTapResult.rejectedOccupied:
         messenger
           ..hideCurrentSnackBar()
