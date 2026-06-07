@@ -12,7 +12,20 @@ import 'package:shifttac/features/game/domain/models/game_mode.dart';
 import 'package:shifttac/features/game/presentation/screens/gameplay_screen.dart';
 import 'package:shifttac/features/home/presentation/screens/home_screen.dart';
 
-Widget _homeTestApp({AppSettingsController? settings}) {
+class _RecordingNavigatorObserver extends NavigatorObserver {
+  Route<dynamic>? lastPushed;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    lastPushed = route;
+    super.didPush(route, previousRoute);
+  }
+}
+
+Widget _homeTestApp({
+  AppSettingsController? settings,
+  List<NavigatorObserver> observers = const [],
+}) {
   final appSettings = settings ?? AppSettingsController();
   return AppSettingsScope(
     settings: appSettings,
@@ -22,6 +35,7 @@ Widget _homeTestApp({AppSettingsController? settings}) {
         designSize: AppConstants.designSize,
         builder: (context, child) => MaterialApp(
           onGenerateRoute: AppRouter.onGenerateRoute,
+          navigatorObservers: observers,
           home: const HomeScreen(),
         ),
       ),
@@ -43,6 +57,12 @@ void main() {
         find.text('Traditional 3x3. Every mark stays on the board.'),
         findsOneWidget,
       );
+      expect(
+        find.text(
+          'Football knowledge on a 3×3 board. Name the player, win the line.',
+        ),
+        findsOneWidget,
+      );
     });
   });
 
@@ -52,6 +72,23 @@ void main() {
       final route = ModalRoute.of(element);
       return route is MorphPageRoute<void> ? route : null;
     }
+
+    testWidgets('Play Tiki-Taka morphs into tiki-taka route', (tester) async {
+      final observer = _RecordingNavigatorObserver();
+      await tester.pumpWidget(_homeTestApp(observers: [observer]));
+      await tester.pumpAndSettle();
+
+      final playTikiTaka = find.text('Play Tiki-Taka');
+      await tester.ensureVisible(playTikiTaka);
+      await tester.pumpAndSettle();
+      await tester.tap(playTikiTaka);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(observer.lastPushed, isNotNull);
+      expect(observer.lastPushed!.settings.name, AppRoutes.tikiTaka);
+      expect(find.byType(GameplayScreen), findsNothing);
+    });
 
     testWidgets('Play ShiftTac morphs into ShiftTac gameplay', (tester) async {
       await tester.pumpWidget(_homeTestApp());
@@ -87,6 +124,26 @@ void main() {
       final route = gameplayMorphRoute(tester);
       expect(route, isNotNull);
       expect(route!.settings.arguments, GameMode.classic);
+    });
+
+    testWidgets('Play Tiki-Taka is tappable and has no Coming Soon badge', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_homeTestApp());
+      await tester.pumpAndSettle();
+
+      final playTikiTaka = find.text('Play Tiki-Taka');
+      await tester.ensureVisible(playTikiTaka);
+
+      expect(playTikiTaka, findsOneWidget);
+      expect(find.text('Coming Soon'), findsNothing);
+      expect(
+        find.ancestor(
+          of: playTikiTaka,
+          matching: find.byType(InkWell),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Play Classic is tappable and has no Coming Soon badge', (

@@ -33,6 +33,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _playShiftTacMorphKey = GlobalKey();
   final GlobalKey _playClassicMorphKey = GlobalKey();
+  final GlobalKey _playTikiTakaMorphKey = GlobalKey();
   final GlobalKey _playVsAiMorphKey = GlobalKey();
 
   static const MorphRouteConfig _heroMorphConfig = MorphRouteConfig(
@@ -43,14 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
     surfaceColor: AppColors.surfaceContainerHighest,
   );
 
-  Future<void> _openGameplay(
+  Future<void> _openRoute(
     BuildContext context, {
     required GlobalKey morphKey,
+    required String routeName,
     Object? arguments,
     MorphRouteConfig config = _secondaryMorphConfig,
   }) {
     final audio = AppAudioScope.read(context);
-    StartupTimingLog.log('Morph', 'tap.openGameplay');
+    StartupTimingLog.log('Morph', 'tap.openRoute $routeName');
     if (audio.isSfxReady) {
       StartupTimingLog.log('SFX', 'gameStart.schedule immediate');
       unawaited(audio.playGameStart());
@@ -70,6 +72,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return MorphNavigator.pushNamedFrom<void>(
       context: context,
       sourceKey: morphKey,
+      routeName: routeName,
+      arguments: arguments,
+      config: config,
+    );
+  }
+
+  Future<void> _openGameplay(
+    BuildContext context, {
+    required GlobalKey morphKey,
+    Object? arguments,
+    MorphRouteConfig config = _secondaryMorphConfig,
+  }) {
+    return _openRoute(
+      context,
+      morphKey: morphKey,
       routeName: AppRoutes.game,
       arguments: arguments,
       config: config,
@@ -113,6 +130,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 morphKey: _playClassicMorphKey,
                 arguments: GameMode.classic,
+              );
+            },
+          ),
+          SizedBox(height: AppSpacing.stackMd.h),
+          HomeActionCard(
+            morphKey: _playTikiTakaMorphKey,
+            style: HomeActionCardStyle.secondary,
+            title: 'Play Tiki-Taka',
+            subtitle:
+                'Football knowledge on a 3×3 board. Name the player, win the line.',
+            iconAsset: IconConstant.target,
+            iconWidth: 24.w,
+            iconHeight: 24.h,
+            onTap: () {
+              _openRoute(
+                context,
+                morphKey: _playTikiTakaMorphKey,
+                routeName: AppRoutes.tikiTaka,
               );
             },
           ),

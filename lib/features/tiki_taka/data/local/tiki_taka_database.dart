@@ -61,12 +61,15 @@ class DefaultTikiTakaDatabase implements TikiTakaDatabase {
        _sharedPreferences = sharedPreferences ?? SharedPreferences.getInstance,
        _resolveLocalDatabasePath =
            resolveLocalDatabasePath ?? TikiTakaDatabasePaths.resolveLocalDatabasePath,
-       _databaseFactory = dbFactory ?? databaseFactory;
+       _databaseFactoryOverride = dbFactory;
 
   final AssetBundle _assetBundle;
   final Future<SharedPreferences> Function() _sharedPreferences;
   final Future<String> Function() _resolveLocalDatabasePath;
-  final DatabaseFactory _databaseFactory;
+  final DatabaseFactory? _databaseFactoryOverride;
+
+  DatabaseFactory get _databaseFactory =>
+      _databaseFactoryOverride ?? databaseFactory;
 
   Database? _database;
   String? _schemaVersion;

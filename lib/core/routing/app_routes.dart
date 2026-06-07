@@ -6,6 +6,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String home = '/home';
   static const String game = '/game';
+  static const String tikiTaka = '/tiki-taka';
   static const String howToPlay = '/how-to-play';
   static const String settings = '/settings';
 
@@ -15,6 +16,7 @@ class AppRoutes {
     onboarding,
     home,
     game,
+    tikiTaka,
     howToPlay,
     settings,
   ];

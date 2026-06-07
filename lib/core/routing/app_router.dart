@@ -8,6 +8,7 @@ import '../../features/how_to_play/presentation/screens/how_to_play_screen.dart'
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
+import '../../features/tiki_taka/presentation/screens/tiki_taka_entry_screen.dart';
 import '../launch/app_launch_gate.dart';
 import 'app_routes.dart';
 import 'main_shell_tab.dart';
@@ -48,6 +49,10 @@ class AppRouter {
     if (name == AppRoutes.game) {
       final session = sessionFromRouteArguments(settings.arguments);
       return (_) => GameplayScreen(session: session);
+    }
+
+    if (name == AppRoutes.tikiTaka) {
+      return (_) => const TikiTakaEntryScreen();
     }
 
     if (name == AppRoutes.home) {

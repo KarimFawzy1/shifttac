@@ -35,6 +35,12 @@ void main() {
         ),
         isNotNull,
       );
+      expect(
+        AppRouter.pageBuilderFor(
+          const RouteSettings(name: AppRoutes.tikiTaka),
+        ),
+        isNotNull,
+      );
     });
 
     testWidgets('builds game route with sessionFromRouteArguments', (
@@ -59,6 +65,16 @@ void main() {
 
       final screen = tester.widget<GameplayScreen>(find.byType(GameplayScreen));
       expect(screen.mode, GameMode.classic);
+    });
+
+    test('tiki-taka route builder ignores GameMode arguments', () {
+      final builder = AppRouter.pageBuilderFor(
+        const RouteSettings(
+          name: AppRoutes.tikiTaka,
+          arguments: GameMode.classic,
+        ),
+      );
+      expect(builder, isNotNull);
     });
   });
 

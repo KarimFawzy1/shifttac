@@ -991,13 +991,13 @@ test/core/routing/app_router_test.dart
 
 **DoD:**
 
-- [ ] User can launch Tiki-Taka from home.
-- [ ] Existing Shift and Classic launch paths still work.
-- [ ] Back/home behavior is consistent with the app.
-- [ ] No Tiki-Taka route leaks X/O gameplay state.
-- [ ] Navigation smoke tests pass without timer-related hangs.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] User can launch Tiki-Taka from home.
+- [x] Existing Shift and Classic launch paths still work.
+- [x] Back/home behavior is consistent with the app.
+- [x] No Tiki-Taka route leaks X/O gameplay state.
+- [x] Navigation smoke tests pass without timer-related hangs.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

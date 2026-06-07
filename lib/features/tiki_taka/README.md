@@ -38,7 +38,7 @@ lib/features/tiki_taka/
 | --- | --- | --- |
 | Win line detection | `lib/features/game/domain/logic/win_checker.dart` | 3-in-a-row after cells filled |
 | App theme / constants | `lib/core/` | Colors, typography, spacing |
-| Routing patterns | `lib/core/routing/` | New route in Phase T9 only |
+| Routing patterns | `lib/core/routing/` | `AppRoutes.tikiTaka` + `TikiTakaEntryScreen` (Phase T9) |
 | Audio | `lib/core/audio/` | SFX for correct/wrong guess |
 | Main shell / scaffold | `lib/features/home/` | Entry from home in Phase T9 |
 | Dialog patterns | Shared widgets | Result / exit dialogs (adapted copy) |
@@ -67,9 +67,9 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T6** — `TikiTakaGameplayScreen`, `TikiTakaBoard`, `TikiTakaCell`, `TikiTakaHud` (SQLite board skeleton, headers, hearts, timer)
 - **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback)
 - **T8** — `TikiTakaFirstWinDialog`, `TikiTakaCompletionDialog`, `TikiTakaLostDialog`, `TikiTakaPauseSheet` (outcome flows, pause, restart, exit)
-- **T9** — Routing and home entry
+- **T9** — `AppRoutes.tikiTaka`, `TikiTakaEntryScreen`, home card (routing and home entry; dedicated route, not `GameMode`)
 
-Home navigation and routes are **not** added until Phase T9.
+Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 
 ## Rules and data contracts
 
