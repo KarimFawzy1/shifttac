@@ -383,20 +383,88 @@ void main() {
       expect(board, isNotNull);
 
       final engine = TikiTakaGameEngine.instance;
+      var game = engine.boardLoaded(engine.initial(), board!);
+      final rowPlayers = <TikiPlayerSearchResult>[];
+      for (var col = 0; col < 3; col++) {
+        final player = await _findValidPlayer(
+          databaseHandle: handle,
+          board: board,
+          row: 0,
+          col: col,
+        );
+        expect(player, isNotNull);
+        rowPlayers.add(player!);
+      }
+
+      var cells = game.cells.toList();
+      for (var col = 0; col < 3; col++) {
+        cells = cells
+            .map(
+              (cell) => cell.row == 0 && cell.col == col
+                  ? cell.copyWith(player: rowPlayers[col])
+                  : cell,
+            )
+            .toList(growable: false);
+      }
+
+      game = game.copyWith(
+        cells: cells,
+        status: TikiGameStatus.firstWin,
+        usedPlayerIds: rowPlayers.map((player) => player.id).toSet(),
+      );
+
       final cubit = TikiTakaCubit.forTest(
         dependencies: _dependencies(handle),
-        initialState: TikiTakaState.initial(
-          engine.boardLoaded(engine.initial(), board!).copyWith(
-            status: TikiGameStatus.firstWin,
-          ),
-        ),
+        initialState: TikiTakaState.initial(game),
       );
       addTearDown(cubit.close);
+
+      expect(cubit.state.game.filledCellCount, 3);
 
       cubit.continueAfterFirstWin();
 
       expect(cubit.state.status, TikiGameStatus.continuing);
       expect(cubit.state.isPlayable, isTrue);
+      expect(cubit.state.game.filledCellCount, 3);
+    });
+
+    test('completed and lost stop the timer', () async {
+      final board = await BoardDao(handle.database).loadDefaultBoard();
+      expect(board, isNotNull);
+
+      final engine = TikiTakaGameEngine.instance;
+      final completedCubit = TikiTakaCubit.forTest(
+        dependencies: _dependencies(handle),
+        initialState: TikiTakaState.initial(
+          engine.boardLoaded(engine.initial(), board!).copyWith(
+            status: TikiGameStatus.completed,
+            elapsed: const Duration(seconds: 30),
+          ),
+        ),
+      );
+      addTearDown(completedCubit.close);
+
+      completedCubit.refreshElapsedForTest();
+      expect(completedCubit.state.elapsedMs, 30_000);
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      expect(completedCubit.state.elapsedMs, 30_000);
+
+      final lostCubit = TikiTakaCubit.forTest(
+        dependencies: _dependencies(handle),
+        initialState: TikiTakaState.initial(
+          engine.boardLoaded(engine.initial(), board).copyWith(
+            status: TikiGameStatus.lost,
+            hearts: 0,
+            elapsed: const Duration(seconds: 45),
+          ),
+        ),
+      );
+      addTearDown(lostCubit.close);
+
+      lostCubit.refreshElapsedForTest();
+      expect(lostCubit.state.elapsedMs, 45_000);
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      expect(lostCubit.state.elapsedMs, 45_000);
     });
   });
 }

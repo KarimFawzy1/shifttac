@@ -66,7 +66,8 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T5** — `TikiAttributeHeader`, `TikiAttributeIcon`, `TikiBoardFrame`, `TikiAttributeAssetManifest` (G2 manifest SVG headers, position text, fallbacks, semantics)
 - **T6** — `TikiTakaGameplayScreen`, `TikiTakaBoard`, `TikiTakaCell`, `TikiTakaHud` (SQLite board skeleton, headers, hearts, timer)
 - **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback)
-- **T8–T9** — Outcome dialogs, routing, home entry
+- **T8** — `TikiTakaFirstWinDialog`, `TikiTakaCompletionDialog`, `TikiTakaLostDialog`, `TikiTakaPauseSheet` (outcome flows, pause, restart, exit)
+- **T9** — Routing and home entry
 
 Home navigation and routes are **not** added until Phase T9.
 

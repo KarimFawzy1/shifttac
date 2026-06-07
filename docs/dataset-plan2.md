@@ -881,6 +881,27 @@ lib/features/tiki_taka/presentation/widgets/player_search_result_tile.dart
 
 ---
 
+## Tiki-Taka Flutter Test Hygiene (T6+)
+
+Phases T6 and T7 established patterns that **must** be followed in T8–T12. The match timer emits every second while the board is playable, so `pumpAndSettle()` and unbounded pump loops **hang indefinitely** in widget/screen tests.
+
+**Required patterns:**
+
+1. **Never call `pumpAndSettle()`** on a tree backed by a live `TikiTakaCubit` with the match timer running.
+2. **Pause the timer in widget/screen tests** unless the test explicitly asserts live elapsed-time UI:
+   - call `cubit.pauseTimer()` after `loadBoard()`, or
+   - seed state with `TikiTakaCubit.forTest(...)`.
+3. **Use bounded pumps** — `pump()`, `pump(duration)`, or a capped retry loop (see `test/features/tiki_taka/presentation/screens/tiki_taka_gameplay_screen_test.dart`).
+4. **Prefer seeded cubit state in widget tests** — build `firstWin`, `lost`, `completed`, etc. via `TikiTakaGameEngine` + `TikiTakaCubit.forTest` instead of playing out full board flows in the widget layer.
+5. **Dialog/sheet tests** — expose `*.forTest` constructors with `AlwaysStoppedAnimation<double>(1)`, a public `animationDuration`, and `@visibleForTesting static void resetVisibilityForTest()`; reset static dialog guards in `setUp`/`tearDown` (same pattern as `PlayerSearchDialog`).
+6. **Complete dialog animations with explicit duration pumps** — e.g. `await tester.pump(MyDialog.animationDuration);` (see `test/match_result_dialog_test.dart`), not `pumpAndSettle`.
+7. **Cubit timer assertions** — use real `Future.delayed` + `cubit.refreshElapsedForTest()`; do **not** wrap SQLite-backed cubit calls in `fakeAsync`.
+8. **Always tear down async UI** — `cubit.closeSearch()`, dialog `resetVisibilityForTest()`, then `await cubit.close()` in `tearDown`.
+
+Add new `@visibleForTesting` hooks only when a test cannot otherwise observe or control behavior without a hang.
+
+---
+
 ## Phase T8 - Outcome Dialogs And Flow Polish
 
 **Goal:** Complete first-win, continue, completed, lost, restart, and exit flows.
@@ -892,6 +913,10 @@ lib/features/tiki_taka/presentation/widgets/tiki_taka_first_win_dialog.dart
 lib/features/tiki_taka/presentation/widgets/tiki_taka_completion_dialog.dart
 lib/features/tiki_taka/presentation/widgets/tiki_taka_lost_dialog.dart
 lib/features/tiki_taka/presentation/widgets/tiki_taka_pause_sheet.dart
+test/features/tiki_taka/presentation/widgets/tiki_taka_first_win_dialog_test.dart
+test/features/tiki_taka/presentation/widgets/tiki_taka_completion_dialog_test.dart
+test/features/tiki_taka/presentation/widgets/tiki_taka_lost_dialog_test.dart
+test/features/tiki_taka/presentation/widgets/tiki_taka_pause_sheet_test.dart
 ```
 
 **Tasks:**
@@ -911,19 +936,26 @@ lib/features/tiki_taka/presentation/widgets/tiki_taka_pause_sheet.dart
 6. Restart resets board state according to rules.
 7. Exit stops timer and returns home.
 8. Handle first win and full completion happening close together.
+9. Follow **Tiki-Taka Flutter Test Hygiene (T6+)** for all dialog and flow widget tests:
+   - each dialog/sheet exposes `forTest`, `animationDuration`, and `resetVisibilityForTest` where it uses route animation or a static open guard,
+   - widget tests seed `TikiTakaCubit.forTest` into `firstWin` / `lost` / `completed` states rather than filling nine cells through the UI,
+   - pause the cubit timer in every widget test unless asserting live timer text,
+   - pump explicit animation durations; never `pumpAndSettle` against a running match timer.
+10. Cover Continue / Restart / Go Home actions with cubit-level tests where possible; reserve widget tests for copy, buttons, and one action smoke per dialog.
 
 **DoD:**
 
-- [ ] First win dialog appears once per board.
-- [ ] Continue Playing keeps existing filled cells.
-- [ ] Timer continues after Continue Playing.
-- [ ] Full board completion stops timer.
-- [ ] Lost state stops timer.
-- [ ] Restart resets all state.
-- [ ] Home exit works from all terminal dialogs.
-- [ ] Edge-case tests pass.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] First win dialog appears once per board.
+- [x] Continue Playing keeps existing filled cells.
+- [x] Timer continues after Continue Playing.
+- [x] Full board completion stops timer.
+- [x] Lost state stops timer.
+- [x] Restart resets all state.
+- [x] Home exit works from all terminal dialogs.
+- [x] Edge-case tests pass without `pumpAndSettle` hangs.
+- [x] Dialog widget tests use bounded pumps and seeded cubit state.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
@@ -938,6 +970,8 @@ lib/core/routing/app_routes.dart
 lib/core/routing/app_router.dart
 lib/features/home/presentation/screens/home_screen.dart
 lib/features/game/domain/models/game_mode.dart
+test/home_screen_test.dart
+test/core/routing/app_router_test.dart
 ```
 
 **Tasks:**
@@ -949,6 +983,11 @@ lib/features/game/domain/models/game_mode.dart
 3. Add home card / CTA for Tiki-Taka.
 4. Keep existing Shift, Classic, and AI flows unchanged.
 5. Add navigation tests if current test patterns support them.
+6. Follow **Tiki-Taka Flutter Test Hygiene (T6+)** for any test that lands on `TikiTakaGameplayScreen`:
+   - prefer lightweight route/parser unit tests for `AppRouter` branching,
+   - in widget navigation smoke tests, inject a preloaded cubit or call `pauseTimer()` immediately after the screen mounts,
+   - use bounded pumps while waiting for SQLite board load; never `pumpAndSettle` on the gameplay screen,
+   - home-only tests (card visible, tap navigates) may keep existing `pumpAndSettle` usage because no match timer is active yet.
 
 **DoD:**
 
@@ -956,7 +995,7 @@ lib/features/game/domain/models/game_mode.dart
 - [ ] Existing Shift and Classic launch paths still work.
 - [ ] Back/home behavior is consistent with the app.
 - [ ] No Tiki-Taka route leaks X/O gameplay state.
-- [ ] Navigation smoke tests pass where practical.
+- [ ] Navigation smoke tests pass without timer-related hangs.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
 
@@ -971,6 +1010,7 @@ lib/features/game/domain/models/game_mode.dart
 ```text
 lib/features/how_to_play/presentation/screens/how_to_play_screen.dart
 lib/features/how_to_play/presentation/widgets/
+test/features/how_to_play/
 ```
 
 **Tasks:**
@@ -985,6 +1025,9 @@ lib/features/how_to_play/presentation/widgets/
 2. Explain hearts and timer.
 3. Explain attribute images and position text.
 4. Avoid mentioning Transfermarkt internals to users.
+5. Keep how-to-play tests static — render the screen/section with fixture copy only:
+   - do **not** embed a live `TikiTakaGameplayScreen` or cubit in how-to-play widget tests,
+   - `pumpAndSettle` is acceptable here because there is no match timer; if a scrollable section is added, prefer `pump()` + explicit scroll helpers over long settle waits.
 
 **DoD:**
 
@@ -992,6 +1035,7 @@ lib/features/how_to_play/presentation/widgets/
 - [ ] Copy matches [tiki-taka-toe-rules.md](./tiki-taka-toe-rules.md).
 - [ ] Rules do not conflict with implemented behavior.
 - [ ] Existing how-to-play sections still render correctly.
+- [ ] How-to-play tests do not mount live Tiki-Taka gameplay state.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
 
@@ -1016,19 +1060,25 @@ lib/features/how_to_play/presentation/widgets/
    - continue,
    - completed,
    - lost.
+   - keep these in **engine/cubit unit tests** (`tiki_taka_game_engine_test.dart`, `tiki_taka_cubit_test.dart`); do not replay full nine-cell flows in widget tests.
 4. Add widget tests for:
    - no turn indicator,
    - hearts visible,
    - timer visible,
    - header assets,
    - long player names.
-5. Run ETL validations:
+5. Audit all Tiki-Taka widget/screen tests against **Tiki-Taka Flutter Test Hygiene (T6+)**:
+   - replace any `pumpAndSettle()` on trees with a running `TikiTakaCubit` timer,
+   - ensure every gameplay screen test calls `pauseTimer()` or uses `forTest` seed state,
+   - ensure dialog tests reset static visibility guards and use bounded animation pumps,
+   - remove unbounded `while` / retry pump loops (cap attempts, fail fast).
+6. Run ETL validations:
 
    ```bash
    python tool/etl/run_validation_cases.py
    ```
 
-6. Run Flutter tests:
+7. Run Flutter tests and confirm they finish (no hung worker):
 
 ```bash
 flutter test
@@ -1041,7 +1091,8 @@ flutter test
 - [ ] DAO tests pass.
 - [ ] Game engine tests pass.
 - [ ] Widget tests pass.
-- [ ] Full `flutter test` passes.
+- [ ] Full `flutter test` completes without timer/dialog hang loops.
+- [ ] No Tiki-Taka widget test uses `pumpAndSettle` against a live match timer.
 - [ ] No new linter errors.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
@@ -1068,6 +1119,7 @@ flutter test
    - asset fallback.
 6. Run manual QA on a physical Android device if available.
 7. Verify app works offline.
+8. Any release-gate automated smoke widget test for Tiki-Taka must follow **Tiki-Taka Flutter Test Hygiene (T6+)** so CI/release scripts do not stall on periodic timers or dialog animations.
 
 **DoD:**
 
@@ -1080,6 +1132,7 @@ flutter test
 - [ ] Corrupt/missing DB shows controlled error.
 - [ ] Release build succeeds.
 - [ ] Manual smoke test passes on device/emulator.
+- [ ] Release/CI test commands finish without hang loops.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
 

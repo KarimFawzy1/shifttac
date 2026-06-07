@@ -44,7 +44,6 @@ class PlayerSearchDialog extends StatefulWidget {
 
   static bool _isVisible = false;
 
-  @visibleForTesting
   static bool get isVisible => _isVisible;
 
   @visibleForTesting

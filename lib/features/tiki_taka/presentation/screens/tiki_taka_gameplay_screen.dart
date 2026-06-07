@@ -17,7 +17,11 @@ import '../state/tiki_taka_state.dart';
 import '../widgets/player_search_dialog.dart';
 import '../widgets/tiki_board_frame.dart';
 import '../widgets/tiki_taka_board.dart';
+import '../widgets/tiki_taka_completion_dialog.dart';
+import '../widgets/tiki_taka_first_win_dialog.dart';
 import '../widgets/tiki_taka_hud.dart';
+import '../widgets/tiki_taka_lost_dialog.dart';
+import '../widgets/tiki_taka_pause_sheet.dart';
 
 /// Playable Tiki-Taka 1P board screen.
 class TikiTakaGameplayScreen extends StatelessWidget {
@@ -58,92 +62,129 @@ class _TikiTakaGameplayBody extends StatelessWidget {
     systemNavigationBarIconBrightness: Brightness.dark,
   );
 
+  static bool _shouldShowOutcomeDialog(TikiGameStatus status) {
+    return status == TikiGameStatus.firstWin ||
+        status == TikiGameStatus.completed ||
+        status == TikiGameStatus.lost;
+  }
+
+  static void _openPauseSheet(BuildContext context) {
+    if (TikiTakaPauseSheet.isVisible ||
+        TikiTakaFirstWinDialog.isVisible ||
+        TikiTakaCompletionDialog.isVisible ||
+        TikiTakaLostDialog.isVisible ||
+        PlayerSearchDialog.isVisible) {
+      return;
+    }
+    unawaited(TikiTakaPauseSheet.show(context));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TikiTakaCubit, TikiTakaState>(
-      listenWhen: (previous, current) =>
-          previous.activeCell != current.activeCell &&
-          current.activeCell != null,
-      listener: (context, state) {
-        unawaited(PlayerSearchDialog.show(context));
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TikiTakaCubit, TikiTakaState>(
+          listenWhen: (previous, current) =>
+              previous.activeCell != current.activeCell &&
+              current.activeCell != null,
+          listener: (context, state) {
+            unawaited(PlayerSearchDialog.show(context));
+          },
+        ),
+        BlocListener<TikiTakaCubit, TikiTakaState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              _shouldShowOutcomeDialog(current.status),
+          listener: (context, state) {
+            switch (state.status) {
+              case TikiGameStatus.firstWin:
+                unawaited(TikiTakaFirstWinDialog.show(context));
+              case TikiGameStatus.completed:
+                unawaited(TikiTakaCompletionDialog.show(context));
+              case TikiGameStatus.lost:
+                unawaited(TikiTakaLostDialog.show(context));
+              case TikiGameStatus.initial ||
+                  TikiGameStatus.loadingBoard ||
+                  TikiGameStatus.ongoing ||
+                  TikiGameStatus.continuing:
+                break;
+            }
+          },
+        ),
+      ],
       child: PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          return;
-        }
-        context.read<TikiTakaCubit>().exitMatch();
-        Navigator.of(context).maybePop();
-      },
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: _systemUi,
-        child: AppScaffold(
-          fullWidthHeader: true,
-          header: _TikiTakaHeader(
-            onBack: () {
-              context.read<TikiTakaCubit>().exitMatch();
-              Navigator.of(context).maybePop();
-            },
-          ),
-          child: BlocBuilder<TikiTakaCubit, TikiTakaState>(
-            buildWhen: (previous, current) =>
-                previous.status != current.status ||
-                previous.hearts != current.hearts ||
-                previous.elapsedMs != current.elapsedMs ||
-                previous.rowHeaders != current.rowHeaders ||
-                previous.columnHeaders != current.columnHeaders,
-            builder: (context, state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: AppSpacing.stackMd.h),
-                  TikiTakaHud(
-                    hearts: state.hearts,
-                    elapsedMs: state.elapsedMs,
-                  ),
-                  SizedBox(height: AppSpacing.stackMd.h),
-                  if (state.status == TikiGameStatus.loadingBoard)
-                    const Expanded(
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  else if (state.rowHeaders.length == 3 &&
-                      state.columnHeaders.length == 3)
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: TikiBoardFrameLoader(
-                              rowHeaders: state.rowHeaders,
-                              columnHeaders: state.columnHeaders,
-                              board: const TikiTakaBoard(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    const Expanded(
-                      child: Center(
-                        child: Text('Board unavailable'),
-                      ),
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            return;
+          }
+          _openPauseSheet(context);
+        },
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: _systemUi,
+          child: AppScaffold(
+            fullWidthHeader: true,
+            header: _TikiTakaHeader(
+              onPause: () => _openPauseSheet(context),
+            ),
+            child: BlocBuilder<TikiTakaCubit, TikiTakaState>(
+              buildWhen: (previous, current) =>
+                  previous.status != current.status ||
+                  previous.hearts != current.hearts ||
+                  previous.elapsedMs != current.elapsedMs ||
+                  previous.rowHeaders != current.rowHeaders ||
+                  previous.columnHeaders != current.columnHeaders,
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: AppSpacing.stackMd.h),
+                    TikiTakaHud(
+                      hearts: state.hearts,
+                      elapsedMs: state.elapsedMs,
                     ),
-                ],
-              );
-            },
+                    SizedBox(height: AppSpacing.stackMd.h),
+                    if (state.status == TikiGameStatus.loadingBoard)
+                      const Expanded(
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (state.rowHeaders.length == 3 &&
+                        state.columnHeaders.length == 3)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: TikiBoardFrameLoader(
+                                rowHeaders: state.rowHeaders,
+                                columnHeaders: state.columnHeaders,
+                                board: const TikiTakaBoard(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      const Expanded(
+                        child: Center(
+                          child: Text('Board unavailable'),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
-      ),
       ),
     );
   }
 }
 
 class _TikiTakaHeader extends StatelessWidget {
-  const _TikiTakaHeader({required this.onBack});
+  const _TikiTakaHeader({required this.onPause});
 
-  final VoidCallback onBack;
+  final VoidCallback onPause;
 
   @override
   Widget build(BuildContext context) {
@@ -169,9 +210,9 @@ class _TikiTakaHeader extends StatelessWidget {
           child: Row(
             children: [
               AppIconButton(
-                iconAsset: IconConstant.back,
-                semanticLabel: 'Back',
-                onPressed: onBack,
+                iconAsset: IconConstant.pause,
+                semanticLabel: 'Pause',
+                onPressed: onPause,
               ),
               Expanded(
                 child: Text(
