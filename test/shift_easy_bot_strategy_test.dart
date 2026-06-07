@@ -6,6 +6,8 @@ import 'package:shifttac/features/game/domain/logic/game_snapshot.dart';
 import 'package:shifttac/features/game/domain/logic/shift_bot_helpers.dart';
 import 'package:shifttac/features/game/domain/logic/shift_bot_strategy_factory.dart';
 import 'package:shifttac/features/game/domain/logic/shift_easy_bot_strategy.dart';
+import 'package:shifttac/features/game/domain/logic/shift_hard_bot_strategy.dart';
+import 'package:shifttac/features/game/domain/logic/shift_intermediate_bot_strategy.dart';
 import 'package:shifttac/features/game/domain/logic/shift_game_engine.dart';
 import 'package:shifttac/features/game/domain/models/bot_difficulty.dart';
 import 'package:shifttac/features/game/domain/models/game_status.dart';
@@ -131,17 +133,16 @@ void main() {
       expect(strategy, isA<ShiftEasyBotStrategy>());
     });
 
-    test('throws for intermediate and hard', () {
-      expect(
-        () => ShiftBotStrategyFactory.forDifficulty(
-          BotDifficulty.intermediate,
-        ),
-        throwsA(isA<UnimplementedError>()),
+    test('returns ShiftHardBotStrategy for hard', () {
+      final strategy = ShiftBotStrategyFactory.forDifficulty(BotDifficulty.hard);
+      expect(strategy, isA<ShiftHardBotStrategy>());
+    });
+
+    test('returns ShiftIntermediateBotStrategy for intermediate', () {
+      final strategy = ShiftBotStrategyFactory.forDifficulty(
+        BotDifficulty.intermediate,
       );
-      expect(
-        () => ShiftBotStrategyFactory.forDifficulty(BotDifficulty.hard),
-        throwsA(isA<UnimplementedError>()),
-      );
+      expect(strategy, isA<ShiftIntermediateBotStrategy>());
     });
   });
 }

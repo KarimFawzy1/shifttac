@@ -137,9 +137,17 @@ class DefaultTikiTakaDatabase implements TikiTakaDatabase {
     );
 
     try {
-      _database = await _openReadOnly(localPath);
+      final db = await _openReadOnly(localPath);
+      try {
+        await db.rawQuery('SELECT COUNT(*) AS c FROM boards');
+      } on DatabaseException {
+        await db.close();
+        rethrow;
+      }
+      _database = db;
       _schemaVersion = schemaVersion;
     } on DatabaseException {
+      _database = null;
       await _deleteIfExists(localPath);
       await _ensureLocalCopy(
         bundledBytes: bundledBytes,
@@ -148,7 +156,9 @@ class DefaultTikiTakaDatabase implements TikiTakaDatabase {
         forceCopy: true,
       );
       try {
-        _database = await _openReadOnly(localPath);
+        final db = await _openReadOnly(localPath);
+        await db.rawQuery('SELECT COUNT(*) AS c FROM boards');
+        _database = db;
         _schemaVersion = schemaVersion;
       } on DatabaseException catch (retryError) {
         throw TikiTakaDatabaseException(

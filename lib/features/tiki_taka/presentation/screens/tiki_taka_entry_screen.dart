@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/local/tiki_taka_database.dart';
 import '../state/tiki_taka_cubit.dart';
+import '../widgets/tiki_taka_database_error_view.dart';
 import 'tiki_taka_gameplay_screen.dart';
 
 /// Opens [TikiTakaDatabase] on first access, then shows [TikiTakaGameplayScreen].
@@ -9,11 +10,15 @@ class TikiTakaEntryScreen extends StatefulWidget {
   const TikiTakaEntryScreen({
     super.key,
     this.cubit,
+    this.database,
     this.autoLoadBoard = true,
   });
 
   /// When set (tests), skips database open and uses this cubit directly.
   final TikiTakaCubit? cubit;
+
+  /// When set (tests), overrides [TikiTakaDatabase.instance].
+  final TikiTakaDatabase? database;
   final bool autoLoadBoard;
 
   @override
@@ -22,6 +27,9 @@ class TikiTakaEntryScreen extends StatefulWidget {
 
 class _TikiTakaEntryScreenState extends State<TikiTakaEntryScreen> {
   Future<void>? _openFuture;
+  TikiTakaCubit? _gameplayCubit;
+
+  TikiTakaDatabase get _database => widget.database ?? TikiTakaDatabase.instance;
 
   @override
   void initState() {
@@ -32,12 +40,34 @@ class _TikiTakaEntryScreenState extends State<TikiTakaEntryScreen> {
     _openFuture = _openDatabaseIfNeeded();
   }
 
+  @override
+  void dispose() {
+    if (widget.cubit == null) {
+      _gameplayCubit?.close();
+    }
+    super.dispose();
+  }
+
   Future<void> _openDatabaseIfNeeded() async {
-    final database = TikiTakaDatabase.instance;
-    if (database.isOpen) {
+    if (_database.isOpen) {
       return;
     }
-    await database.open();
+    await _database.open();
+  }
+
+  void _retryOpen() {
+    _gameplayCubit?.close();
+    _gameplayCubit = null;
+    setState(() {
+      _openFuture = _openDatabaseIfNeeded();
+    });
+  }
+
+  TikiTakaCubit _cubitForGameplay() {
+    return _gameplayCubit ??= TikiTakaCubit(
+      dependencies: TikiTakaDependencies.fromDatabase(_database.database),
+      autoLoadBoard: widget.autoLoadBoard,
+    );
   }
 
   @override
@@ -58,16 +88,15 @@ class _TikiTakaEntryScreenState extends State<TikiTakaEntryScreen> {
           );
         }
         if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Text(
-                'Could not load Tiki-Taka database.',
-                textAlign: TextAlign.center,
-              ),
-            ),
+          return TikiTakaDatabaseErrorView(
+            error: snapshot.error!,
+            onRetry: _retryOpen,
           );
         }
-        return TikiTakaGameplayScreen(autoLoadBoard: widget.autoLoadBoard);
+        return TikiTakaGameplayScreen(
+          cubit: _cubitForGameplay(),
+          autoLoadBoard: widget.autoLoadBoard,
+        );
       },
     );
   }

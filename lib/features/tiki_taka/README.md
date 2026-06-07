@@ -70,6 +70,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T9** — `AppRoutes.tikiTaka`, `TikiTakaEntryScreen`, home card (routing and home entry; dedicated route, not `GameMode`)
 - **T10** — `HowToPlayTikiTakaSection`, static rules copy in How to Play tab
 - **T11** — integration/regression pack: DAO + engine/cubit game flows, widget regression (`tiki_taka_widget_test_support.dart`, HUD/board/header tests), D12 ETL validation, T6+ test hygiene audit
+- **T12** — release readiness: size/latency budgets, controlled error/retry UI, corrupt DB recovery, offline release smoke, `tool/release/check_tiki_taka_release_budgets.py`
 
 ## Test layout (T11)
 
@@ -81,6 +82,17 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 | Cubit integration flows | `test/features/tiki_taka/presentation/state/tiki_taka_cubit_test.dart` |
 | Widget regression | `test/features/tiki_taka/presentation/widgets/`, `screens/tiki_taka_gameplay_screen_test.dart` |
 | Shared widget pumps | `test/features/tiki_taka/presentation/tiki_taka_widget_test_support.dart` |
+| Release performance + smoke | `test/features/tiki_taka/release/` |
+
+## Release checks (T12)
+
+```bash
+python tool/release/check_tiki_taka_release_budgets.py
+powershell -File tool/release/run_tiki_taka_release_checks.ps1
+flutter build apk --release
+```
+
+Current bundled asset budgets (v1): SQLite **17.6 MB** / 20 MB cap, attribute SVGs **84 files · 3.0 MB** / 8 MB cap. Tiki-Taka uses no runtime network APIs.
 
 Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 

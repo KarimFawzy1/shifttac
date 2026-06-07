@@ -17,6 +17,7 @@ import '../state/tiki_taka_state.dart';
 import '../widgets/player_search_dialog.dart';
 import '../widgets/tiki_board_frame.dart';
 import '../widgets/tiki_taka_board.dart';
+import '../widgets/tiki_taka_board_unavailable_view.dart';
 import '../widgets/tiki_taka_completion_dialog.dart';
 import '../widgets/tiki_taka_first_win_dialog.dart';
 import '../widgets/tiki_taka_hud.dart';
@@ -165,9 +166,9 @@ class _TikiTakaGameplayBody extends StatelessWidget {
                         ),
                       )
                     else
-                      const Expanded(
-                        child: Center(
-                          child: Text('Board unavailable'),
+                      Expanded(
+                        child: TikiTakaBoardUnavailableView(
+                          onRetry: () => context.read<TikiTakaCubit>().loadBoard(),
                         ),
                       ),
                   ],

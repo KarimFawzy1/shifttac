@@ -2,11 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shifttac/core/audio/app_audio.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/core/constants/image_constants.dart';
 import 'package:shifttac/core/routing/app_routes.dart';
+import 'package:shifttac/core/settings/app_settings_controller.dart';
 import 'package:shifttac/features/game/presentation/widgets/match_result.dart';
 import 'package:shifttac/features/game/presentation/widgets/match_result_dialog.dart';
+
+Widget _dialogTestApp({required Widget home}) {
+  final settings = AppSettingsController();
+  return AppSettingsScope(
+    settings: settings,
+    child: AppAudioScope(
+      audio: AppAudio(settings),
+      child: ScreenUtilInit(
+        designSize: AppConstants.designSize,
+        builder: (context, _) => MaterialApp(home: home),
+      ),
+    ),
+  );
+}
 
 void main() {
   Future<void> pumpDialog(
@@ -16,26 +32,23 @@ void main() {
     VoidCallback? onBackToHome,
   }) async {
     await tester.pumpWidget(
-      ScreenUtilInit(
-        designSize: AppConstants.designSize,
-        builder: (context, _) => MaterialApp(
-          home: Builder(
-            builder: (context) {
-              return Scaffold(
-                body: Center(
-                  child: ElevatedButton(
-                    onPressed: () => MatchResultDialog.show(
-                      context,
-                      result: result,
-                      onPlayAgain: onPlayAgain ?? () {},
-                      onBackToHome: onBackToHome ?? () {},
-                    ),
-                    child: const Text('open'),
+      _dialogTestApp(
+        home: Builder(
+          builder: (context) {
+            return Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed: () => MatchResultDialog.show(
+                    context,
+                    result: result,
+                    onPlayAgain: onPlayAgain ?? () {},
+                    onBackToHome: onBackToHome ?? () {},
                   ),
+                  child: const Text('open'),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -190,32 +203,39 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: AppConstants.designSize,
-          builder: (context, _) => MaterialApp(
-            routes: {
-              AppRoutes.home: (_) =>
-                  const Scaffold(body: Center(child: Text('home screen'))),
-            },
-            home: Builder(
-              builder: (context) => Scaffold(
-                body: Center(
-                  child: ElevatedButton(
-                    onPressed: () => MatchResultDialog.show(
-                      context,
-                      result: MatchResult.draw(
-                        totalMoves: 9,
-                        matchDurationMs: 0,
+        AppSettingsScope(
+          settings: AppSettingsController(),
+          child: AppAudioScope(
+            audio: AppAudio(AppSettingsController()),
+            child: ScreenUtilInit(
+              designSize: AppConstants.designSize,
+              builder: (context, _) => MaterialApp(
+                routes: {
+                  AppRoutes.home: (_) => const Scaffold(
+                    body: Center(child: Text('home screen')),
+                  ),
+                },
+                home: Builder(
+                  builder: (context) => Scaffold(
+                    body: Center(
+                      child: ElevatedButton(
+                        onPressed: () => MatchResultDialog.show(
+                          context,
+                          result: MatchResult.draw(
+                            totalMoves: 9,
+                            matchDurationMs: 0,
+                          ),
+                          onPlayAgain: () {},
+                          onBackToHome: () {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              AppRoutes.home,
+                              (route) => false,
+                            );
+                          },
+                        ),
+                        child: const Text('open'),
                       ),
-                      onPlayAgain: () {},
-                      onBackToHome: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          AppRoutes.home,
-                          (route) => false,
-                        );
-                      },
                     ),
-                    child: const Text('open'),
                   ),
                 ),
               ),

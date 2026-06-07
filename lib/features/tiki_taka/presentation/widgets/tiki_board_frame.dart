@@ -113,11 +113,17 @@ class TikiBoardFrameLoader extends StatelessWidget {
       future: manifestLoader?.call() ?? TikiAttributeAssetManifest.load(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const SizedBox.shrink();
+          return TikiBoardFrame(
+            rowHeaders: rowHeaders,
+            columnHeaders: columnHeaders,
+            manifest: TikiAttributeAssetManifest.forTest(const {}),
+            board: board,
+            headerExtent: headerExtent,
+          );
         }
         final manifest = snapshot.data;
         if (manifest == null) {
-          return const SizedBox.shrink();
+          return const Center(child: CircularProgressIndicator());
         }
         return TikiBoardFrame(
           rowHeaders: rowHeaders,

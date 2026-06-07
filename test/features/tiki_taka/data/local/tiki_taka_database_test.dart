@@ -177,5 +177,25 @@ void main() {
         throwsA(isA<StateError>()),
       );
     });
+
+    test('recovers from corrupt local copy by re-copying bundled asset', () async {
+      final service = createDatabase();
+      await service.open();
+      await service.close();
+
+      final localPath = p.join(tempDir.path, TikiTakaDatabasePaths.localFileName);
+      await File(localPath).writeAsBytes(const [0, 1, 2, 3, 4]);
+
+      await service.open();
+      expect(service.isOpen, isTrue);
+      expect(service.schemaVersion, '1');
+
+      final boards = await service.database.rawQuery(
+        'SELECT COUNT(*) AS c FROM boards',
+      );
+      expect((boards.first['c'] as int?) ?? 0, greaterThanOrEqualTo(20));
+
+      await service.close();
+    });
   });
 }

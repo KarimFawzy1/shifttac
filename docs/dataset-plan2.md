@@ -1123,18 +1123,18 @@ flutter test
 
 **DoD:**
 
-- [ ] App works offline.
-- [ ] Tiki-Taka screen loads without network.
-- [ ] Board load is fast.
-- [ ] Search feels responsive.
-- [ ] Attribute SVGs do not noticeably bloat app size.
-- [ ] DB copy/open path works after app reinstall.
-- [ ] Corrupt/missing DB shows controlled error.
-- [ ] Release build succeeds.
-- [ ] Manual smoke test passes on device/emulator.
-- [ ] Release/CI test commands finish without hang loops.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] App works offline.
+- [x] Tiki-Taka screen loads without network.
+- [x] Board load is fast.
+- [x] Search feels responsive.
+- [x] Attribute SVGs do not noticeably bloat app size.
+- [x] DB copy/open path works after app reinstall.
+- [x] Corrupt/missing DB shows controlled error.
+- [x] Release build succeeds.
+- [x] Manual smoke test passes on device/emulator.
+- [x] Release/CI test commands finish without hang loops.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
