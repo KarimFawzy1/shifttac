@@ -876,8 +876,8 @@ lib/features/tiki_taka/presentation/widgets/player_search_result_tile.dart
 - [x] Selecting valid player fills the cell.
 - [x] Selecting invalid player removes one heart and leaves cell empty.
 - [x] Dialog/cubit tests pass.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 
