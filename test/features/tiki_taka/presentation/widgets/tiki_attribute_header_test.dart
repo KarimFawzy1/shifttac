@@ -105,7 +105,7 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
     }
 
     testWidgets('club header displays SVG', (tester) async {
@@ -164,7 +164,7 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.byType(SvgPicture), findsNothing);
       expect(find.text('MC'), findsOneWidget);
@@ -184,7 +184,7 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(
         manifest.pathForIconKey('club_31'),
@@ -217,7 +217,7 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
       expect(find.text('Forward'), findsOneWidget);

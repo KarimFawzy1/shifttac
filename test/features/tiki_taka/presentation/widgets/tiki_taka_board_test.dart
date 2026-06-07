@@ -156,7 +156,7 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.byType(FittedBox), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -166,6 +166,7 @@ void main() {
   group('TikiTakaBoard', () {
     testWidgets('empty cell tap activates search on cubit', (tester) async {
       final cubit = _cubitWithBoard(databaseHandle);
+      addTearDown(cubit.close);
 
       await tester.pumpWidget(
         _wrap(
@@ -173,7 +174,7 @@ void main() {
           child: const TikiTakaBoard(),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.tap(find.bySemanticsLabel('Empty cell row 1 column 1'));
       await tester.pump();
@@ -198,11 +199,12 @@ void main() {
           engine.boardLoaded(engine.initial(), board).copyWith(cells: cells),
         ),
       );
+      addTearDown(cubit.close);
 
       await tester.pumpWidget(
         _wrap(cubit: cubit, child: const TikiTakaBoard()),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.tap(find.text('Mohamed Salah'));
       await tester.pump();

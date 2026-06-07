@@ -16,13 +16,7 @@ import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_hud.dart';
 
 import '../../data/local/tiki_taka_dao_test_support.dart';
-
-Widget _wrap(Widget child) {
-  return ScreenUtilInit(
-    designSize: AppConstants.designSize,
-    builder: (context, _) => MaterialApp(home: child),
-  );
-}
+import '../tiki_taka_widget_test_support.dart';
 
 TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
   return TikiTakaDependencies(
@@ -33,23 +27,9 @@ TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
 }
 
 Future<void> _pumpScreen(WidgetTester tester, Widget child) async {
-  await tester.pumpWidget(
-    _wrap(
-      SizedBox(
-        width: AppConstants.designSize.width,
-        height: AppConstants.designSize.height,
-        child: child,
-      ),
-    ),
-  );
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 100));
-  await tester.pump(const Duration(milliseconds: 400));
-  for (var attempt = 0;
-      attempt < 20 && find.byType(TikiTakaBoard).evaluate().isEmpty;
-      attempt++) {
-    await tester.pump(const Duration(milliseconds: 200));
-  }
+  await tester.pumpWidget(wrapTikiGameplayScreen(child));
+  await pumpTikiFrames(tester, frameCount: 5, frameDuration: const Duration(milliseconds: 100));
+  await waitForTikiBoard(tester);
 }
 
 void main() {
@@ -73,34 +53,41 @@ void main() {
     await databaseHandle.close();
   });
 
-  test('loadBoard supplies a real SQLite board for the screen', () {
-    expect(cubit.state.game.board, isNotNull);
-    expect(cubit.state.rowHeaders, hasLength(3));
-    expect(cubit.state.columnHeaders, hasLength(3));
-    expect(cubit.state.status.name, 'ongoing');
-  });
+  group('TikiTakaGameplayScreen regression pack', () {
+    test('loadBoard supplies a real SQLite board for the screen', () {
+      expect(cubit.state.game.board, isNotNull);
+      expect(cubit.state.rowHeaders, hasLength(3));
+      expect(cubit.state.columnHeaders, hasLength(3));
+      expect(cubit.state.status.name, 'ongoing');
+    });
 
-  testWidgets('TikiTakaGameplayScreen renders board and opens search dialog',
-      (tester) async {
-    await _pumpScreen(tester, TikiTakaGameplayScreen(cubit: cubit));
+    testWidgets('regression pack: board UI and empty cell opens search', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, TikiTakaGameplayScreen(cubit: cubit));
 
-    expect(find.byType(TikiTakaBoard), findsOneWidget);
-    expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
-    expect(find.byType(TikiTakaHud), findsOneWidget);
-    expect(find.byIcon(Icons.favorite), findsNWidgets(5));
-    expect(find.text('00:00'), findsOneWidget);
+      expect(find.byType(TikiTakaBoard), findsOneWidget);
+      expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
+      expect(find.byType(TikiTakaHud), findsOneWidget);
+      expect(find.byIcon(Icons.favorite), findsNWidgets(5));
+      expect(find.text('00:00'), findsOneWidget);
+      expect(find.byType(PlayerTurnIndicator), findsNothing);
+      expect(find.byType(PlayerPanel), findsNothing);
+      expect(find.textContaining('Moves:'), findsNothing);
 
-    expect(find.byType(PlayerTurnIndicator), findsNothing);
-    expect(find.byType(PlayerPanel), findsNothing);
-    expect(find.textContaining('Moves:'), findsNothing);
+      final emptyCell = find.bySemanticsLabel('Empty cell row 1 column 1');
+      expect(emptyCell, findsOneWidget);
 
-    await tester.tap(find.bySemanticsLabel('Empty cell row 1 column 1'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump(const Duration(milliseconds: 400));
+      await tester.tap(emptyCell);
+      await pumpTikiFrames(
+        tester,
+        frameCount: 5,
+        frameDuration: const Duration(milliseconds: 60),
+      );
 
-    expect(cubit.state.activeCell, isNotNull);
-    expect(find.text('Find a player'), findsOneWidget);
-    expect(PlayerSearchDialog.isVisible, isTrue);
+      expect(cubit.state.activeCell, isNotNull);
+      expect(find.text('Find a player'), findsOneWidget);
+      expect(PlayerSearchDialog.isVisible, isTrue);
+    });
   });
 }

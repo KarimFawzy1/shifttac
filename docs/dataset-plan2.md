@@ -1086,16 +1086,16 @@ flutter test
 
 **DoD:**
 
-- [ ] D12 validation passes.
-- [ ] DB smoke test passes.
-- [ ] DAO tests pass.
-- [ ] Game engine tests pass.
-- [ ] Widget tests pass.
-- [ ] Full `flutter test` completes without timer/dialog hang loops.
-- [ ] No Tiki-Taka widget test uses `pumpAndSettle` against a live match timer.
-- [ ] No new linter errors.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] D12 validation passes.
+- [x] DB smoke test passes.
+- [x] DAO tests pass.
+- [x] Game engine tests pass.
+- [x] Widget tests pass.
+- [x] Full `flutter test` completes without timer/dialog hang loops.
+- [x] No Tiki-Taka widget test uses `pumpAndSettle` against a live match timer.
+- [x] No new linter errors.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 ---
 

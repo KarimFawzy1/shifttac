@@ -59,6 +59,13 @@ void main() {
       }
     });
 
+    test('loadRandomDefaultBoard returns a playable Clubs x Nations board', () async {
+      final board = await boardDao.loadRandomDefaultBoard();
+      expect(board, isNotNull);
+      expect(board!.rowAttributes, hasLength(3));
+      expect(board.columnAttributes, hasLength(3));
+    });
+
     test('loadBoardById returns null for unknown board', () async {
       expect(await boardDao.loadBoardById('missing-board'), isNull);
     });

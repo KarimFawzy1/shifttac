@@ -69,6 +69,18 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T8** — `TikiTakaFirstWinDialog`, `TikiTakaCompletionDialog`, `TikiTakaLostDialog`, `TikiTakaPauseSheet` (outcome flows, pause, restart, exit)
 - **T9** — `AppRoutes.tikiTaka`, `TikiTakaEntryScreen`, home card (routing and home entry; dedicated route, not `GameMode`)
 - **T10** — `HowToPlayTikiTakaSection`, static rules copy in How to Play tab
+- **T11** — integration/regression pack: DAO + engine/cubit game flows, widget regression (`tiki_taka_widget_test_support.dart`, HUD/board/header tests), D12 ETL validation, T6+ test hygiene audit
+
+## Test layout (T11)
+
+| Area | Location |
+| --- | --- |
+| DB smoke | `test/tiki_taka_database_smoke_test.dart` |
+| DAO integration | `test/features/tiki_taka/data/local/*_dao_test.dart` |
+| Engine + validator flows | `test/features/tiki_taka/domain/logic/tiki_taka_game_engine_test.dart` |
+| Cubit integration flows | `test/features/tiki_taka/presentation/state/tiki_taka_cubit_test.dart` |
+| Widget regression | `test/features/tiki_taka/presentation/widgets/`, `screens/tiki_taka_gameplay_screen_test.dart` |
+| Shared widget pumps | `test/features/tiki_taka/presentation/tiki_taka_widget_test_support.dart` |
 
 Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 
