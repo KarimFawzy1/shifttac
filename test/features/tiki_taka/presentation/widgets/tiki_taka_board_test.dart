@@ -10,10 +10,6 @@ import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.d
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_cell.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/validation_dao.dart';
-import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_cell.dart';
 
@@ -98,11 +94,7 @@ Widget _wrap({
 }
 
 TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
-  return TikiTakaDependencies(
-    boardDao: BoardDao(handle.database),
-    playerSearchDao: PlayerSearchDao(handle.database),
-    answerValidator: AnswerValidator(ValidationDao(handle.database)),
-  );
+  return tikiTakaTestDependencies(handle);
 }
 
 TikiTakaCubit _cubitWithBoard(TikiTakaTestDatabaseHandle handle) {

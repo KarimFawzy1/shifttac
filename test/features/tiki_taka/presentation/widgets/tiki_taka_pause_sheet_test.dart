@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_state.dart';
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
-import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_pause_sheet.dart';
 
 import 'tiki_taka_dialog_test_support.dart';
@@ -71,6 +69,14 @@ void main() {
 
     await tester.tap(find.byKey(TikiTakaPauseSheet.restartButtonKey));
     await tester.pump();
+
+    await tester.runAsync(() async {
+      while (cubit.state.status == TikiGameStatus.loadingBoard) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+
     cubit.pauseTimer();
 
     expect(cubit.state.status, TikiGameStatus.ongoing);

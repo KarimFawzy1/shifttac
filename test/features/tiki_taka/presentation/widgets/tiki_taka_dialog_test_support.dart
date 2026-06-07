@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/validation_dao.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_attribute.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_board.dart';
 import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.dart';
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart';
-import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_completion_dialog.dart';
@@ -77,11 +72,7 @@ const testBoard = TikiBoard(
 TikiTakaDependencies tikiDialogTestDependencies(
   TikiTakaTestDatabaseHandle handle,
 ) {
-  return TikiTakaDependencies(
-    boardDao: BoardDao(handle.database),
-    playerSearchDao: PlayerSearchDao(handle.database),
-    answerValidator: AnswerValidator(ValidationDao(handle.database)),
-  );
+  return tikiTakaTestDependencies(handle);
 }
 
 TikiTakaCubit seedTikiCubit({

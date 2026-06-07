@@ -12,6 +12,7 @@ import '../../data/models/tiki_player_search_result.dart';
 import '../../domain/logic/tiki_taka_game_engine.dart';
 import '../../domain/models/tiki_game_status.dart';
 import '../../domain/services/answer_validator.dart';
+import '../../domain/services/tiki_random_board_generator.dart';
 import 'tiki_taka_state.dart';
 
 /// Outcome of tapping a board cell.
@@ -38,12 +39,14 @@ class TikiTakaDependencies {
     required this.boardDao,
     required this.playerSearchDao,
     required this.answerValidator,
+    required this.randomBoardGenerator,
     this.engine = TikiTakaGameEngine.instance,
   });
 
   final BoardDao boardDao;
   final PlayerSearchDao playerSearchDao;
   final AnswerValidator answerValidator;
+  final TikiRandomBoardGenerator randomBoardGenerator;
   final TikiTakaGameEngine engine;
 
   factory TikiTakaDependencies.fromDatabase(Database database) {
@@ -52,6 +55,7 @@ class TikiTakaDependencies {
       boardDao: BoardDao(database),
       playerSearchDao: PlayerSearchDao(database),
       answerValidator: AnswerValidator(validationDao),
+      randomBoardGenerator: TikiRandomBoardGenerator(database: database),
     );
   }
 }
@@ -64,6 +68,7 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
   }) : _boardDao = dependencies.boardDao,
        _playerSearchDao = dependencies.playerSearchDao,
        _answerValidator = dependencies.answerValidator,
+       _randomBoardGenerator = dependencies.randomBoardGenerator,
        _engine = dependencies.engine,
        super(TikiTakaState.initial(dependencies.engine.initial())) {
     if (autoLoadBoard) {
@@ -98,12 +103,14 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
   }) : _boardDao = dependencies.boardDao,
        _playerSearchDao = dependencies.playerSearchDao,
        _answerValidator = dependencies.answerValidator,
+       _randomBoardGenerator = dependencies.randomBoardGenerator,
        _engine = dependencies.engine,
        super(initialState);
 
   final BoardDao _boardDao;
   final PlayerSearchDao _playerSearchDao;
   final AnswerValidator _answerValidator;
+  final TikiRandomBoardGenerator _randomBoardGenerator;
   final TikiTakaGameEngine _engine;
 
   final Stopwatch _matchStopwatch = Stopwatch();
@@ -124,7 +131,7 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
     return super.close();
   }
 
-  Future<void> loadBoard({bool random = false}) async {
+  Future<void> loadBoard() async {
     if (isClosed) {
       return;
     }
@@ -141,9 +148,9 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
       ),
     );
 
-    final board = random
-        ? await _boardDao.loadRandomDefaultBoard()
-        : await _boardDao.loadDefaultBoard();
+    final board =
+        await _randomBoardGenerator.generate() ??
+        await _boardDao.loadRandomDefaultBoard();
 
     if (isClosed) {
       return;
@@ -155,7 +162,6 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
     }
 
     game = _engine.boardLoaded(game, board);
-    _resetTimer();
     emit(
       state.copyWith(
         game: game,
@@ -166,6 +172,7 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
         inputLocked: false,
       ),
     );
+    _resetTimer();
   }
 
   TikiCellTapResult onCellTapped(int row, int col) {
@@ -300,17 +307,9 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
   }
 
   Future<void> restart() async {
-    final board = state.game.board;
-    _resetTimer();
-
-    if (board == null) {
-      await loadBoard();
-      return;
-    }
-
-    emit(
-      TikiTakaState.initial(_engine.boardLoaded(_engine.initial(), board)),
-    );
+    closeSearch();
+    _stopTimer();
+    await loadBoard();
   }
 
   void pauseTimer() {

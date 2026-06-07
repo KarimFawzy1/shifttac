@@ -22,6 +22,11 @@ class TikiAttributeAssetManifest {
     return TikiAttributeAssetManifest._(paths);
   }
 
+  /// Empty manifest when asset loading fails; headers fall back to text.
+  factory TikiAttributeAssetManifest.empty() {
+    return TikiAttributeAssetManifest._(const {});
+  }
+
   /// Test-only constructor with an explicit icon_key → asset path map.
   @visibleForTesting
   factory TikiAttributeAssetManifest.forTest(Map<String, String> paths) {

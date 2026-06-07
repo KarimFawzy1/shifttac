@@ -10,7 +10,13 @@ import 'tiki_taka_cell.dart';
 
 /// 3×3 playable Tiki-Taka grid driven by [TikiTakaCubit].
 class TikiTakaBoard extends StatelessWidget {
-  const TikiTakaBoard({super.key});
+  const TikiTakaBoard({
+    super.key,
+    this.cellAspectRatio,
+  });
+
+  /// Width-to-height ratio for each cell. When null, cells stay square.
+  final double? cellAspectRatio;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +53,7 @@ class TikiTakaBoard extends StatelessWidget {
                 crossAxisCount: 3,
                 mainAxisSpacing: gap,
                 crossAxisSpacing: gap,
-                childAspectRatio: 1,
+                childAspectRatio: cellAspectRatio ?? 1,
               ),
               itemCount: 9,
               itemBuilder: (context, index) {

@@ -18,43 +18,49 @@ class TikiAttributeHeader extends StatelessWidget {
     required this.manifest,
     required this.axis,
     this.iconSize,
+    this.expand = false,
   });
 
   final TikiAttribute attribute;
   final TikiAttributeAssetManifest manifest;
   final TikiHeaderAxis axis;
   final double? iconSize;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
     final resolvedIconSize = iconSize ?? (axis == TikiHeaderAxis.column ? 30.w : 28.w);
 
+    final header = DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLow,
+        borderRadius: AppSpacing.borderRadiusSm,
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.6),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 4.w,
+          vertical: 4.h,
+        ),
+        child: Center(
+          child: TikiAttributeIcon(
+            attribute: attribute,
+            manifest: manifest,
+            iconSize: resolvedIconSize,
+          ),
+        ),
+      ),
+    );
+
     return Semantics(
       label: TikiAttributeSemantics.labelFor(attribute),
       container: true,
       child: ExcludeSemantics(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.surfaceContainerLow,
-            borderRadius: AppSpacing.borderRadiusSm,
-            border: Border.all(
-              color: AppColors.outlineVariant.withValues(alpha: 0.6),
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 4.w,
-              vertical: 4.h,
-            ),
-            child: Center(
-              child: TikiAttributeIcon(
-                attribute: attribute,
-                manifest: manifest,
-                iconSize: resolvedIconSize,
-              ),
-            ),
-          ),
-        ),
+        child: expand
+            ? SizedBox(width: double.infinity, height: double.infinity, child: header)
+            : header,
       ),
     );
   }

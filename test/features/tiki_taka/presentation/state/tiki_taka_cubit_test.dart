@@ -1,24 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
 import 'package:shifttac/features/tiki_taka/data/local/daos/validation_dao.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_board.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_player_search_result.dart';
 import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.dart';
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_state.dart';
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart';
-import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
 
 import '../../data/local/tiki_taka_dao_test_support.dart';
 
 TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
-  return TikiTakaDependencies(
-    boardDao: BoardDao(handle.database),
-    playerSearchDao: PlayerSearchDao(handle.database),
-    answerValidator: AnswerValidator(ValidationDao(handle.database)),
-  );
+  return tikiTakaTestDependencies(handle);
 }
 
 TikiTakaCubit _createCubit(TikiTakaTestDatabaseHandle handle) {
@@ -71,6 +66,7 @@ Future<TikiPlayerSearchResult?> _findValidPlayer({
   required TikiBoard board,
   required int row,
   required int col,
+  Set<String> excludePlayerIds = const {},
 }) async {
   final matches = await databaseHandle.database.rawQuery(
     '''
@@ -80,16 +76,19 @@ Future<TikiPlayerSearchResult?> _findValidPlayer({
       ON a.player_id = p.id AND a.attribute_id = ?
     INNER JOIN player_attributes b
       ON b.player_id = p.id AND b.attribute_id = ?
-    LIMIT 1
+    LIMIT 20
     ''',
     [board.rowAttributes[row].id, board.columnAttributes[col].id],
   );
 
-  if (matches.isEmpty) {
-    return null;
+  for (final match in matches) {
+    final player = TikiPlayerSearchResult.fromMap(match);
+    if (!excludePlayerIds.contains(player.id)) {
+      return player;
+    }
   }
 
-  return TikiPlayerSearchResult.fromMap(matches.first);
+  return null;
 }
 
 void main() {
@@ -115,11 +114,19 @@ void main() {
       expect(cubit.state.status, TikiGameStatus.ongoing);
       expect(cubit.state.rowHeaders, hasLength(3));
       expect(cubit.state.columnHeaders, hasLength(3));
-      expect(cubit.state.rowHeaders.every((attr) => attr.type == 'club'), isTrue);
       expect(
-        cubit.state.columnHeaders.every((attr) => attr.type == 'nation'),
-        isTrue,
+        cubit.state.rowHeaders.map((attribute) => attribute.id).toSet(),
+        hasLength(3),
       );
+      expect(
+        cubit.state.columnHeaders.map((attribute) => attribute.id).toSet(),
+        hasLength(3),
+      );
+      final headerIds = {
+        ...cubit.state.rowHeaders.map((attribute) => attribute.id),
+        ...cubit.state.columnHeaders.map((attribute) => attribute.id),
+      };
+      expect(headerIds, hasLength(6));
       expect(cubit.state.game.cells, hasLength(9));
       expect(cubit.state.hearts, TikiGameState.startingHearts);
     });
@@ -129,8 +136,8 @@ void main() {
       addTearDown(cubit.close);
 
       await cubit.loadBoard();
+
       await Future<void>.delayed(const Duration(milliseconds: 1100));
-      cubit.refreshElapsedForTest();
 
       expect(cubit.state.elapsedMs, greaterThanOrEqualTo(1000));
     });
@@ -174,25 +181,24 @@ void main() {
     });
 
     test('timer keeps running during firstWin and after continue', () async {
-      final board = await BoardDao(handle.database).loadDefaultBoard();
-      expect(board, isNotNull);
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+      final board = cubit.state.game.board!;
+      await Future<void>.delayed(const Duration(milliseconds: 500));
 
       final rowPlayers = <TikiPlayerSearchResult>[];
       for (var col = 0; col < 3; col++) {
         final player = await _findValidPlayer(
           databaseHandle: handle,
-          board: board!,
+          board: board,
           row: 0,
           col: col,
+          excludePlayerIds: rowPlayers.map((item) => item.id).toSet(),
         );
         expect(player, isNotNull);
         rowPlayers.add(player!);
       }
-
-      final cubit = _createCubit(handle);
-      addTearDown(cubit.close);
-      await cubit.loadBoard();
-      await Future<void>.delayed(const Duration(milliseconds: 500));
 
       for (var col = 0; col < 3; col++) {
         cubit.onCellTapped(0, col);
@@ -316,19 +322,18 @@ void main() {
     });
 
     test('first win is reached through valid selections', () async {
-      final board = await BoardDao(handle.database).loadDefaultBoard();
-      expect(board, isNotNull);
-
       final cubit = _createCubit(handle);
       addTearDown(cubit.close);
       await cubit.loadBoard();
+      final board = cubit.state.game.board!;
 
       for (var col = 0; col < 3; col++) {
         final player = await _findValidPlayer(
           databaseHandle: handle,
-          board: board!,
+          board: board,
           row: 0,
           col: col,
+          excludePlayerIds: cubit.state.game.usedPlayerIds,
         );
         expect(player, isNotNull);
 
@@ -342,30 +347,30 @@ void main() {
     });
 
     test('completed is reached after continue and filling the board', () async {
-      final board = await BoardDao(handle.database).loadDefaultBoard();
-      expect(board, isNotNull);
-
       final cubit = _createCubit(handle);
       addTearDown(cubit.close);
       await cubit.loadBoard();
+      final board = cubit.state.game.board!;
 
       for (var col = 0; col < 3; col++) {
         final player = await _findValidPlayer(
           databaseHandle: handle,
-          board: board!,
+          board: board,
           row: 0,
           col: col,
+          excludePlayerIds: cubit.state.game.usedPlayerIds,
         );
         expect(player, isNotNull);
         cubit.onCellTapped(0, col);
-        await cubit.selectPlayer(player!);
+        final result = await cubit.selectPlayer(player!);
+        expect(result, TikiSelectPlayerResult.accepted);
       }
 
       expect(cubit.state.status, TikiGameStatus.firstWin);
       cubit.continueAfterFirstWin();
       expect(cubit.state.status, TikiGameStatus.continuing);
 
-      final loadedBoard = board!;
+      final loadedBoard = board;
       for (var row = 0; row < 3; row++) {
         for (var col = 0; col < 3; col++) {
           if (cubit.state.game.cellAt(row, col).isFilled) {
@@ -377,6 +382,7 @@ void main() {
             board: loadedBoard,
             row: row,
             col: col,
+            excludePlayerIds: cubit.state.game.usedPlayerIds,
           );
           expect(
             player,
@@ -392,6 +398,31 @@ void main() {
 
       expect(cubit.state.status, TikiGameStatus.completed);
       expect(cubit.state.game.filledCellCount, 9);
+    });
+
+    test('restart loads a fresh random board', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+      final firstSignature = [
+        ...cubit.state.rowHeaders.map((attribute) => attribute.id),
+        ...cubit.state.columnHeaders.map((attribute) => attribute.id),
+      ];
+
+      var foundDifferent = false;
+      for (var attempt = 0; attempt < 12; attempt++) {
+        await cubit.restart();
+        final nextSignature = [
+          ...cubit.state.rowHeaders.map((attribute) => attribute.id),
+          ...cubit.state.columnHeaders.map((attribute) => attribute.id),
+        ];
+        if (!listEquals(firstSignature, nextSignature)) {
+          foundDifferent = true;
+          break;
+        }
+      }
+
+      expect(foundDifferent, isTrue);
     });
 
     test('restart clears cells, used players, timer, and hearts', () async {
@@ -494,6 +525,7 @@ void main() {
           board: board,
           row: 0,
           col: col,
+          excludePlayerIds: rowPlayers.map((item) => item.id).toSet(),
         );
         expect(player, isNotNull);
         rowPlayers.add(player!);

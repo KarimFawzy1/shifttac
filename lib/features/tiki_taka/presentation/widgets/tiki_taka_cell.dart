@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -60,16 +62,21 @@ class TikiTakaCell extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(6.w),
               child: filled
-                  ? FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        label!,
-                        style: AppTextStyles.labelBold.copyWith(
-                          fontSize: 11.sp,
-                          color: AppColors.onSurface,
+                  ? Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Transform.rotate(
+                          angle: -math.pi / 4,
+                          child: Text(
+                            label!,
+                            style: AppTextStyles.labelBold.copyWith(
+                              fontSize: 11.sp,
+                              color: AppColors.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
                       ),
                     )
                   : null,

@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shifttac/features/tiki_taka/data/local/tiki_taka_database.dart';
 import 'package:shifttac/features/tiki_taka/data/local/tiki_taka_database_paths.dart';
+import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class _BundledDbAssetBundle extends AssetBundle {
@@ -77,4 +78,8 @@ Future<TikiTakaTestDatabaseHandle> openTikiTakaTestDatabase() async {
   await service.open();
 
   return TikiTakaTestDatabaseHandle._(service.database, tempDir, service);
+}
+
+TikiTakaDependencies tikiTakaTestDependencies(TikiTakaTestDatabaseHandle handle) {
+  return TikiTakaDependencies.fromDatabase(handle.database);
 }

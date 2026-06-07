@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/features/game/presentation/widgets/player_turn_indicator.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/validation_dao.dart';
-import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 import 'package:shifttac/features/tiki_taka/presentation/screens/tiki_taka_entry_screen.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
@@ -14,11 +9,7 @@ import '../data/local/tiki_taka_dao_test_support.dart';
 import '../presentation/tiki_taka_widget_test_support.dart';
 
 TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
-  return TikiTakaDependencies(
-    boardDao: BoardDao(handle.database),
-    playerSearchDao: PlayerSearchDao(handle.database),
-    answerValidator: AnswerValidator(ValidationDao(handle.database)),
-  );
+  return tikiTakaTestDependencies(handle);
 }
 
 /// Release-gate smoke: offline local DB → entry → playable board (T6+ hygiene).

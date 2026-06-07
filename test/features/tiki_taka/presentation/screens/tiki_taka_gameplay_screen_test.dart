@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/features/game/presentation/widgets/player_panel.dart';
 import 'package:shifttac/features/game/presentation/widgets/player_turn_indicator.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
-import 'package:shifttac/features/tiki_taka/data/local/daos/validation_dao.dart';
-import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 import 'package:shifttac/features/tiki_taka/presentation/screens/tiki_taka_gameplay_screen.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_attribute_header.dart';
@@ -19,11 +13,7 @@ import '../../data/local/tiki_taka_dao_test_support.dart';
 import '../tiki_taka_widget_test_support.dart';
 
 TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
-  return TikiTakaDependencies(
-    boardDao: BoardDao(handle.database),
-    playerSearchDao: PlayerSearchDao(handle.database),
-    answerValidator: AnswerValidator(ValidationDao(handle.database)),
-  );
+  return tikiTakaTestDependencies(handle);
 }
 
 Future<void> _pumpScreen(WidgetTester tester, Widget child) async {

@@ -6,11 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/image_constants.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_icon_button.dart';
+import '../../../game/presentation/widgets/exit_game_dialog.dart';
 import '../../domain/models/tiki_game_status.dart';
 import '../state/tiki_taka_cubit.dart';
 import '../state/tiki_taka_state.dart';
@@ -69,15 +71,59 @@ class _TikiTakaGameplayBody extends StatelessWidget {
         status == TikiGameStatus.lost;
   }
 
-  static void _openPauseSheet(BuildContext context) {
-    if (TikiTakaPauseSheet.isVisible ||
+  static bool _isActiveMatch(TikiGameStatus status) {
+    return switch (status) {
+      TikiGameStatus.ongoing ||
+      TikiGameStatus.continuing ||
+      TikiGameStatus.firstWin => true,
+      TikiGameStatus.initial ||
+      TikiGameStatus.loadingBoard ||
+      TikiGameStatus.completed ||
+      TikiGameStatus.lost => false,
+    };
+  }
+
+  static bool _isOverlayVisible() {
+    return TikiTakaPauseSheet.isVisible ||
         TikiTakaFirstWinDialog.isVisible ||
         TikiTakaCompletionDialog.isVisible ||
         TikiTakaLostDialog.isVisible ||
-        PlayerSearchDialog.isVisible) {
+        PlayerSearchDialog.isVisible;
+  }
+
+  static void _openPauseSheet(BuildContext context) {
+    if (_isOverlayVisible()) {
       return;
     }
     unawaited(TikiTakaPauseSheet.show(context));
+  }
+
+  static Future<void> _handleBack(BuildContext context) async {
+    if (_isOverlayVisible()) {
+      return;
+    }
+
+    final cubit = context.read<TikiTakaCubit>();
+    final confirmed = await ExitGameDialog.show(
+      context,
+      lifecycle: ExitGameDialogLifecycle(
+        isMatchActive: () => _isActiveMatch(cubit.state.status),
+        pauseMatch: cubit.pauseTimer,
+        resumeMatch: cubit.resumeTimer,
+        isSessionOpen: () => !cubit.isClosed,
+      ),
+    );
+    if (!context.mounted || !confirmed) {
+      return;
+    }
+
+    cubit.exitMatch();
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else {
+      navigator.pushNamedAndRemoveUntil(AppRoutes.home, (_) => false);
+    }
   }
 
   @override
@@ -119,15 +165,13 @@ class _TikiTakaGameplayBody extends StatelessWidget {
           if (didPop) {
             return;
           }
-          _openPauseSheet(context);
+          unawaited(_handleBack(context));
         },
         child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: _systemUi,
           child: AppScaffold(
             fullWidthHeader: true,
-            header: _TikiTakaHeader(
-              onPause: () => _openPauseSheet(context),
-            ),
+            header: _TikiTakaHeader(onPause: () => _openPauseSheet(context)),
             child: BlocBuilder<TikiTakaCubit, TikiTakaState>(
               buildWhen: (previous, current) =>
                   previous.status != current.status ||
@@ -152,23 +196,17 @@ class _TikiTakaGameplayBody extends StatelessWidget {
                     else if (state.rowHeaders.length == 3 &&
                         state.columnHeaders.length == 3)
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: TikiBoardFrameLoader(
-                                rowHeaders: state.rowHeaders,
-                                columnHeaders: state.columnHeaders,
-                                board: const TikiTakaBoard(),
-                              ),
-                            ),
-                          ],
+                        child: TikiBoardFrameLoader(
+                          rowHeaders: state.rowHeaders,
+                          columnHeaders: state.columnHeaders,
+                          board: const TikiTakaBoard(),
                         ),
                       )
                     else
                       Expanded(
                         child: TikiTakaBoardUnavailableView(
-                          onRetry: () => context.read<TikiTakaCubit>().loadBoard(),
+                          onRetry: () =>
+                              context.read<TikiTakaCubit>().loadBoard(),
                         ),
                       ),
                   ],

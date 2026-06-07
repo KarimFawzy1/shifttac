@@ -15,6 +15,22 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../domain/models/game_status.dart';
 import '../state/game_cubit.dart';
 
+/// Optional pause/resume hooks when [ExitGameDialog.show] is used outside
+/// classic [GameCubit] gameplay.
+class ExitGameDialogLifecycle {
+  const ExitGameDialogLifecycle({
+    required this.isMatchActive,
+    required this.pauseMatch,
+    required this.resumeMatch,
+    required this.isSessionOpen,
+  });
+
+  final bool Function() isMatchActive;
+  final VoidCallback pauseMatch;
+  final VoidCallback resumeMatch;
+  final bool Function() isSessionOpen;
+}
+
 /// Confirms leaving an in-progress match before returning home.
 class ExitGameDialog extends StatelessWidget {
   const ExitGameDialog._({
@@ -30,12 +46,31 @@ class ExitGameDialog extends StatelessWidget {
   static const Duration _animationDuration = Duration(milliseconds: 300);
 
   /// Returns `true` when the player confirms leaving the match.
-  static Future<bool> show(BuildContext context) {
-    final cubit = context.read<GameCubit>();
-    final shouldResumeOnDismiss =
-        cubit.state.snapshot.status == GameStatus.playing;
+  static Future<bool> show(
+    BuildContext context, {
+    ExitGameDialogLifecycle? lifecycle,
+  }) {
+    late final bool shouldResumeOnDismiss;
+    late final VoidCallback pauseMatch;
+    late final VoidCallback resumeMatch;
+    late final bool Function() isSessionOpen;
+
+    if (lifecycle != null) {
+      shouldResumeOnDismiss = lifecycle.isMatchActive();
+      pauseMatch = lifecycle.pauseMatch;
+      resumeMatch = lifecycle.resumeMatch;
+      isSessionOpen = lifecycle.isSessionOpen;
+    } else {
+      final cubit = context.read<GameCubit>();
+      shouldResumeOnDismiss =
+          cubit.state.snapshot.status == GameStatus.playing;
+      pauseMatch = cubit.pauseMatch;
+      resumeMatch = cubit.resumeMatch;
+      isSessionOpen = () => !cubit.isClosed;
+    }
+
     if (shouldResumeOnDismiss) {
-      cubit.pauseMatch();
+      pauseMatch();
     }
     unawaited(AppAudioScope.read(context).playSwipe());
     final barrierLabel = MaterialLocalizations.of(
@@ -65,8 +100,8 @@ class ExitGameDialog extends StatelessWidget {
           child,
     ).then((confirmed) {
       final exitConfirmed = confirmed ?? false;
-      if (!cubit.isClosed && shouldResumeOnDismiss && !exitConfirmed) {
-        cubit.resumeMatch();
+      if (isSessionOpen() && shouldResumeOnDismiss && !exitConfirmed) {
+        resumeMatch();
       }
       return exitConfirmed;
     });
