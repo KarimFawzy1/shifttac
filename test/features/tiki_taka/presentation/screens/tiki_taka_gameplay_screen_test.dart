@@ -4,7 +4,6 @@ import 'package:shifttac/features/game/presentation/widgets/player_panel.dart';
 import 'package:shifttac/features/game/presentation/widgets/player_turn_indicator.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_player_search_result.dart';
 import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.dart';
-import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_state.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 import 'package:shifttac/features/tiki_taka/presentation/screens/tiki_taka_gameplay_screen.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
@@ -23,7 +22,11 @@ TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
 
 Future<void> _pumpScreen(WidgetTester tester, Widget child) async {
   await tester.pumpWidget(wrapTikiGameplayScreen(child));
-  await pumpTikiFrames(tester, frameCount: 5, frameDuration: const Duration(milliseconds: 100));
+  await pumpTikiFrames(
+    tester,
+    frameCount: 5,
+    frameDuration: const Duration(milliseconds: 100),
+  );
   await waitForTikiBoard(tester);
 }
 
