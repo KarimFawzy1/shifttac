@@ -55,6 +55,29 @@ class TikiTakaGameEngine {
     return state.copyWith(status: TikiGameStatus.continuing);
   }
 
+  /// Clears filled cells and used players while keeping the current board headers.
+  TikiGameState? clearBoard(TikiGameState state) {
+    if (state.board == null) {
+      return null;
+    }
+
+    if (state.status == TikiGameStatus.initial ||
+        state.status == TikiGameStatus.loadingBoard) {
+      return null;
+    }
+
+    if (state.filledCellCount == 0 && state.status == TikiGameStatus.ongoing) {
+      return null;
+    }
+
+    return state.copyWith(
+      cells: TikiCell.emptyBoard(),
+      usedPlayerIds: const {},
+      clearWinningLine: true,
+      status: TikiGameStatus.ongoing,
+    );
+  }
+
   TikiGameState updateElapsed(TikiGameState state, Duration elapsed) {
     if (!_timerActive(state.status)) {
       return state;

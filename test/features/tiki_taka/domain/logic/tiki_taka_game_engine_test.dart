@@ -300,6 +300,57 @@ void main() {
       expect(continued.winningLine, state.winningLine);
     });
 
+    test('clearBoard empties cells and used players while keeping headers', () {
+      var state = _ongoingState();
+      state = _attempt(
+        state: state,
+        row: 0,
+        col: 0,
+        player: _salah,
+        validation: const AnswerValidationResult.valid(_salah),
+      ).state;
+
+      final cleared = engine.clearBoard(state);
+
+      expect(cleared, isNotNull);
+      expect(cleared!.filledCellCount, 0);
+      expect(cleared.usedPlayerIds, isEmpty);
+      expect(cleared.winningLine, isNull);
+      expect(cleared.status, TikiGameStatus.ongoing);
+      expect(cleared.board, state.board);
+      expect(cleared.hearts, state.hearts);
+      expect(cleared.elapsed, state.elapsed);
+    });
+
+    test('clearBoard resets terminal statuses to ongoing', () {
+      var state = _ongoingState().copyWith(
+        status: TikiGameStatus.completed,
+        cells: TikiCell.emptyBoard()
+            .map(
+              (cell) => cell.copyWith(
+                player: TikiPlayerSearchResult(
+                  id: 'tm:${cell.row}${cell.col}',
+                  displayName: 'Player ${cell.row}${cell.col}',
+                ),
+              ),
+            )
+            .toList(growable: false),
+        usedPlayerIds: const {'tm:00'},
+      );
+
+      final cleared = engine.clearBoard(state);
+
+      expect(cleared, isNotNull);
+      expect(cleared!.status, TikiGameStatus.ongoing);
+      expect(cleared.filledCellCount, 0);
+    });
+
+    test('clearBoard is a no-op for an empty ongoing board', () {
+      final state = _ongoingState();
+
+      expect(engine.clearBoard(state), isNull);
+    });
+
     test('completing all 9 cells produces completed', () {
       var state = _ongoingState();
 

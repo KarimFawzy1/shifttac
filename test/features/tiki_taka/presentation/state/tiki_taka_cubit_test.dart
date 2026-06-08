@@ -489,6 +489,35 @@ void main() {
       expect(foundDifferent, isTrue);
     });
 
+    test('clearBoard clears cells and used players without reloading board',
+        () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+
+      await cubit.loadBoard();
+      final boardBeforeClear = cubit.state.game.board;
+
+      final board = cubit.state.game.board!;
+      final cell = await _findAnyValidCell(
+        databaseHandle: handle,
+        board: board,
+      );
+      expect(cell, isNotNull);
+
+      cubit.onCellTapped(cell!.$1, cell.$2);
+      await cubit.selectPlayer(cell.$3);
+      expect(cubit.state.game.filledCellCount, 1);
+      expect(cubit.state.canClearBoard, isTrue);
+
+      cubit.clearBoard();
+
+      expect(cubit.state.game.board, boardBeforeClear);
+      expect(cubit.state.game.usedPlayerIds, isEmpty);
+      expect(cubit.state.game.filledCellCount, 0);
+      expect(cubit.state.canClearBoard, isFalse);
+      expect(cubit.state.activeCell, isNull);
+    });
+
     test('restart clears cells, used players, timer, and hearts', () async {
       final cubit = _createCubit(handle);
       addTearDown(cubit.close);

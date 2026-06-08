@@ -57,6 +57,22 @@ class TikiTakaState extends Equatable {
 
   bool get isPlayable => game.isPlayable && !inputLocked;
 
+  /// Whether the board can be cleared to refill player names on the same headers.
+  bool get canClearBoard {
+    if (game.board == null) {
+      return false;
+    }
+
+    return switch (status) {
+      TikiGameStatus.initial || TikiGameStatus.loadingBoard => false,
+      TikiGameStatus.ongoing => game.filledCellCount > 0,
+      TikiGameStatus.continuing ||
+      TikiGameStatus.firstWin ||
+      TikiGameStatus.completed ||
+      TikiGameStatus.lost => true,
+    };
+  }
+
   TikiTakaState copyWith({
     TikiGameState? game,
     Object? inputLocked = _kUnset,

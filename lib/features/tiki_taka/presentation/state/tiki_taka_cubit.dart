@@ -8,6 +8,7 @@ import '../../data/local/daos/board_dao.dart';
 import '../../data/local/daos/player_search_dao.dart';
 import '../../data/local/daos/validation_dao.dart';
 import '../../data/local/tiki_taka_database.dart';
+import '../../data/models/tiki_board.dart';
 import '../../data/models/tiki_player_search_result.dart';
 import '../../domain/logic/tiki_taka_game_engine.dart';
 import '../../domain/models/tiki_game_status.dart';
@@ -163,6 +164,7 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
     }
 
     game = _engine.boardLoaded(game, board);
+    _logBoardAttributes(board);
     emit(
       state.copyWith(
         game: game,
@@ -174,6 +176,20 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
       ),
     );
     _resetTimer();
+  }
+
+  void _logBoardAttributes(TikiBoard board) {
+    if (!kDebugMode) {
+      return;
+    }
+    final header1 =
+        board.rowAttributes.map((attribute) => attribute.displayName).join(', ');
+    final header2 =
+        board.columnAttributes
+            .map((attribute) => attribute.displayName)
+            .join(', ');
+    debugPrint('Header1 =>  $header1');
+    debugPrint('Header2 =>  $header2');
   }
 
   TikiCellTapResult onCellTapped(int row, int col) {
@@ -317,6 +333,26 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
     closeSearch();
     _stopTimer();
     await loadBoard();
+  }
+
+  void clearBoard() {
+    final cleared = _engine.clearBoard(state.game);
+    if (cleared == null) {
+      return;
+    }
+
+    closeSearch();
+    emit(
+      state.copyWith(
+        game: cleared,
+        inputLocked: false,
+        clearActiveCell: true,
+        searchResults: const [],
+        searchQuery: '',
+        isSearching: false,
+      ),
+    );
+    _syncTimerToStatus(cleared.status);
   }
 
   void pauseTimer() {

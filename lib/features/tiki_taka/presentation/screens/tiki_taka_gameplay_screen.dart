@@ -171,7 +171,24 @@ class _TikiTakaGameplayBody extends StatelessWidget {
           value: _systemUi,
           child: AppScaffold(
             fullWidthHeader: true,
-            header: _TikiTakaHeader(onPause: () => _openPauseSheet(context)),
+            header: BlocBuilder<TikiTakaCubit, TikiTakaState>(
+              buildWhen: (previous, current) =>
+                  previous.canClearBoard != current.canClearBoard,
+              builder: (context, state) {
+                return _TikiTakaHeader(
+                  onPause: () => _openPauseSheet(context),
+                  onRestart: () {
+                    if (_isOverlayVisible()) {
+                      return;
+                    }
+                    unawaited(context.read<TikiTakaCubit>().restart());
+                  },
+                  onClearBoard: state.canClearBoard
+                      ? () => context.read<TikiTakaCubit>().clearBoard()
+                      : null,
+                );
+              },
+            ),
             child: BlocBuilder<TikiTakaCubit, TikiTakaState>(
               buildWhen: (previous, current) =>
                   previous.status != current.status ||
@@ -221,9 +238,18 @@ class _TikiTakaGameplayBody extends StatelessWidget {
 }
 
 class _TikiTakaHeader extends StatelessWidget {
-  const _TikiTakaHeader({required this.onPause});
+  const _TikiTakaHeader({
+    required this.onPause,
+    required this.onRestart,
+    this.onClearBoard,
+  });
+
+  static const Key clearBoardButtonKey = Key('tiki_clear_board');
+  static const Key restartTitleKey = Key('tiki_restart_title');
 
   final VoidCallback onPause;
+  final VoidCallback onRestart;
+  final VoidCallback? onClearBoard;
 
   @override
   Widget build(BuildContext context) {
@@ -243,10 +269,11 @@ class _TikiTakaHeader extends StatelessWidget {
         height: 64.h,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            vertical: 16.h,
+            vertical: 8.h,
             horizontal: AppSpacing.containerPadding.w,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AppIconButton(
                 iconAsset: IconConstant.pause,
@@ -254,15 +281,42 @@ class _TikiTakaHeader extends StatelessWidget {
                 onPressed: onPause,
               ),
               Expanded(
-                child: Text(
-                  'Tiki-Taka',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.titleXs.copyWith(
-                    color: AppColors.inkNavy,
+                child: Center(
+                  child: Semantics(
+                    button: true,
+                    label: 'Restart match',
+                    child: Material(
+                      type: MaterialType.transparency,
+                      clipBehavior: Clip.none,
+                      child: InkWell(
+                        key: restartTitleKey,
+                        onTap: () {
+                          Feedback.forTap(context);
+                          onRestart();
+                        },
+                        borderRadius: AppSpacing.borderRadiusMd,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
+                          child: Text(
+                            'Tiki-Taka',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.titleXs.copyWith(
+                              color: AppColors.inkNavy,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-              SizedBox(width: 48.w),
+              AppIconButton(
+                key: clearBoardButtonKey,
+                iconAsset: IconConstant.restart,
+                semanticLabel: 'Clear board',
+                onPressed: onClearBoard,
+              ),
             ],
           ),
         ),
