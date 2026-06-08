@@ -13,7 +13,7 @@ import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.d
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_cell.dart';
 
-import '../../data/local/tiki_taka_dao_test_support.dart';
+import '../../support/tiki_taka_dao_test_support.dart';
 
 const _salah = TikiPlayerSearchResult(
   id: 'tm:148455',

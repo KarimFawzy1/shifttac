@@ -12,7 +12,7 @@ import 'package:shifttac/features/tiki_taka/presentation/screens/tiki_taka_entry
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_database_error_view.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import '../tiki_taka_widget_test_support.dart';
+import '../../support/tiki_taka_widget_test_support.dart';
 
 class _BundledDbAssetBundle extends AssetBundle {
   _BundledDbAssetBundle(this.bytes);

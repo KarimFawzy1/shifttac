@@ -83,18 +83,19 @@ shifttac/
 │   ├── design.md
 │   └── structure.md
 │
-├── test/
-│   ├── shift_game_engine_test.dart
-│   ├── classic_game_engine_test.dart
-│   ├── game_cubit_test.dart
-│   ├── game_rules_test.dart
-│   ├── board_appearance_mapper_test.dart
-│   ├── match_presentation_test.dart
-│   ├── match_result_dialog_test.dart
-│   ├── match_result_test.dart
-│   ├── app_router_test.dart
-│   ├── home_screen_test.dart
-│   └── win_checker_test.dart
+├── test/                     ← mirrors lib/ layout
+│   ├── widget_test.dart      ← app smoke test (Flutter default)
+│   ├── core/
+│   │   ├── routing/          ← app_router, morph navigation
+│   │   └── settings/         ← app settings controller/prefs
+│   └── features/
+│       ├── game/
+│       │   ├── domain/logic/ ← engines, bots, win checker
+│       │   ├── domain/models/
+│       │   └── presentation/ ← cubit, widgets, screens
+│       ├── home/presentation/screens/
+│       ├── how_to_play/presentation/screens/
+│       └── tiki_taka/        ← data, domain, presentation, release, support/
 │
 ├── pubspec.yaml
 └── README.md

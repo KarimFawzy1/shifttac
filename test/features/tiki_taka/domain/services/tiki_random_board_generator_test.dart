@@ -5,7 +5,7 @@ import 'package:shifttac/features/tiki_taka/data/local/daos/attribute_pair_stats
 import 'package:shifttac/features/tiki_taka/data/models/tiki_attribute.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/tiki_random_board_generator.dart';
 
-import '../../data/local/tiki_taka_dao_test_support.dart';
+import '../../support/tiki_taka_dao_test_support.dart';
 
 void main() {
   late TikiTakaTestDatabaseHandle handle;

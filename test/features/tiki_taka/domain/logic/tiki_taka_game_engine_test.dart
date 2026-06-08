@@ -10,7 +10,7 @@ import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_state.dart';
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/answer_validator.dart';
 
-import '../../data/local/tiki_taka_dao_test_support.dart';
+import '../../support/tiki_taka_dao_test_support.dart';
 
 const _salah = TikiPlayerSearchResult(
   id: 'tm:148455',

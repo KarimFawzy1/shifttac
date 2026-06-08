@@ -13,8 +13,8 @@ import 'package:shifttac/features/tiki_taka/presentation/widgets/player_search_d
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_hud.dart';
 
-import '../../data/local/tiki_taka_dao_test_support.dart';
-import '../tiki_taka_widget_test_support.dart';
+import '../../support/tiki_taka_dao_test_support.dart';
+import '../../support/tiki_taka_widget_test_support.dart';
 
 TikiTakaDependencies _dependencies(TikiTakaTestDatabaseHandle handle) {
   return tikiTakaTestDependencies(handle);

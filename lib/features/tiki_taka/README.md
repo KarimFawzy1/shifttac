@@ -77,12 +77,12 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 
 | Area | Location |
 | --- | --- |
-| DB smoke | `test/tiki_taka_database_smoke_test.dart` |
+| DB smoke | `test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart` |
 | DAO integration | `test/features/tiki_taka/data/local/*_dao_test.dart` |
 | Engine + validator flows | `test/features/tiki_taka/domain/logic/tiki_taka_game_engine_test.dart` |
 | Cubit integration flows | `test/features/tiki_taka/presentation/state/tiki_taka_cubit_test.dart` |
 | Widget regression | `test/features/tiki_taka/presentation/widgets/`, `screens/tiki_taka_gameplay_screen_test.dart` |
-| Shared widget pumps | `test/features/tiki_taka/presentation/tiki_taka_widget_test_support.dart` |
+| Shared test helpers | `test/features/tiki_taka/support/` |
 | Release performance + smoke | `test/features/tiki_taka/release/` |
 
 ## Release checks (T12)

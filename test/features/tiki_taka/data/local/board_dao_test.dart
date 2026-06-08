@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
-import 'tiki_taka_dao_test_support.dart';
+import '../../support/tiki_taka_dao_test_support.dart';
 
 void main() {
   late TikiTakaTestDatabaseHandle handle;

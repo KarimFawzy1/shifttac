@@ -4,7 +4,7 @@ import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart'
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_lost_dialog.dart';
 
-import 'tiki_taka_dialog_test_support.dart';
+import '../../support/tiki_taka_dialog_test_support.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

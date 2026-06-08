@@ -3,7 +3,7 @@ import 'package:shifttac/features/tiki_taka/data/local/daos/board_dao.dart';
 import 'package:shifttac/features/tiki_taka/data/local/daos/player_search_dao.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/tiki_taka_release_budgets.dart';
 
-import '../data/local/tiki_taka_dao_test_support.dart';
+import '../support/tiki_taka_dao_test_support.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

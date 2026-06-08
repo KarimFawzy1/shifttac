@@ -13,9 +13,9 @@ import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_first
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_lost_dialog.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_pause_sheet.dart';
 
-import '../../data/local/tiki_taka_dao_test_support.dart';
+import 'tiki_taka_dao_test_support.dart';
 
-export '../../data/local/tiki_taka_dao_test_support.dart';
+export 'tiki_taka_dao_test_support.dart';
 
 const testBoard = TikiBoard(
   id: 'test_board',
