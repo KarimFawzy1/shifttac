@@ -4,7 +4,7 @@ import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart'
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_first_win_dialog.dart';
 
-import 'tiki_taka_dialog_test_support.dart';
+import '../../support/tiki_taka_dialog_test_support.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -76,5 +76,34 @@ void main() {
     expect(continueTapped, isTrue);
     expect(restartTapped, isFalse);
     expect(goHomeTapped, isFalse);
+  });
+
+  testWidgets('does not overflow when keyboard inset reduces height', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(
+          size: Size(390, 844),
+          viewInsets: EdgeInsets.only(bottom: 320),
+        ),
+        child: wrapTikiDialogTest(
+          cubit: cubit,
+          child: TikiTakaFirstWinDialog.forTest(
+            routeAnimation: const AlwaysStoppedAnimation<double>(1),
+            elapsed: const Duration(minutes: 2, seconds: 5),
+            hearts: 4,
+            onContinue: () => continueTapped = true,
+            onRestart: () => restartTapped = true,
+            onGoHome: () => goHomeTapped = true,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Line complete!'), findsOneWidget);
+    expect(find.text('Continue Playing'), findsOneWidget);
   });
 }

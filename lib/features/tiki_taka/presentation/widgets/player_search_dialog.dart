@@ -54,24 +54,36 @@ class PlayerSearchDialog extends StatefulWidget {
   @visibleForTesting
   static const Key searchFieldKey = _SearchField.fieldKey;
 
-  static Future<void> show(BuildContext context) {
+  static Future<void> show(BuildContext context) async {
     if (_isVisible) {
-      return Future<void>.value();
+      return;
     }
 
     final cubit = context.read<TikiTakaCubit>();
     final activeCell = cubit.state.activeCell;
     final board = cubit.state.game.board;
     if (activeCell == null || board == null) {
-      return Future<void>.value();
+      return;
     }
 
     final rowAttribute = board.rowAttributes[activeCell.row];
     final columnAttribute = board.columnAttributes[activeCell.col];
+
+    TikiAttributeAssetManifest manifest;
+    try {
+      manifest = await TikiAttributeAssetManifest.load();
+    } catch (_) {
+      manifest = TikiAttributeAssetManifest.empty();
+    }
+
+    if (!context.mounted || _isVisible || cubit.state.activeCell == null) {
+      return;
+    }
+
     final localizations = MaterialLocalizations.of(context);
 
     _isVisible = true;
-    return showGeneralDialog<void>(
+    await showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,
       barrierLabel: localizations.modalBarrierDismissLabel,
@@ -80,32 +92,21 @@ class PlayerSearchDialog extends StatefulWidget {
       pageBuilder: (dialogContext, animation, secondaryAnimation) {
         return BlocProvider.value(
           value: cubit,
-          child: FutureBuilder<TikiAttributeAssetManifest>(
-            future: TikiAttributeAssetManifest.load(),
-            builder: (context, snapshot) {
-              final manifest = snapshot.data;
-              if (manifest == null) {
-                return const SizedBox.shrink();
-              }
-
-              return PlayerSearchDialog._(
-                routeAnimation: animation,
-                rowAttribute: rowAttribute,
-                columnAttribute: columnAttribute,
-                manifest: manifest,
-              );
-            },
+          child: PlayerSearchDialog._(
+            routeAnimation: animation,
+            rowAttribute: rowAttribute,
+            columnAttribute: columnAttribute,
+            manifest: manifest,
           ),
         );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) =>
           child,
-    ).whenComplete(() {
-      _isVisible = false;
-      if (!cubit.isClosed && cubit.state.activeCell != null) {
-        cubit.closeSearch();
-      }
-    });
+    );
+    _isVisible = false;
+    if (!cubit.isClosed && cubit.state.activeCell != null) {
+      cubit.closeSearch();
+    }
   }
 
   @override
@@ -114,17 +115,29 @@ class PlayerSearchDialog extends StatefulWidget {
 
 class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
   final TextEditingController _queryController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   Timer? _searchDebounce;
+  bool _isClosing = false;
 
   @override
   void initState() {
     super.initState();
+    final existingQuery = context.read<TikiTakaCubit>().state.searchQuery;
+    if (existingQuery.isNotEmpty) {
+      _queryController.text = existingQuery;
+    }
     _queryController.addListener(_onQueryChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _searchFocusNode.requestFocus();
+      }
+    });
   }
 
   @override
   void dispose() {
     _searchDebounce?.cancel();
+    _searchFocusNode.dispose();
     _queryController
       ..removeListener(_onQueryChanged)
       ..dispose();
@@ -142,6 +155,13 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
   }
 
   void _close() {
+    if (!mounted || _isClosing) {
+      return;
+    }
+
+    _isClosing = true;
+    FocusManager.instance.primaryFocus?.unfocus();
+    context.read<TikiTakaCubit>().closeSearch();
     Navigator.of(context).pop();
   }
 
@@ -212,7 +232,14 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: SlideTransition(position: sheetSlide, child: child),
+                child: AnimatedPadding(
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.viewInsetsOf(context).bottom,
+                  ),
+                  child: SlideTransition(position: sheetSlide, child: child),
+                ),
               ),
             ],
           ),
@@ -220,6 +247,7 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
       },
       child: _PlayerSearchSheet(
         queryController: _queryController,
+        searchFocusNode: _searchFocusNode,
         rowAttribute: widget.rowAttribute,
         columnAttribute: widget.columnAttribute,
         manifest: widget.manifest,
@@ -233,6 +261,7 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
 class _PlayerSearchSheet extends StatelessWidget {
   const _PlayerSearchSheet({
     required this.queryController,
+    required this.searchFocusNode,
     required this.rowAttribute,
     required this.columnAttribute,
     required this.manifest,
@@ -241,6 +270,7 @@ class _PlayerSearchSheet extends StatelessWidget {
   });
 
   final TextEditingController queryController;
+  final FocusNode searchFocusNode;
   final TikiAttribute rowAttribute;
   final TikiAttribute columnAttribute;
   final TikiAttributeAssetManifest manifest;
@@ -249,6 +279,15 @@ class _PlayerSearchSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final keyboardOpen = mediaQuery.viewInsets.bottom > 0;
+    final innerVerticalPadding = AppSpacing.stackMd.h * 2;
+    final maxSheetHeight = mediaQuery.size.height -
+        mediaQuery.viewInsets.bottom -
+        mediaQuery.padding.top -
+        innerVerticalPadding -
+        8.h;
+
     return Semantics(
       scopesRoute: true,
       namesRoute: true,
@@ -280,44 +319,69 @@ class _PlayerSearchSheet extends StatelessWidget {
                 AppSpacing.containerPadding.w,
                 AppSpacing.stackMd.h,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _SheetHandle(onClose: onClose),
-                  SizedBox(height: AppSpacing.stackSm.h),
-                  Text(
-                    'Find a player',
-                    style: AppTextStyles.titleXs.copyWith(
-                      color: AppColors.inkNavy,
-                    ),
-                  ),
-                  SizedBox(height: AppSpacing.stackSm.h),
-                  _CellContextRow(
-                    rowAttribute: rowAttribute,
-                    columnAttribute: columnAttribute,
-                    manifest: manifest,
-                  ),
-                  SizedBox(height: AppSpacing.stackMd.h),
-                  _SearchField(controller: queryController),
-                  SizedBox(height: AppSpacing.stackSm.h),
-                  BlocBuilder<TikiTakaCubit, TikiTakaState>(
-                    buildWhen: (previous, current) =>
-                        previous.searchQuery != current.searchQuery ||
-                        previous.searchResults != current.searchResults ||
-                        previous.isSearching != current.isSearching ||
-                        previous.inputLocked != current.inputLocked,
-                    builder: (context, state) {
-                      return _SearchResultsPanel(
-                        query: state.searchQuery,
-                        results: state.searchResults,
-                        isSearching: state.isSearching,
-                        selectionLocked: state.inputLocked,
-                        onPlayerSelected: onPlayerSelected,
-                      );
-                    },
-                  ),
-                ],
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxSheetHeight),
+                child: ListenableBuilder(
+                  listenable: queryController,
+                  builder: (context, _) {
+                    return BlocBuilder<TikiTakaCubit, TikiTakaState>(
+                      buildWhen: (previous, current) =>
+                          previous.searchQuery != current.searchQuery ||
+                          previous.searchResults != current.searchResults ||
+                          previous.isSearching != current.isSearching ||
+                          previous.inputLocked != current.inputLocked,
+                      builder: (context, state) {
+                        final hasQuery =
+                            queryController.text.trim().isNotEmpty ||
+                            state.searchQuery.trim().isNotEmpty;
+                        final lockResultsHeight = keyboardOpen || hasQuery;
+                        final panelQuery = queryController.text.isNotEmpty
+                            ? queryController.text
+                            : state.searchQuery;
+                        final resultsPanel = _SearchResultsPanel(
+                          query: panelQuery,
+                          results: state.searchResults,
+                          isSearching: state.isSearching,
+                          selectionLocked: state.inputLocked,
+                          onPlayerSelected: onPlayerSelected,
+                        );
+
+                        return Column(
+                          mainAxisSize: lockResultsHeight
+                              ? MainAxisSize.max
+                              : MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _SheetHandle(onClose: onClose),
+                            SizedBox(height: AppSpacing.stackSm.h),
+                            Text(
+                              'Find a player',
+                              style: AppTextStyles.titleXs.copyWith(
+                                color: AppColors.inkNavy,
+                              ),
+                            ),
+                            SizedBox(height: AppSpacing.stackSm.h),
+                            _CellContextRow(
+                              rowAttribute: rowAttribute,
+                              columnAttribute: columnAttribute,
+                              manifest: manifest,
+                            ),
+                            SizedBox(height: AppSpacing.stackMd.h),
+                            _SearchField(
+                              controller: queryController,
+                              focusNode: searchFocusNode,
+                            ),
+                            SizedBox(height: AppSpacing.stackSm.h),
+                            if (lockResultsHeight)
+                              Expanded(child: resultsPanel)
+                            else
+                              resultsPanel,
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -421,17 +485,23 @@ class _CellContextRow extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({required this.controller});
+  const _SearchField({
+    required this.controller,
+    required this.focusNode,
+  });
 
   static const Key fieldKey = Key('tiki_player_search_field');
 
   final TextEditingController controller;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       key: fieldKey,
       controller: controller,
+      focusNode: focusNode,
+      autofocus: true,
       textInputAction: TextInputAction.search,
       style: AppTextStyles.bodyMd.copyWith(color: AppColors.onSurface),
       decoration: InputDecoration(
@@ -489,54 +559,66 @@ class _SearchResultsPanel extends StatelessWidget {
     final trimmedQuery = query.trim();
 
     if (trimmedQuery.isEmpty) {
-      return _StatusMessage(
-        icon: Icons.person_search_outlined,
-        message: 'Search for a player who matches both attributes.',
+      return Center(
+        child: _StatusMessage(
+          icon: Icons.person_search_outlined,
+          message: 'Search for a player who matches both attributes.',
+        ),
       );
     }
 
-    if (isSearching) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24.h),
-        child: const Center(child: CircularProgressIndicator()),
-      );
+    if (isSearching && results.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (results.isEmpty) {
-      return _StatusMessage(
-        icon: Icons.search_off_rounded,
-        message: 'No players found for "$trimmedQuery".',
+      return Center(
+        child: _StatusMessage(
+          icon: Icons.search_off_rounded,
+          message: 'No players found for "$trimmedQuery".',
+        ),
       );
     }
 
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: 280.h),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLow,
-          borderRadius: AppSpacing.borderRadiusMd,
-          border: Border.all(
-            color: AppColors.outlineVariant.withValues(alpha: 0.5),
+    return Stack(
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.surfaceContainerLow,
+            borderRadius: AppSpacing.borderRadiusMd,
+            border: Border.all(
+              color: AppColors.outlineVariant.withValues(alpha: 0.5),
+            ),
+          ),
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(vertical: 4.h),
+            itemCount: results.length,
+            separatorBuilder: (context, index) => Divider(
+              height: 1,
+              color: AppColors.outlineVariant.withValues(alpha: 0.35),
+            ),
+            itemBuilder: (context, index) {
+              final player = results[index];
+              return PlayerSearchResultTile(
+                player: player,
+                enabled: !selectionLocked && !isSearching,
+                onTap: () => onPlayerSelected(player),
+              );
+            },
           ),
         ),
-        child: ListView.separated(
-          shrinkWrap: true,
-          padding: EdgeInsets.symmetric(vertical: 4.h),
-          itemCount: results.length,
-          separatorBuilder: (context, index) => Divider(
-            height: 1,
-            color: AppColors.outlineVariant.withValues(alpha: 0.35),
+        if (isSearching)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: LinearProgressIndicator(
+              minHeight: 2.h,
+              backgroundColor: Colors.transparent,
+              color: AppColors.primary,
+            ),
           ),
-          itemBuilder: (context, index) {
-            final player = results[index];
-            return PlayerSearchResultTile(
-              player: player,
-              enabled: !selectionLocked,
-              onTap: () => onPlayerSelected(player),
-            );
-          },
-        ),
-      ),
+      ],
     );
   }
 }
@@ -550,8 +632,9 @@ class _StatusMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.h),
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: AppColors.onSurfaceVariant, size: 28.sp),
           SizedBox(height: AppSpacing.stackSm.h),

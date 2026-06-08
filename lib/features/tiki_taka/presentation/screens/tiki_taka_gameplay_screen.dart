@@ -143,19 +143,26 @@ class _TikiTakaGameplayBody extends StatelessWidget {
               previous.status != current.status &&
               _shouldShowOutcomeDialog(current.status),
           listener: (context, state) {
-            switch (state.status) {
-              case TikiGameStatus.firstWin:
-                unawaited(TikiTakaFirstWinDialog.show(context));
-              case TikiGameStatus.completed:
-                unawaited(TikiTakaCompletionDialog.show(context));
-              case TikiGameStatus.lost:
-                unawaited(TikiTakaLostDialog.show(context));
-              case TikiGameStatus.initial ||
-                  TikiGameStatus.loadingBoard ||
-                  TikiGameStatus.ongoing ||
-                  TikiGameStatus.continuing:
-                break;
-            }
+            FocusManager.instance.primaryFocus?.unfocus();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!context.mounted) {
+                return;
+              }
+
+              switch (state.status) {
+                case TikiGameStatus.firstWin:
+                  unawaited(TikiTakaFirstWinDialog.show(context));
+                case TikiGameStatus.completed:
+                  unawaited(TikiTakaCompletionDialog.show(context));
+                case TikiGameStatus.lost:
+                  unawaited(TikiTakaLostDialog.show(context));
+                case TikiGameStatus.initial ||
+                    TikiGameStatus.loadingBoard ||
+                    TikiGameStatus.ongoing ||
+                    TikiGameStatus.continuing:
+                  break;
+              }
+            });
           },
         ),
       ],

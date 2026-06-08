@@ -117,6 +117,13 @@ class TikiOutcomeDialogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final outerVerticalPadding = AppSpacing.stackLg.h + AppSpacing.stackMd.h;
+    final maxHeight = mediaQuery.size.height -
+        mediaQuery.viewInsets.bottom -
+        mediaQuery.padding.vertical -
+        outerVerticalPadding;
+
     return Dialog(
       clipBehavior: Clip.none,
       backgroundColor: AppColors.surfaceContainerLowest,
@@ -126,8 +133,11 @@ class TikiOutcomeDialogCard extends StatelessWidget {
       ),
       insetPadding: EdgeInsets.symmetric(horizontal: AppSpacing.stackLg.w),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 336.w),
-        child: Padding(
+        constraints: BoxConstraints(
+          maxWidth: 336.w,
+          maxHeight: maxHeight.clamp(0.0, double.infinity),
+        ),
+        child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
             AppSpacing.containerPadding.w,
             AppSpacing.stackLg.h,

@@ -15,7 +15,7 @@ import 'package:shifttac/features/tiki_taka/presentation/widgets/player_search_d
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_search_result_tile.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_attribute_header.dart';
 
-import '../../data/local/tiki_taka_dao_test_support.dart';
+import '../../support/tiki_taka_dao_test_support.dart';
 
 const _salah = TikiPlayerSearchResult(
   id: 'tm:148455',
@@ -158,6 +158,16 @@ void main() {
       find.textContaining('Search for a player who matches both attributes'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('focuses search field when dialog opens', (tester) async {
+    await _pumpDialog(tester, cubit);
+    await tester.pump();
+
+    final field = tester.widget<TextField>(
+      find.byKey(PlayerSearchDialog.searchFieldKey),
+    );
+    expect(field.focusNode?.hasFocus, isTrue);
   });
 
   testWidgets('shows search results and no-results state', (tester) async {
