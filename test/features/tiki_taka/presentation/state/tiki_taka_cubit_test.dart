@@ -297,7 +297,64 @@ void main() {
       );
     });
 
-    test('duplicate selection reduces hearts through state', () async {
+    test('duplicate correct player keeps hearts', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+
+      final board = cubit.state.game.board!;
+      const salah = TikiPlayerSearchResult(
+        id: 'tm:148455',
+        displayName: 'Mohamed Salah',
+      );
+      final validationDao = ValidationDao(handle.database);
+
+      (int, int)? firstCell;
+      (int, int)? secondCell;
+      for (var row = 0; row < 3; row++) {
+        for (var col = 0; col < 3; col++) {
+          final match = await validationDao.validatePlayer(
+            playerId: salah.id,
+            rowAttributeId: board.rowAttributes[row].id,
+            colAttributeId: board.columnAttributes[col].id,
+          );
+          if (match == null) {
+            continue;
+          }
+
+          final coordinates = (row, col);
+          if (firstCell == null) {
+            firstCell = coordinates;
+          } else if (firstCell != coordinates) {
+            secondCell = coordinates;
+            break;
+          }
+        }
+        if (secondCell != null) {
+          break;
+        }
+      }
+
+      if (secondCell == null) {
+        return;
+      }
+
+      cubit.onCellTapped(firstCell!.$1, firstCell.$2);
+      await cubit.selectPlayer(salah);
+      expect(cubit.state.hearts, 5);
+
+      cubit.onCellTapped(secondCell.$1, secondCell.$2);
+      final result = await cubit.selectPlayer(salah);
+
+      expect(result, TikiSelectPlayerResult.rejectedDuplicatePlayer);
+      expect(cubit.state.hearts, 5);
+      expect(
+        cubit.state.game.cellAt(secondCell.$1, secondCell.$2).isEmpty,
+        isTrue,
+      );
+    });
+
+    test('duplicate wrong selection reduces hearts through state', () async {
       final cubit = _createCubit(handle);
       addTearDown(cubit.close);
       await cubit.loadBoard();
@@ -313,12 +370,19 @@ void main() {
       await cubit.selectPlayer(cell.$3);
       expect(cubit.state.game.usedPlayerIds, contains(cell.$3.id));
 
-      cubit.onCellTapped(0, 1);
+      final wrongCell = await _findInvalidCellForPlayer(
+        validationDao: ValidationDao(handle.database),
+        board: board,
+        player: cell.$3,
+      );
+      expect(wrongCell, isNotNull);
+
+      cubit.onCellTapped(wrongCell!.$1, wrongCell.$2);
       final result = await cubit.selectPlayer(cell.$3);
 
       expect(result, TikiSelectPlayerResult.rejectedInvalid);
       expect(cubit.state.hearts, 4);
-      expect(cubit.state.game.cellAt(0, 1).isEmpty, isTrue);
+      expect(cubit.state.game.cellAt(wrongCell.$1, wrongCell.$2).isEmpty, isTrue);
     });
 
     test('first win is reached through valid selections', () async {

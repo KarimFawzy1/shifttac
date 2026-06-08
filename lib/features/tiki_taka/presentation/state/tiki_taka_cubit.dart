@@ -28,6 +28,7 @@ enum TikiCellTapResult {
 enum TikiSelectPlayerResult {
   accepted,
   rejectedInvalid,
+  rejectedDuplicatePlayer,
   rejectedNoActiveCell,
   rejectedLocked,
   rejectedNotPlayable,
@@ -286,9 +287,15 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
 
     _syncTimerToStatus(answer.state.status);
 
-    return answer.accepted
-        ? TikiSelectPlayerResult.accepted
-        : TikiSelectPlayerResult.rejectedInvalid;
+    if (answer.accepted) {
+      return TikiSelectPlayerResult.accepted;
+    }
+
+    if (answer.rejectionReason == AnswerValidationReason.duplicatePlayer) {
+      return TikiSelectPlayerResult.rejectedDuplicatePlayer;
+    }
+
+    return TikiSelectPlayerResult.rejectedInvalid;
   }
 
   void continueAfterFirstWin() {

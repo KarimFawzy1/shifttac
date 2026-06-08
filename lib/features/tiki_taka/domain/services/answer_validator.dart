@@ -40,17 +40,22 @@ class AnswerValidator {
     required Set<String> usedPlayerIds,
   }) async {
     final normalizedId = toTmPlayerId(playerId);
-    if (usedPlayerIds.contains(normalizedId)) {
-      return const AnswerValidationResult.invalid(
-        AnswerValidationReason.duplicatePlayer,
-      );
-    }
-
     final match = await _validationDao.validatePlayer(
       playerId: normalizedId,
       rowAttributeId: rowAttributeId,
       colAttributeId: colAttributeId,
     );
+
+    if (usedPlayerIds.contains(normalizedId)) {
+      if (match != null) {
+        return const AnswerValidationResult.invalid(
+          AnswerValidationReason.duplicatePlayer,
+        );
+      }
+      return const AnswerValidationResult.invalid(
+        AnswerValidationReason.playerNotMatching,
+      );
+    }
 
     if (match == null) {
       return const AnswerValidationResult.invalid(

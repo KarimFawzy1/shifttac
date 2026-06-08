@@ -9,16 +9,20 @@ import '../../data/models/tiki_board.dart';
 
 /// Builds playable 3×3 boards at runtime using [attribute_pair_stats].
 ///
-/// Each axis gets 3 **distinct** attributes (no repeated club/nation/league/
-/// position on the same side). Row and column headers may be all one type or a
-/// mix of types. The same attribute cannot appear on both axes (rules §17).
-/// At most **one** position header (GK/DEF/MID/FWD) may appear on the whole
-/// board.
+/// Each axis gets 3 **distinct** attributes. At most **one nation** and **one
+/// league** per axis; at most **one nation** on the whole board (nation×nation
+/// cells are not in the shipped stats). At most **one** position header on the
+/// whole board. The same attribute cannot appear on both axes (rules §17).
+///
+/// Supports club×club (e.g. Liverpool×Chelsea → Salah) and league×league
+/// cells when precomputed pair stats exist. Club-heavy templates are weighted
+/// more heavily than nation/league/position mixes.
 class TikiRandomBoardGenerator {
   TikiRandomBoardGenerator({
     required Database database,
     this.minIntersection = 3,
-    this.maxAttempts = 500,
+    this.maxAttempts = 200,
+    this.columnAttemptsPerRow = 12,
     Random? random,
     AttributePairStatsDao? pairStatsDao,
   }) : _database = database,
@@ -34,11 +38,35 @@ class TikiRandomBoardGenerator {
     'position',
   ];
 
+  /// Paired row/column type counts: (row clubs, nations, leagues, positions,
+  /// col clubs, nations, leagues, positions, weight).
+  static const List<
+      (
+        int rowClubs,
+        int rowNations,
+        int rowLeagues,
+        int rowPositions,
+        int colClubs,
+        int colNations,
+        int colLeagues,
+        int colPositions,
+        int weight,
+      )> _boardTemplates = [
+    (3, 0, 0, 0, 3, 0, 0, 0, 30),
+    (3, 0, 0, 0, 0, 1, 1, 1, 25),
+    (0, 1, 1, 1, 3, 0, 0, 0, 25),
+    (2, 0, 1, 0, 2, 0, 1, 0, 12),
+    (2, 1, 0, 0, 3, 0, 0, 0, 8),
+    (3, 0, 0, 0, 2, 1, 0, 0, 8),
+    (3, 0, 0, 0, 2, 0, 1, 0, 6),
+  ];
+
   final Database _database;
   final AttributePairStatsDao _pairStats;
   final Random _random;
   final int minIntersection;
   final int maxAttempts;
+  final int columnAttemptsPerRow;
 
   Future<TikiBoard?> generate() async {
     final byType = await _loadAttributesByType();
@@ -47,41 +75,96 @@ class TikiRandomBoardGenerator {
     }
 
     for (var attempt = 0; attempt < maxAttempts; attempt++) {
-      final rowAttributes = _pickAxisAttributes(byType: byType, excludeIds: const {});
+      final template = _rollBoardTemplate();
+      if (template == null) {
+        continue;
+      }
+
+      final rowAttributes = _pickAxisFromComposition(
+        byType: byType,
+        excludeIds: const {},
+        clubs: template.$1,
+        nations: template.$2,
+        leagues: template.$3,
+        positions: template.$4,
+      );
       if (rowAttributes == null) {
         continue;
       }
 
       final rowIds = rowAttributes.map((attribute) => attribute.id).toSet();
       final rowHasPosition = rowAttributes.any((attribute) => attribute.isPosition);
-      final columnAttributes = _pickAxisAttributes(
-        byType: byType,
-        excludeIds: rowIds,
-        excludePositionType: rowHasPosition,
-      );
-      if (columnAttributes == null) {
+
+      final validColumns =
+          <(List<TikiAttribute> attributes, int minIntersection)>[];
+
+      for (var columnAttempt = 0;
+          columnAttempt < columnAttemptsPerRow;
+          columnAttempt++) {
+        final columnAttributes = _pickAxisFromComposition(
+          byType: byType,
+          excludeIds: rowIds,
+          clubs: template.$5,
+          nations: template.$6,
+          leagues: template.$7,
+          positions: template.$8,
+          excludePositionType: rowHasPosition,
+        );
+        if (columnAttributes == null) {
+          continue;
+        }
+
+        if (_sharesAttributeAcrossAxes(rowAttributes, columnAttributes)) {
+          continue;
+        }
+
+        if (!hasValidPositionCountForBoardForTest(
+          rowAttributes,
+          columnAttributes,
+        )) {
+          continue;
+        }
+
+        if (!hasValidNationCountForBoardForTest(
+          rowAttributes,
+          columnAttributes,
+        )) {
+          continue;
+        }
+
+        if (!hasValidLeagueCountForBoardForTest(
+          rowAttributes,
+          columnAttributes,
+        )) {
+          continue;
+        }
+
+        if (!hasNationOnAtMostOneAxisForTest(
+          rowAttributes,
+          columnAttributes,
+        )) {
+          continue;
+        }
+
+        final validation = await _validateGrid(rowAttributes, columnAttributes);
+        if (validation == null) {
+          continue;
+        }
+
+        validColumns.add((columnAttributes, validation));
+      }
+
+      if (validColumns.isEmpty) {
         continue;
       }
 
-      if (_sharesAttributeAcrossAxes(rowAttributes, columnAttributes)) {
-        continue;
-      }
-
-      if (!hasValidPositionCountForBoardForTest(rowAttributes, columnAttributes)) {
-        continue;
-      }
-
-      final validation = await _validateGrid(rowAttributes, columnAttributes);
-      if (validation == null) {
-        continue;
-      }
-
+      final chosen = validColumns[_random.nextInt(validColumns.length)];
       return TikiBoard(
         id: 'runtime-${DateTime.now().microsecondsSinceEpoch}',
-        name: _boardName(rowAttributes, columnAttributes),
-        minIntersection: validation,
+        name: _boardName(rowAttributes, chosen.$1),
+        minIntersection: chosen.$2,
         rowAttributes: rowAttributes,
-        columnAttributes: columnAttributes,
+        columnAttributes: chosen.$1,
       );
     }
 
@@ -98,98 +181,129 @@ class TikiRandomBoardGenerator {
     return total >= _axisSize * 2;
   }
 
-  /// Picks three unique attributes for one axis (homogeneous or mixed type).
-  List<TikiAttribute>? _pickAxisAttributes({
+  List<TikiAttribute>? _pickAxisFromComposition({
     required Map<String, List<TikiAttribute>> byType,
     required Set<String> excludeIds,
+    required int clubs,
+    required int nations,
+    required int leagues,
+    required int positions,
     bool excludePositionType = false,
   }) {
-    final strategies = <List<TikiAttribute>? Function()>[
-      () => _pickHomogeneousAxis(byType, excludeIds, excludePositionType),
-      () => _pickMixedAxisFromPool(byType, excludeIds, excludePositionType),
-      () => _pickOneAttributePerTypeAxis(byType, excludeIds, excludePositionType),
-    ];
-
-    final strategy = strategies[_random.nextInt(strategies.length)];
-    final picked = strategy();
-    if (picked == null || picked.length != _axisSize) {
+    if (clubs + nations + leagues + positions != _axisSize) {
       return null;
     }
+
+    final typeSlots = _typeSlotsFromCounts(
+      clubs: clubs,
+      nations: nations,
+      leagues: leagues,
+      positions: positions,
+    )..shuffle(_random);
+
+    final picked = <TikiAttribute>[];
+    var localExclude = Set<String>.from(excludeIds);
+    var excludePosition = excludePositionType;
+
+    for (final type in typeSlots) {
+      final pool = _availableAttributes(
+        byType[type],
+        localExclude,
+        excludePosition,
+      );
+      if (pool.isEmpty) {
+        return null;
+      }
+
+      final attribute = pool[_random.nextInt(pool.length)];
+      picked.add(attribute);
+      localExclude = {...localExclude, attribute.id};
+      if (attribute.isPosition) {
+        excludePosition = true;
+      }
+    }
+
     if (!hasUniqueAttributesWithinAxisForTest(picked)) {
       return null;
     }
     if (!hasValidPositionCountWithinAxisForTest(picked)) {
       return null;
     }
+    if (!hasValidNationCountWithinAxisForTest(picked)) {
+      return null;
+    }
+    if (!hasValidLeagueCountWithinAxisForTest(picked)) {
+      return null;
+    }
+
+    picked.shuffle(_random);
     return picked;
   }
 
-  List<TikiAttribute>? _pickHomogeneousAxis(
-    Map<String, List<TikiAttribute>> byType,
-    Set<String> excludeIds,
-    bool excludePositionType,
-  ) {
-    final eligibleTypes = _attributeTypes
-        .where(
-          (type) =>
-              type != 'position' &&
-              _availableAttributes(byType[type], excludeIds, excludePositionType)
-                      .length >=
-                  _axisSize,
-        )
-        .toList(growable: false);
-    if (eligibleTypes.isEmpty) {
-      return null;
-    }
-
-    final type = eligibleTypes[_random.nextInt(eligibleTypes.length)];
-    final pool = _availableAttributes(byType[type], excludeIds, excludePositionType);
-    return _sampleWithoutReplacement(pool, _axisSize);
-  }
-
-  List<TikiAttribute>? _pickMixedAxisFromPool(
-    Map<String, List<TikiAttribute>> byType,
-    Set<String> excludeIds,
-    bool excludePositionType,
-  ) {
-    final pool = _attributeTypes
-        .expand(
-          (type) => _availableAttributes(byType[type], excludeIds, excludePositionType),
-        )
-        .toList(growable: false);
-    return _sampleWithoutReplacement(pool, _axisSize);
-  }
-
-  List<TikiAttribute>? _pickOneAttributePerTypeAxis(
-    Map<String, List<TikiAttribute>> byType,
-    Set<String> excludeIds,
-    bool excludePositionType,
-  ) {
-    final eligibleTypes = _attributeTypes
-        .where(
-          (type) =>
-              (!excludePositionType || type != 'position') &&
-              _availableAttributes(byType[type], excludeIds, excludePositionType)
-                  .isNotEmpty,
-        )
-        .toList(growable: false);
-    if (eligibleTypes.length < _axisSize) {
-      return null;
-    }
-
-    eligibleTypes.shuffle(_random);
-    final selectedTypes = eligibleTypes.take(_axisSize).toList(growable: false);
-    final picked = <TikiAttribute>[];
-    for (final type in selectedTypes) {
-      final pool = _availableAttributes(byType[type], excludeIds, excludePositionType);
-      final attribute = pool[_random.nextInt(pool.length)];
-      picked.add(attribute);
-      excludeIds = {...excludeIds, attribute.id};
-      if (attribute.isPosition) {
-        excludePositionType = true;
+  (
+    int rowClubs,
+    int rowNations,
+    int rowLeagues,
+    int rowPositions,
+    int colClubs,
+    int colNations,
+    int colLeagues,
+    int colPositions,
+  )? _rollBoardTemplate() {
+    final totalWeight = _boardTemplates.fold<int>(
+      0,
+      (sum, template) => sum + template.$9,
+    );
+    var roll = _random.nextInt(totalWeight);
+    for (final template in _boardTemplates) {
+      roll -= template.$9;
+      if (roll < 0) {
+        return (
+          template.$1,
+          template.$2,
+          template.$3,
+          template.$4,
+          template.$5,
+          template.$6,
+          template.$7,
+          template.$8,
+        );
       }
     }
-    return picked;
+
+    final fallback = _boardTemplates.last;
+    return (
+      fallback.$1,
+      fallback.$2,
+      fallback.$3,
+      fallback.$4,
+      fallback.$5,
+      fallback.$6,
+      fallback.$7,
+      fallback.$8,
+    );
+  }
+
+  List<String> _typeSlotsFromCounts({
+    required int clubs,
+    required int nations,
+    required int leagues,
+    required int positions,
+  }) {
+    final slots = <String>[];
+    for (var index = 0; index < clubs; index++) {
+      slots.add('club');
+    }
+    for (var index = 0; index < nations; index++) {
+      slots.add('nation');
+    }
+    for (var index = 0; index < leagues; index++) {
+      slots.add('league');
+    }
+    for (var index = 0; index < positions; index++) {
+      slots.add('position');
+    }
+    return slots;
   }
 
   List<TikiAttribute> _availableAttributes(
@@ -207,18 +321,6 @@ class TikiRandomBoardGenerator {
               !(excludePositionType && attribute.isPosition),
         )
         .toList(growable: false);
-  }
-
-  List<TikiAttribute>? _sampleWithoutReplacement(
-    List<TikiAttribute> pool,
-    int count,
-  ) {
-    if (pool.length < count) {
-      return null;
-    }
-
-    final copy = List<TikiAttribute>.from(pool)..shuffle(_random);
-    return copy.take(count).toList(growable: false);
   }
 
   bool _sharesAttributeAcrossAxes(
@@ -270,6 +372,48 @@ class TikiRandomBoardGenerator {
     final rowLabel = rows.map((attribute) => attribute.displayName).join(' · ');
     final colLabel = columns.map((attribute) => attribute.displayName).join(' · ');
     return '$rowLabel × $colLabel';
+  }
+
+  @visibleForTesting
+  static bool hasNationOnAtMostOneAxisForTest(
+    List<TikiAttribute> rows,
+    List<TikiAttribute> columns,
+  ) {
+    final rowHasNation = rows.any((attribute) => attribute.type == 'nation');
+    final colHasNation = columns.any((attribute) => attribute.type == 'nation');
+    return !(rowHasNation && colHasNation);
+  }
+
+  @visibleForTesting
+  static bool hasValidLeagueCountWithinAxisForTest(
+    List<TikiAttribute> attributes,
+  ) {
+    return attributes.where((attribute) => attribute.type == 'league').length <= 1;
+  }
+
+  @visibleForTesting
+  static bool hasValidLeagueCountForBoardForTest(
+    List<TikiAttribute> rows,
+    List<TikiAttribute> columns,
+  ) {
+    return hasValidLeagueCountWithinAxisForTest(rows) &&
+        hasValidLeagueCountWithinAxisForTest(columns);
+  }
+
+  @visibleForTesting
+  static bool hasValidNationCountWithinAxisForTest(
+    List<TikiAttribute> attributes,
+  ) {
+    return attributes.where((attribute) => attribute.type == 'nation').length <= 1;
+  }
+
+  @visibleForTesting
+  static bool hasValidNationCountForBoardForTest(
+    List<TikiAttribute> rows,
+    List<TikiAttribute> columns,
+  ) {
+    return hasValidNationCountWithinAxisForTest(rows) &&
+        hasValidNationCountWithinAxisForTest(columns);
   }
 
   @visibleForTesting

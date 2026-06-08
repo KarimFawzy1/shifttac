@@ -156,7 +156,16 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
       return;
     }
 
-    if (result == TikiSelectPlayerResult.rejectedInvalid) {
+    if (result == TikiSelectPlayerResult.rejectedDuplicatePlayer) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Correct player, but already selected.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+    } else if (result == TikiSelectPlayerResult.rejectedInvalid) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(

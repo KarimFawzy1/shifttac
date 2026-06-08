@@ -71,7 +71,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T10** — `HowToPlayTikiTakaSection`, static rules copy in How to Play tab
 - **T11** — integration/regression pack: DAO + engine/cubit game flows, widget regression (`tiki_taka_widget_test_support.dart`, HUD/board/header tests), D12 ETL validation, T6+ test hygiene audit
 - **T12** — release readiness: size/latency budgets, controlled error/retry UI, corrupt DB recovery, offline release smoke, `tool/release/check_tiki_taka_release_budgets.py`
-- **Runtime boards** — `TikiRandomBoardGenerator` composes fresh 3×3 headers on every entry/restart using `attribute_pair_stats` (any mix of clubs, nations, leagues, and positions per axis; no duplicate attributes on the same side or across axes; at most one position header per board)
+- **Runtime boards** — `TikiRandomBoardGenerator` composes fresh 3×3 headers on every entry/restart using `attribute_pair_stats` (cross-type plus **club×club** and **league×league** same-type pairs). At most one nation and one league per header; nation on at most one axis. Templates include full **3 clubs × 3 clubs** boards, **league×league** cells, and club-heavy mixed headers.
 
 ## Test layout (T11)
 

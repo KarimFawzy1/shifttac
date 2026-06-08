@@ -460,7 +460,7 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 
 **Steps:**
 
-1. For each pair `(attr_a, attr_b)` where types are compatible for game (e.g. row/col mix):
+1. For each pair `(attr_a, attr_b)` where types differ (club×nation, league×club, …) **or** both are club or both are league (club×club, league×league for runtime random boards):
    - `player_count = COUNT(DISTINCT player_id)` with both edges.
 2. Store `sample_player_ids` (top N by appearance count or market value if available).
 

@@ -80,6 +80,14 @@ class TikiTakaGameEngine {
     }
 
     if (!validation.isValid) {
+      if (validation.reason == AnswerValidationReason.duplicatePlayer) {
+        return TikiAnswerResult(
+          state: state,
+          accepted: false,
+          rejectionReason: validation.reason,
+        );
+      }
+
       final nextHearts = state.hearts - 1;
       return TikiAnswerResult(
         state: state.copyWith(

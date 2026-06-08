@@ -143,7 +143,7 @@ void main() {
       expect(result.rejectionReason, AnswerValidationReason.playerNotMatching);
     });
 
-    test('duplicate player is invalid and removes one heart', () {
+    test('duplicate correct player does not remove a heart', () {
       final afterFirst = _attempt(
         state: _ongoingState(),
         row: 0,
@@ -164,8 +164,36 @@ void main() {
 
       expect(duplicate.accepted, isFalse);
       expect(duplicate.state.cellAt(1, 1).isEmpty, isTrue);
-      expect(duplicate.state.hearts, 4);
+      expect(duplicate.state.hearts, 5);
       expect(duplicate.rejectionReason, AnswerValidationReason.duplicatePlayer);
+    });
+
+    test('duplicate wrong player removes one heart', () {
+      final afterFirst = _attempt(
+        state: _ongoingState(),
+        row: 0,
+        col: 0,
+        player: _salah,
+        validation: const AnswerValidationResult.valid(_salah),
+      ).state;
+
+      final duplicateWrong = _attempt(
+        state: afterFirst,
+        row: 1,
+        col: 1,
+        player: _salah,
+        validation: const AnswerValidationResult.invalid(
+          AnswerValidationReason.playerNotMatching,
+        ),
+      );
+
+      expect(duplicateWrong.accepted, isFalse);
+      expect(duplicateWrong.state.cellAt(1, 1).isEmpty, isTrue);
+      expect(duplicateWrong.state.hearts, 4);
+      expect(
+        duplicateWrong.rejectionReason,
+        AnswerValidationReason.playerNotMatching,
+      );
     });
 
     test('occupied cell cannot be edited', () {
@@ -395,7 +423,7 @@ void main() {
       expect(result.reason, AnswerValidationReason.playerNotMatching);
     });
 
-    test('rejects duplicate player before DAO lookup', () async {
+    test('rejects duplicate player when cell attributes still match', () async {
       final result = await validator.validate(
         playerId: 'tm:148455',
         rowAttributeId: 'nation:egypt',
@@ -405,6 +433,19 @@ void main() {
 
       expect(result.isValid, isFalse);
       expect(result.reason, AnswerValidationReason.duplicatePlayer);
+    });
+
+    test('rejects duplicate player as wrong when cell attributes do not match',
+        () async {
+      final result = await validator.validate(
+        playerId: 'tm:148455',
+        rowAttributeId: 'nation:egypt',
+        colAttributeId: 'club:16',
+        usedPlayerIds: const {'tm:148455'},
+      );
+
+      expect(result.isValid, isFalse);
+      expect(result.reason, AnswerValidationReason.playerNotMatching);
     });
   });
 }
