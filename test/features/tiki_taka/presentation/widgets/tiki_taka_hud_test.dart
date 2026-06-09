@@ -16,12 +16,29 @@ Widget _wrap(Widget child) {
 
 void main() {
   group('TikiTakaHud', () {
-    test('formatElapsed renders mm:ss', () {
+    test('formatElapsed renders mm:ss under one hour', () {
       expect(
         TikiTakaHud.formatElapsed(const Duration(minutes: 2, seconds: 5).inMilliseconds),
         '02:05',
       );
       expect(TikiTakaHud.formatElapsed(0), '00:00');
+      expect(
+        TikiTakaHud.formatElapsed(const Duration(minutes: 59, seconds: 59).inMilliseconds),
+        '59:59',
+      );
+    });
+
+    test('formatElapsed renders hh:mm:ss at and after one hour', () {
+      expect(
+        TikiTakaHud.formatElapsed(const Duration(hours: 1).inMilliseconds),
+        '01:00:00',
+      );
+      expect(
+        TikiTakaHud.formatElapsed(
+          const Duration(hours: 1, minutes: 23, seconds: 45).inMilliseconds,
+        ),
+        '01:23:45',
+      );
     });
 
     testWidgets('shows hearts and timer with fixture values', (tester) async {

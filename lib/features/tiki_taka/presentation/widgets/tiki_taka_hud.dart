@@ -21,8 +21,15 @@ class TikiTakaHud extends StatelessWidget {
 
   static String formatElapsed(int elapsedMs) {
     final duration = Duration(milliseconds: elapsedMs);
-    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+
+    if (duration.inHours >= 1) {
+      final hours = duration.inHours.toString().padLeft(2, '0');
+      final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+      return '$hours:$minutes:$seconds';
+    }
+
+    final minutes = duration.inMinutes.toString().padLeft(2, '0');
     return '$minutes:$seconds';
   }
 
