@@ -7,6 +7,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String game = '/game';
   static const String tikiTaka = '/tiki-taka';
+  static const String tikiAttributeGallery = '/tiki-taka/attribute-gallery';
   static const String howToPlay = '/how-to-play';
   static const String settings = '/settings';
 
@@ -17,6 +18,7 @@ class AppRoutes {
     home,
     game,
     tikiTaka,
+    tikiAttributeGallery,
     howToPlay,
     settings,
   ];

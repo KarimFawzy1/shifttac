@@ -27,9 +27,17 @@ class TikiAttributeHeader extends StatelessWidget {
   final double? iconSize;
   final bool expand;
 
+  /// SVG size for board headers (column = top/bottom, row = left/right).
+  static double gameplayIconSize(TikiHeaderAxis axis) {
+    return switch (axis) {
+      TikiHeaderAxis.column => 30.w,
+      TikiHeaderAxis.row => 28.w,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final resolvedIconSize = iconSize ?? (axis == TikiHeaderAxis.column ? 30.w : 28.w);
+    final resolvedIconSize = iconSize ?? gameplayIconSize(axis);
 
     final header = DecoratedBox(
       decoration: BoxDecoration(

@@ -12,6 +12,7 @@ class ModalBackdrop extends StatelessWidget {
     this.onTap,
     this.maxBlurSigma = 4,
     this.scrimAlpha = 0.2,
+    this.enableBlur = true,
   });
 
   /// Animation progress from 0 (none) to 1 (full blur/scrim).
@@ -20,20 +21,27 @@ class ModalBackdrop extends StatelessWidget {
   final double maxBlurSigma;
   final double scrimAlpha;
 
+  /// When false, only the scrim is drawn. Useful during route transitions
+  /// so the first [BackdropFilter] compile does not hitch the animation.
+  final bool enableBlur;
+
   @override
   Widget build(BuildContext context) {
     final t = progress.clamp(0.0, 1.0);
-    final backdrop = ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: maxBlurSigma * t,
-          sigmaY: maxBlurSigma * t,
-        ),
-        child: ColoredBox(
-          color: AppColors.inkNavy.withValues(alpha: scrimAlpha * t),
-        ),
-      ),
+    final scrim = ColoredBox(
+      color: AppColors.inkNavy.withValues(alpha: scrimAlpha * t),
     );
+    final backdrop = enableBlur && t > 0
+        ? ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: maxBlurSigma * t,
+                sigmaY: maxBlurSigma * t,
+              ),
+              child: scrim,
+            ),
+          )
+        : scrim;
 
     if (onTap == null) {
       return backdrop;

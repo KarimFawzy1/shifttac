@@ -17,6 +17,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_scroll_view.dart';
+import '../../../../core/widgets/secondary_button.dart';
 import '../widgets/ai_settings_pills.dart';
 import '../widgets/home_action_card.dart';
 
@@ -180,6 +181,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 morphKey: _playVsAiMorphKey,
                 arguments: session,
               );
+            },
+          ),
+          SizedBox(height: AppSpacing.stackMd.h),
+          SecondaryButton(
+            label: 'Tiki-Taka Attributes',
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.tikiAttributeGallery);
             },
           ),
           SizedBox(height: AppSpacing.stackLg.h),

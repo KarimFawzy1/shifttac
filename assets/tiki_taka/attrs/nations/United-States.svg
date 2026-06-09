@@ -1,9 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="flag-icons-us" viewBox="0 0 512 512">
-  <path fill="#bd3d44" d="M0 0h512v512H0"/>
-  <path stroke="#fff" stroke-width="40" d="M0 58h512M0 137h512M0 216h512M0 295h512M0 374h512M0 453h512"/>
-  <path fill="#192f5d" d="M0 0h390v275H0z"/>
-  <marker id="us-a" markerHeight="30" markerWidth="30">
-    <path fill="#fff" d="m15 0 9.3 28.6L0 11h30L5.7 28.6"/>
-  </marker>
-  <path fill="none" marker-mid="url(#us-a)" d="m0 0 18 11h65 65 65 65 66L51 39h65 65 65 65L18 66h65 65 65 65 66L51 94h65 65 65 65L18 121h65 65 65 65 66L51 149h65 65 65 65L18 177h65 65 65 65 66L51 205h65 65 65 65L18 232h65 65 65 65 66z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background -->
+  <rect width="100" height="100" fill="#FFFFFF"/>
+
+  <!-- Red Stripes -->
+  <g fill="#B22234">
+    <rect y="0" width="100" height="7.7"/>
+    <rect y="15.4" width="100" height="7.7"/>
+    <rect y="30.8" width="100" height="7.7"/>
+    <rect y="46.2" width="100" height="7.7"/>
+    <rect y="61.6" width="100" height="7.7"/>
+    <rect y="77.0" width="100" height="7.7"/>
+    <rect y="92.3" width="100" height="7.7"/>
+  </g>
+
+  <!-- Blue Canton -->
+  <rect x="0" y="0" width="45" height="54" fill="#3C3B6E"/>
+
+  <!-- Reusable Star -->
+  <defs>
+    <polygon id="star"
+      points="0,-1 0.29,-0.31 0.95,-0.31 0.42,0.12
+              0.62,0.8 0,0.4 -0.62,0.8 -0.42,0.12
+              -0.95,-0.31 -0.29,-0.31"/>
+  </defs>
+
+  <!-- 50 Stars (centered horizontally & vertically) -->
+  <g fill="#FFFFFF">
+
+    <!-- Row 1 (6) -->
+    <use href="#star" transform="translate(6 7) scale(1.2)"/>
+    <use href="#star" transform="translate(12.5 7) scale(1.2)"/>
+    <use href="#star" transform="translate(19 7) scale(1.2)"/>
+    <use href="#star" transform="translate(25.5 7) scale(1.2)"/>
+    <use href="#star" transform="translate(32 7) scale(1.2)"/>
+    <use href="#star" transform="translate(38.5 7) scale(1.2)"/>
+
+    <!-- Row 2 (5) -->
+    <use href="#star" transform="translate(9.25 12) scale(1.2)"/>
+    <use href="#star" transform="translate(15.75 12) scale(1.2)"/>
+    <use href="#star" transform="translate(22.25 12) scale(1.2)"/>
+    <use href="#star" transform="translate(28.75 12) scale(1.2)"/>
+    <use href="#star" transform="translate(35.25 12) scale(1.2)"/>
+
+    <!-- Row 3 (6) -->
+    <use href="#star" transform="translate(6 17) scale(1.2)"/>
+    <use href="#star" transform="translate(12.5 17) scale(1.2)"/>
+    <use href="#star" transform="translate(19 17) scale(1.2)"/>
+    <use href="#star" transform="translate(25.5 17) scale(1.2)"/>
+    <use href="#star" transform="translate(32 17) scale(1.2)"/>
+    <use href="#star" transform="translate(38.5 17) scale(1.2)"/>
+
+    <!-- Row 4 (5) -->
+    <use href="#star" transform="translate(9.25 22) scale(1.2)"/>
+    <use href="#star" transform="translate(15.75 22) scale(1.2)"/>
+    <use href="#star" transform="translate(22.25 22) scale(1.2)"/>
+    <use href="#star" transform="translate(28.75 22) scale(1.2)"/>
+    <use href="#star" transform="translate(35.25 22) scale(1.2)"/>
+
+    <!-- Row 5 (6) -->
+    <use href="#star" transform="translate(6 27) scale(1.2)"/>
+    <use href="#star" transform="translate(12.5 27) scale(1.2)"/>
+    <use href="#star" transform="translate(19 27) scale(1.2)"/>
+    <use href="#star" transform="translate(25.5 27) scale(1.2)"/>
+    <use href="#star" transform="translate(32 27) scale(1.2)"/>
+    <use href="#star" transform="translate(38.5 27) scale(1.2)"/>
+
+    <!-- Row 6 (5) -->
+    <use href="#star" transform="translate(9.25 32) scale(1.2)"/>
+    <use href="#star" transform="translate(15.75 32) scale(1.2)"/>
+    <use href="#star" transform="translate(22.25 32) scale(1.2)"/>
+    <use href="#star" transform="translate(28.75 32) scale(1.2)"/>
+    <use href="#star" transform="translate(35.25 32) scale(1.2)"/>
+
+    <!-- Row 7 (6) -->
+    <use href="#star" transform="translate(6 37) scale(1.2)"/>
+    <use href="#star" transform="translate(12.5 37) scale(1.2)"/>
+    <use href="#star" transform="translate(19 37) scale(1.2)"/>
+    <use href="#star" transform="translate(25.5 37) scale(1.2)"/>
+    <use href="#star" transform="translate(32 37) scale(1.2)"/>
+    <use href="#star" transform="translate(38.5 37) scale(1.2)"/>
+
+    <!-- Row 8 (5) -->
+    <use href="#star" transform="translate(9.25 42) scale(1.2)"/>
+    <use href="#star" transform="translate(15.75 42) scale(1.2)"/>
+    <use href="#star" transform="translate(22.25 42) scale(1.2)"/>
+    <use href="#star" transform="translate(28.75 42) scale(1.2)"/>
+    <use href="#star" transform="translate(35.25 42) scale(1.2)"/>
+
+    <!-- Row 9 (6) -->
+    <use href="#star" transform="translate(6 47) scale(1.2)"/>
+    <use href="#star" transform="translate(12.5 47) scale(1.2)"/>
+    <use href="#star" transform="translate(19 47) scale(1.2)"/>
+    <use href="#star" transform="translate(25.5 47) scale(1.2)"/>
+    <use href="#star" transform="translate(32 47) scale(1.2)"/>
+    <use href="#star" transform="translate(38.5 47) scale(1.2)"/>
+
+  </g>
 </svg>

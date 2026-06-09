@@ -209,6 +209,17 @@ class TikiBoardFrameLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cachedManifest = TikiAttributeAssetManifest.loaded;
+    if (cachedManifest != null) {
+      return TikiBoardFrame(
+        rowHeaders: rowHeaders,
+        columnHeaders: columnHeaders,
+        manifest: cachedManifest,
+        board: board,
+        headerExtent: headerExtent,
+      );
+    }
+
     return FutureBuilder<TikiAttributeAssetManifest>(
       future: manifestLoader?.call() ?? TikiAttributeAssetManifest.load(),
       builder: (context, snapshot) {

@@ -16,6 +16,7 @@ import '../../../game/presentation/widgets/exit_game_dialog.dart';
 import '../../domain/models/tiki_game_status.dart';
 import '../state/tiki_taka_cubit.dart';
 import '../state/tiki_taka_state.dart';
+import '../widgets/tiki_taka_warmup_layer.dart';
 import '../widgets/player_search_dialog.dart';
 import '../widgets/tiki_board_frame.dart';
 import '../widgets/tiki_taka_board.dart';
@@ -174,10 +175,12 @@ class _TikiTakaGameplayBody extends StatelessWidget {
           }
           unawaited(_handleBack(context));
         },
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: _systemUi,
-          child: AppScaffold(
+        child: TikiTakaWarmupLayer(
+          child: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: _systemUi,
+            child: AppScaffold(
             fullWidthHeader: true,
+            resizeToAvoidBottomInset: false,
             header: BlocBuilder<TikiTakaCubit, TikiTakaState>(
               buildWhen: (previous, current) =>
                   previous.canClearBoard != current.canClearBoard,
@@ -196,50 +199,57 @@ class _TikiTakaGameplayBody extends StatelessWidget {
                 );
               },
             ),
-            child: BlocBuilder<TikiTakaCubit, TikiTakaState>(
-              buildWhen: (previous, current) =>
-                  previous.status != current.status ||
-                  previous.hearts != current.hearts ||
-                  previous.elapsedMs != current.elapsedMs ||
-                  previous.rowHeaders != current.rowHeaders ||
-                  previous.columnHeaders != current.columnHeaders,
-              builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: AppSpacing.stackMd.h),
-                    TikiTakaHud(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: AppSpacing.stackMd.h),
+                BlocBuilder<TikiTakaCubit, TikiTakaState>(
+                  buildWhen: (previous, current) =>
+                      previous.hearts != current.hearts ||
+                      previous.elapsedMs != current.elapsedMs,
+                  builder: (context, state) {
+                    return TikiTakaHud(
                       hearts: state.hearts,
                       elapsedMs: state.elapsedMs,
-                    ),
-                    SizedBox(height: AppSpacing.stackMd.h),
-                    if (state.status == TikiGameStatus.loadingBoard)
-                      const Expanded(
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    else if (state.rowHeaders.length == 3 &&
-                        state.columnHeaders.length == 3)
-                      Expanded(
-                        child: TikiBoardFrameLoader(
+                    );
+                  },
+                ),
+                SizedBox(height: AppSpacing.stackMd.h),
+                Expanded(
+                  child: BlocBuilder<TikiTakaCubit, TikiTakaState>(
+                    buildWhen: (previous, current) =>
+                        previous.status != current.status ||
+                        previous.rowHeaders != current.rowHeaders ||
+                        previous.columnHeaders != current.columnHeaders,
+                    builder: (context, state) {
+                      if (state.status == TikiGameStatus.loadingBoard) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      if (state.rowHeaders.length == 3 &&
+                          state.columnHeaders.length == 3) {
+                        return TikiBoardFrameLoader(
                           rowHeaders: state.rowHeaders,
                           columnHeaders: state.columnHeaders,
                           board: const TikiTakaBoard(),
-                        ),
-                      )
-                    else
-                      Expanded(
-                        child: TikiTakaBoardUnavailableView(
-                          onRetry: () =>
-                              context.read<TikiTakaCubit>().loadBoard(),
-                        ),
-                      ),
-                  ],
-                );
-              },
+                        );
+                      }
+
+                      return TikiTakaBoardUnavailableView(
+                        onRetry: () =>
+                            context.read<TikiTakaCubit>().loadBoard(),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
+    ),
     );
   }
 }

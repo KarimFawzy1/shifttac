@@ -7,6 +7,7 @@ import 'package:shifttac/features/tiki_taka/data/models/tiki_attribute.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/tiki_attribute_asset_manifest.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_attribute_header.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_attribute_icon.dart';
+import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_attribute_svg_asset.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_board_frame.dart';
 
 const _liverpoolClub = TikiAttribute(
@@ -57,9 +58,7 @@ Widget _wrap(Widget child) {
   return ScreenUtilInit(
     designSize: AppConstants.designSize,
     builder: (context, _) => MaterialApp(
-      home: Scaffold(
-        body: SizedBox(width: 390, height: 844, child: child),
-      ),
+      home: Scaffold(body: SizedBox(width: 390, height: 844, child: child)),
     ),
   );
 }
@@ -67,9 +66,7 @@ Widget _wrap(Widget child) {
 Finder _svgWithAsset(String assetPath) {
   return find.byWidgetPredicate(
     (widget) =>
-        widget is SvgPicture &&
-        widget.bytesLoader is SvgAssetLoader &&
-        (widget.bytesLoader as SvgAssetLoader).assetName == assetPath,
+        widget is TikiAttributeSvgAsset && widget.assetPath == assetPath,
   );
 }
 
@@ -105,7 +102,7 @@ void main() {
           ),
         ),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
     }
 
     testWidgets('club header displays SVG', (tester) async {
@@ -177,14 +174,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        _wrap(
-          TikiAttributeIcon(
-            attribute: _liverpoolClub,
-            manifest: manifest,
-          ),
-        ),
+        _wrap(TikiAttributeIcon(attribute: _liverpoolClub, manifest: manifest)),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(
         manifest.pathForIconKey('club_31'),
@@ -205,7 +197,11 @@ void main() {
             width: 320,
             height: 360,
             child: TikiBoardFrame(
-              rowHeaders: const [_egyptNation, _forwardPosition, _premierLeague],
+              rowHeaders: const [
+                _egyptNation,
+                _forwardPosition,
+                _premierLeague,
+              ],
               columnHeaders: const [
                 _liverpoolClub,
                 _premierLeague,
@@ -217,7 +213,7 @@ void main() {
           ),
         ),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
       expect(find.text('Forward'), findsOneWidget);

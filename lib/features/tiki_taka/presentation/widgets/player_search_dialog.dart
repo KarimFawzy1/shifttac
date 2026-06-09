@@ -71,7 +71,9 @@ class PlayerSearchDialog extends StatefulWidget {
 
     TikiAttributeAssetManifest manifest;
     try {
-      manifest = await TikiAttributeAssetManifest.load();
+      manifest =
+          TikiAttributeAssetManifest.loaded ??
+          await TikiAttributeAssetManifest.load();
     } catch (_) {
       manifest = TikiAttributeAssetManifest.empty();
     }
@@ -127,6 +129,24 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
       _queryController.text = existingQuery;
     }
     _queryController.addListener(_onQueryChanged);
+    widget.routeAnimation.addStatusListener(_focusSearchWhenReady);
+    if (_isOpenAnimationSettled(widget.routeAnimation)) {
+      _scheduleSearchFocus();
+    }
+  }
+
+  bool _isOpenAnimationSettled(Animation<double> animation) {
+    return animation.isCompleted || animation.value >= 1.0;
+  }
+
+  void _focusSearchWhenReady(AnimationStatus status) {
+    if (status != AnimationStatus.completed || !mounted) {
+      return;
+    }
+    _scheduleSearchFocus();
+  }
+
+  void _scheduleSearchFocus() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _searchFocusNode.requestFocus();
@@ -136,6 +156,7 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
 
   @override
   void dispose() {
+    widget.routeAnimation.removeStatusListener(_focusSearchWhenReady);
     _searchDebounce?.cancel();
     _searchFocusNode.dispose();
     _queryController
@@ -227,19 +248,13 @@ class _PlayerSearchDialogState extends State<PlayerSearchDialog> {
               Positioned.fill(
                 child: ModalBackdrop(
                   progress: backdropCurve.value,
+                  enableBlur: backdropCurve.isCompleted,
                   onTap: _close,
                 ),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: AnimatedPadding(
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeOut,
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.viewInsetsOf(context).bottom,
-                  ),
-                  child: SlideTransition(position: sheetSlide, child: child),
-                ),
+                child: SlideTransition(position: sheetSlide, child: child),
               ),
             ],
           ),
@@ -280,13 +295,15 @@ class _PlayerSearchSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final keyboardOpen = mediaQuery.viewInsets.bottom > 0;
+    final keyboardInset = mediaQuery.viewInsets.bottom;
     final innerVerticalPadding = AppSpacing.stackMd.h * 2;
-    final maxSheetHeight = mediaQuery.size.height -
-        mediaQuery.viewInsets.bottom -
+    // Height is independent of the keyboard so the sheet opens directly at its
+    // final size and never grows/shrinks while the keyboard animates in.
+    final maxSheetHeight =
+        mediaQuery.size.height -
         mediaQuery.padding.top -
         innerVerticalPadding -
-        8.h;
+        24.h;
 
     return Semantics(
       scopesRoute: true,
@@ -295,6 +312,7 @@ class _PlayerSearchSheet extends StatelessWidget {
       label: 'Player search',
       child: SafeArea(
         top: false,
+        maintainBottomViewPadding: true,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.stackMd.w),
           child: DecoratedBox(
@@ -331,10 +349,6 @@ class _PlayerSearchSheet extends StatelessWidget {
                           previous.isSearching != current.isSearching ||
                           previous.inputLocked != current.inputLocked,
                       builder: (context, state) {
-                        final hasQuery =
-                            queryController.text.trim().isNotEmpty ||
-                            state.searchQuery.trim().isNotEmpty;
-                        final lockResultsHeight = keyboardOpen || hasQuery;
                         final panelQuery = queryController.text.isNotEmpty
                             ? queryController.text
                             : state.searchQuery;
@@ -347,9 +361,7 @@ class _PlayerSearchSheet extends StatelessWidget {
                         );
 
                         return Column(
-                          mainAxisSize: lockResultsHeight
-                              ? MainAxisSize.max
-                              : MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _SheetHandle(onClose: onClose),
@@ -372,10 +384,14 @@ class _PlayerSearchSheet extends StatelessWidget {
                               focusNode: searchFocusNode,
                             ),
                             SizedBox(height: AppSpacing.stackSm.h),
-                            if (lockResultsHeight)
-                              Expanded(child: resultsPanel)
-                            else
-                              resultsPanel,
+                            // Only the results area accounts for the keyboard,
+                            // keeping the sheet frame and search field fixed.
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: keyboardInset),
+                                child: resultsPanel,
+                              ),
+                            ),
                           ],
                         );
                       },
@@ -485,10 +501,7 @@ class _CellContextRow extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({
-    required this.controller,
-    required this.focusNode,
-  });
+  const _SearchField({required this.controller, required this.focusNode});
 
   static const Key fieldKey = Key('tiki_player_search_field');
 
@@ -501,7 +514,6 @@ class _SearchField extends StatelessWidget {
       key: fieldKey,
       controller: controller,
       focusNode: focusNode,
-      autofocus: true,
       textInputAction: TextInputAction.search,
       style: AppTextStyles.bodyMd.copyWith(color: AppColors.onSurface),
       decoration: InputDecoration(

@@ -13,6 +13,7 @@ class AppScaffold extends StatelessWidget {
     this.safeAreaTop = true,
     this.safeAreaBottom = true,
     this.fullWidthHeader = false,
+    this.resizeToAvoidBottomInset = true,
   });
 
   final Widget child;
@@ -24,6 +25,9 @@ class AppScaffold extends StatelessWidget {
   /// When true and [header] is set, the header spans the full width of the
   /// screen; [child] alone receives horizontal [padding].
   final bool fullWidthHeader;
+
+  /// When false, the body keeps its size when the keyboard opens (overlays handle insets).
+  final bool resizeToAvoidBottomInset;
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +78,13 @@ class AppScaffold extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: scaffoldBackground,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       body: SafeArea(
         top: safeAreaTop,
         bottom: safeAreaBottom,
+        // When the body is not resized for the keyboard, keep the bottom
+        // padding stable so content does not shift while the keyboard opens.
+        maintainBottomViewPadding: !resizeToAvoidBottomInset,
         child: columnChild,
       ),
     );

@@ -160,8 +160,11 @@ void main() {
     );
   });
 
-  testWidgets('focuses search field when dialog opens', (tester) async {
+  testWidgets('focuses search field after the open animation completes', (
+    tester,
+  ) async {
     await _pumpDialog(tester, cubit);
+    await tester.pump();
     await tester.pump();
 
     final field = tester.widget<TextField>(

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../data/models/tiki_attribute.dart';
 import '../../domain/services/tiki_attribute_asset_manifest.dart';
+import 'tiki_attribute_svg_asset.dart';
 
 /// Renders a club, league, or nation SVG, or position text for board headers.
 class TikiAttributeIcon extends StatelessWidget {
@@ -41,13 +40,11 @@ class TikiAttributeIcon extends StatelessWidget {
       return _FallbackLabel(attribute: attribute, size: size);
     }
 
-    return SvgPicture.asset(
-      assetPath,
-      width: size,
-      height: size,
-      fit: BoxFit.contain,
-      excludeFromSemantics: true,
-      errorBuilder: (context, error, stackTrace) {
+    return TikiAttributeSvgAsset(
+      assetPath: assetPath,
+      size: size,
+      rasterize: true,
+      errorBuilder: (context) {
         return _FallbackLabel(attribute: attribute, size: size);
       },
     );
@@ -66,17 +63,17 @@ class _PositionLabel extends StatelessWidget {
       width: maxSize * 1.6,
       height: maxSize,
       child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            attribute.displayName,
-            style: AppTextStyles.labelBold.copyWith(
-              fontSize: 12.sp,
-              color: AppColors.onSurface,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
+        fit: BoxFit.scaleDown,
+        child: Text(
+          attribute.displayName,
+          style: AppTextStyles.labelBold.copyWith(
+            fontSize: 12.sp,
+            color: AppColors.onSurface,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
         ),
+      ),
     );
   }
 }
@@ -95,29 +92,29 @@ class _FallbackLabel extends StatelessWidget {
       width: size,
       height: size,
       child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.surfaceContainer,
-            borderRadius: AppSpacing.borderRadiusSm,
-            border: Border.all(color: AppColors.outlineVariant),
-          ),
-          child: Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Padding(
-                padding: EdgeInsets.all(2.w),
-                child: Text(
-                  initials,
-                  style: AppTextStyles.labelBold.copyWith(
-                    fontSize: 11.sp,
-                    color: AppColors.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainer,
+          borderRadius: AppSpacing.borderRadiusSm,
+          border: Border.all(color: AppColors.outlineVariant),
+        ),
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Padding(
+              padding: EdgeInsets.all(2.w),
+              child: Text(
+                initials,
+                style: AppTextStyles.labelBold.copyWith(
+                  fontSize: 11.sp,
+                  color: AppColors.onSurfaceVariant,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }
