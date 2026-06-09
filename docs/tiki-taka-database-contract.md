@@ -6,11 +6,15 @@ This document defines how the Flutter app opens and uses the bundled SQLite data
 
 | In scope | Out of scope (v1) |
 | --- | --- |
-| Read-only queries against `assets/db/tiki_taka.db` | Network APIs, Wikidata, live Transfermarkt |
+| Read-only queries against `assets/db/tiki_taka.db` | Live Transfermarkt APIs |
 | Copy bundled asset to an app-local file before open | Writing match state to SQLite |
 | Search, validation, board load DAOs (Phase T2+) | Coach attributes, multiplayer sync |
+| Reading nullable `players.image_url` for **display-only** player avatars (schema v2+) | Live Wikidata / Commons calls from the app |
+| `Image.network` against HTTPS Commons URLs stored in DB when online | Transfermarkt `image_url` hotlinking |
 
 Gameplay match state (hearts, timer, filled cells, used player IDs) stays **in memory** in the game engine/cubit — never persisted to this database.
+
+Player images are **cosmetic**. Image load failures degrade to a placeholder; they never affect search, validation, or board placement. See [player-image-plan.md](./player-image-plan.md).
 
 ## Why copy the bundled asset?
 
@@ -45,6 +49,18 @@ Re-copy the bundled DB when **either** meta value changes after an app update:
 | `source_csv_hash` | ETL input changed |
 
 When the fingerprint changes, delete or overwrite the previous local copy, copy the new asset, persist the new fingerprint, then open.
+
+**Schema v2 (player images):** When `meta.schema_version` changes from `1` to `2`, the app re-copies the bundled DB even if `source_csv_hash` is unchanged. The v2 `players` table adds nullable `image_url` (Commons thumbnail URLs resolved at ETL — see [player-image-plan.md](./player-image-plan.md)).
+
+## `players.image_url` (schema v2+)
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `image_url` | TEXT NULL | HTTPS Wikimedia Commons thumbnail URL; `NULL` when unresolved |
+
+- Populated at **build time** by `tool/etl/fetch_player_images.py` + `build_database.py`.
+- DAOs expose the column to the UI as optional `imageUrl` on search/validation results (Phase P4+).
+- The app **reads** this column only; it never updates image URLs at runtime.
 
 ## Read-only guarantee
 
@@ -96,6 +112,7 @@ search · validate · load board
 | `lib/features/tiki_taka/data/local/tiki_taka_database_paths.dart` | Asset/local paths and fingerprint keys |
 | `test/tiki_taka_database_smoke_test.dart` | Dev smoke test (FFI, read-only) |
 | `docs/dataset-plan.md` | ETL schema and table definitions |
+| `docs/player-image-plan.md` | Player image ETL, schema v2, maintainability runbook |
 | `docs/tiki-taka-toe-rules.md` §19–20 | Product data-source rules |
 
 ## Implementation phases

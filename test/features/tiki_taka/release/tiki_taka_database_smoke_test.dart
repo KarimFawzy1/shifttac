@@ -31,7 +31,13 @@ void main() {
       expect((players.first['c'] as int?) ?? 0, greaterThan(0));
       expect((boards.first['c'] as int?) ?? 0, greaterThanOrEqualTo(20));
       expect((attributes.first['c'] as int?) ?? 0, greaterThan(0));
-      expect(schema.first['value'], '1');
+      expect(schema.first['value'], anyOf('1', '2'));
+
+      if (schema.first['value'] == '2') {
+        final columns = await db.rawQuery('PRAGMA table_info(players)');
+        final names = columns.map((row) => row['name'] as String).toSet();
+        expect(names, contains('image_url'));
+      }
 
       await expectLater(
         db.insert('players', {

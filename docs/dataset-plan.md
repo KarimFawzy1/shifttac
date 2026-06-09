@@ -86,13 +86,20 @@ Publisher: [transfermarkt-datasets](https://github.com/dcaribou/transfermarkt-da
 BUILD TIME (developer machine, repeat monthly)
   transfermarkt-datasets/*.csv
   tool/etl/config/*.yaml          # allowlists + aliases
-  tool/etl/build_database.py      # clean → merge → sqlite
+  tool/etl/build_players.py       # D7 — players_table.csv
+  tool/etl/fetch_player_images.py # D7b — player_images.csv (Wikidata; optional until P3)
+       ↓
+  tool/etl/build_database.py      # D11 — merge → sqlite
        ↓
   tool/etl/output/tiki_taka.db
   tool/etl/output/manifest.json
        ↓ copy
   assets/db/tiki_taka.db          # Flutter asset (read-only)
+```
 
+**Player images:** See [player-image-plan.md](./player-image-plan.md) — [Maintainability & Future Updates](./player-image-plan.md#maintainability--future-updates) for full vs `--only-missing` refresh workflows.
+
+```text
 RUNTIME (Flutter)
   assets/db/tiki_taka.db
        → TikiTakaDatabase (open read-only)
@@ -185,6 +192,9 @@ Subset of players with at least **two** allowlisted attribute links (after merge
 | `search_text` | TEXT | lowercased, ASCII-folded for prefix search |
 | `position` | TEXT | `GK` \| `DEF` \| `MID` \| `FWD` |
 | `nation` | TEXT | normalized citizenship (cache) |
+| `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2) |
+
+**Player image ETL:** `tool/etl/fetch_player_images.py` writes `staging/player_images.csv`; D11 merges into `image_url`. Maintainability runbook: [player-image-plan.md](./player-image-plan.md#maintainability--future-updates).
 
 ### `player_attributes`
 
@@ -509,6 +519,23 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 
 ---
 
+### Phase D7b — Player image URLs (schema v2)
+
+**Goal:** Resolve optional Commons thumbnail URLs for players (display-only; not required for validation).
+
+**Steps:**
+
+1. Run after D7: `python tool/etl/fetch_player_images.py` (full) or `--only-missing` (incremental).
+2. Output: `tool/etl/staging/player_images.csv` (`player_id`, `image_url`, `commons_file`).
+3. D11 merges into `players.image_url`; players without a row keep `NULL`.
+
+**DoD:**
+
+- [ ] Script implemented (Phase P2 in [player-image-plan.md](./player-image-plan.md)).
+- [ ] Optional before first v2 DB ship — missing CSV → all `image_url` NULL.
+
+---
+
 ### Phase D11 — SQLite export & manifest
 
 **Goal:** Produce Flutter asset.
@@ -571,7 +598,7 @@ Example cases:
 | `player_valuations.csv` | Not needed for validation |
 | `game_events.csv` | Scope creep |
 | `club_games.csv` | Redundant with appearances |
-| TM `image_url` | Do not ship |
+| TM `image_url` | Do not ship (use Wikidata → Commons via D7b instead) |
 | Full `appearances` in SQLite | Derive edges only |
 
 ---
@@ -580,11 +607,13 @@ Example cases:
 
 ```text
 1. Replace transfermarkt-datasets/*.csv
-2. python tool/etl/build_database.py
-3. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas)
-4. Bump meta.schema_version if schema changed
-5. Copy tiki_taka.db → assets/db/
-6. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
+2. python tool/etl/build_players.py          # if player set changed
+3. python tool/etl/fetch_player_images.py --only-missing   # new player images (see player-image-plan.md)
+4. python tool/etl/build_database.py
+5. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
+6. Bump meta.schema_version if schema changed
+7. Copy tiki_taka.db → assets/db/
+8. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
 ```
 
 If `player_count` for a live board drops below threshold, retire `board_id` or regenerate boards.
@@ -639,6 +668,7 @@ Same `player_attributes` table; validation query unchanged.
 | D5 | Nation edges |
 | D6 | Position edges |
 | D7 | `players` subset |
+| D7b | `player_images.csv` (optional; schema v2) |
 | D8 | Aliases |
 | D9 | `attribute_pair_stats` |
 | D10 | `boards` |

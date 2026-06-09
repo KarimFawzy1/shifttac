@@ -578,7 +578,7 @@ Run: `flutter test` on 2026-06-09 — **407 / 407 passed**. P0 introduces **docs
 
 #### Next phase
 
-Proceed to **Phase P1 — Schema & Contract Updates** (`players.image_url` in ETL + contract docs + `build_database.py` schema v2 stub).
+Proceed to **Phase P1 — Schema & Contract Updates** (completed 2026-06-09).
 
 ---
 
@@ -616,19 +616,48 @@ python tool/etl/build_database.py   # fails gracefully if staging missing — sc
 
 **DoD:**
 
-- [ ] `players.image_url` documented in dataset + DB contract docs.
-- [ ] `SCHEMA_VERSION` is `2` in `build_database.py`.
-- [ ] `CREATE TABLE players` includes nullable `image_url`.
-- [ ] Import path accepts `image_url` (empty CSV field → `NULL`).
-- [ ] Maintainability section linked from `dataset-plan.md` ETL pipeline notes.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `players.image_url` documented in dataset + DB contract docs.
+- [x] `SCHEMA_VERSION` is `2` in `build_database.py`.
+- [x] `CREATE TABLE players` includes nullable `image_url`.
+- [x] Import path accepts `image_url` (empty CSV field → `NULL`).
+- [x] Maintainability section linked from `dataset-plan.md` ETL pipeline notes.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P1 add players.image_url schema contract
 ```
+
+### Phase P1 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `docs/tiki-taka-database-contract.md` | Display-only `image_url`; schema v2 invalidation; scope updated |
+| `docs/dataset-plan.md` | `image_url` column; D7b phase; pipeline + monthly refresh runbook links |
+| `tool/etl/build_database.py` | `SCHEMA_VERSION = 2`; merge optional `player_images.csv` |
+| `tool/etl/fetch_player_images.py` | CLI stub (`--help`); P2 implementation pending |
+| `test/.../tiki_taka_database_smoke_test.dart` | Accept schema v1 or v2; assert `image_url` column when v2 |
+
+#### Not shipped in P1 (by design)
+
+- `assets/db/tiki_taka.db` is gitignored — not committed. Local rebuild to schema v2 (all `image_url` NULL) is optional for dev smoke tests.
+- Flutter DAO / UI changes (Phase P4+).
+
+#### Validation
+
+```text
+python tool/etl/fetch_player_images.py --help   # OK
+python tool/etl/build_database.py             # OK when staging present
+flutter test test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart
+```
+
+#### Next phase
+
+Proceed to **Phase P2 — Wikidata Image ETL** (`fetch_player_images.py` full implementation).
 
 ---
 
