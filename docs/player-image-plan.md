@@ -364,17 +364,60 @@ Every DoD below includes:
 
 **DoD:**
 
-- [ ] `docs/player-image-plan.md` reviewed and agreed.
-- [ ] Schema v2 column `players.image_url` documented.
-- [ ] Placeholder behavior documented for: no URL, offline, network error, and full [Exception Handling](#exception-handling) matrix.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `docs/player-image-plan.md` reviewed and agreed.
+- [x] Schema v2 column `players.image_url` documented.
+- [x] Placeholder behavior documented for: no URL, offline, network error, and full [Exception Handling](#exception-handling) matrix.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P0 add player image implementation plan
 ```
+
+### Phase P0 Completion — 2026-06-09
+
+#### Locked implementation direction
+
+| Area | Decision |
+| --- | --- |
+| Image source | Wikidata **P2446** → **P18** → Commons `Special:FilePath` thumbnail URL |
+| Forbidden | Transfermarkt `image_url` / TM CDN hotlinking |
+| Storage | Nullable `players.image_url` in `tiki_taka.db` (schema v2) |
+| Runtime | `Image.network` when URL valid + online; no disk cache in v1 |
+| Failure UX | Silent degrade → `Icons.person_rounded` placeholder; no snackbars or crashes |
+| Search UI | ~40 logical px circular avatar leading name/subtitle |
+| Board UI | Filled cell: image `BoxFit.cover` full-bleed; grid size unchanged; no rotated name text |
+| ETL | `fetch_player_images.py` batch SPARQL; `unquote` → `quote` URL encoding; skip bad rows |
+| Gameplay | Images cosmetic only — search, validation, and board logic unchanged |
+
+#### Commons URL verification (pre-implementation)
+
+Manual browser + HTTP checks against players in `assets/db/tiki_taka.db`:
+
+| Player | DB id | Result |
+| --- | --- | --- |
+| Mohamed Salah | `tm:148455` | URL loads — HTTP 200 `image/jpeg` |
+| Lionel Messi | `tm:28003` | URL loads |
+| Cristiano Ronaldo | `tm:8198` | URL loads |
+| Erling Haaland | `tm:418560` | URL loads |
+| Kevin De Bruyne | `tm:88755` | URL loads |
+| Jude Bellingham | `tm:581678` | URL loads |
+
+Example verified URL pattern:
+
+```text
+https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128
+```
+
+#### Test baseline (pre-implementation)
+
+Run: `flutter test` on 2026-06-09 — **407 / 407 passed**. P0 introduces **docs only** — no production code modified.
+
+#### Next phase
+
+Proceed to **Phase P1 — Schema & Contract Updates** (`players.image_url` in ETL + contract docs + `build_database.py` schema v2 stub).
 
 ---
 
