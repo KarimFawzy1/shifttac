@@ -1066,7 +1066,7 @@ flutter test test/features/tiki_taka/presentation/widgets/
 
 #### Next phase
 
-Proceed to **Phase P7 — Board Cell UI**.
+Proceed to **Phase P7 — Board Cell UI** (completed 2026-06-09).
 
 ---
 
@@ -1104,19 +1104,41 @@ Manual: fill a cell online with a known imaged player; verify cover fit; toggle 
 
 **DoD:**
 
-- [ ] Filled cells show image expanded to cell bounds (`BoxFit.cover`).
-- [ ] Empty cells unchanged.
-- [ ] Grid cell size / spacing identical to pre-change board.
-- [ ] Missing URL / offline → person placeholder in cell.
-- [ ] Board widget tests pass.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Filled cells show image expanded to cell bounds (`BoxFit.cover`).
+- [x] Empty cells unchanged.
+- [x] Grid cell size / spacing identical to pre-change board.
+- [x] Missing URL / offline → person placeholder in cell.
+- [x] Board widget tests pass.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P7 show player image in filled board cells
 ```
+
+### Phase P7 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `tiki_taka_cell.dart` | Filled branch uses `LayoutBuilder` + `PlayerAvatar` (`BoxFit.cover`); rotated name text removed |
+| `tiki_taka_board_test.dart` | Placeholder, valid URL, empty cell, dimensions, occupied tap via semantics |
+
+#### Validation
+
+```text
+flutter test test/features/tiki_taka/presentation/widgets/tiki_taka_board_test.dart
+# 6/6 passed
+```
+
+`TikiTakaBoard` grid delegate unchanged (`childAspectRatio`, gaps, padding).
+
+#### Next phase
+
+Proceed to **Phase P8 — Docs, Rules Alignment & Full QA**.
 
 ---
 

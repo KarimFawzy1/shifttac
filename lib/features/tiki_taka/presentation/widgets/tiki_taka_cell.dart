@@ -1,14 +1,12 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/models/tiki_cell.dart';
+import 'player_avatar.dart';
 
-/// One playable Tiki-Taka intersection showing a player name when filled.
+/// One playable Tiki-Taka intersection showing a player image when filled.
 class TikiTakaCell extends StatelessWidget {
   const TikiTakaCell({
     super.key,
@@ -62,22 +60,20 @@ class TikiTakaCell extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(6.w),
               child: filled
-                  ? Center(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Transform.rotate(
-                          angle: -math.pi / 4,
-                          child: Text(
-                            label!,
-                            style: AppTextStyles.labelBold.copyWith(
-                              fontSize: 11.sp,
-                              color: AppColors.onSurface,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                          ),
-                        ),
-                      ),
+                  ? LayoutBuilder(
+                      builder: (context, constraints) {
+                        final size = constraints.biggest.shortestSide;
+                        if (!size.isFinite || size <= 0) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return PlayerAvatar(
+                          imageUrl: cell.player!.imageUrl,
+                          size: size,
+                          fit: BoxFit.cover,
+                          borderRadius: AppSpacing.borderRadiusMd,
+                        );
+                      },
                     )
                   : null,
             ),

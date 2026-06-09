@@ -10,6 +10,7 @@ import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.d
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_cell.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
+import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_cell.dart';
 
@@ -121,7 +122,8 @@ void main() {
   });
 
   group('TikiTakaCell', () {
-    testWidgets('long player names scale down without overflow', (tester) async {
+    testWidgets('filled cell without imageUrl shows person placeholder',
+        (tester) async {
       const player = TikiPlayerSearchResult(
         id: 'tm:test',
         displayName: 'Christopher Alexander Montgomery-Williams',
@@ -150,8 +152,100 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(FittedBox), findsOneWidget);
+      expect(find.byType(PlayerAvatar), findsOneWidget);
+      expect(find.byIcon(Icons.person_rounded), findsOneWidget);
+      expect(find.text(player.displayName), findsNothing);
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('filled cell with imageUrl shows PlayerAvatar', (tester) async {
+      const player = TikiPlayerSearchResult(
+        id: 'tm:148455',
+        displayName: 'Mohamed Salah',
+        imageUrl:
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128',
+      );
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: AppConstants.designSize,
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: TikiTakaCell(
+                    cell: const TikiCell(row: 0, col: 0, player: player),
+                    interactive: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final avatar = tester.widget<PlayerAvatar>(find.byType(PlayerAvatar));
+      expect(avatar.imageUrl, player.imageUrl);
+      expect(avatar.fit, BoxFit.cover);
+    });
+
+    testWidgets('empty cell has no PlayerAvatar', (tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: AppConstants.designSize,
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: TikiTakaCell(
+                    cell: const TikiCell(row: 0, col: 0),
+                    interactive: true,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byType(PlayerAvatar), findsNothing);
+    });
+
+    testWidgets('filled cell preserves outer dimensions', (tester) async {
+      const player = TikiPlayerSearchResult(
+        id: 'tm:test',
+        displayName: 'Test Player',
+      );
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: AppConstants.designSize,
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  key: const Key('cell_host'),
+                  width: 56,
+                  height: 56,
+                  child: TikiTakaCell(
+                    cell: const TikiCell(row: 0, col: 0, player: player),
+                    interactive: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(tester.getSize(find.byKey(const Key('cell_host'))), const Size(56, 56));
     });
   });
 
@@ -198,7 +292,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('Mohamed Salah'));
+      await tester.tap(find.bySemanticsLabel('Filled cell: Mohamed Salah'));
       await tester.pump();
 
       expect(cubit.state.activeCell, isNull);
