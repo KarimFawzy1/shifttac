@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../data/models/tiki_player_search_result.dart';
+import 'player_avatar.dart';
 
 /// Single selectable row in the Tiki-Taka player search dialog.
 class PlayerSearchResultTile extends StatelessWidget {
@@ -19,9 +20,12 @@ class PlayerSearchResultTile extends StatelessWidget {
   final VoidCallback onTap;
   final bool enabled;
 
+  static const _avatarSize = 40.0;
+
   @override
   Widget build(BuildContext context) {
     final subtitle = _subtitleFor(player);
+    final avatarSize = _avatarSize.w;
 
     return Semantics(
       button: true,
@@ -38,6 +42,12 @@ class PlayerSearchResultTile extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             child: Row(
               children: [
+                PlayerAvatar(
+                  imageUrl: player.imageUrl,
+                  size: avatarSize,
+                  borderRadius: BorderRadius.circular(avatarSize / 2),
+                ),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

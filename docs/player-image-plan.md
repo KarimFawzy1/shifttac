@@ -1006,7 +1006,7 @@ flutter test test/features/tiki_taka/domain/services/player_image_url_validator_
 
 #### Next phase
 
-Proceed to **Phase P6 — Search Results UI**.
+Proceed to **Phase P6 — Search Results UI** (completed 2026-06-09).
 
 ---
 
@@ -1035,18 +1035,38 @@ flutter test test/features/tiki_taka/presentation/widgets/
 
 **DoD:**
 
-- [ ] Search rows show circular avatar left of text.
-- [ ] Null `imageUrl` shows person placeholder.
-- [ ] Row tap / enable / disable behavior unchanged.
-- [ ] Widget tests updated.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Search rows show circular avatar left of text.
+- [x] Null `imageUrl` shows person placeholder.
+- [x] Row tap / enable / disable behavior unchanged.
+- [x] Widget tests updated.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P6 show player avatars in search results
 ```
+
+### Phase P6 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `player_search_result_tile.dart` | Leading circular `PlayerAvatar` (~40.w) with `player.imageUrl` |
+| `player_search_result_tile_test.dart` | Placeholder, valid URL, semantics, tap enable/disable |
+
+#### Validation
+
+```text
+flutter test test/features/tiki_taka/presentation/widgets/
+# 38/38 passed
+```
+
+#### Next phase
+
+Proceed to **Phase P7 — Board Cell UI**.
 
 ---
 
