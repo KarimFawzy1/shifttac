@@ -122,7 +122,7 @@ void main() {
   });
 
   group('TikiTakaCell', () {
-    testWidgets('filled cell without imageUrl shows person placeholder',
+    testWidgets('filled cell without imageUrl shows diagonal player name',
         (tester) async {
       const player = TikiPlayerSearchResult(
         id: 'tm:test',
@@ -152,9 +152,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(PlayerAvatar), findsOneWidget);
-      expect(find.byIcon(Icons.person_rounded), findsOneWidget);
-      expect(find.text(player.displayName), findsNothing);
+      expect(find.byType(PlayerAvatar), findsNothing);
+      expect(find.byIcon(Icons.person_rounded), findsNothing);
+      expect(find.text(player.displayName), findsOneWidget);
+      expect(find.byType(FittedBox), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -292,7 +293,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.bySemanticsLabel('Filled cell: Mohamed Salah'));
+      await tester.tap(find.text('Mohamed Salah'));
       await tester.pump();
 
       expect(cubit.state.activeCell, isNull);

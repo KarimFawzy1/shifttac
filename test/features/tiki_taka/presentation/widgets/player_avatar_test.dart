@@ -121,5 +121,11 @@ void main() {
       final clip = tester.widget<ClipRRect>(find.byType(ClipRRect));
       expect(clip.borderRadius, BorderRadius.circular(8));
     });
+
+    test('defaults to top-center alignment for face-first cover crop', () {
+      const avatar = PlayerAvatar(imageUrl: 'https://example.com/x.jpg', size: 40);
+      expect(avatar.fit, BoxFit.cover);
+      expect(avatar.alignment, Alignment.topCenter);
+    });
   });
 }

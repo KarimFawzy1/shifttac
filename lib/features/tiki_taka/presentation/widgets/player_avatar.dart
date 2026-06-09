@@ -11,6 +11,7 @@ class PlayerAvatar extends StatelessWidget {
     required this.imageUrl,
     required this.size,
     this.fit = BoxFit.cover,
+    this.alignment = Alignment.topCenter,
     this.borderRadius,
     this.semanticsLabel,
   });
@@ -18,6 +19,9 @@ class PlayerAvatar extends StatelessWidget {
   final String? imageUrl;
   final double size;
   final BoxFit fit;
+
+  /// Crop anchor for [fit]. Wikidata portraits usually place the face near the top.
+  final Alignment alignment;
   final BorderRadius? borderRadius;
   final String? semanticsLabel;
 
@@ -49,6 +53,7 @@ class PlayerAvatar extends StatelessWidget {
             width: size,
             height: size,
             fit: fit,
+            alignment: alignment,
             gaplessPlayback: true,
             excludeFromSemantics: semanticsLabel == null,
             loadingBuilder: (context, child, loadingProgress) {
