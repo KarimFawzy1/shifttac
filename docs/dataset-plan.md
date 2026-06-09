@@ -87,7 +87,7 @@ BUILD TIME (developer machine, repeat monthly)
   transfermarkt-datasets/*.csv
   tool/etl/config/*.yaml          # allowlists + aliases
   tool/etl/build_players.py       # D7 — players_table.csv
-  tool/etl/fetch_player_images.py # D7b — player_images.csv (Wikidata; optional until P3)
+  tool/etl/fetch_player_images.py # D7b — player_images.csv (Wikidata; schema v2)
        ↓
   tool/etl/build_database.py      # D11 — merge → sqlite
        ↓
@@ -531,8 +531,8 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 
 **DoD:**
 
-- [ ] Script implemented (Phase P2 in [player-image-plan.md](./player-image-plan.md)).
-- [ ] Optional before first v2 DB ship — missing CSV → all `image_url` NULL.
+- [x] Script implemented (Phase P2 in [player-image-plan.md](./player-image-plan.md)).
+- [x] Shipped in schema v2 DB — 11,867 / 28,221 players with `image_url` (2026-06-09); missing CSV → all `image_url` NULL.
 
 ---
 

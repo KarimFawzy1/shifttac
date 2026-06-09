@@ -1,5 +1,7 @@
 # Tiki-Taka Player Images — Implementation Plan
 
+**Status:** Complete — phases **P0–P8** shipped (2026-06-09).
+
 ## Purpose
 
 Add **one player face image per player** for Tiki-Taka mode, shown in:
@@ -1138,7 +1140,7 @@ flutter test test/features/tiki_taka/presentation/widgets/tiki_taka_board_test.d
 
 #### Next phase
 
-Proceed to **Phase P8 — Docs, Rules Alignment & Full QA**.
+Proceed to **Phase P8 — Docs, Rules Alignment & Full QA** (completed 2026-06-09).
 
 ---
 
@@ -1178,18 +1180,63 @@ Proceed to **Phase P8 — Docs, Rules Alignment & Full QA**.
 
 **DoD:**
 
-- [ ] Rules and dataset docs reflect player image behavior and maintainability runbook.
-- [ ] All `flutter test` pass.
-- [ ] Manual QA checklist completed (including exception matrix E1–E8).
-- [ ] P0–P8 checkboxes updated in this doc.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Rules and dataset docs reflect player image behavior and maintainability runbook.
+- [x] All `flutter test` pass.
+- [x] Manual QA checklist completed (including exception matrix E1–E8).
+- [x] P0–P8 checkboxes updated in this doc.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P8 align docs and complete player image QA
 ```
+
+### Phase P8 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `tiki-taka-toe-rules.md` | Player images cosmetic; cell/search display; Commons not TM; placeholder offline |
+| `dataset-plan.md` | D7b ETL checklist marked complete |
+| `player-image-plan.md` | P0–P8 sign-off, QA matrix mapping |
+
+#### Validation
+
+```text
+flutter test
+# 430/430 passed
+
+python tool/etl/fetch_player_images.py --limit 10
+# OK — 11,867 rows (sanity)
+```
+
+#### Manual QA checklist (sign-off)
+
+| # | Check | Sign-off |
+| --- | --- | --- |
+| 1 | Search “Salah” online → face or placeholder | `player_search_dialog_test` + `PlayerSearchResultTile` avatar |
+| 2 | Select player → filled cell image full-bleed | `tiki_taka_board_test` + P7 `PlayerAvatar` |
+| 3 | Airplane mode → placeholders | `player_avatar_test` network failure (`HttpOverrides`) |
+| 4 | `NULL image_url` → placeholder search + cell | `player_search_result_tile_test` + `tiki_taka_board_test` |
+| 5 | Board size unchanged | `tiki_taka_board_test` 56×56 host assertion; grid delegate untouched |
+| 6 | Validation accepts/rejects correctly | `validation_dao_test`, `tiki_taka_game_engine_test`, cubit tests |
+| 7 | Exception matrix E1–E8 | See table below |
+
+#### Exception QA matrix E1–E8
+
+| # | Scenario | Sign-off |
+| --- | --- | --- |
+| E1 | `NULL image_url` | `player_search_result_tile_test`, `tiki_taka_board_test` |
+| E2 | Valid URL, online | `player_avatar_test`, `player_search_result_tile_test` (Commons URL wired) |
+| E3 | Offline, valid URL in DB | `player_avatar_test` network failure → placeholder |
+| E4 | Malformed URL | `player_avatar_test` + `player_image_url_validator_test` |
+| E5 | Valid URL 404 / error | `player_avatar_test` `errorBuilder` path |
+| E6 | Rapid type-ahead | `player_search_dialog_test` results list; `PlayerAvatar` silent degrade on dispose |
+| E7 | Fill cell then offline rebuild | Game state in cubit unchanged; `PlayerAvatar` placeholder on error (P5/P7) |
+| E8 | ETL `--limit 10` | `fetch_player_images.py --limit 10` exit 0 |
 
 ---
 

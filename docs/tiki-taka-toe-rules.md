@@ -357,7 +357,7 @@ Validate selected player against row attribute + column attribute
 If the selected player is valid:
 
 * The cell becomes filled
-* The player name is written inside the cell
+* The player face image is shown full-bleed in the cell (`BoxFit.cover`), or a person placeholder when the URL is missing, offline, or fails to load
 * The cell becomes locked
 * Win checker runs
 * Completion checker runs
@@ -383,30 +383,36 @@ Show lose dialog
 
 ## 9. Cell Display Rules
 
-When a valid player is selected, the player name is displayed inside the cell.
+When a valid player is selected, the player's face image is displayed inside the cell.
 
-The text should:
+The image should:
 
-* Fit inside the cell
-* Adapt its size to the available space
-* Be shown diagonally
+* Fill the cell bounds (`BoxFit.cover`) without changing grid geometry
+* Use a Wikimedia Commons thumbnail URL from bundled `players.image_url` when available
+* Degrade to a **person placeholder icon** when the URL is `NULL`, invalid, offline, or fails to load
 * Keep the cell size fixed
 * Never resize the board cell
 
 Important:
 
 ```text
-Text adapts to the cell.
-The cell does not adapt to the text.
+The image adapts to the cell.
+The cell does not adapt to the image.
 ```
+
+The full player name is **not** drawn inside the cell in v1. It remains available in:
+
+* The player search dialog and result rows
+* Accessibility semantics (`Filled cell: {displayName}`)
 
 Recommended visual behavior:
 
-* Short names use larger text
-* Long names use smaller text
-* Text can wrap if needed
-* Text remains readable
-* Text should not overflow outside the cell
+* Search results show a circular avatar (~40 logical px) beside name/subtitle
+* Filled cells show the face image edge-to-edge within the cell border (with inner padding)
+* Placeholder uses the same icon treatment in search and cells
+* Images are **cosmetic only** — validation is unchanged (name + attribute SQL)
+
+**Forbidden:** Transfermarkt `image_url` values or TM CDN hotlinking in UI.
 
 ---
 
@@ -415,7 +421,7 @@ Recommended visual behavior:
 Once a cell has a valid player:
 
 * The cell is locked
-* The player name remains visible
+* The player image (or person placeholder) remains visible
 * The cell cannot be selected again
 * The answer cannot be changed unless a future edit feature is added
 
@@ -793,8 +799,9 @@ Full ETL phases, merge rules, and schema are defined in [dataset-plan.md](./data
 * Search players via `players.search_text` and `player_aliases`.
 * Load board layout from `boards` + `board_slots`.
 * Match state (hearts, timer, filled cells, used player IDs) lives **in memory** in the game engine/cubit — not in SQLite.
+* Optionally fetch **display-only** player face images over HTTPS from Wikimedia Commons URLs stored in `players.image_url`. Image load failures degrade to a placeholder; gameplay is never blocked.
 
-### Why not live APIs (including Wikidata)
+### Why not live APIs for gameplay data (including Wikidata validation)
 
 | Reason | Detail |
 | --- | --- |
@@ -804,11 +811,11 @@ Full ETL phases, merge rules, and schema are defined in [dataset-plan.md](./data
 | Control | ETL allowlists, aliases, and dedupe produce predictable trivia |
 | Board QA | `attribute_pair_stats` precomputes intersection counts before ship |
 
-Wikidata or other live sources may inform future data enrichment, but **v1 gameplay reads only the bundled SQLite asset** produced by the Transfermarkt ETL.
+Wikidata informs **build-time** player image resolution (ETL → `players.image_url`). The app may fetch those Commons thumbnails at runtime for display only. **Validation and search never call Wikidata or Transfermarkt at runtime.**
 
 ### Refresh cadence
 
-Re-run the ETL monthly (or when source CSVs update), bump `meta.schema_version` if needed, copy the new DB to `assets/db/`, and run validation fixtures. See [dataset-plan.md](./dataset-plan.md) — Monthly Refresh Workflow.
+Re-run the ETL monthly (or when source CSVs update), bump `meta.schema_version` if needed, copy the new DB to `assets/db/`, and run validation fixtures. For player images after schema v2, include `fetch_player_images.py` (full or `--only-missing`) before `build_database.py`. See [dataset-plan.md](./dataset-plan.md) — Monthly Refresh Workflow and [player-image-plan.md](./player-image-plan.md) — [Update workflows](./player-image-plan.md#update-workflows).
 
 ### Licensing note
 
@@ -826,7 +833,7 @@ The shippable database file is `tiki_taka.db`. Schema version is stored in the `
 | --- | --- |
 | `meta` | `schema_version`, `built_at`, source hash |
 | `attributes` | Board headers — clubs, nations, leagues, positions (`club:31`, `nation:egypt`, `league:GB1`, `pos:FWD`) |
-| `players` | Filtered player subset with `display_name`, `search_text`, position/nation cache |
+| `players` | Filtered player subset with `display_name`, `search_text`, position/nation cache, optional `image_url` (Commons thumbnail, schema v2) |
 | `player_attributes` | Independent player ↔ attribute edges (provenance via `source` column) |
 | `player_aliases` | Alternate search strings (surnames, nicknames, manual overrides) |
 | `attribute_pair_stats` | Precomputed intersection counts for board viability |
@@ -848,7 +855,7 @@ The shippable database file is `tiki_taka.db`. Schema version is stored in the `
 
 * Coach edges (`coach:*`) — deferred
 * Raw CSV rows — derive edges only
-* Transfermarkt image URLs
+* Transfermarkt image URLs (use Wikidata → Commons via ETL instead; see [player-image-plan.md](./player-image-plan.md))
 * Full appearance history
 
 Optional dev-only table (not required for gameplay):
@@ -916,10 +923,11 @@ It should include:
 * Selected cell attributes
 * Search input
 * Search results
-* Player name
-* Optional player image (app assets only — not TM hotlinks)
-* Optional player nationality/club hints
+* Player name and subtitle (position · nation when available)
+* Circular player avatar (Commons URL from `players.image_url`, or person placeholder on failure)
 * Cancel button
+
+Player images are **display-only**. Offline mode, missing URLs, and network errors show the same person placeholder — search, selection, and validation continue normally. Do **not** hotlink Transfermarkt assets.
 
 The user must select a player from the list.
 
@@ -994,7 +1002,7 @@ The implementation must handle:
 * Restart while dialog is open
 * App backgrounding while timer is running
 * Board generation failure (fallback board or error state)
-* Long player names
+* Long player names (search list and semantics; not drawn inside filled cells)
 * Similar player names
 * Accented names (normalized at ETL; search is accent-insensitive)
 
@@ -1053,8 +1061,8 @@ Verify:
 * No move counter appears
 * Hearts are visible
 * Timer is visible
-* Player name fits inside cell
-* Long names do not break layout
+* Search results show player avatar or placeholder
+* Filled cells show player image full-bleed or placeholder; cell size unchanged
 * Occupied cells cannot be selected again
 
 ---
@@ -1135,7 +1143,8 @@ Locked for Flutter implementation. See also [dataset-plan2.md](./dataset-plan2.m
 | Nation rule | Citizenship from player profile (v1); national-team caps deferred |
 | Default board template | **Clubs × Nations** (alternate: Leagues × Clubs) |
 | Default `MIN_INTERSECTION` | **3** (medium); easy = 5, hard = 1 with manual QA |
-| Data source | Transfermarkt CSV → ETL → bundled `tiki_taka.db` (not live Wikidata) |
+| Data source | Transfermarkt CSV → ETL → bundled `tiki_taka.db` (not live Wikidata for validation) |
+| Player images | **Cosmetic** — Wikidata/Commons URLs in `players.image_url`; placeholder on failure; no TM hotlinks |
 | Coach attributes | **Deferred post-v1** |
 | Local multiplayer | **Deferred post-v1** (see dataset-plan2 Future F1) |
 
@@ -1171,6 +1180,7 @@ Use this list for implementation gates and doc alignment.
 * [x] **Optional full-board completion** — Continue Playing toward all 9 cells filled
 * [x] **Coach attributes deferred**
 * [x] **Multiplayer deferred**
+* [x] **Player images** — cosmetic Commons avatars in search + cells; placeholder on failure; validation unchanged
 
 ---
 
@@ -1179,9 +1189,10 @@ Use this list for implementation gates and doc alignment.
 | Doc | Role |
 | --- | --- |
 | [dataset-plan.md](./dataset-plan.md) | ETL pipeline, SQLite schema, allowlists, board curation |
+| [player-image-plan.md](./player-image-plan.md) | Player image ETL, runtime placeholder, maintainability runbook |
 | [rules.md](./rules.md) | Mode comparison across the app |
 | [classic-rules.md](./classic-rules.md) | Classic Tic Tac Toe rules (shared win checker concept) |
 
 ---
 
-*Last updated: 2026-06-06 — v1 rules locked (G6); Section 30 and Appendix A aligned with dataset-plan2.*
+*Last updated: 2026-06-09 — player image display rules (P8); Section 9, 19, 23, 30, and Appendix A aligned with [player-image-plan.md](./player-image-plan.md).*
