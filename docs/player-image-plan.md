@@ -28,6 +28,7 @@ Images are resolved at **build time** from **Wikidata** (via Transfermarkt ID **
 | Search row layout | Leading circular avatar (~40 logical px) + existing name/subtitle |
 | Gameplay validation | Unchanged — images are display-only; search/validate SQL logic is unaffected |
 | Schema version | Bump `meta.schema_version` from `1` → `2` |
+| Image updates | **ETL-only** — re-run fetch + DB build; Flutter reads `image_url` from SQLite (see [Maintainability](#maintainability--future-updates)) |
 
 ---
 
@@ -100,7 +101,8 @@ Reuse existing theme tokens:
 | --- | --- | --- |
 | `schema_version` | `2` | Triggers app DB re-copy |
 | `player_image_source` | `wikidata_p2446_p18` | Provenance |
-| `players_with_image_count` | `8420` | QA / telemetry in manifest |
+| `player_images_fetched_at` | `2026-06-09T12:00:00+00:00` | Last ETL image fetch (ISO 8601) |
+| `players_with_image_count` | `8420` | QA / regression vs previous build |
 
 ### Staging file
 
@@ -116,9 +118,164 @@ Only rows with a resolved image are written. Players absent from this file get `
 
 ---
 
+## Maintainability & Future Updates
+
+Player images must stay **easy to refresh** when the Transfermarkt dataset grows, Wikidata coverage improves, or a specific URL needs fixing — **without Flutter code changes** for routine updates.
+
+### Design goals
+
+| Goal | How we achieve it |
+| --- | --- |
+| Single source of truth | `players.image_url` in shipped SQLite — not a second manifest, not hardcoded Dart constants |
+| Build-time resolution only | All Wikidata/Commons work lives in `tool/etl/`; the app only displays URLs from the DB |
+| Idempotent ETL | Re-running `fetch_player_images.py` produces a fresh `player_images.csv`; safe to repeat |
+| Incremental updates | `--only-missing` resolves images only for players not yet in `player_images.csv` |
+| Manual fixes without code | Optional `player_image_overrides.yaml` merged **after** Wikidata (overrides win) |
+| One URL builder | Shared `tool/etl/player_image_url.py` — encoding, validation, Commons URL shape in one module |
+| Thin Flutter layer | DAO passes `image_url` → `PlayerAvatar` validates + loads; no player-specific branches in UI |
+
+### Layer responsibilities (keep clean)
+
+```text
+tool/etl/player_image_url.py     # URL build + validate (Python, unit-testable)
+tool/etl/fetch_player_images.py  # Wikidata SPARQL + CSV output (+ CLI flags)
+tool/etl/build_database.py       # Merge player_images.csv → players.image_url
+lib/.../player_image_url_validator.dart   # Runtime HTTPS/Commons guard (mirror of ETL rules)
+lib/.../player_avatar.dart       # Display only — never fetches Wikidata
+```
+
+**Anti-patterns (do not implement):**
+
+- Hardcoding player URLs or asset paths in widgets.
+- A separate `assets/tiki_taka/players/manifest.json` duplicating DB rows.
+- Live Wikidata/Commons calls from the Flutter app.
+- Player-specific `if (id == 'tm:…')` branches in UI code.
+
+### Shared ETL module (`player_image_url.py`)
+
+Extract in **Phase P2** so URL logic is not duplicated across scripts:
+
+```python
+def filename_from_p18_uri(p18_uri: str) -> str: ...
+def build_commons_thumbnail_url(filename: str, *, width: int = 128) -> str: ...
+def is_valid_commons_image_url(url: str) -> bool: ...
+```
+
+Both `fetch_player_images.py` and `build_database.py` (sanity check on import) use this module. Tests live in `tool/etl/tests/test_player_image_url.py`.
+
+### Manual overrides (optional, Phase P2)
+
+`tool/etl/config/player_image_overrides.yaml` — for players Wikidata misses or wrong P18:
+
+```yaml
+# player_id → explicit Commons thumbnail URL (HTTPS only)
+tm:148455:
+  url: "https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128"
+  note: "manual verify 2026-06-09"
+```
+
+Merge order in `fetch_player_images.py`:
+
+1. Wikidata batch results  
+2. Apply overrides (replace or insert by `player_id`)  
+3. Write final `player_images.csv`
+
+Overrides are **version-controlled** and reviewable in PRs — preferred over one-off script edits.
+
+### CLI flags (`fetch_player_images.py`)
+
+| Flag | Purpose |
+| --- | --- |
+| *(default)* | Process **all** players in `players_table.csv` |
+| `--only-missing` | Skip players already present in existing `player_images.csv` (fast incremental) |
+| `--limit N` | Dev: first N players only |
+| `--verify-urls` | HEAD/GET each URL; drop 404 / non-image before write |
+| `--refresh` | With `--only-missing` off: full re-fetch; with `--only-missing`: re-try NULL/missing only |
+
+### Update workflows
+
+#### A — Full dataset refresh (monthly TM CSV drop)
+
+Use when `players_table.csv` changes substantially or you want to re-resolve all images:
+
+```text
+python tool/etl/build_players.py
+python tool/etl/fetch_player_images.py              # full Wikidata pass
+python tool/etl/build_database.py
+# copy assets/db/tiki_taka.db → commit → app release or OTA asset update
+```
+
+#### B — New players only (recommended for routine ETL)
+
+Use after `build_players.py` adds rows but existing images should be kept:
+
+```text
+python tool/etl/build_players.py
+python tool/etl/fetch_player_images.py --only-missing
+python tool/etl/build_database.py
+```
+
+`--only-missing` compares `players_table.csv` ids against `staging/player_images.csv` and queries Wikidata **only for gaps**.
+
+#### C — Fix one or a few players manually
+
+1. Add entry to `player_image_overrides.yaml`.  
+2. Re-run `fetch_player_images.py` (overrides merged on write).  
+3. Re-run `build_database.py`.  
+4. Ship updated `tiki_taka.db`.
+
+No Dart changes required.
+
+#### D — Refresh stale Commons URLs
+
+When `--verify-urls` drops broken links from a previous build:
+
+```text
+python tool/etl/fetch_player_images.py --verify-urls
+python tool/etl/build_database.py
+```
+
+Players whose URLs 404 become omitted from CSV → `image_url = NULL` → placeholder until Wikidata/override fixes them.
+
+### Shipping updates to users
+
+| Change type | App code needed? | How users get new images |
+| --- | --- | --- |
+| New/changed `image_url` values only | **No** | New `tiki_taka.db` asset; `source_csv_hash` / fingerprint triggers re-copy on app update |
+| Schema change (`image_url` column added) | Yes (P4–P7 once) | `schema_version` bump triggers re-copy |
+| URL validation rules in Flutter | Yes | Normal app release |
+
+Routine image coverage improvements are **data-only commits** (`assets/db/tiki_taka.db` + manifest) after P4–P8 ship.
+
+### Observability for future you
+
+`fetch_player_images_summary.json` and `meta` / output manifest should include:
+
+| Field | Purpose |
+| --- | --- |
+| `player_images_fetched_at` | ISO timestamp of last successful fetch run |
+| `players_with_image_count` | Quick regression check vs previous build |
+| `skipped.*` | See if coverage improved after Wikidata edits |
+| `newly_resolved_count` | With `--only-missing`: how many new players got URLs |
+
+Compare manifest across builds in PR description when refreshing images.
+
+### Adding a new player end-to-end
+
+```text
+1. TM CSV → build_players.py includes new tm:{id} in players_table.csv
+2. fetch_player_images.py --only-missing  → Wikidata lookup for that id
+3. build_database.py                      → image_url merged (or NULL)
+4. Ship DB asset                          → app shows image or placeholder automatically
+```
+
+Flutter code requires **no changes** per new player.
+
+---
+
 ## Wikidata ETL (summary)
 
-**Script:** `tool/etl/fetch_player_images.py`
+**Scripts:** `tool/etl/fetch_player_images.py` (orchestration) + `tool/etl/player_image_url.py` (shared URL helpers).
 
 1. Read all `player_id` values from `staging/players_table.csv`.
 2. Strip `tm:` prefix → numeric TM id for SPARQL **P2446** lookup.
@@ -134,8 +291,9 @@ Only rows with a resolved image are written. Players absent from this file get `
    ```
 
 4. For duplicate `tmId` rows, keep the first result only (one image per player).
-5. Build Commons URL; skip empty/invalid filenames.
-6. Write `player_images.csv` and `tool/etl/reports/fetch_player_images_summary.json`.
+5. Build Commons URL via `player_image_url.build_commons_thumbnail_url()`; skip empty/invalid filenames.
+6. Merge `tool/etl/config/player_image_overrides.yaml` when present (overrides win).
+7. Write `player_images.csv` and `tool/etl/reports/fetch_player_images_summary.json`.
 
 **HTTP etiquette:** set a descriptive `User-Agent` (app name + contact); sleep ~1s between batch requests; retry transient 429/5xx up to 3 times.
 
@@ -303,7 +461,9 @@ Image failures must **never**:
 | `lib/features/tiki_taka/data/local/daos/player_search_dao.dart` | `SELECT … p.image_url` |
 | `lib/features/tiki_taka/data/local/daos/validation_dao.dart` | Include `image_url` in validation result |
 | `lib/features/tiki_taka/presentation/widgets/player_avatar.dart` | **NEW** — network + placeholder |
-| `lib/features/tiki_taka/domain/services/player_image_url_validator.dart` | **NEW** — `isLoadablePlayerImageUrl` (HTTPS Commons check) |
+| `lib/features/tiki_taka/domain/services/player_image_url_validator.dart` | **NEW** — `isLoadablePlayerImageUrl` (HTTPS Commons check; mirrors ETL rules) |
+| `tool/etl/player_image_url.py` | **NEW** — shared URL build/validate for ETL |
+| `tool/etl/config/player_image_overrides.yaml` | **NEW** — optional manual URL overrides |
 | `lib/features/tiki_taka/presentation/widgets/player_search_result_tile.dart` | Leading `PlayerAvatar` |
 | `lib/features/tiki_taka/presentation/widgets/tiki_taka_cell.dart` | Filled state → full-cell `PlayerAvatar` (`BoxFit.cover`) |
 | `tool/etl/build_database.py` | Schema v2 + merge `player_images.csv` |
@@ -389,7 +549,8 @@ tiki-taka: P0 add player image implementation plan
 | Failure UX | Silent degrade → `Icons.person_rounded` placeholder; no snackbars or crashes |
 | Search UI | ~40 logical px circular avatar leading name/subtitle |
 | Board UI | Filled cell: image `BoxFit.cover` full-bleed; grid size unchanged; no rotated name text |
-| ETL | `fetch_player_images.py` batch SPARQL; `unquote` → `quote` URL encoding; skip bad rows |
+| ETL | `fetch_player_images.py` batch SPARQL; shared `player_image_url.py`; `--only-missing` for new players; overrides YAML |
+| Maintainability | Image updates are data-only after P8 — re-run ETL + ship DB; no per-player Dart changes |
 | Gameplay | Images cosmetic only — search, validation, and board logic unchanged |
 
 #### Commons URL verification (pre-implementation)
@@ -434,6 +595,7 @@ Proceed to **Phase P1 — Schema & Contract Updates** (`players.image_url` in ET
 2. Update `docs/dataset-plan.md`:
    - Add `image_url` to `players` table definition.
    - Add `fetch_player_images.py` to pipeline diagram (after D7, before D11).
+   - Document [Maintainability & Future Updates](#maintainability--future-updates) runbook (full vs `--only-missing`).
 3. Update `tool/etl/build_database.py`:
    - `SCHEMA_VERSION = 2`
    - Add `image_url TEXT` to `CREATE TABLE players`.
@@ -458,6 +620,7 @@ python tool/etl/build_database.py   # fails gracefully if staging missing — sc
 - [ ] `SCHEMA_VERSION` is `2` in `build_database.py`.
 - [ ] `CREATE TABLE players` includes nullable `image_url`.
 - [ ] Import path accepts `image_url` (empty CSV field → `NULL`).
+- [ ] Maintainability section linked from `dataset-plan.md` ETL pipeline notes.
 - [ ] Phase changes are committed.
 - [ ] Commit is pushed to remote.
 
@@ -478,17 +641,23 @@ tiki-taka: P1 add players.image_url schema contract
 1. Implement `tool/etl/fetch_player_images.py`:
    - Input: `staging/players_table.csv`
    - Output: `staging/player_images.csv`, `reports/fetch_player_images_summary.json`
+   - Extract URL helpers to `tool/etl/player_image_url.py` (shared, unit-tested).
    - Batched SPARQL, **single-pass URL encoding** (`unquote` → `quote`), dedupe, retries, User-Agent.
    - Per-player try/except: one bad player must not abort the run.
+   - CLI: `--only-missing`, `--limit N`, `--verify-urls`, `--refresh` (see [Maintainability](#maintainability--future-updates)).
+   - Merge optional `tool/etl/config/player_image_overrides.yaml` after Wikidata (overrides win).
    - Optional `--verify-urls` flag: HEAD/GET Commons; skip 404 / non-image (see [Exception Handling](#exception-handling)).
-2. Add `tool/etl/reports/.gitkeep` or ensure reports dir exists.
-3. Document run command in script docstring:
+2. Add `tool/etl/tests/test_player_image_url.py` for URL builder/validator.
+3. Add `tool/etl/config/player_image_overrides.yaml` example (empty or commented — no required overrides).
+4. Add `tool/etl/reports/.gitkeep` or ensure reports dir exists.
+5. Document run commands in script docstring:
 
    ```text
    python tool/etl/fetch_player_images.py
+   python tool/etl/fetch_player_images.py --only-missing
    ```
 
-4. Optional dry-run flag `--limit N` for dev (first N players only).
+6. Optional dry-run flag `--limit N` for dev (first N players only).
 
 **Scope Out:**
 
@@ -509,6 +678,9 @@ Check summary JSON contains: `total_players`, `matched_wikidata`, `with_p18`, `w
 - [ ] Each output row has exactly one `player_id` and one `image_url`.
 - [ ] URLs use HTTPS Commons `Special:FilePath` with `width=128`.
 - [ ] Filename encoding uses **decode-then-encode** (no `%2520` double-encoding).
+- [ ] `player_image_url.py` extracted with tests; no duplicated URL logic in fetch script.
+- [ ] `--only-missing` incremental mode works for new players in `players_table.csv`.
+- [ ] Overrides file format documented; merge order Wikidata → overrides.
 - [ ] Skipped players are counted in summary (`no_wikidata`, `no_p18`, `invalid_url`, etc.).
 - [ ] SPARQL batch failure retries then continues; partial success still exits 0.
 - [ ] Summary report written with match and skip counts.
@@ -533,7 +705,7 @@ tiki-taka: P2 add wikidata player image ETL
 1. Update `build_database.py`:
    - Load `player_images.csv` into a dict keyed by `player_id`.
    - When importing `players_table.csv`, set `image_url` from dict or `NULL`.
-   - Write `meta.player_image_source` and manifest field `players_with_image_count`.
+   - Write `meta.player_image_source`, `meta.player_images_fetched_at`, and manifest field `players_with_image_count`.
 2. Update `REQUIRED_STAGING` if `player_images.csv` is optional (recommended: **optional** — missing file means all `NULL`).
 3. Run full ETL pipeline:
 
@@ -796,7 +968,7 @@ tiki-taka: P7 show player image in filled board cells
 1. Update `docs/tiki-taka-toe-rules.md`:
    - Player images are cosmetic; validation still name/attribute based.
    - Offline → placeholder; no TM hotlinking.
-2. Update `docs/dataset-plan.md` ETL checklist with D7b image fetch step.
+2. Update `docs/dataset-plan.md` ETL checklist with D7b image fetch step and [update workflows](#update-workflows).
 3. Mark phases P0–P8 complete in this file (checkboxes).
 4. Run full test suite:
 
@@ -823,7 +995,7 @@ tiki-taka: P7 show player image in filled board cells
 
 **DoD:**
 
-- [ ] Rules and dataset docs reflect player image behavior.
+- [ ] Rules and dataset docs reflect player image behavior and maintainability runbook.
 - [ ] All `flutter test` pass.
 - [ ] Manual QA checklist completed (including exception matrix E1–E8).
 - [ ] P0–P8 checkboxes updated in this doc.
@@ -840,18 +1012,42 @@ tiki-taka: P8 align docs and complete player image QA
 
 ## ETL Runbook (after implementation)
 
-Full refresh when Transfermarkt CSV or player set changes:
+See [Update workflows](#update-workflows) for full vs incremental refresh.
+
+### Full refresh
+
+When Transfermarkt CSV or player set changes substantially:
 
 ```text
 # Existing pipeline through D7 …
 python tool/etl/build_players.py
 
-# New image resolution
+# Image resolution (all players)
 python tool/etl/fetch_player_images.py
 
 # Export SQLite
 python tool/etl/build_database.py
 ```
+
+### Incremental (new players only)
+
+After `build_players.py` adds rows; keep existing `player_images.csv` entries:
+
+```text
+python tool/etl/build_players.py
+python tool/etl/fetch_player_images.py --only-missing
+python tool/etl/build_database.py
+```
+
+### Manual URL fix
+
+```text
+# Edit tool/etl/config/player_image_overrides.yaml
+python tool/etl/fetch_player_images.py
+python tool/etl/build_database.py
+```
+
+No Flutter rebuild required for data-only image updates after P4–P8 ship.
 
 Expected manifest fields:
 
@@ -860,7 +1056,8 @@ Expected manifest fields:
   "schema_version": 2,
   "player_count": 28221,
   "players_with_image_count": 8500,
-  "player_image_source": "wikidata_p2446_p18"
+  "player_image_source": "wikidata_p2446_p18",
+  "player_images_fetched_at": "2026-06-09T12:00:00+00:00"
 }
 ```
 
@@ -874,7 +1071,9 @@ Expected manifest fields:
 | P18 image not a headshot | v1 accepts any P18; optional ETL filter list in future |
 | Wikidata rate limits | Batch size 300–500, sleep, retries, `--limit` for dev; failed batches logged, run continues |
 | Double URL encoding (`%2520`) | ETL `unquote` → `quote`; optional `--verify-urls` catches 404 before ship |
-| Stale Commons file after ETL | Runtime `errorBuilder` → placeholder; optional ETL verify skips bad URLs |
+| Stale Commons file after ETL | Runtime `errorBuilder` → placeholder; `--verify-urls` on refresh; override YAML for manual fix |
+| Future player additions | `--only-missing` after `build_players.py`; no Dart changes per player |
+| Duplicate URL logic ETL/app | Shared `player_image_url.py` + `player_image_url_validator.dart` mirror same rules |
 | Offline gameplay | Core game is offline; images degrade gracefully |
 | DB size growth | URLs only (~100 bytes × matches ≈ low MB); no binary blobs |
 | Commons downtime | `errorBuilder` → placeholder; same as offline |
@@ -899,7 +1098,7 @@ Expected manifest fields:
 | --- | --- |
 | P0 | `docs/player-image-plan.md` |
 | P1 | `docs/tiki-taka-database-contract.md`, `docs/dataset-plan.md`, `tool/etl/build_database.py` |
-| P2 | `tool/etl/fetch_player_images.py`, `tool/etl/reports/fetch_player_images_summary.json` |
+| P2 | `fetch_player_images.py`, `player_image_url.py`, `player_image_overrides.yaml`, tests |
 | P3 | `assets/db/tiki_taka.db`, `tool/etl/output/manifest.json` |
 | P4 | `tiki_player_search_result.dart`, `player_search_dao.dart`, `validation_dao.dart` |
 | P5 | `player_avatar.dart`, `player_image_url_validator.dart`, tests |
