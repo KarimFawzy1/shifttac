@@ -14,6 +14,7 @@ class PlayerAvatar extends StatelessWidget {
     this.alignment = Alignment.topCenter,
     this.borderRadius,
     this.semanticsLabel,
+    this.unavailableFallback,
   });
 
   final String? imageUrl;
@@ -25,17 +26,16 @@ class PlayerAvatar extends StatelessWidget {
   final BorderRadius? borderRadius;
   final String? semanticsLabel;
 
+  /// Shown while loading or when the network image fails (e.g. board cell offline).
+  final Widget? unavailableFallback;
+
   @override
   Widget build(BuildContext context) {
     final resolvedRadius = borderRadius ?? BorderRadius.circular(size / 2);
 
     if (!isLoadablePlayerImageUrl(imageUrl)) {
       _logFallback('invalid_url');
-      return _PersonPlaceholder(
-        size: size,
-        borderRadius: resolvedRadius,
-        semanticsLabel: semanticsLabel,
-      );
+      return _fallbackWidget(resolvedRadius);
     }
 
     final url = imageUrl!.trim();
@@ -60,23 +60,31 @@ class PlayerAvatar extends StatelessWidget {
               if (loadingProgress == null) {
                 return child;
               }
-              return _PersonPlaceholder(
-                size: size,
-                borderRadius: resolvedRadius,
-                semanticsLabel: semanticsLabel,
-              );
+              return _fallbackWidget(resolvedRadius);
             },
             errorBuilder: (context, error, stackTrace) {
               _logFallback('network_error');
-              return _PersonPlaceholder(
-                size: size,
-                borderRadius: resolvedRadius,
-                semanticsLabel: semanticsLabel,
-              );
+              return _fallbackWidget(resolvedRadius);
             },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _fallbackWidget(BorderRadius resolvedRadius) {
+    if (unavailableFallback != null) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: unavailableFallback,
+      );
+    }
+
+    return _PersonPlaceholder(
+      size: size,
+      borderRadius: resolvedRadius,
+      semanticsLabel: semanticsLabel,
     );
   }
 

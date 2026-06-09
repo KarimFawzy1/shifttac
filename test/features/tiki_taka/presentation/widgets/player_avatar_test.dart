@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
+import 'package:shifttac/features/tiki_taka/presentation/widgets/player_diagonal_name.dart';
 
 const _validCommonsUrl =
     'https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128';
@@ -91,6 +92,28 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byIcon(Icons.person_rounded), findsOneWidget);
+    });
+
+    testWidgets('network failure shows unavailableFallback when provided',
+        (tester) async {
+      HttpOverrides.global = _FailingHttpOverrides();
+      addTearDown(() => HttpOverrides.global = null);
+
+      await tester.pumpWidget(
+        _wrap(
+          const PlayerAvatar(
+            imageUrl: _validCommonsUrl,
+            size: 40,
+            unavailableFallback: PlayerDiagonalName(displayName: 'Mohamed Salah'),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Mohamed Salah'), findsOneWidget);
+      expect(find.byIcon(Icons.person_rounded), findsNothing);
     });
 
     testWidgets('uses provided semantics label on placeholder', (tester) async {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,10 +13,26 @@ import 'package:shifttac/features/tiki_taka/domain/models/tiki_cell.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
+import 'package:shifttac/features/tiki_taka/presentation/widgets/player_diagonal_name.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_cell.dart';
 
 import '../../support/tiki_taka_dao_test_support.dart';
+
+class _FailingHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) => _FailingHttpClient();
+}
+
+class _FailingHttpClient implements HttpClient {
+  @override
+  Future<HttpClientRequest> getUrl(Uri url) {
+    throw const SocketException('Test network failure');
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 const _salah = TikiPlayerSearchResult(
   id: 'tm:148455',
@@ -191,6 +209,47 @@ void main() {
       final avatar = tester.widget<PlayerAvatar>(find.byType(PlayerAvatar));
       expect(avatar.imageUrl, player.imageUrl);
       expect(avatar.fit, BoxFit.cover);
+      expect(avatar.unavailableFallback, isA<PlayerDiagonalName>());
+    });
+
+    testWidgets(
+        'filled cell with imageUrl shows diagonal name when image cannot load',
+        (tester) async {
+      HttpOverrides.global = _FailingHttpOverrides();
+      addTearDown(() => HttpOverrides.global = null);
+
+      const player = TikiPlayerSearchResult(
+        id: 'tm:148455',
+        displayName: 'Mohamed Salah',
+        imageUrl:
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128',
+      );
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: AppConstants.designSize,
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: TikiTakaCell(
+                    cell: const TikiCell(row: 0, col: 0, player: player),
+                    interactive: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Mohamed Salah'), findsOneWidget);
+      expect(find.byIcon(Icons.person_rounded), findsNothing);
     });
 
     testWidgets('empty cell has no PlayerAvatar', (tester) async {
