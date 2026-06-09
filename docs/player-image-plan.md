@@ -657,7 +657,7 @@ flutter test test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart
 
 #### Next phase
 
-Proceed to **Phase P2 — Wikidata Image ETL** (`fetch_player_images.py` full implementation).
+Proceed to **Phase P2 — Wikidata Image ETL** (completed 2026-06-09).
 
 ---
 
@@ -703,25 +703,58 @@ Check summary JSON contains: `total_players`, `matched_wikidata`, `with_p18`, `w
 
 **DoD:**
 
-- [ ] Script runs against staging and produces `player_images.csv`.
-- [ ] Each output row has exactly one `player_id` and one `image_url`.
-- [ ] URLs use HTTPS Commons `Special:FilePath` with `width=128`.
-- [ ] Filename encoding uses **decode-then-encode** (no `%2520` double-encoding).
-- [ ] `player_image_url.py` extracted with tests; no duplicated URL logic in fetch script.
-- [ ] `--only-missing` incremental mode works for new players in `players_table.csv`.
-- [ ] Overrides file format documented; merge order Wikidata → overrides.
-- [ ] Skipped players are counted in summary (`no_wikidata`, `no_p18`, `invalid_url`, etc.).
-- [ ] SPARQL batch failure retries then continues; partial success still exits 0.
-- [ ] Summary report written with match and skip counts.
-- [ ] No Transfermarkt image URLs anywhere in output.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] Script runs against staging and produces `player_images.csv`.
+- [x] Each output row has exactly one `player_id` and one `image_url`.
+- [x] URLs use HTTPS Commons `Special:FilePath` with `width=128`.
+- [x] Filename encoding uses **decode-then-encode** (no `%2520` double-encoding).
+- [x] `player_image_url.py` extracted with tests; no duplicated URL logic in fetch script.
+- [x] `--only-missing` incremental mode works for new players in `players_table.csv`.
+- [x] Overrides file format documented; merge order Wikidata → overrides.
+- [x] Skipped players are counted in summary (`no_wikidata`, `no_p18`, `invalid_url`, etc.).
+- [x] SPARQL batch failure retries then continues; partial success still exits 0.
+- [x] Summary report written with match and skip counts.
+- [x] No Transfermarkt image URLs anywhere in output.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P2 add wikidata player image ETL
 ```
+
+### Phase P2 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `tool/etl/player_image_url.py` | Shared URL build/validate/verify helpers |
+| `tool/etl/fetch_player_images.py` | Full Wikidata SPARQL ETL + CLI flags |
+| `tool/etl/tests/test_player_image_url.py` | 6 unit tests (encoding, validation) |
+| `tool/etl/config/player_image_overrides.yaml` | Commented example overrides file |
+| `tool/etl/reports/.gitkeep` | Reports directory placeholder |
+
+#### Validation run
+
+```text
+python -m unittest tests.test_player_image_url -v          # 6/6 OK
+python fetch_player_images.py --limit 100                  # 90 rows, 10 no_p18
+python fetch_player_images.py --only-missing --limit 150   # +46 new → 136 total
+```
+
+Sample summary fields: `total_players`, `matched_wikidata`, `with_p18`, `written_rows`, `newly_resolved_count`, `skipped`, `batch_errors`.
+
+SPARQL uses POST with 429 backoff (65s) per Wikidata rate limits.
+
+#### Not shipped in P2 (by design)
+
+- Full `player_images.csv` for all ~28k players (Phase P3 + `build_database.py`).
+- Flutter changes (Phase P4+).
+
+#### Next phase
+
+Proceed to **Phase P3 — Database Build Integration & Asset Refresh**.
 
 ---
 

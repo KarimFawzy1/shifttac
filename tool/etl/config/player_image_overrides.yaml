@@ -1,0 +1,7 @@
+# Optional manual player image URLs (merged after Wikidata in fetch_player_images.py).
+# Overrides win when player_id matches.
+#
+# Example:
+# tm:148455:
+#   url: "https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128"
+#   note: "manual verify 2026-06-09"
