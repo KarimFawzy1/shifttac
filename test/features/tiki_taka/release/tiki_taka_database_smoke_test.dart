@@ -37,6 +37,25 @@ void main() {
         final columns = await db.rawQuery('PRAGMA table_info(players)');
         final names = columns.map((row) => row['name'] as String).toSet();
         expect(names, contains('image_url'));
+
+        final withImages = await db.rawQuery(
+          'SELECT COUNT(*) AS c FROM players WHERE image_url IS NOT NULL',
+        );
+        expect((withImages.first['c'] as int?) ?? 0, greaterThan(0));
+
+        final imageSource = await db.query(
+          'meta',
+          where: 'key = ?',
+          whereArgs: ['player_image_source'],
+        );
+        expect(imageSource.first['value'], 'wikidata_p2446_p18');
+
+        final sample = await db.rawQuery(
+          "SELECT image_url FROM players WHERE image_url IS NOT NULL LIMIT 1",
+        );
+        final url = sample.first['image_url'] as String;
+        expect(url.startsWith('https://commons.wikimedia.org/'), isTrue);
+        expect(url.contains('%2520'), isFalse);
       }
 
       await expectLater(

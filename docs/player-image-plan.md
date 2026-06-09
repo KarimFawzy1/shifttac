@@ -754,7 +754,7 @@ SPARQL uses POST with 429 backoff (65s) per Wikidata rate limits.
 
 #### Next phase
 
-Proceed to **Phase P3 — Database Build Integration & Asset Refresh**.
+Proceed to **Phase P3 — Database Build Integration & Asset Refresh** (completed 2026-06-09).
 
 ---
 
@@ -799,20 +799,52 @@ flutter test test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart
 
 **DoD:**
 
-- [ ] `assets/db/tiki_taka.db` rebuilt with schema v2.
-- [ ] `players_with_image_count` > 0 in output manifest.
-- [ ] Every non-null `image_url` is HTTPS and points to `commons.wikimedia.org`.
-- [ ] Spot-check: no `%2520` double-encoding in shipped URLs.
-- [ ] Players without Wikidata match have `image_url IS NULL`.
-- [ ] `source_csv_hash` / fingerprint changed so app re-copies DB on update.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `assets/db/tiki_taka.db` rebuilt with schema v2.
+- [x] `players_with_image_count` > 0 in output manifest.
+- [x] Every non-null `image_url` is HTTPS and points to `commons.wikimedia.org`.
+- [x] Spot-check: no `%2520` double-encoding in shipped URLs.
+- [x] Players without Wikidata match have `image_url IS NULL`.
+- [x] `source_csv_hash` / fingerprint changed so app re-copies DB on update.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P3 rebuild tiki_taka.db with player image URLs
 ```
+
+### Phase P3 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `tool/etl/build_database.py` | Meta `player_image_source`, `player_images_fetched_at`; hash includes `player_images.csv` |
+| `assets/db/tiki_taka.db` | Schema v2 with **11,867** player image URLs |
+| `tool/etl/output/manifest.json` | `players_with_image_count`, updated `source_csv_hash` |
+| `test/.../tiki_taka_database_smoke_test.dart` | Asserts v2 image count + Commons URL sample |
+
+#### ETL run
+
+```text
+python fetch_player_images.py --refresh   # 11,867 / 28,221 players (~5 min)
+python build_database.py                  # D12 13/13 OK, 19.10 MB
+```
+
+Coverage: 11,867 with P18 image; 12,141 no_p18; 4,213 no_wikidata.
+
+#### Validation
+
+```text
+flutter test test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart
+```
+
+Manifest: `schema_version: 2`, `players_with_image_count: 11867`, new `source_csv_hash`.
+
+#### Next phase
+
+Proceed to **Phase P4 — Data Layer (Models & DAOs)**.
 
 ---
 

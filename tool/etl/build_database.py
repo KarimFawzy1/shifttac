@@ -25,17 +25,20 @@ _ETL_DIR = Path(__file__).resolve().parent
 if str(_ETL_DIR) not in sys.path:
     sys.path.insert(0, str(_ETL_DIR))
 
-from etl_common import DATASETS, ROOT, load_yaml  # noqa: E402
+from etl_common import DATASETS, REPORTS, ROOT, load_yaml  # noqa: E402
+from player_image_url import is_valid_commons_image_url  # noqa: E402
 
 STAGING = _ETL_DIR / "staging"
 OUTPUT_DIR = _ETL_DIR / "output"
 DB_PATH = OUTPUT_DIR / "tiki_taka.db"
 MANIFEST_PATH = OUTPUT_DIR / "manifest.json"
 ASSET_DB_PATH = ROOT / "assets" / "db" / "tiki_taka.db"
+PLAYER_IMAGE_SUMMARY_PATH = REPORTS / "fetch_player_images_summary.json"
 
 SCHEMA_VERSION = 2
 MAX_DB_BYTES = 20 * 1024 * 1024
 
+PLAYER_IMAGE_SOURCE = "wikidata_p2446_p18"
 PLAYER_IMAGES_PATH = STAGING / "player_images.csv"
 
 SOURCE_CSV_FILES = (
@@ -84,7 +87,7 @@ def load_player_image_urls() -> dict[str, str]:
         for row in csv.DictReader(handle):
             player_id = tm_id(row.get("player_id", ""))
             image_url = nullable_text(row.get("image_url"))
-            if player_id and image_url:
+            if player_id and image_url and is_valid_commons_image_url(image_url):
                 urls[player_id] = image_url
     return urls
 
@@ -95,6 +98,8 @@ def transform_player_row(
 ) -> tuple:
     player_id = tm_id(row["id"])
     image_url = nullable_text(row.get("image_url")) or image_urls.get(player_id)
+    if image_url and not is_valid_commons_image_url(image_url):
+        image_url = None
     return (
         player_id,
         row["display_name"],
@@ -111,6 +116,7 @@ def slugify(value: str) -> str:
 
 
 def compute_source_csv_hash() -> str:
+    """Fingerprint input includes TM CSVs and optional player_images.csv."""
     digest = hashlib.sha256()
     for name in SOURCE_CSV_FILES:
         path = DATASETS / name
@@ -120,7 +126,26 @@ def compute_source_csv_hash() -> str:
         with path.open("rb") as handle:
             for chunk in iter(lambda: handle.read(1 << 20), b""):
                 digest.update(chunk)
+    if PLAYER_IMAGES_PATH.is_file():
+        digest.update(b"player_images.csv")
+        with PLAYER_IMAGES_PATH.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1 << 20), b""):
+                digest.update(chunk)
     return f"sha256:{digest.hexdigest()}"
+
+
+def load_player_images_fetched_at(fallback: str) -> str:
+    if not PLAYER_IMAGE_SUMMARY_PATH.is_file():
+        return fallback
+    try:
+        with PLAYER_IMAGE_SUMMARY_PATH.open(encoding="utf-8") as handle:
+            payload = json.load(handle)
+        fetched_at = payload.get("fetched_at")
+        if isinstance(fetched_at, str) and fetched_at.strip():
+            return fetched_at.strip()
+    except (OSError, json.JSONDecodeError):
+        pass
+    return fallback
 
 
 def require_staging() -> list[str]:
@@ -396,10 +421,13 @@ def export_database() -> dict[str, int]:
 
         built_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
         source_hash = compute_source_csv_hash()
+        player_images_fetched_at = load_player_images_fetched_at(built_at)
         meta_rows = [
             ("schema_version", str(SCHEMA_VERSION)),
             ("built_at", built_at),
             ("source_csv_hash", source_hash),
+            ("player_image_source", PLAYER_IMAGE_SOURCE),
+            ("player_images_fetched_at", player_images_fetched_at),
         ]
         connection.executemany("INSERT INTO meta (key, value) VALUES (?, ?)", meta_rows)
         connection.commit()
@@ -433,16 +461,24 @@ def export_database() -> dict[str, int]:
     if final_db != DB_PATH:
         shutil.copy2(final_db, DB_PATH)
 
-    return counts, built_at, source_hash
+    return counts, built_at, source_hash, player_images_fetched_at
 
 
-def write_manifest(built_at: str, source_hash: str, counts: dict[str, int]) -> None:
+def write_manifest(
+    built_at: str,
+    source_hash: str,
+    counts: dict[str, int],
+    *,
+    player_images_fetched_at: str,
+) -> None:
     manifest = {
         "schema_version": SCHEMA_VERSION,
         "built_at": built_at,
         "source_csv_hash": source_hash,
         "player_count": counts["player_count"],
         "players_with_image_count": counts.get("players_with_image_count", 0),
+        "player_image_source": PLAYER_IMAGE_SOURCE,
+        "player_images_fetched_at": player_images_fetched_at,
         "attribute_count": counts["attribute_count"],
         "board_count": counts["board_count"],
         "player_attribute_rows": counts["player_attribute_rows"],
@@ -476,13 +512,18 @@ def main() -> int:
         return 1
 
     try:
-        counts, built_at, source_hash = export_database()
+        counts, built_at, source_hash, player_images_fetched_at = export_database()
     except FileNotFoundError as exc:
         print(f"D11 export FAILED: {exc}", file=sys.stderr)
         return 1
 
     shutil.copy2(DB_PATH, ASSET_DB_PATH)
-    write_manifest(built_at, source_hash, counts)
+    write_manifest(
+        built_at,
+        source_hash,
+        counts,
+        player_images_fetched_at=player_images_fetched_at,
+    )
     verify_readonly_open(ASSET_DB_PATH)
 
     size_bytes = DB_PATH.stat().st_size
@@ -496,6 +537,7 @@ def main() -> int:
 
     print(
         f"D11 export OK: {counts['player_count']:,} players, "
+        f"{counts.get('players_with_image_count', 0):,} with images, "
         f"{counts['attribute_count']} attributes, {counts['board_count']} boards, "
         f"{size_mb:.2f} MB"
     )
