@@ -844,7 +844,7 @@ Manifest: `schema_version: 2`, `players_with_image_count: 11867`, new `source_cs
 
 #### Next phase
 
-Proceed to **Phase P4 — Data Layer (Models & DAOs)**.
+Proceed to **Phase P4 — Data Layer (Models & DAOs)** (completed 2026-06-09).
 
 ---
 
@@ -880,18 +880,42 @@ flutter test test/features/tiki_taka/
 
 **DoD:**
 
-- [ ] `TikiPlayerSearchResult.imageUrl` nullable field added; `Equatable` props updated.
-- [ ] Search and validation DAOs return `image_url`.
-- [ ] Unit/DAO tests pass with and without `imageUrl`.
-- [ ] Smoke test covers new column.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `TikiPlayerSearchResult.imageUrl` nullable field added; `Equatable` props updated.
+- [x] Search and validation DAOs return `image_url`.
+- [x] Unit/DAO tests pass with and without `imageUrl`.
+- [x] Smoke test covers new column.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P4 expose player image_url in DAOs and models
 ```
+
+### Phase P4 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `tiki_player_search_result.dart` | Nullable `imageUrl`; `fromMap` + `Equatable` props |
+| `player_search_dao.dart` | `SELECT … p.image_url` |
+| `validation_dao.dart` | `SELECT … p.image_url` |
+| `tiki_player_search_result_test.dart` | **NEW** — fromMap with/without URL |
+| `player_search_dao_test.dart` | Salah Commons URL; null imageUrl case |
+| `validation_dao_test.dart` | Salah `imageUrl` on validate |
+| `tiki_taka_database_test.dart` | Expect schema v2 |
+
+#### Validation
+
+```text
+flutter test test/features/tiki_taka/   # 122/122 passed
+```
+
+#### Next phase
+
+Proceed to **Phase P5 — PlayerAvatar Widget**.
 
 ---
 

@@ -35,6 +35,8 @@ void main() {
 
       expect(match, isNotNull);
       expect(match!.displayName, 'Mohamed Salah');
+      expect(match.imageUrl, isNotNull);
+      expect(match.imageUrl, startsWith('https://commons.wikimedia.org/'));
     });
 
     test('rejects Salah for Egypt x Dortmund', () async {

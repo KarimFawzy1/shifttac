@@ -10,7 +10,7 @@ class ValidationDao {
   final Database _database;
 
   static const _validationSql = '''
-SELECT DISTINCT p.id, p.display_name, p.position, p.nation
+SELECT DISTINCT p.id, p.display_name, p.position, p.nation, p.image_url
 FROM players p
 INNER JOIN player_attributes a
   ON a.player_id = p.id AND a.attribute_id = ?

@@ -7,12 +7,14 @@ class TikiPlayerSearchResult extends Equatable {
     required this.displayName,
     this.position,
     this.nation,
+    this.imageUrl,
   });
 
   final String id;
   final String displayName;
   final String? position;
   final String? nation;
+  final String? imageUrl;
 
   factory TikiPlayerSearchResult.fromMap(Map<String, Object?> row) {
     return TikiPlayerSearchResult(
@@ -20,9 +22,10 @@ class TikiPlayerSearchResult extends Equatable {
       displayName: row['display_name']! as String,
       position: row['position'] as String?,
       nation: row['nation'] as String?,
+      imageUrl: row['image_url'] as String?,
     );
   }
 
   @override
-  List<Object?> get props => [id, displayName, position, nation];
+  List<Object?> get props => [id, displayName, position, nation, imageUrl];
 }

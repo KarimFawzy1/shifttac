@@ -20,7 +20,7 @@ class PlayerSearchDao {
 
     final rows = await _database.rawQuery(
       '''
-      SELECT DISTINCT p.id, p.display_name, p.position, p.nation
+      SELECT DISTINCT p.id, p.display_name, p.position, p.nation, p.image_url
       FROM players p
       LEFT JOIN player_aliases pa ON pa.player_id = p.id
       WHERE p.search_text LIKE ? OR pa.alias LIKE ?
