@@ -915,7 +915,7 @@ flutter test test/features/tiki_taka/   # 122/122 passed
 
 #### Next phase
 
-Proceed to **Phase P5 — PlayerAvatar Widget**.
+Proceed to **Phase P5 — PlayerAvatar Widget** (completed 2026-06-09).
 
 ---
 
@@ -971,19 +971,42 @@ flutter test test/features/tiki_taka/presentation/widgets/player_avatar_test.dar
 
 **DoD:**
 
-- [ ] `PlayerAvatar` implemented with placeholder fallback for all failure modes in [Exception Handling](#exception-handling).
-- [ ] URL validated before `Image.network`; invalid URLs never hit the network.
-- [ ] No `cached_network_image` dependency added.
-- [ ] Widget tests cover null, invalid URL, and error path.
-- [ ] No snackbars, dialogs, or crashes on image failure.
-- [ ] Phase changes are committed.
-- [ ] Commit is pushed to remote.
+- [x] `PlayerAvatar` implemented with placeholder fallback for all failure modes in [Exception Handling](#exception-handling).
+- [x] URL validated before `Image.network`; invalid URLs never hit the network.
+- [x] No `cached_network_image` dependency added.
+- [x] Widget tests cover null, invalid URL, and error path.
+- [x] No snackbars, dialogs, or crashes on image failure.
+- [x] Phase changes are committed.
+- [x] Commit is pushed to remote.
 
 **Suggested commit:**
 
 ```text
 tiki-taka: P5 add PlayerAvatar widget with placeholder fallback
 ```
+
+### Phase P5 Completion — 2026-06-09
+
+#### Deliverables
+
+| File | Change |
+| --- | --- |
+| `player_image_url_validator.dart` | `isLoadablePlayerImageUrl` — HTTPS Commons guard |
+| `player_avatar.dart` | Network image + `_PersonPlaceholder`; debug-only fallback logs |
+| `player_avatar_test.dart` | Null, empty, invalid host, malformed URL, network error |
+| `player_image_url_validator_test.dart` | Unit tests for URL validator |
+
+#### Validation
+
+```text
+flutter test test/features/tiki_taka/presentation/widgets/player_avatar_test.dart
+flutter test test/features/tiki_taka/domain/services/player_image_url_validator_test.dart
+# 11/11 passed
+```
+
+#### Next phase
+
+Proceed to **Phase P6 — Search Results UI**.
 
 ---
 
