@@ -28,6 +28,26 @@ class TikiAttribute extends Equatable {
 
   bool get isPosition => type == 'position';
 
+  /// Compact board-header label (e.g. `FWD` instead of `Forward`).
+  String get boardHeaderLabel {
+    if (!isPosition) {
+      return displayName;
+    }
+
+    final code = id.contains(':') ? id.split(':').last : id;
+    if (code.length >= 2 && code.length <= 3) {
+      return code.toUpperCase();
+    }
+
+    return switch (displayName.toLowerCase()) {
+      'goalkeeper' => 'GK',
+      'defender' => 'DEF',
+      'midfielder' => 'MID',
+      'forward' => 'FWD',
+      _ => displayName,
+    };
+  }
+
   @override
   List<Object?> get props => [id, type, displayName, slug, iconKey];
 }

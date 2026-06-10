@@ -60,18 +60,22 @@ class _PositionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: maxSize * 1.6,
+      width: maxSize,
       height: maxSize,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(
-          attribute.displayName,
-          style: AppTextStyles.labelBold.copyWith(
-            fontSize: 12.sp,
-            color: AppColors.onSurface,
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            attribute.boardHeaderLabel,
+            style: AppTextStyles.labelBold.copyWith(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.4,
+              color: AppColors.onSurface,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
         ),
       ),
     );

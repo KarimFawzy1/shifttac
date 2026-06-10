@@ -135,10 +135,11 @@ void main() {
       expect(find.bySemanticsLabel('League: Premier League'), findsOneWidget);
     });
 
-    testWidgets('position header displays text only', (tester) async {
+    testWidgets('position header displays short code text only', (tester) async {
       await pumpHeader(tester, attribute: _forwardPosition);
 
-      expect(find.text('Forward'), findsOneWidget);
+      expect(find.text('FWD'), findsOneWidget);
+      expect(find.text('Forward'), findsNothing);
       expect(find.byType(SvgPicture), findsNothing);
       expect(find.bySemanticsLabel('Position: Forward'), findsOneWidget);
     });
@@ -216,7 +217,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
-      expect(find.text('Forward'), findsOneWidget);
+      expect(find.text('FWD'), findsOneWidget);
       expect(
         _svgWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.svg'),
         findsOneWidget,
