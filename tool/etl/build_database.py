@@ -35,7 +35,7 @@ MANIFEST_PATH = OUTPUT_DIR / "manifest.json"
 ASSET_DB_PATH = ROOT / "assets" / "db" / "tiki_taka.db"
 PLAYER_IMAGE_SUMMARY_PATH = REPORTS / "fetch_player_images_summary.json"
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 MAX_DB_BYTES = 20 * 1024 * 1024
 
 PLAYER_IMAGE_SOURCE = "wikidata_p2446_p18"
@@ -100,6 +100,7 @@ def transform_player_row(
     image_url = nullable_text(row.get("image_url")) or image_urls.get(player_id)
     if image_url and not is_valid_commons_image_url(image_url):
         image_url = None
+    search_rank = int((row.get("search_rank") or "0").strip() or 0)
     return (
         player_id,
         row["display_name"],
@@ -107,6 +108,7 @@ def transform_player_row(
         nullable_text(row.get("position")),
         nullable_text(row.get("nation")),
         image_url,
+        search_rank,
     )
 
 
@@ -232,7 +234,8 @@ def create_schema(connection: sqlite3.Connection) -> None:
             search_text TEXT NOT NULL,
             position TEXT,
             nation TEXT,
-            image_url TEXT
+            image_url TEXT,
+            search_rank INTEGER NOT NULL DEFAULT 0
         );
 
         CREATE TABLE player_attributes (
@@ -278,6 +281,7 @@ def create_schema(connection: sqlite3.Connection) -> None:
         CREATE INDEX idx_pa_attribute ON player_attributes(attribute_id);
         CREATE INDEX idx_pa_player ON player_attributes(player_id);
         CREATE INDEX idx_alias ON player_aliases(alias);
+        CREATE INDEX idx_players_search_rank ON players(search_rank DESC);
         CREATE INDEX idx_pair ON attribute_pair_stats(attr_a, attr_b);
         """
     )
@@ -347,6 +351,7 @@ def export_database() -> dict[str, int]:
                 "position",
                 "nation",
                 "image_url",
+                "search_rank",
             ],
             STAGING / "players_table.csv",
             transform=lambda row: transform_player_row(row, image_urls),

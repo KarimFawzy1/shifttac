@@ -20,14 +20,18 @@ class PlayerSearchDao {
 
     final rows = await _database.rawQuery(
       '''
-      SELECT DISTINCT p.id, p.display_name, p.position, p.nation, p.image_url
+      SELECT p.id, p.display_name, p.position, p.nation, p.image_url
       FROM players p
       LEFT JOIN player_aliases pa ON pa.player_id = p.id
       WHERE p.search_text LIKE ? OR pa.alias LIKE ?
-      ORDER BY p.display_name
+      GROUP BY p.id
+      ORDER BY
+        p.search_rank DESC,
+        MIN(CASE WHEN p.search_text LIKE ? THEN 0 ELSE 1 END),
+        p.display_name COLLATE NOCASE ASC
       LIMIT ?
       ''',
-      [prefixPattern, prefixPattern, limit],
+      [prefixPattern, prefixPattern, prefixPattern, limit],
     );
 
     return rows.map(TikiPlayerSearchResult.fromMap).toList(growable: false);

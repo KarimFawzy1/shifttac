@@ -86,7 +86,7 @@ void main() {
       await service.open();
 
       expect(service.isOpen, isTrue);
-      expect(service.schemaVersion, '2');
+      expect(service.schemaVersion, '3');
 
       final players = await service.database.rawQuery(
         'SELECT COUNT(*) AS c FROM players',
@@ -188,7 +188,7 @@ void main() {
 
       await service.open();
       expect(service.isOpen, isTrue);
-      expect(service.schemaVersion, '2');
+      expect(service.schemaVersion, '3');
 
       final boards = await service.database.rawQuery(
         'SELECT COUNT(*) AS c FROM boards',

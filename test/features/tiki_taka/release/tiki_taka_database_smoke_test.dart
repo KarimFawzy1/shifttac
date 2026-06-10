@@ -31,12 +31,16 @@ void main() {
       expect((players.first['c'] as int?) ?? 0, greaterThan(0));
       expect((boards.first['c'] as int?) ?? 0, greaterThanOrEqualTo(20));
       expect((attributes.first['c'] as int?) ?? 0, greaterThan(0));
-      expect(schema.first['value'], anyOf('1', '2'));
+      expect(schema.first['value'], anyOf('1', '2', '3'));
 
-      if (schema.first['value'] == '2') {
+      if (schema.first['value'] == '2' || schema.first['value'] == '3') {
         final columns = await db.rawQuery('PRAGMA table_info(players)');
         final names = columns.map((row) => row['name'] as String).toSet();
         expect(names, contains('image_url'));
+
+        if (schema.first['value'] == '3') {
+          expect(names, contains('search_rank'));
+        }
 
         final withImages = await db.rawQuery(
           'SELECT COUNT(*) AS c FROM players WHERE image_url IS NOT NULL',
