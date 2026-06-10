@@ -1,7 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/player_image_url_validator.dart';
 
 void main() {
+  group('playerImageNetworkHeaders', () {
+    test('includes descriptive User-Agent for Wikimedia', () {
+      expect(
+        playerImageNetworkHeaders['User-Agent'],
+        '${AppConstants.appName}/${AppConstants.appVersionLabel} '
+        '(player-images; +https://github.com/KarimFawzy1/shifttac)',
+      );
+    });
+  });
+
   group('isLoadablePlayerImageUrl', () {
     test('accepts HTTPS Commons Special:FilePath URLs', () {
       expect(

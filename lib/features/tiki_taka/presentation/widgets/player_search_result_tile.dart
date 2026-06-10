@@ -8,7 +8,7 @@ import '../../data/models/tiki_player_search_result.dart';
 import 'player_avatar.dart';
 
 /// Single selectable row in the Tiki-Taka player search dialog.
-class PlayerSearchResultTile extends StatelessWidget {
+class PlayerSearchResultTile extends StatefulWidget {
   const PlayerSearchResultTile({
     super.key,
     required this.player,
@@ -20,30 +20,42 @@ class PlayerSearchResultTile extends StatelessWidget {
   final VoidCallback onTap;
   final bool enabled;
 
-  static const _avatarSize = 40.0;
+  static const avatarLogicalSize = 40.0;
+
+  @override
+  State<PlayerSearchResultTile> createState() => _PlayerSearchResultTileState();
+}
+
+class _PlayerSearchResultTileState extends State<PlayerSearchResultTile>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = _subtitleFor(player);
-    final avatarSize = _avatarSize.w;
+    super.build(context);
+
+    final subtitle = _subtitleFor(widget.player);
+    final avatarSize = PlayerSearchResultTile.avatarLogicalSize.w;
 
     return Semantics(
       button: true,
-      enabled: enabled,
+      enabled: widget.enabled,
       label: subtitle == null
-          ? player.displayName
-          : '${player.displayName}, $subtitle',
+          ? widget.player.displayName
+          : '${widget.player.displayName}, $subtitle',
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: enabled ? onTap : null,
+          onTap: widget.enabled ? widget.onTap : null,
           borderRadius: AppSpacing.borderRadiusMd,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             child: Row(
               children: [
                 PlayerAvatar(
-                  imageUrl: player.imageUrl,
+                  key: ValueKey(widget.player.imageUrl),
+                  imageUrl: widget.player.imageUrl,
                   size: avatarSize,
                   borderRadius: BorderRadius.circular(avatarSize / 2),
                 ),
@@ -53,9 +65,9 @@ class PlayerSearchResultTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        player.displayName,
+                        widget.player.displayName,
                         style: AppTextStyles.bodyMd.copyWith(
-                          color: enabled
+                          color: widget.enabled
                               ? AppColors.onSurface
                               : AppColors.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
@@ -75,7 +87,7 @@ class PlayerSearchResultTile extends StatelessWidget {
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: enabled
+                  color: widget.enabled
                       ? AppColors.onSurfaceVariant
                       : AppColors.outlineVariant,
                   size: 22.sp,

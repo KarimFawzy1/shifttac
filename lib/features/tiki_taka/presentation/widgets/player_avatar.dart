@@ -2,7 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/services/player_avatar_image_queue.dart';
 import '../../domain/services/player_image_url_validator.dart';
+
+/// Shared [ImageProvider] for avatars so display hits a stable cache entry.
+ImageProvider<Object> playerAvatarImageProvider(
+  String url, {
+  required int cacheSize,
+}) {
+  return ResizeImage(
+    NetworkImage(url.trim(), headers: playerImageNetworkHeaders),
+    width: cacheSize,
+    height: cacheSize,
+  );
+}
 
 /// Circular or rounded player face from a Commons URL, with person placeholder fallback.
 class PlayerAvatar extends StatelessWidget {
@@ -48,24 +61,16 @@ class PlayerAvatar extends StatelessWidget {
         child: SizedBox(
           width: size,
           height: size,
-          child: Image.network(
-            url,
-            width: size,
-            height: size,
+          child: _PlayerNetworkImage(
+            key: ValueKey(url),
+            url: url,
+            size: size,
+            borderRadius: resolvedRadius,
             fit: fit,
             alignment: alignment,
-            gaplessPlayback: true,
-            excludeFromSemantics: semanticsLabel == null,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              }
-              return _fallbackWidget(resolvedRadius);
-            },
-            errorBuilder: (context, error, stackTrace) {
-              _logFallback('network_error');
-              return _fallbackWidget(resolvedRadius);
-            },
+            semanticsLabel: semanticsLabel,
+            fallback: _fallbackWidget(resolvedRadius),
+            onPermanentFailure: () => _logFallback('network_error'),
           ),
         ),
       ),
@@ -94,6 +99,175 @@ class PlayerAvatar extends StatelessWidget {
     }
     final labelSuffix = semanticsLabel == null ? '' : ' label=$semanticsLabel';
     debugPrint('[PlayerAvatar] fallback$labelSuffix reason=$reason');
+  }
+}
+
+enum _AvatarImageLoadState { loading, ready, failed }
+
+class _PlayerNetworkImage extends StatefulWidget {
+  const _PlayerNetworkImage({
+    super.key,
+    required this.url,
+    required this.size,
+    required this.borderRadius,
+    required this.fit,
+    required this.alignment,
+    required this.fallback,
+    required this.onPermanentFailure,
+    this.semanticsLabel,
+  });
+
+  final String url;
+  final double size;
+  final BorderRadius borderRadius;
+  final BoxFit fit;
+  final Alignment alignment;
+  final Widget fallback;
+  final VoidCallback onPermanentFailure;
+  final String? semanticsLabel;
+
+  @override
+  State<_PlayerNetworkImage> createState() => _PlayerNetworkImageState();
+}
+
+class _PlayerNetworkImageState extends State<_PlayerNetworkImage> {
+  _AvatarImageLoadState _loadState = _AvatarImageLoadState.loading;
+  ImageProvider<Object>? _provider;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _startLoad();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _PlayerNetworkImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      _startLoad();
+    }
+  }
+
+  void _startLoad() {
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final cacheSize = (widget.size * devicePixelRatio).round();
+    final provider = playerAvatarImageProvider(widget.url, cacheSize: cacheSize);
+    final configuration = createLocalImageConfiguration(
+      context,
+      size: Size(widget.size, widget.size),
+    );
+
+    _provider = provider;
+
+    if (PaintingBinding.instance.imageCache.containsKey(provider)) {
+      _loadState = _AvatarImageLoadState.ready;
+      return;
+    }
+
+    _loadState = _AvatarImageLoadState.loading;
+    final requestedUrl = widget.url;
+    final dedupeKey = PlayerAvatarImageQueue.instance.cacheKey(
+      requestedUrl,
+      cacheSize,
+    );
+
+    PlayerAvatarImageQueue.instance
+        .ensureCached(
+          provider: provider,
+          dedupeKey: dedupeKey,
+          configuration: configuration,
+        )
+        .then((_) {
+          if (!mounted || widget.url != requestedUrl) {
+            return;
+          }
+          setState(() => _loadState = _AvatarImageLoadState.ready);
+        })
+        .catchError((_) {
+          if (!mounted) {
+            return;
+          }
+          widget.onPermanentFailure();
+          setState(() => _loadState = _AvatarImageLoadState.failed);
+        });
+  }
+
+  Widget _loadingPlaceholder() {
+    return _AvatarLoadingPlaceholder(
+      size: widget.size,
+      borderRadius: widget.borderRadius,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loadState == _AvatarImageLoadState.failed) {
+      return widget.fallback;
+    }
+
+    if (_loadState == _AvatarImageLoadState.loading || _provider == null) {
+      return _loadingPlaceholder();
+    }
+
+    return Image(
+      image: _provider!,
+      width: widget.size,
+      height: widget.size,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      gaplessPlayback: true,
+      excludeFromSemantics: widget.semanticsLabel == null,
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded || frame != null) {
+          return child;
+        }
+        return _loadingPlaceholder();
+      },
+      errorBuilder: (context, error, stackTrace) {
+        widget.onPermanentFailure();
+        return widget.fallback;
+      },
+    );
+  }
+}
+
+class _AvatarLoadingPlaceholder extends StatelessWidget {
+  const _AvatarLoadingPlaceholder({
+    required this.size,
+    required this.borderRadius,
+  });
+
+  final double size;
+  final BorderRadius borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    final indicatorSize = size * 0.42;
+
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: ColoredBox(
+        color: AppColors.surfaceContainerHigh,
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Center(
+            child: SizedBox(
+              width: indicatorSize,
+              height: indicatorSize,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

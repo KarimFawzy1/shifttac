@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
+import 'package:shifttac/features/tiki_taka/domain/services/player_avatar_image_queue.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_diagonal_name.dart';
 
@@ -36,6 +37,8 @@ class _FailingHttpClient implements HttpClient {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  tearDown(PlayerAvatarImageQueue.instance.resetForTest);
 
   group('PlayerAvatar', () {
     testWidgets('null imageUrl shows person placeholder', (tester) async {
@@ -89,7 +92,8 @@ void main() {
       );
 
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 700));
 
       expect(find.byIcon(Icons.person_rounded), findsOneWidget);
     });
@@ -110,7 +114,8 @@ void main() {
       );
 
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 700));
 
       expect(find.text('Mohamed Salah'), findsOneWidget);
       expect(find.byIcon(Icons.person_rounded), findsNothing);

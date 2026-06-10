@@ -15,6 +15,7 @@ import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart'
 import 'package:shifttac/shared/widgets/board_winning_line_overlay.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
+import 'package:shifttac/features/tiki_taka/domain/services/player_avatar_image_queue.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_diagonal_name.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
@@ -131,6 +132,8 @@ TikiTakaCubit _cubitWithBoard(TikiTakaTestDatabaseHandle handle) {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  tearDown(PlayerAvatarImageQueue.instance.resetForTest);
 
   late TikiTakaTestDatabaseHandle databaseHandle;
 
@@ -249,7 +252,8 @@ void main() {
       );
 
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 700));
 
       expect(find.text('Mohamed Salah'), findsOneWidget);
       expect(find.byIcon(Icons.person_rounded), findsNothing);

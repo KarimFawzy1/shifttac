@@ -604,6 +604,7 @@ class _SearchResultsPanel extends StatelessWidget {
           ),
           child: ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 4.h),
+            cacheExtent: 1200,
             itemCount: results.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
@@ -612,6 +613,7 @@ class _SearchResultsPanel extends StatelessWidget {
             itemBuilder: (context, index) {
               final player = results[index];
               return PlayerSearchResultTile(
+                key: ValueKey(player.id),
                 player: player,
                 enabled: !selectionLocked && !isSearching,
                 onTap: () => onPlayerSelected(player),
