@@ -20,6 +20,15 @@ class TikiAttributeIcon extends StatelessWidget {
   final TikiAttributeAssetManifest manifest;
   final double? iconSize;
 
+  /// Tall club crests sit in a square slot; boost them to match league/nation weight.
+  @visibleForTesting
+  static const double clubVisualScale = 1.6;
+
+  @visibleForTesting
+  static double visualScaleFor(TikiAttribute attribute) {
+    return attribute.type == 'club' ? clubVisualScale : 1.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = iconSize ?? 32.w;
@@ -40,6 +49,27 @@ class TikiAttributeIcon extends StatelessWidget {
       return _FallbackLabel(attribute: attribute, size: size);
     }
 
+    if (attribute.type == 'club') {
+      final renderSize = size * clubVisualScale;
+
+      return SizedBox(
+        width: size,
+        height: size,
+        child: ClipRect(
+          child: Center(
+            child: TikiAttributeSvgAsset(
+              assetPath: assetPath,
+              size: renderSize,
+              rasterize: true,
+              errorBuilder: (context) {
+                return _FallbackLabel(attribute: attribute, size: size);
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
     return TikiAttributeSvgAsset(
       assetPath: assetPath,
       size: size,
@@ -57,27 +87,55 @@ class _PositionLabel extends StatelessWidget {
   final TikiAttribute attribute;
   final double maxSize;
 
+  static const _labelFontSize = 20.0;
+
+  /// Slot width for the widest code (`FWD`) at [_labelFontSize] so every
+  /// position label renders at the same size and stays centered in the slot.
+  static const _referenceLabelWidth = 48.0;
+  static const _referenceLabelHeight = 24.0;
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: maxSize,
-      height: maxSize,
-      child: Center(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            attribute.boardHeaderLabel,
-            style: AppTextStyles.labelBold.copyWith(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.4,
-              color: AppColors.onSurface,
+    final labelStyle = AppTextStyles.labelBold.copyWith(
+      fontSize: _labelFontSize.sp,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.2,
+      color: AppColors.onSurface,
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth.isFinite && constraints.maxWidth > 0
+            ? constraints.maxWidth
+            : maxSize;
+        final height =
+            constraints.maxHeight.isFinite && constraints.maxHeight > 0
+            ? constraints.maxHeight
+            : maxSize;
+
+        return SizedBox(
+          width: width,
+          height: height,
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: _referenceLabelWidth.sp,
+                height: _referenceLabelHeight.sp,
+                child: Center(
+                  child: Text(
+                    attribute.boardHeaderLabel,
+                    style: labelStyle,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                ),
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

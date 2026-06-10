@@ -171,6 +171,54 @@ void main() {
   });
 
   group('TikiAttributeIcon', () {
+    test('club crests render larger than nations in the same slot', () {
+      expect(
+        TikiAttributeIcon.visualScaleFor(_liverpoolClub),
+        greaterThan(TikiAttributeIcon.visualScaleFor(_egyptNation)),
+      );
+      expect(TikiAttributeIcon.visualScaleFor(_premierLeague), 1.0);
+    });
+
+    testWidgets('club SVG uses boosted render size', (tester) async {
+      const slotSize = 30.0;
+
+      await tester.pumpWidget(
+        _wrap(
+          TikiAttributeIcon(
+            attribute: _liverpoolClub,
+            manifest: manifest,
+            iconSize: slotSize,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final clubSvg = tester.widget<TikiAttributeSvgAsset>(
+        find.byType(TikiAttributeSvgAsset),
+      );
+      expect(clubSvg.size, slotSize * TikiAttributeIcon.clubVisualScale);
+    });
+
+    testWidgets('league SVG keeps unscaled render size', (tester) async {
+      const slotSize = 30.0;
+
+      await tester.pumpWidget(
+        _wrap(
+          TikiAttributeIcon(
+            attribute: _premierLeague,
+            manifest: manifest,
+            iconSize: slotSize,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final leagueSvg = tester.widget<TikiAttributeSvgAsset>(
+        find.byType(TikiAttributeSvgAsset),
+      );
+      expect(leagueSvg.size, slotSize);
+    });
+
     testWidgets('icon resolves manifest paths without display-name guessing', (
       tester,
     ) async {

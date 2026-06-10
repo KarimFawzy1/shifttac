@@ -91,6 +91,7 @@ class TikiBoardFrame extends StatelessWidget {
                                   attribute: columnHeaders[index],
                                   manifest: manifest,
                                   axis: TikiHeaderAxis.column,
+                                  expand: true,
                                 ),
                             ],
                           ),

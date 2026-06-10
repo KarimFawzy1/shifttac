@@ -30,8 +30,8 @@ class TikiAttributeHeader extends StatelessWidget {
   /// SVG size for board headers (column = top/bottom, row = left/right).
   static double gameplayIconSize(TikiHeaderAxis axis) {
     return switch (axis) {
-      TikiHeaderAxis.column => 30.w,
-      TikiHeaderAxis.row => 28.w,
+      TikiHeaderAxis.column => 35.w,
+      TikiHeaderAxis.row => 35.w,
     };
   }
 
@@ -48,10 +48,7 @@ class TikiAttributeHeader extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 4.w,
-          vertical: 4.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
         child: Center(
           child: TikiAttributeIcon(
             attribute: attribute,
@@ -67,7 +64,11 @@ class TikiAttributeHeader extends StatelessWidget {
       container: true,
       child: ExcludeSemantics(
         child: expand
-            ? SizedBox(width: double.infinity, height: double.infinity, child: header)
+            ? SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: header,
+              )
             : header,
       ),
     );
