@@ -68,7 +68,7 @@ class _PositionLabel extends StatelessWidget {
           child: Text(
             attribute.boardHeaderLabel,
             style: AppTextStyles.labelBold.copyWith(
-              fontSize: 18.sp,
+              fontSize: 20.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.4,
               color: AppColors.onSurface,
