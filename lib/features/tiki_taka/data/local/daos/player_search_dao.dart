@@ -5,7 +5,7 @@ import '../search_query_normalizer.dart';
 
 /// Prefix search over normalized player names and aliases.
 class PlayerSearchDao {
-  PlayerSearchDao(this._database, {this.limit = 20});
+  PlayerSearchDao(this._database, {this.limit = 10});
 
   final Database _database;
   final int limit;
