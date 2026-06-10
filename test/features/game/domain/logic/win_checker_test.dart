@@ -190,6 +190,18 @@ void main() {
       expect(lineForO, isNull);
     });
 
+    test('tikiCompletionRevealOrder lists columns, rows, then diagonals', () {
+      expect(WinChecker.tikiCompletionRevealOrder, hasLength(8));
+      expect(WinChecker.tikiCompletionRevealOrder[0], WinChecker.allLines[3]);
+      expect(WinChecker.tikiCompletionRevealOrder[1], WinChecker.allLines[4]);
+      expect(WinChecker.tikiCompletionRevealOrder[2], WinChecker.allLines[5]);
+      expect(WinChecker.tikiCompletionRevealOrder[3], WinChecker.allLines[0]);
+      expect(WinChecker.tikiCompletionRevealOrder[4], WinChecker.allLines[1]);
+      expect(WinChecker.tikiCompletionRevealOrder[5], WinChecker.allLines[2]);
+      expect(WinChecker.tikiCompletionRevealOrder[6], WinChecker.allLines[6]);
+      expect(WinChecker.tikiCompletionRevealOrder[7], WinChecker.allLines[7]);
+    });
+
     test('returns an unmodifiable winning line', () {
       final moves = [
         _move(Player.x, 0, 0, 0),

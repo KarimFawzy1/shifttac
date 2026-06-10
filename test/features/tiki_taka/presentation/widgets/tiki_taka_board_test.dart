@@ -8,8 +8,11 @@ import 'package:shifttac/core/constants/app_constants.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_attribute.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_board.dart';
 import 'package:shifttac/features/tiki_taka/data/models/tiki_player_search_result.dart';
+import 'package:shifttac/features/game/domain/models/position.dart';
 import 'package:shifttac/features/tiki_taka/domain/logic/tiki_taka_game_engine.dart';
 import 'package:shifttac/features/tiki_taka/domain/models/tiki_cell.dart';
+import 'package:shifttac/features/tiki_taka/domain/models/tiki_game_status.dart';
+import 'package:shifttac/shared/widgets/board_winning_line_overlay.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
@@ -327,6 +330,82 @@ void main() {
 
       expect(cubit.state.activeCell, isNotNull);
       expect(cubit.state.activeCell, const TikiActiveCell(row: 0, col: 0));
+    });
+
+    testWidgets('firstWin shows animated winning line overlay', (tester) async {
+      final engine = TikiTakaGameEngine.instance;
+      final board = _testBoard();
+      final cubit = TikiTakaCubit.forTest(
+        dependencies: _dependencies(databaseHandle),
+        initialState: TikiTakaState.initial(
+          engine.boardLoaded(engine.initial(), board).copyWith(
+            status: TikiGameStatus.firstWin,
+            winningLine: const [
+              Position(row: 0, col: 0),
+              Position(row: 0, col: 1),
+              Position(row: 0, col: 2),
+            ],
+          ),
+        ),
+      );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        _wrap(cubit: cubit, child: const TikiTakaBoard()),
+      );
+      await tester.pump();
+
+      expect(find.byType(BoardWinningLineReveal), findsOneWidget);
+      expect(find.byType(BoardWinningLinesSequenceReveal), findsNothing);
+    });
+
+    testWidgets('continuing hides winning line overlay', (tester) async {
+      final engine = TikiTakaGameEngine.instance;
+      final board = _testBoard();
+      final cubit = TikiTakaCubit.forTest(
+        dependencies: _dependencies(databaseHandle),
+        initialState: TikiTakaState.initial(
+          engine.boardLoaded(engine.initial(), board).copyWith(
+            status: TikiGameStatus.continuing,
+            winningLine: const [
+              Position(row: 0, col: 0),
+              Position(row: 0, col: 1),
+              Position(row: 0, col: 2),
+            ],
+          ),
+        ),
+      );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        _wrap(cubit: cubit, child: const TikiTakaBoard()),
+      );
+      await tester.pump();
+
+      expect(find.byType(BoardWinningLineReveal), findsNothing);
+      expect(find.byType(BoardWinningLinesSequenceReveal), findsNothing);
+    });
+
+    testWidgets('completed shows stacked line sequence overlay', (tester) async {
+      final engine = TikiTakaGameEngine.instance;
+      final board = _testBoard();
+      final cubit = TikiTakaCubit.forTest(
+        dependencies: _dependencies(databaseHandle),
+        initialState: TikiTakaState.initial(
+          engine.boardLoaded(engine.initial(), board).copyWith(
+            status: TikiGameStatus.completed,
+          ),
+        ),
+      );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        _wrap(cubit: cubit, child: const TikiTakaBoard()),
+      );
+      await tester.pump();
+
+      expect(find.byType(BoardWinningLinesSequenceReveal), findsOneWidget);
+      expect(find.byType(BoardWinningLineReveal), findsNothing);
     });
 
     testWidgets('occupied cell tap is explained', (tester) async {

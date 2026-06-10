@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -23,10 +25,14 @@ class TikiTakaCell extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isActive;
 
+  static const double _outerRadius = AppSpacing.radiusMd;
+
   @override
   Widget build(BuildContext context) {
     final filled = cell.isFilled;
     final label = filled ? cell.player!.displayName : null;
+    final contentPadding = 2.w;
+    final innerRadius = math.max(0.0, _outerRadius - contentPadding);
 
     return Semantics(
       label: filled
@@ -60,8 +66,8 @@ class TikiTakaCell extends StatelessWidget {
                   : null,
             ),
             child: Padding(
-              padding: EdgeInsets.all(6.w),
-              child: filled ? _filledContent(label!) : null,
+              padding: EdgeInsets.all(contentPadding),
+              child: filled ? _filledContent(label!, innerRadius) : null,
             ),
           ),
         ),
@@ -69,7 +75,7 @@ class TikiTakaCell extends StatelessWidget {
     );
   }
 
-  Widget _filledContent(String displayName) {
+  Widget _filledContent(String displayName, double innerRadius) {
     if (isLoadablePlayerImageUrl(cell.player!.imageUrl)) {
       return LayoutBuilder(
         builder: (context, constraints) {
@@ -82,7 +88,7 @@ class TikiTakaCell extends StatelessWidget {
             imageUrl: cell.player!.imageUrl,
             size: size,
             fit: BoxFit.cover,
-            borderRadius: AppSpacing.borderRadiusMd,
+            borderRadius: BorderRadius.circular(innerRadius),
             unavailableFallback: PlayerDiagonalName(displayName: displayName),
           );
         },

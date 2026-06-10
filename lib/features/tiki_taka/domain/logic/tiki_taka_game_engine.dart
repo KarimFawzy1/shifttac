@@ -52,7 +52,10 @@ class TikiTakaGameEngine {
       return state;
     }
 
-    return state.copyWith(status: TikiGameStatus.continuing);
+    return state.copyWith(
+      status: TikiGameStatus.continuing,
+      clearWinningLine: true,
+    );
   }
 
   /// Clears filled cells and used players while keeping the current board headers.

@@ -44,19 +44,86 @@ class TikiTakaGameplayScreen extends StatelessWidget {
     if (cubit != null) {
       return BlocProvider.value(
         value: cubit!,
-        child: const _TikiTakaGameplayBody(),
+        child: const _TikiTakaOutcomeLifecycle(),
       );
     }
 
     return BlocProvider(
       create: (_) => TikiTakaCubit.production(autoLoadBoard: autoLoadBoard),
-      child: const _TikiTakaGameplayBody(),
+      child: const _TikiTakaOutcomeLifecycle(),
+    );
+  }
+}
+
+class _TikiTakaOutcomeLifecycle extends StatefulWidget {
+  const _TikiTakaOutcomeLifecycle();
+
+  @override
+  State<_TikiTakaOutcomeLifecycle> createState() =>
+      _TikiTakaOutcomeLifecycleState();
+}
+
+class _TikiTakaOutcomeLifecycleState extends State<_TikiTakaOutcomeLifecycle> {
+  bool _outcomePresenting = false;
+  TikiGameStatus? _pendingAnimatedOutcome;
+
+  Future<void> _presentOutcomeDialogWhenReady(BuildContext context) async {
+    if (_outcomePresenting || !context.mounted) {
+      return;
+    }
+
+    final status = _pendingAnimatedOutcome ??
+        context.read<TikiTakaCubit>().state.status;
+    if (status != TikiGameStatus.firstWin &&
+        status != TikiGameStatus.completed) {
+      return;
+    }
+
+    _outcomePresenting = true;
+    try {
+      switch (status) {
+        case TikiGameStatus.firstWin:
+          await TikiTakaFirstWinDialog.show(context);
+        case TikiGameStatus.completed:
+          await TikiTakaCompletionDialog.show(context);
+        case TikiGameStatus.initial ||
+            TikiGameStatus.loadingBoard ||
+            TikiGameStatus.ongoing ||
+            TikiGameStatus.continuing ||
+            TikiGameStatus.lost:
+          break;
+      }
+    } finally {
+      if (mounted) {
+        _outcomePresenting = false;
+        _pendingAnimatedOutcome = null;
+      }
+    }
+  }
+
+  void _onOutcomeRevealComplete() {
+    unawaited(_presentOutcomeDialogWhenReady(context));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _TikiTakaGameplayBody(
+      onOutcomeRevealComplete: _onOutcomeRevealComplete,
+      onAnimatedOutcomeStatus: (status) {
+        _pendingAnimatedOutcome = status;
+      },
     );
   }
 }
 
 class _TikiTakaGameplayBody extends StatelessWidget {
-  const _TikiTakaGameplayBody();
+  const _TikiTakaGameplayBody({
+    required this.onOutcomeRevealComplete,
+    required this.onAnimatedOutcomeStatus,
+  });
+
+  final VoidCallback onOutcomeRevealComplete;
+  final ValueChanged<TikiGameStatus> onAnimatedOutcomeStatus;
 
   static final SystemUiOverlayStyle _systemUi = SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -65,12 +132,6 @@ class _TikiTakaGameplayBody extends StatelessWidget {
     systemNavigationBarColor: AppColors.warmIvory,
     systemNavigationBarIconBrightness: Brightness.dark,
   );
-
-  static bool _shouldShowOutcomeDialog(TikiGameStatus status) {
-    return status == TikiGameStatus.firstWin ||
-        status == TikiGameStatus.completed ||
-        status == TikiGameStatus.lost;
-  }
 
   static bool _isActiveMatch(TikiGameStatus status) {
     return switch (status) {
@@ -142,28 +203,29 @@ class _TikiTakaGameplayBody extends StatelessWidget {
         BlocListener<TikiTakaCubit, TikiTakaState>(
           listenWhen: (previous, current) =>
               previous.status != current.status &&
-              _shouldShowOutcomeDialog(current.status),
+              (current.status == TikiGameStatus.firstWin ||
+                  current.status == TikiGameStatus.completed ||
+                  current.status == TikiGameStatus.lost),
           listener: (context, state) {
             FocusManager.instance.primaryFocus?.unfocus();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!context.mounted) {
-                return;
-              }
 
-              switch (state.status) {
-                case TikiGameStatus.firstWin:
-                  unawaited(TikiTakaFirstWinDialog.show(context));
-                case TikiGameStatus.completed:
-                  unawaited(TikiTakaCompletionDialog.show(context));
-                case TikiGameStatus.lost:
+            switch (state.status) {
+              case TikiGameStatus.firstWin:
+              case TikiGameStatus.completed:
+                onAnimatedOutcomeStatus(state.status);
+              case TikiGameStatus.lost:
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!context.mounted) {
+                    return;
+                  }
                   unawaited(TikiTakaLostDialog.show(context));
-                case TikiGameStatus.initial ||
-                    TikiGameStatus.loadingBoard ||
-                    TikiGameStatus.ongoing ||
-                    TikiGameStatus.continuing:
-                  break;
-              }
-            });
+                });
+              case TikiGameStatus.initial ||
+                  TikiGameStatus.loadingBoard ||
+                  TikiGameStatus.ongoing ||
+                  TikiGameStatus.continuing:
+                break;
+            }
           },
         ),
       ],
@@ -233,7 +295,9 @@ class _TikiTakaGameplayBody extends StatelessWidget {
                         return TikiBoardFrameLoader(
                           rowHeaders: state.rowHeaders,
                           columnHeaders: state.columnHeaders,
-                          board: const TikiTakaBoard(),
+                          board: TikiTakaBoard(
+                            onOutcomeRevealComplete: onOutcomeRevealComplete,
+                          ),
                         );
                       }
 

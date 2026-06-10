@@ -297,7 +297,7 @@ void main() {
       expect(continued.cells, state.cells);
       expect(continued.hearts, state.hearts);
       expect(continued.usedPlayerIds, state.usedPlayerIds);
-      expect(continued.winningLine, state.winningLine);
+      expect(continued.winningLine, isNull);
     });
 
     test('clearBoard empties cells and used players while keeping headers', () {

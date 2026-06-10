@@ -57,9 +57,13 @@ class TikiBoardFrame extends StatelessWidget {
         }
 
         final frameWidth = lead + gap + gridExtent;
-        final resolvedBoard = board is TikiTakaBoard
-            ? const TikiTakaBoard(cellAspectRatio: 1)
-            : board;
+        final resolvedBoard = switch (board) {
+          TikiTakaBoard(:final onOutcomeRevealComplete) => TikiTakaBoard(
+            cellAspectRatio: 1,
+            onOutcomeRevealComplete: onOutcomeRevealComplete,
+          ),
+          _ => board,
+        };
 
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalInset),
