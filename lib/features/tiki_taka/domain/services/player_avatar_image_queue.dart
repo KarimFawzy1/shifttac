@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
+import 'player_avatar_image_provider.dart';
+
 /// Throttles Commons avatar downloads to avoid Wikimedia HTTP 429 bursts.
 class PlayerAvatarImageQueue {
   PlayerAvatarImageQueue._();
@@ -23,19 +25,37 @@ class PlayerAvatarImageQueue {
 
   final List<_LoadTask> _queue = [];
   final Map<String, Future<void>> _inFlight = {};
+  final Set<String> _resolvedUrls = {};
 
   int _activeCount = 0;
   bool _draining = false;
   DateTime _lastStartAt = DateTime.fromMillisecondsSinceEpoch(0);
 
-  String cacheKey(String url, int cacheSize) => '${url.trim()}|$cacheSize';
+  String cacheKey(String url) => '${url.trim()}|$kPlayerAvatarDecodeSize';
+
+  /// Whether this avatar URL has already been decoded into [ImageCache].
+  bool isResolved(String url) {
+    final trimmed = url.trim();
+    if (_resolvedUrls.contains(trimmed)) {
+      return true;
+    }
+
+    return PaintingBinding.instance.imageCache.containsKey(
+      playerAvatarImageProvider(trimmed),
+    );
+  }
+
+  void markResolved(String url) {
+    _resolvedUrls.add(url.trim());
+  }
 
   Future<void> ensureCached({
     required ImageProvider<Object> provider,
     required String dedupeKey,
     required ImageConfiguration configuration,
+    required String url,
   }) {
-    if (PaintingBinding.instance.imageCache.containsKey(provider)) {
+    if (isResolved(url)) {
       return Future<void>.value();
     }
 
@@ -50,6 +70,7 @@ class PlayerAvatarImageQueue {
 
     _queue.add(
       _LoadTask(
+        url: url.trim(),
         provider: provider,
         configuration: configuration,
         completer: completer,
@@ -98,6 +119,7 @@ class PlayerAvatarImageQueue {
   Future<void> _runTask(_LoadTask task) async {
     try {
       await _resolveProvider(task.provider, task.configuration);
+      markResolved(task.url);
       if (!task.completer.isCompleted) {
         task.completer.complete();
       }
@@ -150,20 +172,24 @@ class PlayerAvatarImageQueue {
   void resetForTest() {
     _queue.clear();
     _inFlight.clear();
+    _resolvedUrls.clear();
     _activeCount = 0;
     _draining = false;
     _lastStartAt = DateTime.fromMillisecondsSinceEpoch(0);
+    resetPlayerAvatarImageProvidersForTest();
   }
 }
 
 class _LoadTask {
   const _LoadTask({
+    required this.url,
     required this.provider,
     required this.configuration,
     required this.completer,
     required this.attempt,
   });
 
+  final String url;
   final ImageProvider<Object> provider;
   final ImageConfiguration configuration;
   final Completer<void> completer;
@@ -171,6 +197,7 @@ class _LoadTask {
 
   _LoadTask copyWithAttempt(int nextAttempt) {
     return _LoadTask(
+      url: url,
       provider: provider,
       configuration: configuration,
       completer: completer,

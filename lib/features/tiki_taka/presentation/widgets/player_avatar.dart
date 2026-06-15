@@ -2,20 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/services/player_avatar_image_provider.dart';
 import '../../domain/services/player_avatar_image_queue.dart';
 import '../../domain/services/player_image_url_validator.dart';
-
-/// Shared [ImageProvider] for avatars so display hits a stable cache entry.
-ImageProvider<Object> playerAvatarImageProvider(
-  String url, {
-  required int cacheSize,
-}) {
-  return ResizeImage(
-    NetworkImage(url.trim(), headers: playerImageNetworkHeaders),
-    width: cacheSize,
-    height: cacheSize,
-  );
-}
 
 /// Circular or rounded player face from a Commons URL, with person placeholder fallback.
 class PlayerAvatar extends StatelessWidget {
@@ -131,60 +120,72 @@ class _PlayerNetworkImage extends StatefulWidget {
 }
 
 class _PlayerNetworkImageState extends State<_PlayerNetworkImage> {
-  _AvatarImageLoadState _loadState = _AvatarImageLoadState.loading;
-  ImageProvider<Object>? _provider;
+  late final ImageProvider<Object> _provider;
+  late _AvatarImageLoadState _loadState;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _startLoad();
-      }
-    });
+    _provider = playerAvatarImageProvider(widget.url);
+    _loadState = PlayerAvatarImageQueue.instance.isResolved(widget.url)
+        ? _AvatarImageLoadState.ready
+        : _AvatarImageLoadState.loading;
+
+    if (_loadState == _AvatarImageLoadState.loading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _startLoad();
+        }
+      });
+    }
   }
 
   @override
   void didUpdateWidget(covariant _PlayerNetworkImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url != widget.url) {
-      _startLoad();
+      _provider = playerAvatarImageProvider(widget.url);
+      _loadState = PlayerAvatarImageQueue.instance.isResolved(widget.url)
+          ? _AvatarImageLoadState.ready
+          : _AvatarImageLoadState.loading;
+      if (_loadState == _AvatarImageLoadState.loading) {
+        _startLoad();
+      }
     }
   }
 
   void _startLoad() {
-    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
-    final cacheSize = (widget.size * devicePixelRatio).round();
-    final provider = playerAvatarImageProvider(widget.url, cacheSize: cacheSize);
+    if (PlayerAvatarImageQueue.instance.isResolved(widget.url)) {
+      if (mounted && _loadState != _AvatarImageLoadState.ready) {
+        setState(() => _loadState = _AvatarImageLoadState.ready);
+      }
+      return;
+    }
+
+    if (_loadState != _AvatarImageLoadState.loading) {
+      setState(() => _loadState = _AvatarImageLoadState.loading);
+    }
+
     final configuration = createLocalImageConfiguration(
       context,
       size: Size(widget.size, widget.size),
     );
 
-    _provider = provider;
-
-    if (PaintingBinding.instance.imageCache.containsKey(provider)) {
-      _loadState = _AvatarImageLoadState.ready;
-      return;
-    }
-
-    _loadState = _AvatarImageLoadState.loading;
     final requestedUrl = widget.url;
-    final dedupeKey = PlayerAvatarImageQueue.instance.cacheKey(
-      requestedUrl,
-      cacheSize,
-    );
+    final dedupeKey = PlayerAvatarImageQueue.instance.cacheKey(requestedUrl);
 
     PlayerAvatarImageQueue.instance
         .ensureCached(
-          provider: provider,
+          provider: _provider,
           dedupeKey: dedupeKey,
           configuration: configuration,
+          url: requestedUrl,
         )
         .then((_) {
           if (!mounted || widget.url != requestedUrl) {
             return;
           }
+          PlayerAvatarImageQueue.instance.markResolved(requestedUrl);
           setState(() => _loadState = _AvatarImageLoadState.ready);
         })
         .catchError((_) {
@@ -209,24 +210,18 @@ class _PlayerNetworkImageState extends State<_PlayerNetworkImage> {
       return widget.fallback;
     }
 
-    if (_loadState == _AvatarImageLoadState.loading || _provider == null) {
+    if (_loadState == _AvatarImageLoadState.loading) {
       return _loadingPlaceholder();
     }
 
     return Image(
-      image: _provider!,
+      image: _provider,
       width: widget.size,
       height: widget.size,
       fit: widget.fit,
       alignment: widget.alignment,
       gaplessPlayback: true,
       excludeFromSemantics: widget.semanticsLabel == null,
-      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-        if (wasSynchronouslyLoaded || frame != null) {
-          return child;
-        }
-        return _loadingPlaceholder();
-      },
       errorBuilder: (context, error, stackTrace) {
         widget.onPermanentFailure();
         return widget.fallback;

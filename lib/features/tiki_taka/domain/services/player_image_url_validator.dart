@@ -1,11 +1,14 @@
 import '../../../../core/constants/app_constants.dart';
 
 /// Wikimedia requires a descriptive User-Agent; missing it causes intermittent 403s.
-Map<String, String> get playerImageNetworkHeaders => {
+final Map<String, String> kPlayerImageNetworkHeaders = {
   'User-Agent':
       '${AppConstants.appName}/${AppConstants.appVersionLabel} '
       '(player-images; +https://github.com/KarimFawzy1/shifttac)',
 };
+
+/// @deprecated Use [kPlayerImageNetworkHeaders].
+Map<String, String> get playerImageNetworkHeaders => kPlayerImageNetworkHeaders;
 
 /// Runtime guard for player avatar network loads (mirrors ETL Commons rules).
 bool isLoadablePlayerImageUrl(String? url) {

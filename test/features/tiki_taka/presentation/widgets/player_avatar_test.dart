@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shifttac/core/constants/app_constants.dart';
+import 'package:shifttac/features/tiki_taka/domain/services/player_avatar_image_provider.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/player_avatar_image_queue.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_diagonal_name.dart';
@@ -154,6 +156,37 @@ void main() {
       const avatar = PlayerAvatar(imageUrl: 'https://example.com/x.jpg', size: 40);
       expect(avatar.fit, BoxFit.cover);
       expect(avatar.alignment, Alignment.topCenter);
+    });
+
+    test('playerAvatarImageProvider uses canonical decode size', () {
+      final provider = playerAvatarImageProvider(_validCommonsUrl);
+      final resize = provider as ResizeImage;
+      expect(resize.width, kPlayerAvatarDecodeSize);
+      expect(resize.height, kPlayerAvatarDecodeSize);
+    });
+
+    test('playerAvatarImageProvider is equal across display sizes', () {
+      final searchProvider = playerAvatarImageProvider(_validCommonsUrl);
+      final boardProvider = playerAvatarImageProvider(_validCommonsUrl);
+      expect(identical(searchProvider, boardProvider), isTrue);
+      expect(
+        PaintingBinding.instance.imageCache.containsKey(searchProvider),
+        PaintingBinding.instance.imageCache.containsKey(boardProvider),
+      );
+    });
+
+    testWidgets('board avatar skips spinner when url already resolved',
+        (tester) async {
+      HttpOverrides.global = _FailingHttpOverrides();
+      addTearDown(() => HttpOverrides.global = null);
+
+      PlayerAvatarImageQueue.instance.markResolved(_validCommonsUrl);
+
+      await tester.pumpWidget(
+        _wrap(const PlayerAvatar(imageUrl: _validCommonsUrl, size: 100)),
+      );
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
     });
   });
 }
