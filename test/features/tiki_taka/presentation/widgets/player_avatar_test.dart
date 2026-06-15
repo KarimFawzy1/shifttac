@@ -40,7 +40,10 @@ class _FailingHttpClient implements HttpClient {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  tearDown(PlayerAvatarImageQueue.instance.resetForTest);
+  tearDown(() {
+    PlayerAvatarImageQueue.instance.resetForTest();
+    PlayerAvatarDebugLog.resetForTest();
+  });
 
   group('PlayerAvatar', () {
     testWidgets('null imageUrl shows person placeholder', (tester) async {

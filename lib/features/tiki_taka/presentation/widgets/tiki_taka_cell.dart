@@ -86,6 +86,7 @@ class TikiTakaCell extends StatelessWidget {
 
           return PlayerAvatar(
             imageUrl: cell.player!.imageUrl,
+            playerName: displayName,
             size: size,
             fit: BoxFit.cover,
             borderRadius: BorderRadius.circular(innerRadius),

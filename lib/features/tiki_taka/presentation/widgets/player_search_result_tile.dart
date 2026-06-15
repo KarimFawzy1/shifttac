@@ -56,6 +56,7 @@ class _PlayerSearchResultTileState extends State<PlayerSearchResultTile>
                 PlayerAvatar(
                   key: ValueKey(widget.player.imageUrl),
                   imageUrl: widget.player.imageUrl,
+                  playerName: widget.player.displayName,
                   size: avatarSize,
                   borderRadius: BorderRadius.circular(avatarSize / 2),
                 ),
