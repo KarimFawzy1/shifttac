@@ -1,9 +1,9 @@
 {
   "phase": "D8",
-  "built_at": "2026-06-20T13:05:20+00:00",
+  "built_at": "2026-06-20T14:26:18+00:00",
   "output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\player_aliases.csv",
   "build_stats": {
-    "total_alias_rows": 84088,
+    "total_alias_rows": 84400,
     "phrase_ngram_aliases": 4691,
     "unique_surnames_added": 14741,
     "yaml_aliases_added": 6,
@@ -24,7 +24,7 @@
     ],
     "collision_check": {
       "surname_prefix": "silva",
-      "match_count": 106,
+      "match_count": 107,
       "sample_names": [
         "Adrien Silva",
         "Alex da Silva",

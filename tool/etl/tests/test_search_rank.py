@@ -9,7 +9,13 @@ _ETL_DIR = Path(__file__).resolve().parents[1]
 if str(_ETL_DIR) not in sys.path:
     sys.path.insert(0, str(_ETL_DIR))
 
-from search_rank import compute_search_rank, load_search_rank_boosts  # noqa: E402
+from search_rank import (  # noqa: E402
+    apply_legendary_search_rank_floor,
+    compute_search_rank,
+    legendary_search_rank_floor,
+    load_legendary_roster_ids,
+    load_search_rank_boosts,
+)
 
 
 class SearchRankTests(unittest.TestCase):
@@ -32,6 +38,30 @@ class SearchRankTests(unittest.TestCase):
         boosts = load_search_rank_boosts()
         self.assertGreaterEqual(boosts.get("17121", 0), 120_000_000)
         self.assertGreaterEqual(boosts.get("8024", 0), 120_000_000)
+
+    def test_legendary_roster_includes_maldini_and_ginola(self) -> None:
+        roster = load_legendary_roster_ids()
+        self.assertIn("5803", roster)
+        self.assertIn("104897", roster)
+
+    def test_legendary_floor_raises_zero_rank_legends(self) -> None:
+        paolo_floor = legendary_search_rank_floor("5803")
+        ginola_floor = legendary_search_rank_floor("104897")
+        self.assertIsNotNone(paolo_floor)
+        self.assertIsNotNone(ginola_floor)
+        self.assertEqual(apply_legendary_search_rank_floor("5803", 0), paolo_floor)
+        self.assertEqual(apply_legendary_search_rank_floor("tm:104897", 0), ginola_floor)
+        self.assertGreater(paolo_floor, ginola_floor)
+
+    def test_legendary_floor_does_not_lower_high_rank(self) -> None:
+        high_rank = 200_000_000
+        self.assertEqual(
+            apply_legendary_search_rank_floor("28003", high_rank),
+            high_rank,
+        )
+
+    def test_non_legendary_player_unaffected(self) -> None:
+        self.assertEqual(apply_legendary_search_rank_floor("999999", 5_000_000), 5_000_000)
 
 
 if __name__ == "__main__":

@@ -27,7 +27,11 @@ if str(_ETL_DIR) not in sys.path:
     sys.path.insert(0, str(_ETL_DIR))
 
 from etl_common import REPORTS, STAGING_NORM, load_yaml  # noqa: E402
-from search_rank import compute_search_rank, load_search_rank_boosts  # noqa: E402
+from search_rank import (
+    apply_legendary_search_rank_floor,
+    compute_search_rank,
+    load_search_rank_boosts,
+)  # noqa: E402
 
 STAGING = _ETL_DIR / "staging"
 PLAYERS_TABLE_PATH = STAGING / "players_table.csv"
@@ -226,6 +230,7 @@ def write_players_table(
             profile.get("highest_market_value_in_eur"),
             manual_boost=rank_boosts.get(player_id, 0),
         )
+        search_rank = apply_legendary_search_rank_floor(player_id, search_rank)
         rows.append(
             {
                 "id": tm_id(player_id),

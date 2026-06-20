@@ -82,7 +82,30 @@ void main() {
       final results = await searchDao.search('mar');
       final topFive = results.take(5).map((result) => result.id).toList();
 
+      expect(results.first.id, 'tm:8024');
       expect(topFive, contains('tm:8024'));
+    });
+
+    test('search maldini returns Paolo Maldini first', () async {
+      final results = await searchDao.search('maldini');
+
+      expect(results, isNotEmpty);
+      expect(results.first.id, 'tm:5803');
+      expect(results.first.displayName, contains('Paolo Maldini'));
+    });
+
+    test('search paolo returns Paolo Maldini in top 5', () async {
+      final results = await searchDao.search('paolo');
+      final topFive = results.take(5).map((result) => result.id).toList();
+
+      expect(topFive, contains('tm:5803'));
+    });
+
+    test('search gin returns David Ginola in top 5', () async {
+      final results = await searchDao.search('gin');
+      final topFive = results.take(5).map((result) => result.id).toList();
+
+      expect(topFive, contains('tm:104897'));
     });
 
     test('search maradona returns face image result', () async {

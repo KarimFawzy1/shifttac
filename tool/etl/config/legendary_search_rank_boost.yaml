@@ -1,5 +1,7 @@
 # transfermarkt_id → manual search_rank boost (EUR-equivalent points)
 # Retired legends need ~120M to rank above active "Mar*" prefix matches (~110M).
+# All ids in legendary_players_with_tm_id.csv also receive LEGENDARY_SEARCH_RANK_FLOOR
+# automatically in build_players.py; entries here override or supplement that floor.
 version: "1"
 players:
   "8024": 120000000   # Diego Maradona

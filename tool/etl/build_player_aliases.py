@@ -28,6 +28,7 @@ if str(_ETL_DIR) not in sys.path:
     sys.path.insert(0, str(_ETL_DIR))
 
 from etl_common import REPORTS, load_yaml, make_search_text  # noqa: E402
+from search_rank import load_legendary_roster_ids  # noqa: E402
 
 STAGING = _ETL_DIR / "staging"
 PLAYERS_TABLE_PATH = STAGING / "players_table.csv"
@@ -109,6 +110,10 @@ def resolve_yaml_player_ref(ref: str, by_display: dict[str, str]) -> str | None:
 def build_alias_rows(players: list[dict[str, str]]) -> tuple[list[dict[str, str]], dict]:
     by_display = {normalize_alias(p["display_name"]): p["id"] for p in players}
     player_ids = {p["id"] for p in players}
+    legendary_ids = load_legendary_roster_ids()
+
+    def is_legendary(player_id: str) -> bool:
+        return player_id.removeprefix("tm:") in legendary_ids
 
     # (player_id, alias) -> source tag for stats
     entries: dict[tuple[str, str], str] = {}
@@ -133,7 +138,7 @@ def build_alias_rows(players: list[dict[str, str]]) -> tuple[list[dict[str, str]
         tokens = tokenize(search_text)
         rank = int((player.get("search_rank") or "0").strip() or 0)
         for phrase in contiguous_ngrams(tokens):
-            if " " not in phrase and rank == 0:
+            if " " not in phrase and rank == 0 and not is_legendary(pid):
                 continue
             source = "word_token" if " " not in phrase else "phrase_ngram"
             add(pid, phrase, source)

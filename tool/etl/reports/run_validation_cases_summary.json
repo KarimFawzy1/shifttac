@@ -1,6 +1,6 @@
 {
   "phase": "D12",
-  "run_at": "2026-06-20T13:19:44+00:00",
+  "run_at": "2026-06-20T14:26:29+00:00",
   "db_path": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db",
   "fixtures": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\fixtures\\validation_cases.yaml",
   "case_count": 18,
