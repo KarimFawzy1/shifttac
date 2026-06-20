@@ -1,7 +1,6 @@
 # Optional manual player image URLs (merged after Wikidata in fetch_player_images.py).
 # Overrides win when player_id matches.
-#
-# Example:
-# tm:148455:
-#   url: "https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128"
-#   note: "manual verify 2026-06-09"
+tm:101776:
+  url: "https://commons.wikimedia.org/wiki/Special:FilePath/Saeed%20Al-Owairan%20at%20the%202025%20RSFF.jpg?width=128"
+  commons_file: "Saeed Al-Owairan at the 2025 RSFF.jpg"
+  note: "No Wikidata P18; Commons portrait from 2025 RSFF"

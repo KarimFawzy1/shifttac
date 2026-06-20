@@ -522,10 +522,10 @@ python tool/etl/fetch_player_images.py --verify-urls
 
 **DoD Phase 3:**
 
-- [ ] `player_images.csv` contains all included legendary `player_id`s
-- [ ] `fetch_player_images_summary.json` → `matched_wikidata / total >= 0.95`
-- [ ] Spot-check in DB after D11: Maradona, Pelé, Di Stéfano, Cruyff have non-null `image_url`
-- [ ] Invalid URLs rejected by `is_valid_commons_image_url`
+- [x] `player_images.csv` contains all included legendary `player_id`s
+- [x] `fetch_player_images_summary.json` → `matched_wikidata / total >= 0.95`
+- [x] Spot-check in DB after D11: Maradona, Pelé, Di Stéfano, Cruyff have non-null `image_url`
+- [x] Invalid URLs rejected by `is_valid_commons_image_url`
 
 **Git commit & push:**
 

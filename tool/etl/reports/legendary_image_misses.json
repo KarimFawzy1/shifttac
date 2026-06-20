@@ -1,0 +1,23 @@
+{
+  "reported_at": "2026-06-20T12:59:17+00:00",
+  "legendary_total": 335,
+  "legendary_with_image": 332,
+  "miss_count": 3,
+  "misses": [
+    {
+      "player_id": "tm:200375",
+      "display_name": "Karl-Heinz Förster",
+      "wikidata_qid": "Q62091"
+    },
+    {
+      "player_id": "tm:52947",
+      "display_name": "Breno (Bledorn Verri)",
+      "wikidata_qid": "Q44742"
+    },
+    {
+      "player_id": "tm:5802",
+      "display_name": "Thomas Helveg",
+      "wikidata_qid": "Q910192"
+    }
+  ]
+}
