@@ -605,6 +605,19 @@ void main() {
       );
     });
 
+    test('searchPlayers skips queries shorter than three characters', () async {
+      final cubit = _createCubit(handle);
+      addTearDown(cubit.close);
+      await cubit.loadBoard();
+      cubit.onCellTapped(0, 0);
+
+      await cubit.searchPlayers('mo');
+
+      expect(cubit.state.searchQuery, 'mo');
+      expect(cubit.state.searchResults, isEmpty);
+      expect(cubit.state.isSearching, isFalse);
+    });
+
     test('continueAfterFirstWin transitions to continuing', () async {
       final board = await BoardDao(handle.database).loadDefaultBoard();
       expect(board, isNotNull);

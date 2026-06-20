@@ -196,6 +196,20 @@ void main() {
     expect(find.byType(PlayerSearchResultTile), findsNothing);
   });
 
+  testWidgets('shows min-length prompt before searching', (tester) async {
+    await _pumpDialog(tester, cubit);
+
+    await tester.enterText(find.byKey(PlayerSearchDialog.searchFieldKey), 'mo');
+    await tester.pump();
+
+    expect(
+      find.textContaining('Type at least 3 characters to search'),
+      findsOneWidget,
+    );
+    expect(find.byType(PlayerSearchResultTile), findsNothing);
+    expect(cubit.state.searchResults, isEmpty);
+  });
+
   testWidgets('free-text submit does not fill a cell', (tester) async {
     await _pumpDialog(tester, cubit);
 
