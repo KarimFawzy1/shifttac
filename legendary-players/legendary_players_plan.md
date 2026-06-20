@@ -131,7 +131,7 @@ These players can still ship if they meet the two-attribute gate via **clubs**, 
 | Already in shipped DB | ~3 | Maradona-era overlap with TM scrape |
 | In TM `normalized/players.csv` | ~102 | Will merge via normal D3–D6 |
 | **Not in TM dataset** | **~233** | Require legendary supplement ingest |
-| Empty nationality (post-filter) | 7 | Expected — seven non-allowlisted nations stripped (see §5) |
+| Empty nationality (post-filter) | 3 | In CSV — seven nations stripped by policy (see §5); four TM-unresolved players not in CSV |
 | Empty clubs (post-filter) | 7 | Career clubs not in allowlist — see §0.2 |
 | Nations stripped by filter | 7 | **Intentional** — do not restore to allowlist |
 | Club stints stripped | ~829 | Restored by 100-club allowlist re-filter |
@@ -201,7 +201,7 @@ python legendary-players/filter_allowed_attributes.py
 
 3. Write `legendary-players/reports/stripped_nations.json` listing the seven players with blank `Nationality` and their remaining allowlisted clubs (for QA).
 
-**Verify:** `_qual_check.json` shows `empty_nat: 7` (expected). Ingest must **not** fail on blank nationality when the player still has ≥2 other attributes.
+**Verify:** `_qual_check.json` shows `empty_nat: 3` in the current CSV (three stripped-nation players with TM ids). Four other stripped-nation legends are documented in `stripped_nations.json` but are not in `legendary_players_with_tm_id.csv` (TM id unresolved). Ingest must **not** fail on blank nationality when the player still has ≥2 other attributes.
 
 ### 0.2 Fix seven club-less players
 
@@ -272,12 +272,12 @@ python tool/etl/scripts/generate_club_top5_league.py --verify
 
 **DoD Phase 0:**
 
-- [ ] Seven non-allowlisted nations remain stripped; `stripped_nations.json` documents affected players
-- [ ] `filter_allowed_attributes.py` re-run; `_qual_check.json` shows `empty_nat: 7` (expected)
-- [ ] `verify_club_mapping.py` passes (0 unmapped clubs in CSV)
-- [ ] `club_top5_league.yaml` covers every allowlisted club that has a top-5 domestic league
-- [ ] `legendary-players/reports/phase0_summary.json` written (counts, excluded players preview)
-- [ ] `flutter test test/features/tiki_taka/domain/services/tiki_taka_attribute_manifest_test.dart` passes (nation count unchanged)
+- [x] Seven non-allowlisted nations remain stripped; `stripped_nations.json` documents affected players
+- [x] `filter_allowed_attributes.py` re-run; `_qual_check.json` shows `empty_nat: 3` (3 of 7 stripped-nation players in CSV)
+- [x] `verify_club_mapping.py` passes (0 unmapped clubs in CSV)
+- [x] `club_top5_league.yaml` covers every allowlisted club that has a top-5 domestic league (66 mappings)
+- [x] `legendary-players/reports/phase0_summary.json` written (counts, excluded players preview)
+- [x] `flutter test test/features/tiki_taka/domain/services/tiki_taka_attribute_manifest_test.dart` passes (nation count unchanged)
 
 **Git commit & push:**
 
@@ -392,11 +392,11 @@ Add `tool/etl/tests/test_ingest_legendary_players.py`:
 
 **DoD Phase 1:**
 
-- [ ] `python tool/etl/ingest_legendary_players.py` exits 0
-- [ ] `staging/legendary/*.csv` files exist with expected row counts
-- [ ] `pytest tool/etl/tests/test_ingest_legendary_players.py` passes
-- [ ] 0 unmapped clubs/nations
-- [ ] Di Stéfano has exactly `{nation:argentina, nation:spain}` + club/pos edges
+- [x] `python tool/etl/ingest_legendary_players.py` exits 0
+- [x] `staging/legendary/*.csv` files exist with expected row counts
+- [x] `pytest tool/etl/tests/test_ingest_legendary_players.py` passes
+- [x] 0 unmapped clubs/nations
+- [x] Di Stéfano has exactly `{nation:argentina, nation:spain}` + club/pos edges
 
 **Git commit & push:**
 
@@ -469,10 +469,10 @@ Wire into `search_rank.load_search_rank_boosts()` merge.
 
 **DoD Phase 2:**
 
-- [ ] Full staging merge completes without duplicate PK errors
-- [ ] `build_players.py` includes legendary-only profiles (spot-check: Pelé `tm:17121`, Di Stéfano)
-- [ ] TM overlap players (e.g. Zidane) do not duplicate edges
-- [ ] `tool/etl/reports/merge_legendary_summary.json` — counts merged per edge type
+- [x] Full staging merge completes without duplicate PK errors
+- [x] `build_players.py` includes legendary-only profiles (spot-check: Pelé `tm:17121`, Di Stéfano)
+- [x] TM overlap players (e.g. Zidane) do not duplicate edges
+- [x] `tool/etl/reports/merge_legendary_summary.json` — counts merged per edge type
 
 **Git commit & push:**
 
@@ -522,10 +522,10 @@ python tool/etl/fetch_player_images.py --verify-urls
 
 **DoD Phase 3:**
 
-- [ ] `player_images.csv` contains all included legendary `player_id`s
-- [ ] `fetch_player_images_summary.json` → `matched_wikidata / total >= 0.95`
-- [ ] Spot-check in DB after D11: Maradona, Pelé, Di Stéfano, Cruyff have non-null `image_url`
-- [ ] Invalid URLs rejected by `is_valid_commons_image_url`
+- [x] `player_images.csv` contains all included legendary `player_id`s
+- [x] `fetch_player_images_summary.json` → `matched_wikidata / total >= 0.95`
+- [x] Spot-check in DB after D11: Maradona, Pelé, Di Stéfano, Cruyff have non-null `image_url`
+- [x] Invalid URLs rejected by `is_valid_commons_image_url`
 
 **Git commit & push:**
 

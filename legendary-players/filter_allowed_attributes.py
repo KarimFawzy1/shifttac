@@ -15,6 +15,20 @@ NATIONS_YAML = ROOT / "tool" / "etl" / "config" / "nations_allowlist.yaml"
 CLUBS_YAML = ROOT / "tool" / "etl" / "config" / "clubs_allowlist.yaml"
 REPORT_PATH = ROOT / "legendary-players" / "attribute_filter_report.json"
 
+# Nations intentionally excluded from v1 boards — must NOT be added to EXCEPTION_NATIONS.
+STRIPPED_NATIONS = frozenset(
+    {
+        "North Macedonia",
+        "Iran",
+        "Georgia",
+        "Paraguay",
+        "Zambia",
+    "South Africa",
+    "New Zealand",
+    "Montenegro",
+}
+)
+
 EXCEPTION_NATIONS = {
     "Hungary",
     "Saudi Arabia",
@@ -27,7 +41,6 @@ EXCEPTION_NATIONS = {
     "Australia",
     "Bulgaria",
     "Ghana",
-    "Montenegro",
     "Norway",
     "Peru",
     "Poland",
@@ -98,6 +111,11 @@ CLUB_ALIASES = {
     "Basel": "FC Basel",
     "Al-Shabab": "AlShabab",
     "Koln": "FC Köln",
+    "Paris Saint-Germain": "Paris Saint Germain",
+    "Al-Nassr": "Al Nassr",
+    "Al-Hilal": "Al Hilal",
+    "Al-Ahli": "Al Ahli",
+    "Al-Ittihad": "Al Ittihad",
 }
 
 
@@ -125,6 +143,7 @@ def join_clubs(clubs: list[str]) -> str:
 
 def main() -> None:
     allowed_nations = load_allowed_nations()
+    assert not STRIPPED_NATIONS & EXCEPTION_NATIONS, "STRIPPED_NATIONS must stay out of EXCEPTION_NATIONS"
     allowed_clubs = load_allowed_clubs()
 
     rows = list(csv.DictReader(CSV_PATH.open(encoding="utf-8")))

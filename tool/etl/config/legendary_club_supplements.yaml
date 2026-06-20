@@ -1,0 +1,29 @@
+# Manual club edges for legendary players when CSV careers lack allowlisted clubs.
+# Phase 0.2: no historically accurate allowlisted clubs found for these players — exclude at ingest.
+version: "1"
+edges: []
+
+excluded_players: []
+
+players_without_allowlisted_clubs:
+  - player_name: Lev Yashin
+    transfermarkt_id: "174987"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (GK)
+  - player_name: Gigi Riva
+    transfermarkt_id: "145348"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (FWD)
+  - player_name: Hans-Peter Briegel
+    transfermarkt_id: "71378"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (DEF)
+  - player_name: Nándor Hidegkuti
+    transfermarkt_id: "105334"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (FWD)
+  - player_name: József Bozsik
+    transfermarkt_id: "136476"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (MID)
+  - player_name: Valentin Ivanov
+    transfermarkt_id: "151247"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (FWD)
+  - player_name: Lakhdar Belloumi
+    transfermarkt_id: "117732"
+    notes: No allowlisted clubs; qualifies at ingest via nation + position (MID)

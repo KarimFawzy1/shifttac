@@ -1,12 +1,22 @@
 """Shared Wikimedia Commons thumbnail URL helpers for player image ETL."""
 from __future__ import annotations
 
+import ssl
 import urllib.parse
 import urllib.request
 
 COMMONS_HOST = "commons.wikimedia.org"
 DEFAULT_THUMBNAIL_WIDTH = 128
 USER_AGENT = "ShiftTacEtl/1.0 (player-image-etl; +https://github.com/KarimFawzy1/shifttac)"
+
+
+def ssl_context() -> ssl.SSLContext:
+    try:
+        import certifi
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 
 def tm_id(raw: str) -> str:
@@ -74,7 +84,7 @@ def verify_commons_image_url(
     headers = {"User-Agent": user_agent, "Range": "bytes=0-0"}
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with urllib.request.urlopen(request, timeout=timeout, context=ssl_context()) as response:
             content_type = response.headers.get("Content-Type", "")
             return response.status in (200, 206) and content_type.startswith("image/")
     except urllib.error.HTTPError as exc:

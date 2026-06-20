@@ -1,0 +1,27 @@
+{
+  "fetched_at": "2026-06-20T12:59:17+00:00",
+  "total_players": 28454,
+  "processed_players": 16336,
+  "matched_wikidata": 12139,
+  "with_p18": 0,
+  "written_rows": 12118,
+  "newly_resolved_count": 0,
+  "legendary": {
+    "total": 335,
+    "matched_wikidata": 3,
+    "with_image": 332,
+    "match_rate": 0.991,
+    "image_rate": 0.991,
+    "qid_resolved": 3,
+    "p2446_resolved": 0
+  },
+  "skipped": {
+    "no_p18": 12139,
+    "no_wikidata": 4197
+  },
+  "batch_errors": [],
+  "verify_urls_enabled": false,
+  "only_missing": true,
+  "refresh": false,
+  "player_image_source": "wikidata_p2446_p18_and_qid_fast_path"
+}

@@ -1,0 +1,12 @@
+# transfermarkt_id → manual search_rank boost (EUR-equivalent points)
+version: "1"
+players:
+  "8024": 500   # Diego Maradona
+  "17121": 500  # Pelé
+  "8021": 500   # Johan Cruyff
+  "135778": 500 # Alfredo Di Stéfano
+  "3111": 450   # Zinedine Zidane
+  "3140": 450   # Ronaldo Nazário
+  "3373": 400   # Ronaldinho
+  "28003": 400  # Lionel Messi (overlap safety)
+  "8198": 400   # Cristiano Ronaldo (overlap safety)

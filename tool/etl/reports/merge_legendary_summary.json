@@ -1,0 +1,40 @@
+{
+  "phase": "legendary_merge",
+  "merged_at": "2026-06-20T12:43:48+00:00",
+  "profiles": {
+    "existing_profiles": 47690,
+    "legendary_profiles": 336,
+    "added_profiles": 233,
+    "total_profiles": 47923
+  },
+  "edges": {
+    "player_club.csv": {
+      "existing_rows": 14216,
+      "legendary_rows": 1034,
+      "added_rows": 835,
+      "skipped_duplicate_attribute": 199,
+      "total_rows": 15051
+    },
+    "player_nation.csv": {
+      "existing_rows": 25337,
+      "legendary_rows": 332,
+      "added_rows": 243,
+      "skipped_duplicate_attribute": 89,
+      "total_rows": 25580
+    },
+    "player_league.csv": {
+      "existing_rows": 19152,
+      "legendary_rows": 541,
+      "added_rows": 378,
+      "skipped_duplicate_attribute": 163,
+      "total_rows": 19530
+    },
+    "player_position.csv": {
+      "existing_rows": 47225,
+      "legendary_rows": 336,
+      "added_rows": 241,
+      "skipped_duplicate_attribute": 95,
+      "total_rows": 47466
+    }
+  }
+}
