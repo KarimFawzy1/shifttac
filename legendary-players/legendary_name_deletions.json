@@ -1,0 +1,665 @@
+{
+  "deleted_at": "2026-06-17T12:33:49.313357+00:00",
+  "database": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db",
+  "legendary_name_count": 340,
+  "matched_player_count": 130,
+  "players_before": 28221,
+  "players_after": 28091,
+  "deleted_counts": {
+    "player_attributes": 895,
+    "player_aliases": 348,
+    "players": 130
+  },
+  "deleted_players": [
+    {
+      "player_id": "tm:40433",
+      "display_name": "Alexis Sánchez",
+      "legendary_name": "Alexis Sánchez"
+    },
+    {
+      "player_id": "tm:128223",
+      "display_name": "Álvaro Morata",
+      "legendary_name": "Álvaro Morata"
+    },
+    {
+      "player_id": "tm:7109",
+      "display_name": "Andrea Barzagli",
+      "legendary_name": "Andrea Barzagli"
+    },
+    {
+      "player_id": "tm:5817",
+      "display_name": "Andrea Pirlo",
+      "legendary_name": "Andrea Pirlo"
+    },
+    {
+      "player_id": "tm:7600",
+      "display_name": "Andrés Iniesta",
+      "legendary_name": "Andrés Iniesta"
+    },
+    {
+      "player_id": "tm:4360",
+      "display_name": "Arjen Robben",
+      "legendary_name": "Arjen Robben"
+    },
+    {
+      "player_id": "tm:3182",
+      "display_name": "Ashley Cole",
+      "legendary_name": "Ashley Cole"
+    },
+    {
+      "player_id": "tm:2514",
+      "display_name": "Bastian Schweinsteiger",
+      "legendary_name": "Bastian Schweinsteiger"
+    },
+    {
+      "player_id": "tm:124548",
+      "display_name": "Bebeto",
+      "legendary_name": "Bebeto"
+    },
+    {
+      "player_id": "tm:33923",
+      "display_name": "Blaise Matuidi",
+      "legendary_name": "Blaise Matuidi"
+    },
+    {
+      "player_id": "tm:203655",
+      "display_name": "Cafú",
+      "legendary_name": "Cafu"
+    },
+    {
+      "player_id": "tm:7594",
+      "display_name": "Carles Puyol",
+      "legendary_name": "Carles Puyol"
+    },
+    {
+      "player_id": "tm:727747",
+      "display_name": "Carlos Alberto",
+      "legendary_name": "Carlos Alberto"
+    },
+    {
+      "player_id": "tm:4276",
+      "display_name": "Carlos Tevez",
+      "legendary_name": "Carlos Tevez"
+    },
+    {
+      "player_id": "tm:8806",
+      "display_name": "Cesc Fàbregas",
+      "legendary_name": "Cesc Fàbregas"
+    },
+    {
+      "player_id": "tm:44716",
+      "display_name": "Claudio Marchisio",
+      "legendary_name": "Claudio Marchisio"
+    },
+    {
+      "player_id": "tm:532",
+      "display_name": "Claudio Pizarro",
+      "legendary_name": "Claudio Pizarro"
+    },
+    {
+      "player_id": "tm:27577",
+      "display_name": "Clint Dempsey",
+      "legendary_name": "Clint Dempsey"
+    },
+    {
+      "player_id": "tm:8198",
+      "display_name": "Cristiano Ronaldo",
+      "legendary_name": "Cristiano Ronaldo"
+    },
+    {
+      "player_id": "tm:15951",
+      "display_name": "Dani Alves",
+      "legendary_name": "Dani Alves"
+    },
+    {
+      "player_id": "tm:5947",
+      "display_name": "Daniele De Rossi",
+      "legendary_name": "Daniele De Rossi"
+    },
+    {
+      "player_id": "tm:3139",
+      "display_name": "David Beckham",
+      "legendary_name": "David Beckham"
+    },
+    {
+      "player_id": "tm:35518",
+      "display_name": "David Silva",
+      "legendary_name": "David Silva"
+    },
+    {
+      "player_id": "tm:74071",
+      "display_name": "David Silva",
+      "legendary_name": "David Silva"
+    },
+    {
+      "player_id": "tm:7980",
+      "display_name": "David Villa",
+      "legendary_name": "David Villa"
+    },
+    {
+      "player_id": "tm:3924",
+      "display_name": "Didier Drogba",
+      "legendary_name": "Didier Drogba"
+    },
+    {
+      "player_id": "tm:44779",
+      "display_name": "Diego Costa",
+      "legendary_name": "Diego Costa"
+    },
+    {
+      "player_id": "tm:546212",
+      "display_name": "Diego Costa",
+      "legendary_name": "Diego Costa"
+    },
+    {
+      "player_id": "tm:22202",
+      "display_name": "Diego Milito",
+      "legendary_name": "Diego Milito"
+    },
+    {
+      "player_id": "tm:65",
+      "display_name": "Dimitar Berbatov",
+      "legendary_name": "Dimitar Berbatov"
+    },
+    {
+      "player_id": "tm:4010",
+      "display_name": "Dirk Kuyt",
+      "legendary_name": "Dirk Kuyt"
+    },
+    {
+      "player_id": "tm:50202",
+      "display_name": "Eden Hazard",
+      "legendary_name": "Eden Hazard"
+    },
+    {
+      "player_id": "tm:7767",
+      "display_name": "Fernando Torres",
+      "legendary_name": "Fernando Torres"
+    },
+    {
+      "player_id": "tm:5958",
+      "display_name": "Francesco Totti",
+      "legendary_name": "Francesco Totti"
+    },
+    {
+      "player_id": "tm:3163",
+      "display_name": "Frank Lampard",
+      "legendary_name": "Frank Lampard"
+    },
+    {
+      "player_id": "tm:39381",
+      "display_name": "Gareth Bale",
+      "legendary_name": "Gareth Bale"
+    },
+    {
+      "player_id": "tm:18944",
+      "display_name": "Gerard Piqué",
+      "legendary_name": "Gerard Piqué"
+    },
+    {
+      "player_id": "tm:5023",
+      "display_name": "Gianluigi Buffon",
+      "legendary_name": "Gianluigi Buffon"
+    },
+    {
+      "player_id": "tm:29260",
+      "display_name": "Giorgio Chiellini",
+      "legendary_name": "Giorgio Chiellini"
+    },
+    {
+      "player_id": "tm:3979",
+      "display_name": "Iker Casillas",
+      "legendary_name": "Iker Casillas"
+    },
+    {
+      "player_id": "tm:88103",
+      "display_name": "James Rodríguez",
+      "legendary_name": "James Rodríguez"
+    },
+    {
+      "player_id": "tm:3597",
+      "display_name": "Jamie Carragher",
+      "legendary_name": "Jamie Carragher"
+    },
+    {
+      "player_id": "tm:19981",
+      "display_name": "Javier Mascherano",
+      "legendary_name": "Javier Mascherano"
+    },
+    {
+      "player_id": "tm:1161",
+      "display_name": "Javier Zanetti",
+      "legendary_name": "Javier Zanetti"
+    },
+    {
+      "player_id": "tm:7486",
+      "display_name": "Joan Capdevila",
+      "legendary_name": "Joan Capdevila"
+    },
+    {
+      "player_id": "tm:3876",
+      "display_name": "Joe Cole",
+      "legendary_name": "Joe Cole"
+    },
+    {
+      "player_id": "tm:3220",
+      "display_name": "John Arne Riise",
+      "legendary_name": "John Arne Riise"
+    },
+    {
+      "player_id": "tm:3160",
+      "display_name": "John Terry",
+      "legendary_name": "John Terry"
+    },
+    {
+      "player_id": "tm:3366",
+      "display_name": "Kaká",
+      "legendary_name": "Kaká"
+    },
+    {
+      "player_id": "tm:41234",
+      "display_name": "Kaká",
+      "legendary_name": "Kaká"
+    },
+    {
+      "player_id": "tm:235610",
+      "display_name": "Káká",
+      "legendary_name": "Kaká"
+    },
+    {
+      "player_id": "tm:380696",
+      "display_name": "Kaká",
+      "legendary_name": "Kaká"
+    },
+    {
+      "player_id": "tm:93128",
+      "display_name": "Kalidou Koulibaly",
+      "legendary_name": "Kalidou Koulibaly"
+    },
+    {
+      "player_id": "tm:18922",
+      "display_name": "Karim Benzema",
+      "legendary_name": "Karim Benzema"
+    },
+    {
+      "player_id": "tm:88755",
+      "display_name": "Kevin De Bruyne",
+      "legendary_name": "Kevin De Bruyne"
+    },
+    {
+      "player_id": "tm:39983",
+      "display_name": "Leonardo Bonucci",
+      "legendary_name": "Leonardo Bonucci"
+    },
+    {
+      "player_id": "tm:5299",
+      "display_name": "Ludovic Giuly",
+      "legendary_name": "Ludovic Giuly"
+    },
+    {
+      "player_id": "tm:44352",
+      "display_name": "Luis Suárez",
+      "legendary_name": "Luis Suárez"
+    },
+    {
+      "player_id": "tm:424784",
+      "display_name": "Luis Suárez",
+      "legendary_name": "Luis Suárez"
+    },
+    {
+      "player_id": "tm:27992",
+      "display_name": "Luka Modrić",
+      "legendary_name": "Luka Modrić"
+    },
+    {
+      "player_id": "tm:18301",
+      "display_name": "Maicon",
+      "legendary_name": "Maicon"
+    },
+    {
+      "player_id": "tm:70484",
+      "display_name": "Maicón",
+      "legendary_name": "Maicon"
+    },
+    {
+      "player_id": "tm:84695",
+      "display_name": "Maicon",
+      "legendary_name": "Maicon"
+    },
+    {
+      "player_id": "tm:17259",
+      "display_name": "Manuel Neuer",
+      "legendary_name": "Manuel Neuer"
+    },
+    {
+      "player_id": "tm:44501",
+      "display_name": "Marcelo",
+      "legendary_name": "Marcelo"
+    },
+    {
+      "player_id": "tm:52920",
+      "display_name": "Marcelo",
+      "legendary_name": "Marcelo"
+    },
+    {
+      "player_id": "tm:190185",
+      "display_name": "Marcelo",
+      "legendary_name": "Marcelo"
+    },
+    {
+      "player_id": "tm:1091605",
+      "display_name": "Marcelo",
+      "legendary_name": "Marcelo"
+    },
+    {
+      "player_id": "tm:38593",
+      "display_name": "Marek Hamsik",
+      "legendary_name": "Marek Hamšík"
+    },
+    {
+      "player_id": "tm:6288",
+      "display_name": "Mario Gómez",
+      "legendary_name": "Mario Gómez"
+    },
+    {
+      "player_id": "tm:227954",
+      "display_name": "Mario Gómez",
+      "legendary_name": "Mario Gómez"
+    },
+    {
+      "player_id": "tm:34572",
+      "display_name": "Mario Mandzukic",
+      "legendary_name": "Mario Mandžukić"
+    },
+    {
+      "player_id": "tm:32617",
+      "display_name": "Micah Richards",
+      "legendary_name": "Micah Richards"
+    },
+    {
+      "player_id": "tm:5588",
+      "display_name": "Michael Essien",
+      "legendary_name": "Michael Essien"
+    },
+    {
+      "player_id": "tm:1397",
+      "display_name": "Michael Owen",
+      "legendary_name": "Michael Owen"
+    },
+    {
+      "player_id": "tm:122702",
+      "display_name": "Michel",
+      "legendary_name": "Míchel"
+    },
+    {
+      "player_id": "tm:711455",
+      "display_name": "Michel",
+      "legendary_name": "Míchel"
+    },
+    {
+      "player_id": "tm:887834",
+      "display_name": "Michel",
+      "legendary_name": "Míchel"
+    },
+    {
+      "player_id": "tm:10",
+      "display_name": "Miroslav Klose",
+      "legendary_name": "Miroslav Klose"
+    },
+    {
+      "player_id": "tm:148455",
+      "display_name": "Mohamed Salah",
+      "legendary_name": "Mohamed Salah"
+    },
+    {
+      "player_id": "tm:19726",
+      "display_name": "Nemanja Vidic‎",
+      "legendary_name": "Nemanja Vidić"
+    },
+    {
+      "player_id": "tm:68290",
+      "display_name": "Neymar",
+      "legendary_name": "Neymar"
+    },
+    {
+      "player_id": "tm:3226",
+      "display_name": "Nicolas Anelka",
+      "legendary_name": "Nicolas Anelka"
+    },
+    {
+      "player_id": "tm:3411",
+      "display_name": "Pablo Aimar",
+      "legendary_name": "Pablo Aimar"
+    },
+    {
+      "player_id": "tm:224852",
+      "display_name": "Patrick Vieira",
+      "legendary_name": "Patrick Vieira"
+    },
+    {
+      "player_id": "tm:122153",
+      "display_name": "Paul Pogba",
+      "legendary_name": "Paul Pogba"
+    },
+    {
+      "player_id": "tm:3397",
+      "display_name": "Paul Scholes",
+      "legendary_name": "Paul Scholes"
+    },
+    {
+      "player_id": "tm:48930",
+      "display_name": "Pelé",
+      "legendary_name": "Pelé"
+    },
+    {
+      "player_id": "tm:99189",
+      "display_name": "Pelé",
+      "legendary_name": "Pelé"
+    },
+    {
+      "player_id": "tm:4072",
+      "display_name": "Peter Crouch",
+      "legendary_name": "Peter Crouch"
+    },
+    {
+      "player_id": "tm:5658",
+      "display_name": "Petr Cech",
+      "legendary_name": "Petr Čech"
+    },
+    {
+      "player_id": "tm:2219",
+      "display_name": "Philipp Lahm",
+      "legendary_name": "Philipp Lahm"
+    },
+    {
+      "player_id": "tm:39152",
+      "display_name": "Radamel Falcao",
+      "legendary_name": "Radamel Falcao"
+    },
+    {
+      "player_id": "tm:134425",
+      "display_name": "Raheem Sterling",
+      "legendary_name": "Raheem Sterling"
+    },
+    {
+      "player_id": "tm:9828",
+      "display_name": "Ricardo Carvalho",
+      "legendary_name": "Ricardo Carvalho"
+    },
+    {
+      "player_id": "tm:4188",
+      "display_name": "Ricardo Quaresma",
+      "legendary_name": "Ricardo Quaresma"
+    },
+    {
+      "player_id": "tm:3235",
+      "display_name": "Rio Ferdinand",
+      "legendary_name": "Rio Ferdinand"
+    },
+    {
+      "player_id": "tm:38253",
+      "display_name": "Robert Lewandowski",
+      "legendary_name": "Robert Lewandowski"
+    },
+    {
+      "player_id": "tm:4380",
+      "display_name": "Robin van Persie",
+      "legendary_name": "Robin van Persie"
+    },
+    {
+      "player_id": "tm:129128",
+      "display_name": "Romário",
+      "legendary_name": "Romário"
+    },
+    {
+      "player_id": "tm:234044",
+      "display_name": "Romário",
+      "legendary_name": "Romário"
+    },
+    {
+      "player_id": "tm:96341",
+      "display_name": "Romelu Lukaku",
+      "legendary_name": "Romelu Lukaku"
+    },
+    {
+      "player_id": "tm:451858",
+      "display_name": "Rui Costa",
+      "legendary_name": "Rui Costa"
+    },
+    {
+      "player_id": "tm:3406",
+      "display_name": "Ryan Giggs",
+      "legendary_name": "Ryan Giggs"
+    },
+    {
+      "player_id": "tm:4257",
+      "display_name": "Samuel Eto'o",
+      "legendary_name": "Samuel Eto'o"
+    },
+    {
+      "player_id": "tm:40555",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:52976",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:96928",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:167976",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:329013",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:456449",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:836547",
+      "display_name": "Serginho",
+      "legendary_name": "Serginho"
+    },
+    {
+      "player_id": "tm:26399",
+      "display_name": "Sergio Agüero",
+      "legendary_name": "Sergio Agüero"
+    },
+    {
+      "player_id": "tm:25557",
+      "display_name": "Sergio Ramos",
+      "legendary_name": "Sergio Ramos"
+    },
+    {
+      "player_id": "tm:75287",
+      "display_name": "Seydou Doumbia",
+      "legendary_name": "Seydou Doumbia"
+    },
+    {
+      "player_id": "tm:5357",
+      "display_name": "Sidney Govou",
+      "legendary_name": "Sidney Govou"
+    },
+    {
+      "player_id": "tm:2865",
+      "display_name": "Stephan Lichtsteiner",
+      "legendary_name": "Stephan Lichtsteiner"
+    },
+    {
+      "player_id": "tm:3109",
+      "display_name": "Steven Gerrard",
+      "legendary_name": "Steven Gerrard"
+    },
+    {
+      "player_id": "tm:29241",
+      "display_name": "Thiago Silva",
+      "legendary_name": "Thiago Silva"
+    },
+    {
+      "player_id": "tm:4267",
+      "display_name": "Tim Howard",
+      "legendary_name": "Tim Howard"
+    },
+    {
+      "player_id": "tm:132",
+      "display_name": "Tomas Rosicky",
+      "legendary_name": "Tomáš Rosický"
+    },
+    {
+      "player_id": "tm:31909",
+      "display_name": "Toni Kroos",
+      "legendary_name": "Toni Kroos"
+    },
+    {
+      "player_id": "tm:92141",
+      "display_name": "Víctor Ibarbo",
+      "legendary_name": "Víctor Ibarbo"
+    },
+    {
+      "player_id": "tm:9594",
+      "display_name": "Vincent Kompany",
+      "legendary_name": "Vincent Kompany"
+    },
+    {
+      "player_id": "tm:5938",
+      "display_name": "Walter Samuel",
+      "legendary_name": "Walter Samuel"
+    },
+    {
+      "player_id": "tm:3332",
+      "display_name": "Wayne Rooney",
+      "legendary_name": "Wayne Rooney"
+    },
+    {
+      "player_id": "tm:4673",
+      "display_name": "Wesley Sneijder",
+      "legendary_name": "Wesley Sneijder"
+    },
+    {
+      "player_id": "tm:7476",
+      "display_name": "Xabi Alonso",
+      "legendary_name": "Xabi Alonso"
+    },
+    {
+      "player_id": "tm:7607",
+      "display_name": "Xavi",
+      "legendary_name": "Xavi"
+    },
+    {
+      "player_id": "tm:3455",
+      "display_name": "Zlatan Ibrahimović",
+      "legendary_name": "Zlatan Ibrahimović"
+    }
+  ]
+}

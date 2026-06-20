@@ -1,0 +1,589 @@
+14 | Sampdoria
+14 | River Plate
+13 | Parma
+10 | Corinthians
+ 9 | Feyenoord
+ 9 | Real Zaragoza
+ 9 | Genoa
+ 8 | Bordeaux
+ 8 | São Paulo
+ 8 | Rangers
+ 7 | Cruzeiro
+ 7 | Fluminense
+ 7 | Udinese
+ 6 | Torino
+ 6 | Werder Bremen
+ 6 | Bolton Wanderers
+ 6 | Espanyol
+ 6 | Red Star Belgrade
+ 5 | Newell's Old Boys
+ 5 | New York Cosmos
+ 5 | Saint-Étienne
+ 5 | Brescia
+ 5 | Al-Sadd
+ 5 | Palmeiras
+ 5 | Fenerbahçe
+ 5 | Pisa
+ 5 | Hamburger SV
+ 5 | Celtic
+ 5 | Qatar SC
+ 5 | Chicago Fire
+ 5 | Dinamo Zagreb
+ 5 | Los Angeles Galaxy
+ 5 | Como
+ 5 | Atlético Nacional
+ 4 | Grêmio
+ 4 | New York Red Bulls
+ 4 | Vasco da Gama
+ 4 | Deportivo La Coruña
+ 4 | Botafogo
+ 4 | Kaiserslautern
+ 4 | Montpellier
+ 4 | Southampton
+ 4 | Shanghai Shenhua
+ 4 | Vissel Kobe
+ 4 | Al-Nassr
+ 4 | Bari
+ 4 | Celta Vigo
+ 4 | Tonnerre Yaoundé
+ 4 | Portsmouth
+ 4 | Bastia
+ 4 | Panathinaikos
+ 4 | Real Valladolid
+ 4 | Vélez Sarsfield
+ 4 | Groningen
+ 4 | Rayo Vallecano
+ 4 | Millonarios
+ 4 | Basel
+ 4 | Fort Lauderdale Strikers
+ 4 | FC Köln
+ 4 | América
+ 3 | Argentinos Juniors
+ 3 | Cannes
+ 3 | Atlético Mineiro
+ 3 | Borussia Mönchengladbach
+ 3 | Olympiacos
+ 3 | Delhi Dynamos
+ 3 | Piacenza
+ 3 | Verona
+ 3 | Ascoli
+ 3 | Brøndby
+ 3 | Queens Park Rangers
+ 3 | Blackburn Rovers
+ 3 | Stoke City
+ 3 | Metz
+ 3 | Nantes
+ 3 | Al-Gharafa
+ 3 | Hércules
+ 3 | Mumbai City
+ 3 | 1860 Munich
+ 3 | Sparta Prague
+ 3 | Beşiktaş
+ 3 | Al-Ahli
+ 3 | Perugia
+ 3 | Racing Club
+ 3 | Estudiantes
+ 3 | Internacional
+ 3 | New York City FC
+ 3 | Al-Hilal
+ 3 | Al-Rayyan
+ 3 | VfL Wolfsburg
+ 3 | Budapest Honvéd
+ 3 | Cagliari
+ 3 | Seattle Sounders
+ 3 | Leicester City
+ 3 | Middlesbrough
+ 3 | Burnley
+ 3 | Hellas Verona
+ 3 | Athletic Bilbao
+ 3 | Varese
+ 3 | Cremonese
+ 3 | Sion
+ 3 | San Lorenzo
+ 3 | Atlante
+ 3 | Salernitana
+ 3 | Trabzonspor
+ 3 | Norwich City
+ 2 | Los Angeles Aztecs
+ 2 | Levante
+ 2 | MetroStars
+ 2 | Juventude
+ 2 | Anzhi Makhachkala
+ 2 | Banfield
+ 2 | Padova
+ 2 | Sydney FC
+ 2 | Chievo
+ 2 | Nottingham Forest
+ 2 | Bournemouth
+ 2 | Auxerre
+ 2 | Nîmes
+ 2 | Strasbourg
+ 2 | CSKA Sofia
+ 2 | Kashiwa Reysol
+ 2 | D.C. United
+ 2 | Dynamo Kyiv
+ 2 | Budućnost Podgorica
+ 2 | Malmö FF
+ 2 | Valenciennes
+ 2 | Pelita Jaya
+ 2 | Schalke 04
+ 2 | Sporting Gijón
+ 2 | Alverca
+ 2 | Reggina
+ 2 | Júbilo Iwata
+ 2 | Yokohama FC
+ 2 | Kashima Antlers
+ 2 | Al-Ittihad
+ 2 | Preston North End
+ 2 | Derby County
+ 2 | Independiente
+ 2 | Eibar
+ 2 | Real Sociedad
+ 2 | Melbourne City
+ 2 | Los Angeles FC
+ 2 | Sagan Tosu
+ 2 | Le Mans
+ 2 | Guingamp
+ 2 | Montreal Impact
+ 2 | Bahia
+ 2 | Inter Miami
+ 2 | Cobreloa
+ 2 | Colo-Colo
+ 2 | Albacete
+ 2 | Wolverhampton Wanderers
+ 2 | Genk
+ 2 | Anderlecht
+ 2 | West Bromwich Albion
+ 2 | Atlético Junior
+ 2 | San Jose Earthquakes
+ 2 | Dynamo Moscow
+ 2 | Watford
+ 2 | Fortuna Düsseldorf
+ 2 | Reims
+ 2 | Toulon
+ 2 | Real Oviedo
+ 2 | Atletico Celaya
+ 2 | Alavés
+ 2 | St. Gallen
+ 2 | Al-Shamal
+ 2 | Spartak Moscow
+ 2 | Croatia Zagreb
+ 2 | NK Zagreb
+ 2 | Independiente Medellín
+ 2 | Colorado Rapids
+ 2 | Universidad de Chile
+ 2 | América de Cali
+ 2 | Veracruz
+ 2 | Peñarol
+ 2 | Alianza Lima
+ 2 | UNAM
+ 2 | San Diego Sockers
+ 2 | Puebla
+ 2 | Racing Club de France
+ 2 | León
+ 2 | Kyoto Purple Sanga
+ 2 | Al-Shabab
+ 2 | Grasshopper
+ 2 | Hebei China Fortune
+ 2 | Avaí
+ 2 | Criciúma
+ 2 | Villa Nova
+ 2 | Sona
+ 2 | Aalesund
+ 2 | Chennaiyin
+ 2 | New England Revolution
+ 2 | Empoli
+ 2 | Palermo
+ 2 | Arezzo
+ 1 | Washington Diplomats
+ 1 | Querétaro
+ 1 | Nancy
+ 1 | HFC Haarlem
+ 1 | Monza
+ 1 | Vicenza
+ 1 | Miami FC
+ 1 | Adelaide United
+ 1 | América-RJ
+ 1 | Mogi Mirim
+ 1 | AEK Athens
+ 1 | Bunyodkor
+ 1 | Kabuscorp
+ 1 | São Caetano
+ 1 | União São João
+ 1 | Al-Arabi
+ 1 | Talleres RE
+ 1 | Albinoleffe
+ 1 | Ravenna
+ 1 | Venezia
+ 1 | Barnet
+ 1 | Noordwijk
+ 1 | Den Bosch
+ 1 | Heerenveen
+ 1 | Málaga
+ 1 | Go Ahead Eagles
+ 1 | Willem II
+ 1 | Karlsruher SC
+ 1 | Chemnitzer FC
+ 1 | FC Homburg
+ 1 | KFC Uerdingen
+ 1 | Austria Salzburg
+ 1 | Stuttgarter Kickers
+ 1 | Orange County Blue Star
+ 1 | Kickers Offenbach
+ 1 | TSV 1860 Munich
+ 1 | Dynamo Dresden
+ 1 | Servette
+ 1 | Cobh Ramblers
+ 1 | Hvidovre
+ 1 | Martigues
+ 1 | Cardiff City
+ 1 | North Queensland Fury
+ 1 | Perth Glory
+ 1 | Muangthong United
+ 1 | LA Galaxy
+ 1 | FC Goa
+ 1 | Platense
+ 1 | Baniyas
+ 1 | Pune City
+ 1 | Grenoble
+ 1 | KB
+ 1 | Bayer Uerdingen
+ 1 | Milan
+ 1 | Hebros
+ 1 | Farul Constanța
+ 1 | Sportul Studențesc
+ 1 | Steaua București
+ 1 | Osijek
+ 1 | Dukla Prague
+ 1 | Partizan
+ 1 | Reipas
+ 1 | HJK
+ 1 | MyPa
+ 1 | Hansa Rostock
+ 1 | Lahti
+ 1 | Mighty Barrolle
+ 1 | Invincible Eleven
+ 1 | Al-Jazira
+ 1 | Real Tamale
+ 1 | Zürich
+ 1 | Dragons l'Ouémé
+ 1 | Niort
+ 1 | Mulhouse
+ 1 | Al-Ain
+ 1 | Iwuanyanwu Nationale
+ 1 | Hull City
+ 1 | Éclair de Douala
+ 1 | Léopards de Douala
+ 1 | Saint-Pierroise
+ 1 | Bali United
+ 1 | Liberty Professionals
+ 1 | Persib Bandung
+ 1 | Sabail
+ 1 | Al-Rayan
+ 1 | Dorados de Sinaloa
+ 1 | Salgueiros
+ 1 | Fafe
+ 1 | Högaborg
+ 1 | Helsingborg
+ 1 | Råå IF
+ 1 | Yokohama F. Marinos
+ 1 | Bellmare Hiratsuka
+ 1 | Dundee
+ 1 | Wembley
+ 1 | Brandsen
+ 1 | Vitória
+ 1 | Toros Neza
+ 1 | Pescara
+ 1 | Swansea City
+ 1 | Leganés
+ 1 | Mallorca
+ 1 | Antalyaspor
+ 1 | Konyaspor
+ 1 | Orlando City SC
+ 1 | Zrinjski Mostar
+ 1 | Inter Zaprešić
+ 1 | Phoenix Rising
+ 1 | Chmel Blšany
+ 1 | Rennes
+ 1 | UNAM Pumas
+ 1 | Al-Orobah
+ 1 | Nacional
+ 1 | Lanceros Boyacá
+ 1 | Penafiel
+ 1 | Braga
+ 1 | Envigado
+ 1 | Delta Warsaw
+ 1 | Legia Warsaw II
+ 1 | Znicz Pruszków
+ 1 | Lech Poznań
+ 1 | QPR
+ 1 | El Mokawloon
+ 1 | TSV 1861 Nördlingen
+ 1 | Sporting de Lourenço Marques
+ 1 | Boston Minutemen
+ 1 | Monterrey
+ 1 | Toronto Metros-Croatia
+ 1 | Beira-Mar
+ 1 | Las Vegas Quicksilvers
+ 1 | União de Tomar
+ 1 | New Jersey Americans
+ 1 | Huracán
+ 1 | Olaria
+ 1 | Waterford
+ 1 | Stockport County
+ 1 | Cork Celtic
+ 1 | Hibernian
+ 1 | Brisbane Lions
+ 1 | Botafogo-SP
+ 1 | Mantova
+ 1 | Alessandria
+ 1 | Legnano
+ 1 | San Antonio Thunder
+ 1 | Herning Fremad
+ 1 | Chesterfield
+ 1 | Scunthorpe United
+ 1 | Blacktown City
+ 1 | Chester City
+ 1 | Sheffield United
+ 1 | Wrexham
+ 1 | Sydney Olympic
+ 1 | Charlton Athletic
+ 1 | Nagoya Grampus Eight
+ 1 | Swindon Town
+ 1 | Gansu Tianma
+ 1 | Boston United
+ 1 | Tow Law Town
+ 1 | Sheffield Wednesday
+ 1 | Bradford City
+ 1 | Sunderland
+ 1 | Torquay United
+ 1 | Eintracht Braunschweig
+ 1 | Angers
+ 1 | USM Casablanca
+ 1 | Club Brugge
+ 1 | Getafe
+ 1 | Recreativo Huelva
+ 1 | Úbeda
+ 1 | Plus Ultra
+ 1 | Real Betis
+ 1 | Erandio
+ 1 | Indautxu
+ 1 | Barakaldo
+ 1 | Arona
+ 1 | Nuorese
+ 1 | Torres
+ 1 | Vancouver Whitecaps
+ 1 | Racing Club Heemstede
+ 1 | South Florida Sun
+ 1 | Kansas City Comets
+ 1 | Löwenbrau
+ 1 | Baar
+ 1 | Zug
+ 1 | PEC Zwolle
+ 1 | Haarlem
+ 1 | Twente
+ 1 | Ferencváros
+ 1 | Young Fellows Zürich
+ 1 | Elektromos
+ 1 | MTK Budapest
+ 1 | Volgar Astrakhan
+ 1 | Krylya Sovetov Moscow
+ 1 | Torpedo Moscow
+ 1 | Borovo
+ 1 | Vojvodina
+ 1 | Rapid Wien
+ 1 | Hrvatski Dragovoljac
+ 1 | Standard Liège
+ 1 | Olimpija Ljubljana
+ 1 | Vardar
+ 1 | VfB Leipzig
+ 1 | Sarmiento
+ 1 | Instituto
+ 1 | Rosario Central
+ 1 | First Vienna
+ 1 | Sankt Pölten
+ 1 | Kremser SC
+ 1 | Fernández Vial
+ 1 | Quilmes
+ 1 | Logroñés
+ 1 | Ancona
+ 1 | Lanús
+ 1 | Unión Magdalena
+ 1 | Deportivo Cali
+ 1 | Tampa Bay Mutiny
+ 1 | Miami Fusion
+ 1 | Cúcuta Deportivo
+ 1 | Cortuluá
+ 1 | Atlético Buenaventura
+ 1 | Deportes Tolima
+ 1 | Santa Fe
+ 1 | Real Cartagena
+ 1 | Junior
+ 1 | Aucas
+ 1 | Bajo Cauca
+ 1 | Guaros FC
+ 1 | Deportivo Rionegri
+ 1 | Deportivo Pereira
+ 1 | Sportivo Luqueño
+ 1 | Guaraní
+ 1 | Cobresal
+ 1 | Trasandino
+ 1 | Miami Sharks
+ 1 | Linz
+ 1 | Dallas Burn
+ 1 | Celaya
+ 1 | Cruz Azul
+ 1 | Tigres UANL
+ 1 | NA Hussein Dey
+ 1 | Tours
+ 1 | GC Mascara
+ 1 | MP Oran
+ 1 | MC Alger
+ 1 | USM Bel Abbès
+ 1 | ASM Oran
+ 1 | Canon Yaoundé
+ 1 | Sabadell
+ 1 | Hospitalet
+ 1 | Bolívar
+ 1 | Mufulira Wanderers
+ 1 | Cercle Brugge
+ 1 | Necaxa
+ 1 | Al-Wahda
+ 1 | Irapuato
+ 1 | Correcaminos
+ 1 | Kaizer Chiefs
+ 1 | Seoul Trust Bank
+ 1 | Air Force FC
+ 1 | SV Darmstadt 98
+ 1 | Juventus-SP
+ 1 | Matsubara
+ 1 | CRB
+ 1 | XV de Jaú
+ 1 | Coritiba
+ 1 | Verdy Kawasaki
+ 1 | Atletico Suzuka
+ 1 | Taxirani
+ 1 | Bank Tejarat
+ 1 | Arminia Bielefeld
+ 1 | Hertha BSC
+ 1 | Saba Battery
+ 1 | Persepolis
+ 1 | Saipa
+ 1 | Stop Out
+ 1 | Wellington Diamond United
+ 1 | FC Zürich
+ 1 | Aarau
+ 1 | JEF United Ichihara
+ 1 | Central United
+ 1 | Football Kingz
+ 1 | Chennaiyin FC
+ 1 | Livorno
+ 1 | Emirates Club
+ 1 | California Surf
+ 1 | Spartak Subotica
+ 1 | Nürnberg
+ 1 | Notts County
+ 1 | Chiasso
+ 1 | Atlas
+ 1 | Reggiana
+ 1 | Yokohama Flügels
+ 1 | Cerezo Osaka
+ 1 | Kitchee
+ 1 | Leça
+ 1 | Vitória Setúbal
+ 1 | Shanghai SIPG
+ 1 | Brest
+ 1 | Waldhof Mannheim
+ 1 | Santa Ana
+ 1 | Clausenengen
+ 1 | Molde
+ 1 | Halmstad
+ 1 | Shimizu S-Pulse
+ 1 | APOEL
+ 1 | Lorient
+ 1 | Monts d'Or Azergues
+ 1 | Troyes
+ 1 | NorthEast United
+ 1 | Lierse
+ 1 | Santa Coloma
+ 1 | Utrecht
+ 1 | Quick Boys
+ 1 | Évian
+ 1 | Lyon Duchère
+ 1 | MDA Chasselay
+ 1 | FC Miami City
+ 1 | Deportivo Pesquero
+ 1 | Marsonia
+ 1 | Al-Duhail
+ 1 | Savona
+ 1 | Sambenedettese
+ 1 | Pro Vercelli
+ 1 | Novara
+ 1 | Degerfors
+ 1 | IFK Norrköping
+ 1 | Slovan Bratislava
+ 1 | Dalian Professional
+ 1 | IFK Göteborg
+ 1 | Zenit Saint Petersburg
+ 1 | Melbourne Victory
+ 1 | Melbourne Heart
+ 1 | PAOK
+ 1 | Kerala Blasters
+ 1 | Coventry City
+ 1 | Tampa Bay Rowdies
+ 1 | Johor Darul Ta'zim
+ 1 | Estudiantes de Río Cuarto
+ 1 | América Mineiro
+ 1 | Vitesse
+ 1 | Tenerife
+ 1 | Rondinella
+ 1 | Pistoiese
+ 1 | Club León
+ 1 | Racing Santander
+ 1 | Kavala
+ 1 | Polonia Warsaw
+ 1 | Al-Khor
+ 1 | ADO Den Haag
+ 1 | Jagiellonia Białystok
+ 1 | Ittihad Club
+ 1 | V-Varen Nagasaki
+ 1 | Millwall
+ 1 | Hangzhou Greentown
+ 1 | Jamshedpur FC
+ 1 | Hannover 96
+ 1 | Houston Dynamo
+ 1 | Beveren
+ 1 | Aris Thessaloniki
+ 1 | North Jersey Imperials
+ 1 | Memphis 901 FC
+ 1 | Dulwich Hamlet
+ 1 | IFK Hässleholm
+ 1 | Inter de Abidjan
+ 1 | Athletic Adjame
+ 1 | Toumodi
+ 1 | Denguele
+ 1 | Tokushima Vortis
+ 1 | Young Boys
+ 1 | CSKA Moscow
+ 1 | Girona
+ 1 | Hamrun Spartans
+ 1 | Kasımpaşa
+ 1 | Vitória Guimarães
+ 1 | Treviso
+ 1 | Fenerbahce
+ 1 | Marsala
+ 1 | Trapani
+ 1 | Carpi
+ 1 | Murata
+ 1 | Deportivo Rionegro
+ 1 | RS Futebol
+ 1 | Aosta
+ 1 | Triestina
+ 1 | Tre Penne
+ 1 | Itaperuna
+ 1 | Dinamo Tbilisi
+ 1 | Augsburg
+ 1 | Oggiono
+ 1 | Caratese
+ 1 | Odense
+ 1 | Massese

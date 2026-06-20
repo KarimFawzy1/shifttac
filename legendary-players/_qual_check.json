@@ -1,0 +1,56 @@
+{
+  "empty_nat": [
+    {
+      "name": "Darko Pančev",
+      "clubs": "Red Star Belgrade, Inter Milan",
+      "tm": "100098"
+    },
+    {
+      "name": "Ali Daei",
+      "clubs": "Bayern Munich, Al-Shabab",
+      "tm": "335"
+    },
+    {
+      "name": "Kakha Kaladze",
+      "clubs": "AC Milan, Genoa",
+      "tm": "3430"
+    }
+  ],
+  "empty_clubs": [
+    {
+      "name": "Lev Yashin",
+      "nat": "Russia",
+      "tm": "174987"
+    },
+    {
+      "name": "Gigi Riva",
+      "nat": "Italy",
+      "tm": "145348"
+    },
+    {
+      "name": "Hans-Peter Briegel",
+      "nat": "Germany",
+      "tm": "71378"
+    },
+    {
+      "name": "Nándor Hidegkuti",
+      "nat": "Hungary",
+      "tm": "105334"
+    },
+    {
+      "name": "József Bozsik",
+      "nat": "Hungary",
+      "tm": "136476"
+    },
+    {
+      "name": "Valentin Ivanov",
+      "nat": "Russia",
+      "tm": "151247"
+    },
+    {
+      "name": "Lakhdar Belloumi",
+      "nat": "Algeria",
+      "tm": "117732"
+    }
+  ]
+}

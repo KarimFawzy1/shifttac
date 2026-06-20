@@ -1,0 +1,114 @@
+14 | River Plate
+14 | Sampdoria
+13 | Parma
+10 | Corinthians
+ 9 | Feyenoord
+ 9 | Genoa
+ 9 | Real Zaragoza
+ 8 | Bordeaux
+ 8 | Rangers
+ 8 | São Paulo
+ 7 | Cruzeiro
+ 7 | Fluminense
+ 7 | Udinese
+ 6 | Espanyol
+ 6 | Red Star Belgrade
+ 6 | Torino
+ 6 | Werder Bremen
+ 5 | Al-Sadd
+ 5 | Atlético Nacional
+ 5 | Brescia
+ 5 | Celtic
+ 5 | Chicago Fire
+ 5 | Dinamo Zagreb
+ 5 | Fenerbahçe
+ 5 | Hamburger SV
+ 5 | Los Angeles Galaxy
+ 5 | New York Cosmos
+ 5 | Newell's Old Boys
+ 5 | Palmeiras
+ 5 | Saint-Étienne
+ 4 | Al-Nassr
+ 4 | América
+ 4 | Basel
+ 4 | Bastia
+ 4 | Botafogo
+ 4 | Celta Vigo
+ 4 | Deportivo La Coruña
+ 4 | FC Köln
+ 4 | Groningen
+ 4 | Grêmio
+ 4 | Kaiserslautern
+ 4 | Millonarios
+ 4 | Montpellier
+ 4 | New York Red Bulls
+ 4 | Panathinaikos
+ 4 | Portsmouth
+ 4 | Rayo Vallecano
+ 4 | Southampton
+ 4 | Vasco da Gama
+ 4 | Vissel Kobe
+ 4 | Vélez Sarsfield
+ 3 | 1860 Munich
+ 3 | Al-Ahli
+ 3 | Al-Hilal
+ 3 | Argentinos Juniors
+ 3 | Athletic Bilbao
+ 3 | Atlético Mineiro
+ 3 | Beşiktaş
+ 3 | Blackburn Rovers
+ 3 | Borussia Mönchengladbach
+ 3 | Burnley
+ 3 | Cagliari
+ 3 | Cannes
+ 3 | Estudiantes
+ 3 | Internacional
+ 3 | Leicester City
+ 3 | Metz
+ 3 | Middlesbrough
+ 3 | Nantes
+ 3 | New York City FC
+ 3 | Norwich City
+ 3 | Olympiacos
+ 3 | Queens Park Rangers
+ 3 | Racing Club
+ 3 | San Lorenzo
+ 3 | Seattle Sounders
+ 3 | Sparta Prague
+ 3 | Stoke City
+ 3 | Trabzonspor
+ 3 | VfL Wolfsburg
+ 2 | Al-Ittihad
+ 2 | Al-Shabab
+ 2 | Anderlecht
+ 2 | Auxerre
+ 2 | Bahia
+ 2 | D.C. United
+ 2 | Derby County
+ 2 | Dynamo Kyiv
+ 2 | Guingamp
+ 2 | Independiente
+ 2 | Inter Miami
+ 2 | Kashima Antlers
+ 2 | Los Angeles Aztecs
+ 2 | Los Angeles FC
+ 2 | Malmö FF
+ 2 | MetroStars
+ 2 | Nottingham Forest
+ 2 | Real Sociedad
+ 2 | Schalke 04
+ 2 | Strasbourg
+ 2 | Watford
+ 2 | West Bromwich Albion
+ 1 | AEK Athens
+ 1 | Braga
+ 1 | Club Brugge
+ 1 | Heerenveen
+ 1 | Hertha BSC
+ 1 | Málaga
+ 1 | Real Betis
+ 1 | Rennes
+ 1 | Sheffield United
+ 1 | Sunderland
+ 1 | Twente
+TOTAL 113

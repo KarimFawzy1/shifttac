@@ -1,0 +1,341 @@
+Player Name,Nationality,DOB,Position,Senior Clubs Played For,candidate_transfermarkt_id,candidate_wikidata_qid,candidate_name,candidate_dob,candidate_nationality,match_confidence,review_reason
+Diego Maradona,Argentina,"Oct 30, 1960",FWD,"Argentinos Juniors, Boca Juniors, Barcelona, Napoli, Sevilla, Newell's Old Boys",,,,,,0,low_confidence
+Pelé,Brazil,"Oct 23, 1940",FWD,"Santos, New York Cosmos",,,,,,0,low_confidence
+Johan Cruyff,Netherlands,"Apr 25, 1947",FWD,"Ajax, Barcelona, Los Angeles Aztecs, Washington Diplomats, Levante, Feyenoord",,,,,,0,low_confidence
+Zinedine Zidane,France,"Jun 23, 1972",MID,"Cannes, Bordeaux, Juventus, Real Madrid",,,,,,0,low_confidence
+Ronaldo Nazário,Brazil,"Sep 18, 1976",FWD,"Cruzeiro, PSV Eindhoven, Barcelona, Inter Milan, Real Madrid, AC Milan, Corinthians",,,,,,0,low_confidence
+Ronaldinho,Brazil,"Mar 21, 1980",FWD,"Grêmio, Paris Saint-Germain, Barcelona, AC Milan, Flamengo, Atlético Mineiro, Querétaro, Fluminense",,,,,,0,low_confidence
+Thierry Henry,France,"Aug 17, 1977",FWD,"Monaco, Juventus, Arsenal, Barcelona, New York Red Bulls",,,,,,0,low_confidence
+Luís Figo,Portugal,"Nov 4, 1972",MID,"Sporting CP, Barcelona, Real Madrid, Inter Milan",,,,,,0,low_confidence
+Michel Platini,France,"Jun 21, 1955",MID,"Nancy, Saint-Étienne, Juventus",,,,,,0,low_confidence
+Marco van Basten,Netherlands,"Oct 31, 1964",FWD,"Ajax, AC Milan",,,,,,0,low_confidence
+Ruud Gullit,Netherlands,"Sep 1, 1962",MID,"HFC Haarlem, Feyenoord, PSV Eindhoven, AC Milan, Sampdoria, Chelsea",,,,,,0,low_confidence
+Frank Rijkaard,Netherlands,"Sep 30, 1962",MID,"Ajax, Sporting CP, Real Zaragoza, AC Milan",,,,,,0,low_confidence
+Lothar Matthäus,Germany,"Mar 21, 1961",MID,"Borussia Mönchengladbach, Bayern Munich, Inter Milan, MetroStars",,,,,,0,low_confidence
+Paolo Maldini,Italy,"Jun 26, 1968",DEF,AC Milan,,,,,,0,low_confidence
+Franco Baresi,Italy,"May 8, 1960",DEF,AC Milan,,,,,,0,low_confidence
+Alessandro Costacurta,Italy,"Apr 24, 1966",DEF,"AC Milan, Monza",,,,,,0,low_confidence
+Mauro Tassotti,Italy,"Jan 19, 1960",DEF,"Lazio, AC Milan",,,,,,0,low_confidence
+Roberto Baggio,Italy,"Feb 18, 1967",FWD,"Vicenza, Fiorentina, Juventus, AC Milan, Bologna, Inter Milan, Brescia",,,,,,0,low_confidence
+Romário,Brazil,"Jan 29, 1966",FWD,"Vasco da Gama, PSV Eindhoven, Barcelona, Flamengo, Valencia, Fluminense, Al-Sadd, Miami FC, Adelaide United, América-RJ",,,,,,0,low_confidence
+Rivaldo,Brazil,"Apr 19, 1972",FWD,"Mogi Mirim, Corinthians, Palmeiras, Deportivo La Coruña, Barcelona, AC Milan, Cruzeiro, Olympiacos, AEK Athens, Bunyodkor, São Paulo, Kabuscorp, São Caetano",,,,,,0,low_confidence
+Cafu,Brazil,"Jun 7, 1970",DEF,"São Paulo, Real Zaragoza, Juventude, Palmeiras, Roma, AC Milan",,,,,,0,low_confidence
+Roberto Carlos,Brazil,"Apr 10, 1973",DEF,"União São João, Palmeiras, Inter Milan, Real Madrid, Fenerbahçe, Corinthians, Anzhi Makhachkala, Delhi Dynamos",,,,,,0,low_confidence
+Gabriel Batistuta,Argentina,"Feb 1, 1969",FWD,"Newell's Old Boys, River Plate, Boca Juniors, Fiorentina, Roma, Inter Milan, Al-Arabi",,,,,,0,low_confidence
+Javier Zanetti,Argentina,"Aug 10, 1973",DEF,"Talleres RE, Banfield, Inter Milan",,,,,,0,low_confidence
+Alessandro Del Piero,Italy,"Nov 9, 1974",FWD,"Padova, Juventus, Sydney FC, Delhi Dynamos",,,,,,0,low_confidence
+Francesco Totti,Italy,"Sep 27, 1976",FWD,Roma,,,,,,0,low_confidence
+Filippo Inzaghi,Italy,"Aug 9, 1973",FWD,"Piacenza, Albinoleffe, Verona, Parma, Atalanta, Juventus, AC Milan",,,,,,0,low_confidence
+Christian Vieri,Italy,"Jul 12, 1973",FWD,"Torino, Pisa, Ravenna, Venezia, Atalanta, Juventus, Atlético Madrid, Lazio, Inter Milan, AC Milan, Monaco, Fiorentina",,,,,,0,low_confidence
+Hernán Crespo,Argentina,"Jul 5, 1975",FWD,"River Plate, Parma, Lazio, Inter Milan, Chelsea, AC Milan, Genoa",,,,,,0,low_confidence
+Juan Román Riquelme,Argentina,"Jun 24, 1978",MID,"Boca Juniors, Barcelona, Villarreal, Argentinos Juniors",,,,,,0,low_confidence
+Clarence Seedorf,Netherlands,"Apr 1, 1976",MID,"Ajax, Sampdoria, Real Madrid, Inter Milan, AC Milan, Botafogo",,,,,,0,low_confidence
+Edgar Davids,Netherlands,"Mar 13, 1973",MID,"Ajax, AC Milan, Juventus, Barcelona, Inter Milan, Tottenham Hotspur, Crystal Palace, Barnet",,,,,,0,low_confidence
+Patrick Kluivert,Netherlands,"Jul 1, 1976",FWD,"Ajax, AC Milan, Barcelona, Newcastle United, Valencia, PSV Eindhoven, Lille",,,,,,0,low_confidence
+Edwin van der Sar,Netherlands,"Oct 29, 1970",GK,"Ajax, Juventus, Fulham, Manchester United, Noordwijk",,,,,,0,low_confidence
+Ruud van Nistelrooy,Netherlands,"Jul 1, 1976",FWD,"Den Bosch, Heerenveen, PSV Eindhoven, Manchester United, Real Madrid, Hamburger SV, Málaga",,,,,,0,low_confidence
+Dennis Bergkamp,Netherlands,"May 10, 1969",FWD,"Ajax, Inter Milan, Arsenal",,,,,,0,low_confidence
+Marc Overmars,Netherlands,"Mar 29, 1973",FWD,"Go Ahead Eagles, Willem II, Ajax, Arsenal, Barcelona",,,,,,0,low_confidence
+Oliver Kahn,Germany,"Jun 15, 1969",GK,"Karlsruher SC, Bayern Munich",,,,,,0,low_confidence
+Michael Ballack,Germany,"Sep 26, 1976",MID,"Chemnitzer FC, Kaiserslautern, Bayer Leverkusen, Bayern Munich, Chelsea",,,,,,0,low_confidence
+Miroslav Klose,Germany,"Jun 9, 1978",FWD,"FC Homburg, Kaiserslautern, Werder Bremen, Bayern Munich, Lazio",,,,,,0,low_confidence
+Oliver Bierhoff,Germany,"May 1, 1968",FWD,"KFC Uerdingen, Hamburger SV, Borussia Mönchengladbach, Austria Salzburg, Ascoli, Udinese, AC Milan, Monaco, Chievo",,,,,,0,low_confidence
+Jürgen Klinsmann,Germany,"Jul 30, 1964",FWD,"Stuttgarter Kickers, VfB Stuttgart, Inter Milan, Monaco, Tottenham Hotspur, Bayern Munich, Sampdoria, Orange County Blue Star",,,,,,0,low_confidence
+Rudi Völler,Germany,"Apr 13, 1960",FWD,"Kickers Offenbach, TSV 1860 Munich, Werder Bremen, Roma, Marseille, Bayer Leverkusen",,,,,,0,low_confidence
+Matthias Sammer,Germany,"Sep 5, 1967",DEF,"Dynamo Dresden, VfB Stuttgart, Inter Milan, Borussia Dortmund",,,,,,0,low_confidence
+Karl-Heinz Rummenigge,Germany,"Sep 25, 1955",FWD,"Bayern Munich, Inter Milan, Servette",,,,,,0,low_confidence
+Ryan Giggs,Wales,"Nov 29, 1973",MID,Manchester United,,,,,,0,low_confidence
+Paul Scholes,England,"Nov 16, 1974",MID,Manchester United,,,,,,0,low_confidence
+Roy Keane,Ireland,"Aug 10, 1971",MID,"Cobh Ramblers, Nottingham Forest, Manchester United, Celtic",,,,,,0,low_confidence
+Peter Schmeichel,Denmark,"Nov 18, 1963",GK,"Hvidovre, Brøndby, Manchester United, Sporting CP, Aston Villa, Manchester City",,,,,,0,low_confidence
+Gary Neville,England,"Feb 18, 1975",DEF,Manchester United,,,,,,0,low_confidence
+Rio Ferdinand,England,"Nov 7, 1978",DEF,"West Ham United, Bournemouth, Leeds United, Manchester United, Queens Park Rangers",,,,,,0,low_confidence
+Eric Cantona,France,"May 24, 1966",FWD,"Auxerre, Martigues, Marseille, Bordeaux, Montpellier, Nîmes, Leeds United, Manchester United",,,,,,0,low_confidence
+Alan Shearer,England,"Aug 13, 1970",FWD,"Southampton, Blackburn Rovers, Newcastle United",,,,,,0,low_confidence
+Michael Owen,England,"Dec 14, 1979",FWD,"Liverpool, Real Madrid, Newcastle United, Manchester United, Stoke City",,,,,,0,low_confidence
+Robbie Fowler,England,"Apr 9, 1975",FWD,"Liverpool, Leeds United, Manchester City, Cardiff City, Blackburn Rovers, North Queensland Fury, Perth Glory, Muangthong United",,,,,,0,low_confidence
+Steven Gerrard,England,"May 30, 1980",MID,"Liverpool, LA Galaxy",,,,,,0,low_confidence
+Jamie Carragher,England,"Jan 28, 1978",DEF,Liverpool,,,,,,0,low_confidence
+Patrick Vieira,France,"Jun 23, 1976",MID,"Cannes, AC Milan, Arsenal, Juventus, Inter Milan, Manchester City",,,,,,0,low_confidence
+Robert Pires,France,"Oct 29, 1973",MID,"Metz, Marseille, Arsenal, Villarreal, Aston Villa, FC Goa",,,,,,0,low_confidence
+Emmanuel Petit,France,"Sep 22, 1970",MID,"Monaco, Arsenal, Barcelona, Chelsea",,,,,,0,low_confidence
+Lilian Thuram,France,"Jan 1, 1972",DEF,"Monaco, Parma, Juventus, Barcelona",,,,,,0,low_confidence
+Marcel Desailly,France,"Sep 7, 1968",DEF,"Nantes, Marseille, AC Milan, Chelsea, Al-Gharafa, Qatar SC",,,,,,0,low_confidence
+Laurent Blanc,France,"Nov 19, 1965",DEF,"Montpellier, Napoli, Nîmes, Saint-Étienne, Auxerre, Barcelona, Marseille, Inter Milan, Manchester United",,,,,,0,low_confidence
+Didier Deschamps,France,"Oct 15, 1968",MID,"Nantes, Bordeaux, Marseille, Juventus, Chelsea, Valencia",,,,,,0,low_confidence
+David Trezeguet,France,"Oct 15, 1977",FWD,"Platense, Monaco, Juventus, Hércules, Baniyas, River Plate, Newell's Old Boys, Pune City",,,,,,0,low_confidence
+Nicolas Anelka,France,"Mar 14, 1979",FWD,"Paris Saint-Germain, Arsenal, Real Madrid, Liverpool, Manchester City, Fenerbahçe, Bolton Wanderers, Chelsea, Shanghai Shenhua, Juventus, West Ham United, Mumbai City",,,,,,0,low_confidence
+Youri Djorkaeff,France,"Mar 9, 1968",MID,"Grenoble, Strasbourg, Monaco, Paris Saint-Germain, Inter Milan, Kaiserslautern, Bolton Wanderers, Blackburn Rovers, New York Red Bulls",,,,,,0,low_confidence
+Michael Laudrup,Denmark,"Jun 15, 1964",MID,"KB, Brøndby, Juventus, Lazio, Barcelona, Real Madrid, Vissel Kobe, Ajax",,,,,,0,low_confidence
+Brian Laudrup,Denmark,"Feb 22, 1969",FWD,"Brøndby, Bayer Uerdingen, Bayern Munich, Fiorentina, Milan, Rangers, Chelsea, Copenhagen, Ajax",,,,,,0,low_confidence
+Hristo Stoichkov,Bulgaria,"Feb 8, 1966",FWD,"Hebros, CSKA Sofia, Barcelona, Parma, Al-Nassr, Kashiwa Reysol, Chicago Fire, D.C. United",,,,,,0,low_confidence
+Gheorghe Hagi,Romania,"Feb 5, 1965",MID,"Farul Constanța, Sportul Studențesc, Steaua București, Real Madrid, Brescia, Barcelona, Galatasaray",,,,,,0,low_confidence
+Davor Šuker,Croatia,"Jan 1, 1968",FWD,"Osijek, Dinamo Zagreb, Sevilla, Real Madrid, Arsenal, West Ham United, 1860 Munich",,,,,,0,low_confidence
+Zvonimir Boban,Croatia,"Oct 8, 1968",MID,"Dinamo Zagreb, AC Milan, Bari, Celta Vigo",,,,,,0,low_confidence
+Andriy Shevchenko,Ukraine,"Sep 29, 1976",FWD,"Dynamo Kyiv, AC Milan, Chelsea",,,,,,0,low_confidence
+Pavel Nedvěd,Czech Republic,"Aug 30, 1972",MID,"Dukla Prague, Sparta Prague, Lazio, Juventus",,,,,,0,low_confidence
+Predrag Mijatović,Montenegro,"Jan 19, 1969",FWD,"Budućnost Podgorica, Partizan, Valencia, Real Madrid, Fiorentina, Levante",,,,,,0,low_confidence
+Jari Litmanen,Finland,"Feb 20, 1971",MID,"Reipas, HJK, MyPa, Ajax, Barcelona, Liverpool, Hansa Rostock, Malmö FF, Lahti",,,,,,0,low_confidence
+George Weah,Liberia,"Oct 1, 1966",FWD,"Mighty Barrolle, Invincible Eleven, Tonnerre Yaoundé, Monaco, Paris Saint-Germain, AC Milan, Chelsea, Manchester City, Marseille, Al-Jazira",,,,,,0,low_confidence
+Abedi Pele,Ghana,"Nov 5, 1964",MID,"Real Tamale, Al-Sadd, Zürich, Dragons l'Ouémé, Niort, Mulhouse, Marseille, Lille, Lyon, Torino, 1860 Munich, Al-Ain",,,,,,0,low_confidence
+Nwankwo Kanu,Nigeria,"Aug 1, 1976",FWD,"Iwuanyanwu Nationale, Ajax, Inter Milan, Arsenal, West Ham United, Portsmouth",,,,,,0,low_confidence
+Jay-Jay Okocha,Nigeria,"Aug 14, 1973",MID,"Eintracht Frankfurt, Fenerbahçe, Paris Saint-Germain, Bolton Wanderers, Qatar SC, Hull City",,,,,,0,low_confidence
+Roger Milla,Cameroon,"May 20, 1952",FWD,"Éclair de Douala, Léopards de Douala, Tonnerre Yaoundé, Valenciennes, Monaco, Bastia, Saint-Étienne, Montpellier, Saint-Pierroise, Pelita Jaya, Bali United",,,,,,0,low_confidence
+Michael Essien,Ghana,"Dec 3, 1982",MID,"Liberty Professionals, Bastia, Lyon, Chelsea, Real Madrid, AC Milan, Panathinaikos, Persib Bandung, Sabail",,,,,,0,low_confidence
+Raúl González,Spain,"Jun 27, 1977",FWD,"Real Madrid, Schalke 04, Al-Sadd, New York Cosmos",,,,,,0,low_confidence
+Guti,Spain,"Oct 31, 1976",MID,"Real Madrid, Beşiktaş",,,,,,0,low_confidence
+Fernando Hierro,Spain,"Mar 23, 1968",DEF,"Real Valladolid, Real Madrid, Al-Rayan, Bolton Wanderers",,,,,,0,low_confidence
+Carles Puyol,Spain,"Apr 13, 1978",DEF,Barcelona,,,,,,0,low_confidence
+Luis Enrique,Spain,"May 8, 1970",MID,"Sporting Gijón, Real Madrid, Barcelona",,,,,,0,low_confidence
+Pep Guardiola,Spain,"Jan 18, 1971",MID,"Barcelona, Brescia, Roma, Al-Ahli, Dorados de Sinaloa",,,,,,0,low_confidence
+Deco,Portugal,"Aug 27, 1977",MID,"Corinthians, Alverca, Salgueiros, Porto, Barcelona, Chelsea, Fluminense",,,,,,0,low_confidence
+Rui Costa,Portugal,"Mar 29, 1972",MID,"Benfica, Fafe, Fiorentina, AC Milan",,,,,,0,low_confidence
+Vítor Baía,Portugal,"Oct 15, 1969",GK,"Porto, Barcelona",,,,,,0,low_confidence
+Henrik Larsson,Sweden,"Sep 20, 1971",FWD,"Högaborg, Helsingborg, Feyenoord, Celtic, Barcelona, Manchester United, Råå IF",,,,,,0,low_confidence
+Shunsuke Nakamura,Japan,"Jun 24, 1978",MID,"Yokohama F. Marinos, Reggina, Celtic, Espanyol, Júbilo Iwata, Yokohama FC",,,,,,0,low_confidence
+Hidetoshi Nakata,Japan,"Jan 22, 1977",MID,"Bellmare Hiratsuka, Perugia, Roma, Parma, Bologna, Fiorentina, Bolton Wanderers",,,,,,0,low_confidence
+Claudio Caniggia,Argentina,"Jan 9, 1967",FWD,"River Plate, Verona, Atalanta, Roma, Benfica, Boca Juniors, Dundee, Rangers, Qatar SC, Wembley",,,,,,0,low_confidence
+Diego Simeone,Argentina,"Apr 28, 1970",MID,"Vélez Sarsfield, Pisa, Sevilla, Atlético Madrid, Inter Milan, Lazio, Racing Club",,,,,,0,low_confidence
+Juan Sebastián Verón,Argentina,"Mar 9, 1975",MID,"Estudiantes, Boca Juniors, Sampdoria, Parma, Lazio, Manchester United, Chelsea, Inter Milan, Brandsen",,,,,,0,low_confidence
+Bebeto,Brazil,"Feb 16, 1964",FWD,"Vitória, Flamengo, Vasco da Gama, Deportivo La Coruña, Sevilla, Cruzeiro, Toros Neza, Kashima Antlers, Botafogo, Al-Ittihad",,,,,,0,low_confidence
+Dunga,Brazil,"Oct 31, 1963",MID,"Internacional, Corinthians, Santos, Vasco da Gama, Pisa, Fiorentina, Pescara, VfB Stuttgart, Júbilo Iwata",,,,,,0,low_confidence
+Cristiano Ronaldo,Portugal,"Feb 5, 1985",FWD,"Sporting CP, Manchester United, Real Madrid, Juventus, Al-Nassr",,,,,,0,low_confidence
+Zlatan Ibrahimović,Sweden,"Oct 3, 1981",FWD,"Malmö FF, Ajax, Juventus, Inter Milan, Barcelona, AC Milan, Paris Saint-Germain, Los Angeles Galaxy, Manchester United",,,,,,0,low_confidence
+David Beckham,England,"May 2, 1975",MID,"Manchester United, Preston North End, Real Madrid, Los Angeles Galaxy, AC Milan, Paris Saint-Germain",,,,,,0,low_confidence
+Wayne Rooney,England,"Oct 24, 1985",FWD,"Everton, Manchester United, D.C. United, Derby County",,,,,,0,low_confidence
+Frank Lampard,England,"Jun 20, 1978",MID,"West Ham United, Swansea City, Chelsea, Manchester City, New York City FC",,,,,,0,low_confidence
+Samuel Eto'o,Cameroon,"Mar 10, 1981",FWD,"Real Madrid, Leganés, Espanyol, Mallorca, Barcelona, Inter Milan, Anzhi Makhachkala, Chelsea, Everton, Sampdoria, Antalyaspor, Konyaspor, Qatar SC",,,,,,0,low_confidence
+Kaká,Brazil,"Apr 22, 1982",MID,"São Paulo, AC Milan, Real Madrid, Orlando City SC",,,,,,0,low_confidence
+Andrea Pirlo,Italy,"May 19, 1979",MID,"Brescia, Inter Milan, Reggina, AC Milan, Juventus, New York City FC",,,,,,0,low_confidence
+Sergio Agüero,Argentina,"Jun 2, 1988",FWD,"Independiente, Atlético Madrid, Manchester City, Barcelona",,,,,,0,low_confidence
+Cesc Fàbregas,Spain,"May 4, 1987",MID,"Arsenal, Barcelona, Chelsea, Monaco, Como",,,,,,0,low_confidence
+David Silva,Spain,"Jan 8, 1986",MID,"Valencia, Eibar, Celta Vigo, Manchester City, Real Sociedad",,,,,,0,low_confidence
+David Villa,Spain,"Dec 3, 1981",FWD,"Sporting Gijón, Real Zaragoza, Valencia, Barcelona, Atlético Madrid, New York City FC, Melbourne City, Vissel Kobe",,,,,,0,low_confidence
+Karim Benzema,France,"Dec 19, 1987",FWD,"Lyon, Real Madrid, Al-Ittihad",,,,,,0,low_confidence
+Luka Modrić,Croatia,"Sep 9, 1985",MID,"Dinamo Zagreb, Zrinjski Mostar, Inter Zaprešić, Tottenham Hotspur, Real Madrid",,,,,,0,low_confidence
+Gareth Bale,Wales,"Jul 16, 1989",FWD,"Southampton, Tottenham Hotspur, Real Madrid, Los Angeles FC",,,,,,0,low_confidence
+Robin van Persie,Netherlands,"Aug 6, 1983",FWD,"Feyenoord, Arsenal, Manchester United, Fenerbahçe",,,,,,0,low_confidence
+Xabi Alonso,Spain,"Nov 25, 1981",MID,"Real Sociedad, Eibar, Liverpool, Real Madrid, Bayern Munich",,,,,,0,low_confidence
+Fernando Torres,Spain,"Mar 20, 1984",FWD,"Atlético Madrid, Liverpool, Chelsea, AC Milan, Sagan Tosu",,,,,,0,low_confidence
+Didier Drogba,Ivory Coast,"Mar 11, 1978",FWD,"Le Mans, Guingamp, Marseille, Chelsea, Shanghai Shenhua, Galatasaray, Montreal Impact, Phoenix Rising",,,,,,0,low_confidence
+Ashley Cole,England,"Dec 20, 1980",DEF,"Arsenal, Crystal Palace, Chelsea, Roma, Los Angeles Galaxy, Derby County",,,,,,0,low_confidence
+Petr Čech,Czech Republic,"May 20, 1982",GK,"Chmel Blšany, Sparta Prague, Rennes, Chelsea, Arsenal",,,,,,0,low_confidence
+John Terry,England,"Dec 7, 1980",DEF,"Chelsea, Nottingham Forest, Aston Villa",,,,,,0,low_confidence
+Carlos Tevez,Argentina,"Feb 5, 1984",FWD,"Boca Juniors, Corinthians, West Ham United, Manchester United, Manchester City, Juventus, Shanghai Shenhua",,,,,,0,low_confidence
+Arjen Robben,Netherlands,"Jan 23, 1984",FWD,"Groningen, PSV Eindhoven, Chelsea, Real Madrid, Bayern Munich",,,,,,0,low_confidence
+Wesley Sneijder,Netherlands,"Jun 9, 1984",MID,"Ajax, Real Madrid, Inter Milan, Galatasaray, Nice, Al-Gharafa",,,,,,0,low_confidence
+Dani Alves,Brazil,"May 6, 1983",DEF,"Bahia, Sevilla, Barcelona, Juventus, Paris Saint-Germain, São Paulo, UNAM Pumas",,,,,,0,low_confidence
+Gerard Piqué,Spain,"Feb 2, 1987",DEF,"Manchester United, Real Zaragoza, Barcelona",,,,,,0,low_confidence
+Iker Casillas,Spain,"May 20, 1981",GK,"Real Madrid, Porto",,,,,,0,low_confidence
+Sergio Ramos,Spain,"Mar 30, 1986",DEF,"Sevilla, Real Madrid, Paris Saint-Germain, Al-Orobah",,,,,,0,low_confidence
+Marcelo,Brazil,"May 12, 1988",DEF,"Fluminense, Real Madrid, Olympiacos",,,,,,0,low_confidence
+Gianluigi Buffon,Italy,"Jan 28, 1978",GK,"Parma, Juventus, Paris Saint-Germain",,,,,,0,low_confidence
+Neymar,Brazil,"Feb 5, 1992",FWD,"Santos, Barcelona, Paris Saint-Germain, Al-Hilal",,,,,,0,low_confidence
+Luis Suárez,Uruguay,"Jan 24, 1987",FWD,"Nacional, Groningen, Ajax, Liverpool, Barcelona, Atlético Madrid, Grêmio, Inter Miami",,,,,,0,low_confidence
+Alexis Sánchez,Chile,"Dec 19, 1988",FWD,"Cobreloa, Colo-Colo, River Plate, Udinese, Barcelona, Arsenal, Manchester United, Inter Milan, Marseille",,,,,,0,low_confidence
+Radamel Falcao,Colombia,"Feb 10, 1986",FWD,"Lanceros Boyacá, River Plate, Porto, Atlético Madrid, Monaco, Manchester United, Chelsea, Galatasaray, Rayo Vallecano, Millonarios",,,,,,0,low_confidence
+Diego Costa,Spain,"Oct 7, 1988",FWD,"Penafiel, Braga, Atlético Madrid, Celta Vigo, Albacete, Real Valladolid, Rayo Vallecano, Chelsea, Atlético Mineiro, Wolverhampton Wanderers, Botafogo, Grêmio",,,,,,0,low_confidence
+James Rodríguez,Colombia,"Jul 12, 1991",MID,"Envigado, Banfield, Porto, Monaco, Real Madrid, Bayern Munich, Everton, Al-Rayyan, Olympiacos, São Paulo, Rayo Vallecano",,,,,,0,low_confidence
+Paul Pogba,France,"Mar 15, 1993",MID,"Manchester United, Juventus",,,,,,0,low_confidence
+Bastian Schweinsteiger,Germany,"Aug 1, 1984",MID,"Bayern Munich, Manchester United, Chicago Fire",,,,,,0,low_confidence
+Toni Kroos,Germany,"Jan 4, 1990",MID,"Bayern Munich, Bayer Leverkusen, Real Madrid",,,,,,0,low_confidence
+Philipp Lahm,Germany,"Nov 11, 1983",DEF,"Bayern Munich, VfB Stuttgart",,,,,,0,low_confidence
+Manuel Neuer,Germany,"Mar 27, 1986",GK,"Schalke 04, Bayern Munich",,,,,,0,low_confidence
+Robert Lewandowski,Poland,"Aug 21, 1988",FWD,"Delta Warsaw, Legia Warsaw II, Znicz Pruszków, Lech Poznań, Borussia Dortmund, Bayern Munich, Barcelona",,,,,,0,low_confidence
+Eden Hazard,Belgium,"Jan 7, 1991",FWD,"Lille, Chelsea, Real Madrid",,,,,,0,low_confidence
+Kevin De Bruyne,Belgium,"Jun 28, 1991",MID,"Genk, Werder Bremen, Chelsea, VfL Wolfsburg, Manchester City",,,,,,0,low_confidence
+Romelu Lukaku,Belgium,"May 13, 1993",FWD,"Anderlecht, Chelsea, West Bromwich Albion, Everton, Manchester United, Inter Milan, Roma, Napoli",,,,,,0,low_confidence
+Álvaro Morata,Spain,"Oct 23, 1992",FWD,"Real Madrid, Juventus, Chelsea, Atlético Madrid, AC Milan",,,,,,0,low_confidence
+Raheem Sterling,England,"Dec 8, 1994",FWD,"QPR, Liverpool, Manchester City, Chelsea, Arsenal",,,,,,0,low_confidence
+Mohamed Salah,Egypt,"Jun 15, 1992",FWD,"El Mokawloon, Basel, Chelsea, Fiorentina, Roma, Liverpool",,,,,,0,low_confidence
+Xavi,Spain,"Jan 25, 1980",MID,"Barcelona, Al-Sadd",,,,,,0,low_confidence
+Franz Beckenbauer,Germany,"Sep 11, 1945",DEF,"Bayern Munich, New York Cosmos, Hamburger SV",,,,,,0,low_confidence
+Gerd Müller,Germany,"Nov 3, 1945",FWD,"TSV 1861 Nördlingen, Bayern Munich, Fort Lauderdale Strikers",,,,,,0,low_confidence
+Eusebio,Portugal,"Jan 25, 1942",FWD,"Sporting de Lourenço Marques, Benfica, Boston Minutemen, Monterrey, Toronto Metros-Croatia, Beira-Mar, Las Vegas Quicksilvers, União de Tomar, New Jersey Americans",,,,,,0,low_confidence
+Ferenc Puskás,Hungary,"Apr 1, 1927",FWD,"Budapest Honvéd, Real Madrid",,,,,,0,low_confidence
+Alfredo Di Stéfano,Argentina / Spain,"Jul 4, 1926",FWD,"River Plate, Huracán, Millonarios, Real Madrid, Espanyol",,,,,,0,low_confidence
+Garrincha,Brazil,"Oct 28, 1933",FWD,"Botafogo, Corinthians, Atlético Junior, Flamengo, Olaria",,,,,,0,low_confidence
+Bobby Charlton,England,"Oct 11, 1937",MID,"Manchester United, Preston North End, Waterford",,,,,,0,low_confidence
+George Best,Northern Ireland,"May 22, 1946",FWD,"Manchester United, Stockport County, Cork Celtic, Los Angeles Aztecs, Fulham, Fort Lauderdale Strikers, Hibernian, San Jose Earthquakes, Bournemouth, Brisbane Lions",,,,,,0,low_confidence
+Lev Yashin,Russia,"Oct 22, 1929",GK,Dynamo Moscow,,,,,,0,low_confidence
+Zico,Brazil,"Mar 3, 1953",MID,"Flamengo, Udinese, Kashima Antlers",,,,,,0,low_confidence
+Sócrates,Brazil,"Feb 19, 1954",MID,"Botafogo-SP, Corinthians, Fiorentina, Flamengo, Santos",,,,,,0,low_confidence
+Falcão,Brazil,"Oct 16, 1953",MID,"Internacional, Roma, São Paulo",,,,,,0,low_confidence
+Dino Zoff,Italy,"Feb 28, 1942",GK,"Udinese, Mantova, Napoli, Juventus",,,,,,0,low_confidence
+Giacinto Facchetti,Italy,"Jul 18, 1942",DEF,Inter Milan,,,,,,0,low_confidence
+Gianni Rivera,Italy,"Aug 18, 1943",MID,"Alessandria, AC Milan",,,,,,0,low_confidence
+Gigi Riva,Italy,"Nov 7, 1944",FWD,"Legnano, Cagliari",,,,,,0,low_confidence
+Bobby Moore,England,"Apr 12, 1941",DEF,"West Ham United, Fulham, San Antonio Thunder, Seattle Sounders, Herning Fremad",,,,,,0,low_confidence
+Gordon Banks,England,"Dec 30, 1937",GK,"Chesterfield, Leicester City, Stoke City, Fort Lauderdale Strikers",,,,,,0,low_confidence
+Kevin Keegan,England,"Feb 14, 1951",FWD,"Scunthorpe United, Liverpool, Hamburger SV, Southampton, Newcastle United, Blacktown City",,,,,,0,low_confidence
+Kenny Dalglish,Scotland,"Mar 4, 1951",FWD,"Celtic, Liverpool",,,,,,0,low_confidence
+Graeme Souness,Scotland,"May 6, 1953",MID,"Tottenham Hotspur, Middlesbrough, Sampdoria, Rangers",,,,,,0,low_confidence
+Ian Rush,Wales,"Oct 20, 1961",FWD,"Chester City, Liverpool, Juventus, Leeds United, Newcastle United, Sheffield United, Wrexham, Sydney Olympic",,,,,,0,low_confidence
+John Barnes,England,"Nov 7, 1963",MID,"Watford, Liverpool, Newcastle United, Charlton Athletic",,,,,,0,low_confidence
+Gary Lineker,England,"Nov 30, 1960",FWD,"Leicester City, Everton, Barcelona, Tottenham Hotspur, Nagoya Grampus Eight",,,,,,0,low_confidence
+Bryan Robson,England,"Jan 11, 1957",MID,"West Bromwich Albion, Manchester United, Middlesbrough",,,,,,0,low_confidence
+Glenn Hoddle,England,"Oct 27, 1957",MID,"Tottenham Hotspur, Monaco, Swindon Town, Chelsea",,,,,,0,low_confidence
+Paul Gascoigne,England,"May 27, 1967",MID,"Newcastle United, Tottenham Hotspur, Lazio, Rangers, Middlesbrough, Everton, Burnley, Gansu Tianma, Boston United",,,,,,0,low_confidence
+Chris Waddle,England,"Dec 14, 1960",MID,"Tow Law Town, Newcastle United, Tottenham Hotspur, Marseille, Sheffield Wednesday, Bradford City, Sunderland, Burnley, Torquay United",,,,,,0,low_confidence
+Sepp Maier,Germany,"Feb 28, 1944",GK,Bayern Munich,,,,,,0,low_confidence
+Paul Breitner,Germany,"Sep 5, 1951",MID,"Bayern Munich, Real Madrid, Eintracht Braunschweig",,,,,,0,low_confidence
+Uli Hoeness,Germany,"Jan 5, 1952",MID,"Bayern Munich, 1860 Munich",,,,,,0,low_confidence
+Karl-Heinz Förster,Germany,"Jul 25, 1958",DEF,"VfB Stuttgart, Marseille",,,,,,0,low_confidence
+Hans-Peter Briegel,Germany,"Oct 11, 1955",DEF,"Kaiserslautern, Hellas Verona, Sampdoria",,,,,,0,low_confidence
+Klaus Allofs,Germany,"Dec 5, 1956",FWD,"Fortuna Düsseldorf, FC Köln, Marseille, Bordeaux, Werder Bremen",,,,,,0,low_confidence
+Raymond Kopa,France,"Oct 13, 1931",MID,"Angers, Reims, Real Madrid",,,,,,0,low_confidence
+Just Fontaine,France,"Aug 18, 1933",FWD,"USM Casablanca, Nice, Reims",,,,,,0,low_confidence
+Jean-Pierre Papin,France,"Nov 5, 1963",FWD,"Valenciennes, Club Brugge, Marseille, AC Milan, Bayern Munich, Bordeaux, Guingamp",,,,,,0,low_confidence
+Alain Giresse,France,"Aug 2, 1952",MID,"Bordeaux, Marseille",,,,,,0,low_confidence
+Jean Tigana,France,"Jun 23, 1955",MID,"Toulon, Lyon, Bordeaux, Marseille",,,,,,0,low_confidence
+Luis Aragonés,Spain,"Jul 28, 1938",MID,"Getafe, Real Madrid, Recreativo Huelva, Hércules, Úbeda, Plus Ultra, Real Oviedo, Real Betis, Atlético Madrid",,,,,,0,low_confidence
+Telmo Zarra,Spain,"Jan 20, 1921",FWD,"Erandio, Athletic Bilbao, Indautxu, Barakaldo",,,,,,0,low_confidence
+Emilio Butragueño,Spain,"Jul 22, 1963",FWD,"Real Madrid, Atletico Celaya",,,,,,0,low_confidence
+Míchel,Spain,"Mar 23, 1963",MID,"Real Madrid, Atletico Celaya",,,,,,0,low_confidence
+José Antonio Camacho,Spain,"Jun 8, 1955",DEF,Real Madrid,,,,,,0,low_confidence
+Andoni Zubizarreta,Spain,"Oct 23, 1961",GK,"Alavés, Athletic Bilbao, Barcelona, Valencia",,,,,,0,low_confidence
+Gaetano Scirea,Italy,"May 25, 1953",DEF,"Atalanta, Juventus",,,,,,0,low_confidence
+Marco Tardelli,Italy,"Sep 24, 1954",MID,"Pisa, Como, Juventus, Inter Milan, St. Gallen",,,,,,0,low_confidence
+Claudio Gentile,Italy,"Sep 27, 1953",DEF,"Arona, Varese, Juventus, Fiorentina, Piacenza",,,,,,0,low_confidence
+Antonio Cabrini,Italy,"Oct 8, 1957",DEF,"Cremonese, Atalanta, Juventus, Bologna",,,,,,0,low_confidence
+Bruno Conti,Italy,"Mar 13, 1955",MID,"Roma, Genoa",,,,,,0,low_confidence
+Gianluca Vialli,Italy,"Jul 9, 1964",FWD,"Cremonese, Sampdoria, Juventus, Chelsea",,,,,,0,low_confidence
+Roberto Mancini,Italy,"Nov 27, 1964",FWD,"Bologna, Sampdoria, Lazio, Leicester City",,,,,,0,low_confidence
+Giuseppe Bergomi,Italy,"Dec 22, 1963",DEF,Inter Milan,,,,,,0,low_confidence
+Gianfranco Zola,Italy,"Jul 5, 1966",FWD,"Nuorese, Torres, Napoli, Parma, Chelsea, Cagliari",,,,,,0,low_confidence
+Ruud Krol,Netherlands,"Dec 20, 1949",DEF,"Ajax, Vancouver Whitecaps, Napoli, Cannes",,,,,,0,low_confidence
+Johan Neeskens,Netherlands,"Sep 15, 1951",MID,"Racing Club Heemstede, Ajax, Barcelona, New York Cosmos, Groningen, South Florida Sun, Kansas City Comets, Löwenbrau, Baar, Zug",,,,,,0,low_confidence
+Johnny Rep,Netherlands,"Nov 25, 1951",FWD,"Ajax, Valencia, Bastia, Saint-Étienne, PEC Zwolle, Feyenoord, Haarlem",,,,,,0,low_confidence
+Ronald Koeman,Netherlands,"Mar 21, 1963",DEF,"Groningen, Ajax, PSV Eindhoven, Barcelona, Feyenoord",,,,,,0,low_confidence
+Frank de Boer,Netherlands,"May 15, 1970",DEF,"Ajax, Barcelona, Galatasaray, Rangers, Al-Rayyan, Al-Shamal",,,,,,0,low_confidence
+Ronald de Boer,Netherlands,"May 15, 1970",MID,"Ajax, Twente, Barcelona, Rangers, Al-Rayyan, Al-Shamal",,,,,,0,low_confidence
+Sándor Kocsis,Hungary,"Sep 21, 1929",FWD,"Ferencváros, Budapest Honvéd, Young Fellows Zürich, Barcelona",,,,,,0,low_confidence
+Nándor Hidegkuti,Hungary,"Mar 3, 1922",FWD,"Elektromos, MTK Budapest",,,,,,0,low_confidence
+József Bozsik,Hungary,"Nov 28, 1925",MID,Budapest Honvéd,,,,,,0,low_confidence
+Rinat Dasayev,Russia,"Jun 13, 1957",GK,"Volgar Astrakhan, Spartak Moscow, Sevilla",,,,,,0,low_confidence
+Valentin Ivanov,Russia,"Nov 19, 1934",FWD,"Krylya Sovetov Moscow, Torpedo Moscow",,,,,,0,low_confidence
+Dragan Džajić,Serbia,"May 30, 1946",FWD,"Red Star Belgrade, Bastia",,,,,,0,low_confidence
+Siniša Mihajlović,Serbia,"Feb 20, 1969",DEF,"Borovo, Vojvodina, Red Star Belgrade, Roma, Sampdoria, Lazio, Inter Milan",,,,,,0,low_confidence
+Dejan Savićević,Montenegro,"Sep 15, 1966",MID,"Budućnost Podgorica, Red Star Belgrade, AC Milan, Rapid Wien",,,,,,0,low_confidence
+Robert Prosinečki,Croatia,"Jan 12, 1969",MID,"Dinamo Zagreb, Red Star Belgrade, Real Madrid, Real Oviedo, Barcelona, Sevilla, Croatia Zagreb, Hrvatski Dragovoljac, Standard Liège, Portsmouth, Olimpija Ljubljana, NK Zagreb",,,,,,0,low_confidence
+Darko Pančev,North Macedonia,"Sep 7, 1965",FWD,"Vardar, Red Star Belgrade, Inter Milan, VfB Leipzig, Fortuna Düsseldorf, Sion",,,,,,0,low_confidence
+Daniel Passarella,Argentina,"May 25, 1953",DEF,"Sarmiento, River Plate, Fiorentina, Inter Milan",,,,,,0,low_confidence
+Mario Kempes,Argentina,"Jul 15, 1954",FWD,"Instituto, Rosario Central, Valencia, River Plate, Hércules, First Vienna, Sankt Pölten, Kremser SC, Fernández Vial, Pelita Jaya",,,,,,0,low_confidence
+Ubaldo Fillol,Argentina,"Jul 21, 1950",GK,"Quilmes, Racing Club, River Plate, Argentinos Juniors, Flamengo, Atlético Madrid, Vélez Sarsfield",,,,,,0,low_confidence
+Jorge Valdano,Argentina,"Oct 4, 1955",FWD,"Newell's Old Boys, Alavés, Real Zaragoza, Real Madrid",,,,,,0,low_confidence
+Oscar Ruggeri,Argentina,"Jan 26, 1962",DEF,"Boca Juniors, River Plate, Logroñés, Real Madrid, Vélez Sarsfield, Ancona, América, San Lorenzo, Lanús",,,,,,0,low_confidence
+Carlos Valderrama,Colombia,"Sep 2, 1961",MID,"Unión Magdalena, Millonarios, Deportivo Cali, Montpellier, Real Valladolid, Independiente Medellín, Atlético Junior, Tampa Bay Mutiny, Miami Fusion, Colorado Rapids",,,,,,0,low_confidence
+Faustino Asprilla,Colombia,"Nov 10, 1969",FWD,"Cúcuta Deportivo, Atlético Nacional, Parma, Newcastle United, Palmeiras, Fluminense, Atlante, Cortuluá, Universidad de Chile, Estudiantes",,,,,,0,low_confidence
+Freddy Rincón,Colombia,"Aug 14, 1966",MID,"Atlético Buenaventura, Deportes Tolima, Santa Fe, América de Cali, Palmeiras, Napoli, Real Madrid, Corinthians, Santos, Cruzeiro",,,,,,0,low_confidence
+René Higuita,Colombia,"Aug 27, 1966",GK,"Atlético Nacional, Millonarios, Real Valladolid, Veracruz, Independiente Medellín, Real Cartagena, Junior, Aucas, Bajo Cauca, Guaros FC, Deportivo Rionegri, Deportivo Pereira",,,,,,0,low_confidence
+José Luis Chilavert,Paraguay,"Jul 27, 1965",GK,"Sportivo Luqueño, Guaraní, San Lorenzo, Real Zaragoza, Vélez Sarsfield, Strasbourg, Peñarol",,,,,,0,low_confidence
+Iván Zamorano,Chile,"Jan 18, 1967",FWD,"Cobresal, Trasandino, Cobreloa, St. Gallen, Sevilla, Real Madrid, Inter Milan, América, Colo-Colo",,,,,,0,low_confidence
+Marcelo Salas,Chile,"Dec 24, 1974",FWD,"Universidad de Chile, River Plate, Lazio, Juventus",,,,,,0,low_confidence
+Teófilo Cubillas,Peru,"Mar 8, 1949",MID,"Alianza Lima, Basel, Porto, Fort Lauderdale Strikers, Miami Sharks",,,,,,0,low_confidence
+Hugo Sánchez,Mexico,"Jul 11, 1958",FWD,"UNAM, San Diego Sockers, Atlético Madrid, Real Madrid, América, Rayo Vallecano, Atlante, Linz, Dallas Burn, Celaya",,,,,,0,low_confidence
+Jorge Campos,Mexico,"Oct 15, 1966",GK,"UNAM, Atlante, Los Angeles Galaxy, Cruz Azul, Chicago Fire, Tigres UANL, Puebla",,,,,,0,low_confidence
+Rabah Madjer,Algeria,"Feb 15, 1958",FWD,"NA Hussein Dey, Racing Club de France, Tours, Porto, Valencia, Qatar SC",,,,,,0,low_confidence
+Lakhdar Belloumi,Algeria,"Dec 29, 1958",MID,"GC Mascara, MP Oran, MC Alger, USM Bel Abbès, ASM Oran",,,,,,0,low_confidence
+Thomas N'Kono,Cameroon,"Jul 20, 1956",GK,"Canon Yaoundé, Tonnerre Yaoundé, Espanyol, Sabadell, Hospitalet, Bolívar",,,,,,0,low_confidence
+Rigobert Song,Cameroon,"Jul 1, 1976",DEF,"Tonnerre Yaoundé, Metz, Salernitana, Liverpool, West Ham United, FC Köln, Galatasaray, Trabzonspor",,,,,,0,low_confidence
+Kalusha Bwalya,Zambia,"Aug 16, 1963",MID,"Mufulira Wanderers, Cercle Brugge, PSV Eindhoven, América, Necaxa, Al-Wahda, León, Irapuato, Veracruz, Correcaminos",,,,,,0,low_confidence
+Lucas Radebe,South Africa,"Apr 12, 1969",DEF,"Kaizer Chiefs, Leeds United",,,,,,0,low_confidence
+Cha Bum-kun,South Korea,"May 22, 1953",FWD,"Seoul Trust Bank, Air Force FC, SV Darmstadt 98, Eintracht Frankfurt, Bayer Leverkusen",,,,,,0,low_confidence
+Kazuyoshi Miura,Japan,"Feb 26, 1967",FWD,"Juventus-SP, Santos, Matsubara, CRB, XV de Jaú, Coritiba, Verdy Kawasaki, Genoa, Croatia Zagreb, Kyoto Purple Sanga, Vissel Kobe, Yokohama FC, Sydney FC, Atletico Suzuka",,,,,,0,low_confidence
+Ali Daei,Iran,"Mar 21, 1969",FWD,"Taxirani, Bank Tejarat, Al-Sadd, Arminia Bielefeld, Bayern Munich, Hertha BSC, Al-Shabab, Saba Battery, Persepolis, Saipa",,,,,,0,low_confidence
+Majed Abdullah,Saudi Arabia,"Nov 1, 1959",FWD,Al-Nassr,,,,,,0,low_confidence
+Saeed Al-Owairan,Saudi Arabia,"Aug 19, 1967",MID,Al-Shabab,,,,,,0,low_confidence
+Wynton Rufer,New Zealand,"Dec 29, 1962",FWD,"Stop Out, Wellington Diamond United, Norwich City, FC Zürich, Aarau, Grasshopper, Werder Bremen, JEF United Ichihara, Central United, Football Kingz",,,,,,0,low_confidence
+Alessandro Nesta,Italy,"Mar 19, 1976",DEF,"Lazio, AC Milan, Montreal Impact, Chennaiyin FC",,,,,,0,low_confidence
+Fabio Cannavaro,Italy,"Sep 13, 1973",DEF,"Napoli, Parma, Inter Milan, Juventus, Real Madrid, Al-Ahli",,,,,,0,low_confidence
+Giorgio Chiellini,Italy,"Aug 14, 1984",DEF,"Livorno, Fiorentina, Juventus, Los Angeles FC",,,,,,0,low_confidence
+Andrés Iniesta,Spain,"May 11, 1984",MID,"Barcelona, Vissel Kobe, Emirates Club",,,,,,0,low_confidence
+Carlos Alberto,Brazil,"Jul 17, 1944",DEF,"Fluminense, Santos, Flamengo, New York Cosmos, California Surf",,,,,,0,low_confidence
+Nemanja Vidić,Serbia,"Oct 21, 1981",DEF,"Red Star Belgrade, Spartak Subotica, Spartak Moscow, Manchester United, Inter Milan",,,,,,0,low_confidence
+Claude Makélélé,France,"Feb 18, 1973",MID,"Nantes, Marseille, Celta Vigo, Real Madrid, Chelsea, Paris Saint-Germain",,,,,,0,low_confidence
+Breno (Bledorn Verri),Brazil,"Oct 13, 1989",DEF,"São Paulo, Bayern Munich, Nürnberg, Vasco da Gama",,,,,,0,low_confidence
+Gennaro Gattuso,Italy,"Jan 9, 1978",MID,"Perugia, Rangers, Salernitana, AC Milan, Sion",,,,,,0,low_confidence
+Sol Campbell,England,"Sep 18, 1974",DEF,"Tottenham Hotspur, Arsenal, Portsmouth, Notts County, Newcastle United",,,,,,0,low_confidence
+Gianluca Zambrotta,Italy,"Feb 19, 1977",DEF,"Como, Bari, Juventus, Barcelona, AC Milan, Chiasso",,,,,,0,low_confidence
+Javier Mascherano,Argentina,"Jun 8, 1984",DEF,"River Plate, Corinthians, West Ham United, Liverpool, Barcelona, Hebei China Fortune, Estudiantes",,,,,,0,low_confidence
+Rafael Márquez,Mexico,"Feb 13, 1979",DEF,"Atlas, Monaco, Barcelona, New York Red Bulls, León, Hellas Verona",,,,,,0,low_confidence
+Paulo Futre,Portugal,"Feb 28, 1966",FWD,"Sporting CP, Porto, Atlético Madrid, Benfica, Marseille, Reggiana, AC Milan, West Ham United, Yokohama Flügels",,,,,,0,low_confidence
+Bixente Lizarazu,France,"Dec 9, 1969",DEF,"Bordeaux, Athletic Bilbao, Bayern Munich, Marseille",,,,,,0,low_confidence
+Diego Forlán,Uruguay,"May 19, 1979",FWD,"Independiente, Manchester United, Villarreal, Atlético Madrid, Inter Milan, Internacional, Cerezo Osaka, Peñarol, Mumbai City, Kitchee",,,,,,0,low_confidence
+Ricardo Carvalho,Portugal,"May 18, 1978",DEF,"Leça, Porto, Vitória Setúbal, Alverca, Chelsea, Real Madrid, Monaco, Shanghai SIPG",,,,,,0,low_confidence
+Diego Milito,Argentina,"Jun 12, 1979",FWD,"Racing Club, Genoa, Real Zaragoza, Inter Milan",,,,,,0,low_confidence
+Mario Gómez,Germany,"Jul 10, 1985",FWD,"VfB Stuttgart, Bayern Munich, Fiorentina, Beşiktaş",,,,,,0,low_confidence
+Vincent Kompany,Belgium,"Apr 10, 1986",DEF,"Anderlecht, Hamburger SV, Manchester City",,,,,,0,low_confidence
+Douglas Maicon,Brazil,"Jul 26, 1981",DEF,"Cruzeiro, Monaco, Inter Milan, Manchester City, Roma, Avaí, Criciúma, Villa Nova, Sona",,,,,,0,low_confidence
+David Ginola,France,"Jan 25, 1967",MID,"Toulon, Racing Club de France, Brest, Paris Saint-Germain, Newcastle United, Tottenham Hotspur, Aston Villa, Everton",,,,,,0,low_confidence
+Jürgen Kohler,Germany,"Oct 6, 1965",DEF,"Waldhof Mannheim, FC Köln, Bayern Munich, Juventus, Borussia Dortmund",,,,,,0,low_confidence
+Fernando Morientes,Spain,"Apr 5, 1976",FWD,"Albacete, Real Zaragoza, Real Madrid, Monaco, Liverpool, Valencia, Marseille, Santa Ana",,,,,,0,low_confidence
+Solskjær,Norway,"Feb 26, 1973",FWD,"Clausenengen, Molde, Manchester United",,,,,,0,low_confidence
+Freddie Ljungberg,Sweden,"Apr 16, 1977",MID,"Halmstad, Arsenal, West Ham United, Seattle Sounders, Chicago Fire, Celtic, Shimizu S-Pulse, Mumbai City",,,,,,0,low_confidence
+Tomáš Rosický,Czech Republic,"Oct 4, 1980",MID,"Sparta Prague, Borussia Dortmund, Arsenal",,,,,,0,low_confidence
+John Arne Riise,Norway,"Sep 24, 1980",DEF,"Aalesund, Monaco, Liverpool, Roma, Fulham, APOEL, Delhi Dynamos, Aalesund, Chennaiyin",,,,,,0,low_confidence
+Ludovic Giuly,France,"Jul 10, 1976",MID,"Lyon, Monaco, Barcelona, Roma, Paris Saint-Germain, Lorient, Monts d'Or Azergues",,,,,,0,low_confidence
+Sami Al-Jaber,Saudi Arabia,"Dec 11, 1972",FWD,"Al-Hilal, Wolverhampton Wanderers",,,,,,0,low_confidence
+Park Ji-sung,South Korea,"Feb 25, 1981",MID,"Kyoto Purple Sanga, PSV Eindhoven, Manchester United, Queens Park Rangers",,,,,,0,low_confidence
+Blaise Matuidi,France,"Apr 9, 1987",MID,"Troyes, Saint-Étienne, Paris Saint-Germain, Juventus, Inter Miami",,,,,,0,low_confidence
+Joan Capdevila,Spain,"Feb 3, 1978",DEF,"Espanyol, Atlético Madrid, Deportivo La Coruña, Villarreal, Benfica, NorthEast United, Lierse, Santa Coloma",,,,,,0,low_confidence
+Dirk Kuyt,Netherlands,"Jul 22, 1980",MID,"Utrecht, Feyenoord, Liverpool, Fenerbahçe, Quick Boys",,,,,,0,low_confidence
+Sidney Govou,France,"Jul 27, 1979",FWD,"Lyon, Panathinaikos, Évian, Lyon Duchère, MDA Chasselay, FC Miami City",,,,,,0,low_confidence
+Ledley King,England,"Oct 12, 1980",DEF,Tottenham Hotspur,,,,,,0,low_confidence
+Claudio Pizarro,Peru,"Oct 3, 1978",FWD,"Deportivo Pesquero, Alianza Lima, Werder Bremen, Bayern Munich, Chelsea, FC Köln",,,,,,0,low_confidence
+Mario Mandžukić,Croatia,"May 21, 1986",FWD,"Marsonia, NK Zagreb, Dinamo Zagreb, VfL Wolfsburg, Bayern Munich, Atlético Madrid, Juventus, Al-Duhail, AC Milan",,,,,,0,low_confidence
+Walter Zenga,Italy,"Apr 28, 1960",GK,"Inter Milan, Salernitana, Savona, Sambenedettese, Sampdoria, Padova, New England Revolution",,,,,,0,low_confidence
+Gianluca Pagliuca,Italy,"Dec 18, 1966",GK,"Sampdoria, Inter Milan, Bologna, Ascoli",,,,,,0,low_confidence
+Angelo Peruzzi,Italy,"Feb 16, 1970",GK,"Roma, Hellas Verona, Juventus, Inter Milan, Lazio",,,,,,0,low_confidence
+Walter Vierchowod,Italy,"Apr 6, 1959",DEF,"Como, Fiorentina, Roma, Sampdoria, Juventus, AC Milan, Piacenza",,,,,,0,low_confidence
+Sandro Mazzola,Italy,"Nov 8, 1942",MID,Inter Milan,,,,,,0,low_confidence
+Giuseppe Meazza,Italy,"Aug 23, 1910",FWD,"Inter Milan, AC Milan, Juventus, Varese, Atalanta",,,,,,0,low_confidence
+Silvio Piola,Italy,"Sep 29, 1913",FWD,"Pro Vercelli, Lazio, Torino, Juventus, Novara",,,,,,0,low_confidence
+Gunnar Nordahl,Sweden,"Oct 19, 1921",FWD,"Degerfors, IFK Norrköping, AC Milan, Roma",,,,,,0,low_confidence
+Ciro Ferrara,Italy,"Feb 11, 1967",DEF,"Napoli, Juventus",,,,,,0,low_confidence
+Steve McManaman,England,"Feb 11, 1972",MID,"Liverpool, Real Madrid, Manchester City",,,,,,0,low_confidence
+Marek Hamšík,Slovakia,"Jul 27, 1987",MID,"Slovan Bratislava, Brescia, Napoli, Dalian Professional, IFK Göteborg, Trabzonspor",,,,,,0,low_confidence
+Claudio Marchisio,Italy,"Jan 19, 1986",MID,"Juventus, Empoli, Zenit Saint Petersburg",,,,,,0,low_confidence
+Harry Kewell,Australia,"Sep 22, 1978",MID,"Leeds United, Liverpool, Galatasaray, Melbourne Victory, Al-Gharafa, Melbourne Heart",,,,,,0,low_confidence
+Dimitar Berbatov,Bulgaria,"Jan 30, 1981",FWD,"CSKA Sofia, Bayer Leverkusen, Tottenham Hotspur, Manchester United, Fulham, Monaco, PAOK, Kerala Blasters",,,,,,0,low_confidence
+Joe Cole,England,"Nov 8, 1981",MID,"West Ham United, Chelsea, Liverpool, Lille, Aston Villa, Coventry City, Tampa Bay Rowdies",,,,,,0,low_confidence
+Daniele De Rossi,Italy,"Jul 24, 1983",MID,"Roma, Boca Juniors",,,,,,0,low_confidence
+Pablo Aimar,Argentina,"Nov 3, 1979",MID,"River Plate, Valencia, Real Zaragoza, Benfica, Johor Darul Ta'zim, Estudiantes de Río Cuarto",,,,,,0,low_confidence
+Gilberto Silva,Brazil,"Oct 7, 1976",MID,"América Mineiro, Atlético Mineiro, Arsenal, Panathinaikos, Grêmio",,,,,,0,low_confidence
+Roy Makaay,Netherlands,"Mar 9, 1975",FWD,"Vitesse, Tenerife, Deportivo La Coruña, Bayern Munich, Feyenoord",,,,,,0,low_confidence
+Andrea Barzagli,Italy,"May 8, 1981",DEF,"Rondinella, Pistoiese, Ascoli, Chievo, Palermo, VfL Wolfsburg, Juventus",,,,,,0,low_confidence
+Landon Donovan,United States,"Mar 4, 1982",MID,"Bayer Leverkusen, San Jose Earthquakes, Los Angeles Galaxy, Bayern Munich, Everton, Club León, San Diego Sockers",,,,,,0,low_confidence
+Euzebiusz Smolarek,Poland,"Jan 9, 1981",FWD,"Feyenoord, Borussia Dortmund, Racing Santander, Bolton Wanderers, Kavala, Polonia Warsaw, Al-Khor, ADO Den Haag, Jagiellonia Białystok",,,,,,0,low_confidence
+Al-Noor,Saudi Arabia,"Feb 26, 1978",MID,"Ittihad Club, Al-Nassr",,,,,,0,low_confidence
+Víctor Ibarbo,Colombia,"May 19, 1990",MID,"Atlético Nacional, Cagliari, Roma, Watford, Atlético Nacional, Panathinaikos, Sagan Tosu, V-Varen Nagasaki, América de Cali",,,,,,0,low_confidence
+Tim Cahill,Australia,"Dec 6, 1979",FWD,"Millwall, Everton, New York Red Bulls, Shanghai Shenhua, Hangzhou Greentown, Melbourne City, Jamshedpur FC",,,,,,0,low_confidence
+DaMarcus Beasley,United States,"May 24, 1982",MID,"Chicago Fire, PSV Eindhoven, Manchester City, Rangers, Hannover 96, Puebla, Houston Dynamo",,,,,,0,low_confidence
+Gervinho (Yao Kouassi),Ivory Coast,"May 27, 1987",MID,"Beveren, Le Mans, Lille, Arsenal, Roma, Hebei China Fortune, Parma, Trabzonspor, Aris Thessaloniki",,,,,,0,low_confidence
+Tim Howard,United States,"Mar 6, 1979",GK,"North Jersey Imperials, MetroStars, Manchester United, Everton, Colorado Rapids, Memphis 901 FC",,,,,,0,low_confidence
+Peter Crouch,England,"Jan 30, 1981",FWD,"Tottenham Hotspur, Dulwich Hamlet, IFK Hässleholm, Queens Park Rangers, Portsmouth, Aston Villa, Norwich City, Southampton, Liverpool, Stoke City, Burnley",,,,,,0,low_confidence
+Seydou Doumbia,Ivory Coast,"Dec 31, 1987",FWD,"Inter de Abidjan, Athletic Adjame, Toumodi, Denguele, Kashiwa Reysol, Tokushima Vortis, Young Boys, CSKA Moscow, Roma, Newcastle United, Basel, Sporting CP, Girona, Sion, Hamrun Spartans",,,,,,0,low_confidence
+Clint Dempsey,United States,"Mar 9, 1983",MID,"New England Revolution, Fulham, Tottenham Hotspur, Seattle Sounders",,,,,,0,low_confidence
+Ricardo Quaresma,Portugal,"Sep 26, 1983",MID,"Sporting CP, Barcelona, Porto, Inter Milan, Chelsea, Beşiktaş, Al-Ahli, Kasımpaşa, Vitória Guimarães",,,,,,0,low_confidence
+Micah Richards,England,"Jun 24, 1988",DEF,"Manchester City, Fiorentina, Aston Villa",,,,,,0,low_confidence
+Leonardo Bonucci,Italy,"May 1, 1987",DEF,"Inter Milan, Treviso, Pisa, Bari, Juventus, AC Milan, Union Berlin, Fenerbahce",,,,,,0,low_confidence
+Walter Samuel,Argentina,"Mar 23, 1978",DEF,"Newell's Old Boys, Boca Juniors, Roma, Real Madrid, Inter Milan, Basel",,,,,,0,low_confidence
+Marco Materazzi,Italy,"Aug 19, 1973",DEF,"Marsala, Trapani, Perugia, Carpi, Everton, Inter Milan, Chennaiyin",,,,,,0,low_confidence
+Christian Panucci,Italy,"Apr 12, 1973",DEF,"Genoa, AC Milan, Real Madrid, Inter Milan, Chelsea, Monaco, Roma, Parma",,,,,,0,low_confidence
+Aldair,Brazil,"Nov 30, 1965",DEF,"Flamengo, Benfica, Roma, Genoa, Murata",,,,,,0,low_confidence
+Iván Córdoba,Colombia,"Aug 11, 1976",DEF,"Deportivo Rionegro, Atlético Nacional, San Lorenzo, Inter Milan",,,,,,0,low_confidence
+Thiago Silva,Brazil,"Sep 22, 1984",DEF,"RS Futebol, Juventude, Porto, Dynamo Moscow, Fluminense, AC Milan, Paris Saint-Germain, Chelsea",,,,,,0,low_confidence
+Kalidou Koulibaly,Senegal,"Jun 20, 1991",DEF,"Metz, Genk, Napoli, Chelsea, Al-Hilal",,,,,,0,low_confidence
+Tarcisio Burgnich,Italy,"Apr 25, 1939",DEF,"Udinese, Juventus, Palermo, Inter Milan, Napoli",,,,,,0,low_confidence
+Roberto Rosato,Italy,"Apr 3, 1943",DEF,"Torino, AC Milan, Genoa, Aosta",,,,,,0,low_confidence
+Aristide Guarneri,Italy,"Mar 7, 1938",DEF,"Como, Inter Milan, Bologna, Napoli, Cremonese",,,,,,0,low_confidence
+Fulvio Collovati,Italy,"May 9, 1957",DEF,"AC Milan, Inter Milan, Udinese, Roma, Genoa",,,,,,0,low_confidence
+Sandro Salvadore,Italy,"Nov 29, 1939",DEF,"AC Milan, Juventus",,,,,,0,low_confidence
+Cesare Maldini,Italy,"Feb 5, 1932",DEF,"Triestina, AC Milan, Torino",,,,,,0,low_confidence
+Maicon,Brazil,"Jul 26, 1981",DEF,"Cruzeiro, Monaco, Inter Milan, Manchester City, Roma, Avaí, Criciúma, Villa Nova, Sona, Tre Penne",,,,,,0,low_confidence
+Serginho,Brazil,"Jun 27, 1971",DEF,"Itaperuna, Bahia, Flamengo, Cruzeiro, São Paulo, AC Milan",,,,,,0,low_confidence
+Kakha Kaladze,Georgia,"Feb 27, 1978",DEF,"Dinamo Tbilisi, Dynamo Kyiv, AC Milan, Genoa",,,,,,0,low_confidence
+Stephan Lichtsteiner,Switzerland,"Jan 16, 1984",DEF,"Grasshopper, Lille, Lazio, Juventus, Arsenal, Augsburg",,,,,,0,low_confidence
+Moreno Torricelli,Italy,"Jan 23, 1970",DEF,"Oggiono, Caratese, Juventus, Fiorentina, Espanyol, Arezzo",,,,,,0,low_confidence
+Thomas Helveg,Denmark,"Jun 24, 1971",DEF,"Odense, Udinese, AC Milan, Inter Milan, Norwich City, Borussia Mönchengladbach",,,,,,0,low_confidence
+Amedeo Carboni,Italy,"Apr 6, 1965",DEF,"Arezzo, Bari, Empoli, Parma, Sampdoria, Roma, Valencia",,,,,,0,low_confidence
+Gianluca Pessotto,Italy,"Aug 11, 1970",DEF,"Varese, Massese, Bologna, Verona, Torino, Juventus",,,,,,0,low_confidence

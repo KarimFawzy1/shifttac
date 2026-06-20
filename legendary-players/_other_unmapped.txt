@@ -1,0 +1,43 @@
+ 9 | Real Zaragoza
+ 6 | Bolton Wanderers
+ 5 | Brescia
+ 5 | Como
+ 5 | Pisa
+ 5 | Qatar SC
+ 4 | Bari
+ 4 | Bastia
+ 4 | Fort Lauderdale Strikers
+ 4 | Groningen
+ 4 | Kaiserslautern
+ 4 | Montpellier
+ 4 | Portsmouth
+ 4 | Rayo Vallecano
+ 4 | Real Valladolid
+ 4 | Shanghai Shenhua
+ 4 | Tonnerre Yaoundé
+ 3 | Al-Gharafa
+ 3 | Al-Rayyan
+ 3 | Ascoli
+ 3 | Atlante
+ 3 | Blackburn Rovers
+ 3 | Brøndby
+ 3 | Budapest Honvéd
+ 3 | Burnley
+ 3 | Cagliari
+ 3 | Cannes
+ 3 | Cremonese
+ 3 | Delhi Dynamos
+ 3 | Hellas Verona
+ 3 | Hércules
+ 3 | Metz
+ 3 | Middlesbrough
+ 3 | Mumbai City
+ 3 | Norwich City
+ 3 | Perugia
+ 3 | Piacenza
+ 3 | Queens Park Rangers
+ 3 | Salernitana
+ 3 | Sion
+ 3 | Stoke City
+ 3 | Varese
+ 3 | Verona
