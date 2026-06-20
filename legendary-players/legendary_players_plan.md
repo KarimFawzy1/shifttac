@@ -469,10 +469,10 @@ Wire into `search_rank.load_search_rank_boosts()` merge.
 
 **DoD Phase 2:**
 
-- [ ] Full staging merge completes without duplicate PK errors
-- [ ] `build_players.py` includes legendary-only profiles (spot-check: Pelé `tm:17121`, Di Stéfano)
-- [ ] TM overlap players (e.g. Zidane) do not duplicate edges
-- [ ] `tool/etl/reports/merge_legendary_summary.json` — counts merged per edge type
+- [x] Full staging merge completes without duplicate PK errors
+- [x] `build_players.py` includes legendary-only profiles (spot-check: Pelé `tm:17121`, Di Stéfano)
+- [x] TM overlap players (e.g. Zidane) do not duplicate edges
+- [x] `tool/etl/reports/merge_legendary_summary.json` — counts merged per edge type
 
 **Git commit & push:**
 
