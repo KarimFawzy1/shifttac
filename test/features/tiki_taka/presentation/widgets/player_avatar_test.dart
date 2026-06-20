@@ -187,8 +187,10 @@ void main() {
       await tester.pumpWidget(
         _wrap(const PlayerAvatar(imageUrl: _validCommonsUrl, size: 100)),
       );
+      await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(Image), findsOneWidget);
     });
   });
 }

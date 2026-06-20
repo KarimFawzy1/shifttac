@@ -30,8 +30,8 @@ class SearchRankTests(unittest.TestCase):
 
     def test_legendary_boosts_loaded(self) -> None:
         boosts = load_search_rank_boosts()
-        self.assertGreaterEqual(boosts.get("17121", 0), 500)
-        self.assertGreaterEqual(boosts.get("8024", 0), 500)
+        self.assertGreaterEqual(boosts.get("17121", 0), 120_000_000)
+        self.assertGreaterEqual(boosts.get("8024", 0), 120_000_000)
 
 
 if __name__ == "__main__":

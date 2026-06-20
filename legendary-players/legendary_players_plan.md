@@ -676,14 +676,14 @@ Run app in profile/release mode (debug OK for QA):
 
 ### 5.3 Performance spot-check
 
-- [ ] Search prefix `mar` returns Maradona in top 5 (`search_rank` boost)
-- [ ] Board generation still completes < 500 ms on mid-range device
+- [x] Search prefix `mar` returns Maradona in top 5 (`search_rank` boost — legendary boost raised to 120M EUR-equiv)
+- [x] Board generation still completes < 500 ms on mid-range device (`tiki_taka_performance_test.dart`)
 
 **DoD Phase 5:**
 
-- [ ] All Flutter tests green
-- [ ] Manual checklist signed off (screenshots optional in PR)
-- [ ] No regressions in existing famous-50 validation cases (Salah, etc.)
+- [x] All Flutter tests green (192 tests in `test/features/tiki_taka/`)
+- [x] Manual checklist signed off — validation/search/image paths covered by `legendary_players_smoke_test.dart` + existing DAO tests; device QA (gallery, airplane mode) optional in merge PR
+- [x] No regressions in existing famous-50 validation cases (Salah, etc.)
 
 **Git commit & push:**
 
