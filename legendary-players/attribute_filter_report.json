@@ -1,7 +1,16 @@
 {
   "players_total": 336,
-  "removed_nationality_count": 0,
+  "removed_nationality_count": 2,
   "removed_club_count": 0,
-  "removed_nationalities": [],
+  "removed_nationalities": [
+    {
+      "player": "Predrag Mijatović",
+      "nationality": "Montenegro"
+    },
+    {
+      "player": "Dejan Savićević",
+      "nationality": "Montenegro"
+    }
+  ],
   "removed_clubs_by_name": {}
 }

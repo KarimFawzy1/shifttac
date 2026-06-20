@@ -392,11 +392,11 @@ Add `tool/etl/tests/test_ingest_legendary_players.py`:
 
 **DoD Phase 1:**
 
-- [ ] `python tool/etl/ingest_legendary_players.py` exits 0
-- [ ] `staging/legendary/*.csv` files exist with expected row counts
-- [ ] `pytest tool/etl/tests/test_ingest_legendary_players.py` passes
-- [ ] 0 unmapped clubs/nations
-- [ ] Di Stéfano has exactly `{nation:argentina, nation:spain}` + club/pos edges
+- [x] `python tool/etl/ingest_legendary_players.py` exits 0
+- [x] `staging/legendary/*.csv` files exist with expected row counts
+- [x] `pytest tool/etl/tests/test_ingest_legendary_players.py` passes
+- [x] 0 unmapped clubs/nations
+- [x] Di Stéfano has exactly `{nation:argentina, nation:spain}` + club/pos edges
 
 **Git commit & push:**
 

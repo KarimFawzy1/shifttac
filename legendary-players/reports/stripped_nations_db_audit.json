@@ -1,0 +1,45 @@
+{
+  "checked_at": "2026-06-20T12:36:56.774637+00:00",
+  "stripped_nations": {
+    "north_macedonia": "North Macedonia",
+    "iran": "Iran",
+    "georgia": "Georgia",
+    "paraguay": "Paraguay",
+    "zambia": "Zambia",
+    "south_africa": "South Africa",
+    "new_zealand": "New Zealand"
+  },
+  "apply": false,
+  "databases": [
+    {
+      "path": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db",
+      "before": {
+        "stripped_nation_attributes": [],
+        "player_attribute_edges": [],
+        "attribute_count": 0,
+        "edge_count": 0
+      },
+      "after": {
+        "stripped_nation_attributes": [],
+        "player_attribute_edges": [],
+        "attribute_count": 0,
+        "edge_count": 0
+      }
+    },
+    {
+      "path": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\output\\tiki_taka.db",
+      "before": {
+        "stripped_nation_attributes": [],
+        "player_attribute_edges": [],
+        "attribute_count": 0,
+        "edge_count": 0
+      },
+      "after": {
+        "stripped_nation_attributes": [],
+        "player_attribute_edges": [],
+        "attribute_count": 0,
+        "edge_count": 0
+      }
+    }
+  ]
+}

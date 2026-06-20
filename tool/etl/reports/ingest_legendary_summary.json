@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-06-20T12:40:14.117977+00:00",
+  "csv_rows": 336,
+  "included_preview": 336,
+  "excluded_insufficient_attributes": 0,
+  "dual_nation_players": [
+    "Alfredo Di Stéfano"
+  ],
+  "unmapped_clubs": [],
+  "unmapped_nations": [],
+  "league_edges_added": 541,
+  "players_with_zero_league": 18,
+  "output_counts": {
+    "profiles": 336,
+    "clubs": 1034,
+    "nations": 332,
+    "leagues": 541,
+    "positions": 336
+  }
+}

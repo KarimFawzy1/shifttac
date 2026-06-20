@@ -15,6 +15,7 @@ REPORTS = ROOT / "legendary-players" / "reports"
 CSV_PATH = ROOT / "legendary-players" / "legendary_players_with_tm_id.csv"
 FILTER_SCRIPT = ROOT / "legendary-players" / "filter_allowed_attributes.py"
 VERIFY_SCRIPT = ROOT / "legendary-players" / "verify_club_mapping.py"
+STRIPPED_NATIONS_DB = ROOT / "legendary-players" / "_check_stripped_nations_in_db.py"
 GENERATE_LEAGUE = ROOT / "tool" / "etl" / "scripts" / "generate_club_top5_league.py"
 SUPPLEMENTS_YAML = ROOT / "tool" / "etl" / "config" / "legendary_club_supplements.yaml"
 QUAL_CHECK = ROOT / "legendary-players" / "_qual_check.json"
@@ -154,6 +155,7 @@ def write_phase0_summary(rows: list[dict[str, str]], qual: dict[str, object]) ->
         "acceptance": {
             "stripped_nations_documented": STRIPPED_NATIONS.is_file(),
             "verify_club_mapping_passed": True,
+            "stripped_nations_absent_from_db": True,
             "club_top5_league_generated": (
                 ROOT / "tool" / "etl" / "config" / "club_top5_league.yaml"
             ).is_file(),
@@ -176,6 +178,9 @@ def main() -> int:
 
     print("\n=== Phase 0.3: verify club mapping ===")
     run_script(VERIFY_SCRIPT)
+
+    print("\n=== Phase 0.1b: verify stripped nations absent from DB ===")
+    run_script(STRIPPED_NATIONS_DB)
 
     print("\n=== Phase 0.4: generate club_top5_league.yaml ===")
     run_script(GENERATE_LEAGUE)

@@ -23,9 +23,10 @@ STRIPPED_NATIONS = frozenset(
         "Georgia",
         "Paraguay",
         "Zambia",
-        "South Africa",
-        "New Zealand",
-    }
+    "South Africa",
+    "New Zealand",
+    "Montenegro",
+}
 )
 
 EXCEPTION_NATIONS = {
@@ -40,7 +41,6 @@ EXCEPTION_NATIONS = {
     "Australia",
     "Bulgaria",
     "Ghana",
-    "Montenegro",
     "Norway",
     "Peru",
     "Poland",
