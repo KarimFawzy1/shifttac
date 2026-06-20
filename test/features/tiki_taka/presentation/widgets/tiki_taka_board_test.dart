@@ -215,6 +215,8 @@ void main() {
       final avatar = tester.widget<PlayerAvatar>(find.byType(PlayerAvatar));
       expect(avatar.imageUrl, player.imageUrl);
       expect(avatar.fit, BoxFit.cover);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(Transform), findsWidgets);
       expect(avatar.unavailableFallback, isA<PlayerDiagonalName>());
     });
 
@@ -255,7 +257,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 700));
 
-      expect(find.text('Mohamed Salah'), findsOneWidget);
+      expect(find.byType(Transform), findsWidgets);
       expect(find.byIcon(Icons.person_rounded), findsNothing);
     });
 

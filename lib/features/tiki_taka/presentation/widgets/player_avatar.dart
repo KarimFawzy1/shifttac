@@ -18,6 +18,8 @@ class PlayerAvatar extends StatelessWidget {
     this.borderRadius,
     this.semanticsLabel,
     this.unavailableFallback,
+    this.loadingFallback,
+    this.forceLoadingFallback = false,
   });
 
   final String? imageUrl;
@@ -34,6 +36,12 @@ class PlayerAvatar extends StatelessWidget {
 
   /// Shown while loading or when the network image fails (e.g. board cell offline).
   final Widget? unavailableFallback;
+
+  /// Optional loading-state UI shown before image decode completes.
+  final Widget? loadingFallback;
+
+  /// Debug/test switch: always render loading UI and never show image.
+  final bool forceLoadingFallback;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +73,8 @@ class PlayerAvatar extends StatelessWidget {
             alignment: alignment,
             semanticsLabel: semanticsLabel ?? resolvedPlayerName,
             fallback: _fallbackWidget(resolvedRadius),
+            loadingFallback: loadingFallback,
+            forceLoadingFallback: forceLoadingFallback,
             onPermanentFailure: (reason, error) =>
                 _logFallback(resolvedPlayerName, reason, error: error),
             onLoaded: (source) => _logLoaded(resolvedPlayerName, url, source),
@@ -206,6 +216,8 @@ class _PlayerNetworkImage extends StatefulWidget {
     required this.fit,
     required this.alignment,
     required this.fallback,
+    required this.loadingFallback,
+    required this.forceLoadingFallback,
     required this.onPermanentFailure,
     required this.onLoaded,
     this.semanticsLabel,
@@ -218,6 +230,8 @@ class _PlayerNetworkImage extends StatefulWidget {
   final BoxFit fit;
   final Alignment alignment;
   final Widget fallback;
+  final Widget? loadingFallback;
+  final bool forceLoadingFallback;
   final void Function(String reason, Object? error) onPermanentFailure;
   final void Function(String source) onLoaded;
   final String? semanticsLabel;
@@ -317,34 +331,47 @@ class _PlayerNetworkImageState extends State<_PlayerNetworkImage> {
   }
 
   Widget _loadingPlaceholder() {
-    return _AvatarLoadingPlaceholder(
-      size: widget.size,
-      borderRadius: widget.borderRadius,
-    );
+    return widget.loadingFallback ??
+        _AvatarLoadingPlaceholder(
+          size: widget.size,
+          borderRadius: widget.borderRadius,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loadState == _AvatarImageLoadState.failed) {
-      return widget.fallback;
-    }
-
-    if (_loadState == _AvatarImageLoadState.loading) {
+    if (widget.forceLoadingFallback) {
       return _loadingPlaceholder();
     }
 
-    return Image(
-      image: _provider,
-      width: widget.size,
-      height: widget.size,
-      fit: widget.fit,
-      alignment: widget.alignment,
-      gaplessPlayback: true,
-      excludeFromSemantics: widget.semanticsLabel == null,
-      errorBuilder: (context, error, stackTrace) {
-        widget.onPermanentFailure('image_decode_error', error);
-        return widget.fallback;
-      },
+    final current = switch (_loadState) {
+      _AvatarImageLoadState.failed => widget.fallback,
+      _AvatarImageLoadState.loading => _loadingPlaceholder(),
+      _AvatarImageLoadState.ready => Image(
+          image: _provider,
+          width: widget.size,
+          height: widget.size,
+          fit: widget.fit,
+          alignment: widget.alignment,
+          gaplessPlayback: true,
+          excludeFromSemantics: widget.semanticsLabel == null,
+          errorBuilder: (context, error, stackTrace) {
+            widget.onPermanentFailure('image_decode_error', error);
+            return widget.fallback;
+          },
+        ),
+    };
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      transitionBuilder: (child, animation) =>
+          FadeTransition(opacity: animation, child: child),
+      child: KeyedSubtree(
+        key: ValueKey('state:${_loadState.name}:${widget.url}'),
+        child: current,
+      ),
     );
   }
 }
