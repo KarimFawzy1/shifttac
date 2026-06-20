@@ -1,0 +1,27 @@
+{
+  "phase": "D10",
+  "built_at": "2026-06-20T13:05:22+00:00",
+  "min_intersection": 3,
+  "total_boards": 120,
+  "featured_boards": 20,
+  "auto_boards": 100,
+  "featured_yaml_skipped": [
+    "featured-pl-africa: min intersection 0 < 3 (skipped)",
+    "featured-la-liga-americas: min intersection 2 < 3 (skipped)",
+    "featured-ligue-talents: \"Unknown attribute display name: 'Paris Saint-Germain'\"",
+    "featured-top5-mix: min intersection 0 < 3 (skipped)",
+    "featured-ibero-clash: min intersection 0 < 3 (skipped)",
+    "featured-dutch-portugal: min intersection 1 < 3 (skipped)",
+    "featured-salah-special: min intersection 0 < 3 (skipped)",
+    "featured-pl-latam: min intersection 1 < 3 (skipped)",
+    "featured-german-trio: min intersection 2 < 3 (skipped)",
+    "featured-french-power: \"Unknown attribute display name: 'Paris Saint-Germain'\"",
+    "featured-league-france: \"Unknown attribute display name: 'Paris Saint-Germain'\"",
+    "featured-league-mixed: \"Unknown attribute display name: 'Paris Saint-Germain'\"",
+    "featured-league-europe-west: \"Unknown attribute display name: 'Paris Saint-Germain'\""
+  ],
+  "boards_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\boards.csv",
+  "board_slots_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\board_slots.csv",
+  "weakest_cell_global": 3,
+  "validation_passed": true
+}

@@ -52,7 +52,7 @@ void main() {
           where: 'key = ?',
           whereArgs: ['player_image_source'],
         );
-        expect(imageSource.first['value'], 'wikidata_p2446_p18');
+        expect(imageSource.first['value'], 'wikidata_p2446_p18_and_qid_fast_path');
 
         final sample = await db.rawQuery(
           "SELECT image_url FROM players WHERE image_url IS NOT NULL LIMIT 1",

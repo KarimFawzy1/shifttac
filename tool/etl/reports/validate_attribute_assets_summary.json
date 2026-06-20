@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "db_path": "assets/db/tiki_taka.db",
+  "manifest_path": "assets/tiki_taka/attrs/manifest.json",
+  "report_path": "tool/etl/reports/validate_attribute_assets_summary.json",
+  "expected_count": 153,
+  "manifest_count": 153,
+  "counts_by_type": {
+    "club": 100,
+    "league": 5,
+    "nation": 48
+  },
+  "excluded_types": [
+    "position"
+  ],
+  "missing_manifest_entries": [],
+  "missing_files": [],
+  "orphan_manifest_entries": [],
+  "unexpected_position_manifest_entries": [],
+  "errors": []
+}

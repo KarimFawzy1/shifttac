@@ -1,7 +1,7 @@
 {
   "phase": "T0",
   "gate": "tiki_taka_preflight",
-  "run_at": "2026-06-06T13:11:20+00:00",
+  "run_at": "2026-06-20T13:13:58+00:00",
   "status": "pass",
   "blocking_gaps_before_t1": 0,
   "gap_closure_checks": [
@@ -109,7 +109,7 @@
       "id": "G2_manifest_entry_count",
       "path": "assets\\tiki_taka\\attrs\\manifest.json",
       "passed": true,
-      "count": 84
+      "count": 153
     }
   ],
   "automated_steps": [
@@ -117,30 +117,30 @@
       "id": "D12_validation_cases",
       "passed": true,
       "exit_code": 0,
-      "stdout": "D12 validation OK: 10/10 cases\n  db: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db\n  report: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\run_validation_cases_summary.json",
+      "stdout": "D12 validation OK: 18/18 cases\n  db: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db\n  report: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\run_validation_cases_summary.json",
       "stderr": ""
     },
     {
       "id": "G3_asset_coverage",
       "passed": true,
       "exit_code": 0,
-      "stdout": "G3 asset validation OK: 84 attributes, 84 manifest entries\n  report: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\validate_attribute_assets_summary.json",
+      "stdout": "G3 asset validation OK: 153 attributes, 153 manifest entries\n  report: D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\validate_attribute_assets_summary.json",
       "stderr": ""
     }
   ],
   "flutter_verification": [
     {
-      "id": "test/tiki_taka_database_smoke_test.dart",
+      "id": "test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart",
       "passed": true,
       "exit_code": 0
     },
     {
-      "id": "test/tiki_taka_attribute_assets_test.dart",
+      "id": "test/features/tiki_taka/domain/services/tiki_taka_attribute_assets_test.dart",
       "passed": true,
       "exit_code": 0
     },
     {
-      "id": "test/tiki_taka_attribute_manifest_test.dart",
+      "id": "test/features/tiki_taka/domain/services/tiki_taka_attribute_manifest_test.dart",
       "passed": true,
       "exit_code": 0
     },
@@ -150,8 +150,8 @@
       "exit_code": 0
     }
   ],
-  "d12_case_count": 10,
-  "d12_passed_count": 10,
+  "d12_case_count": 18,
+  "d12_passed_count": 18,
   "g1_g7_checklist": {
     "G1_pubspec_assets_registered": true,
     "G2_manifest_complete": true,

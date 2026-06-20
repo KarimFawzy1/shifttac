@@ -176,7 +176,7 @@ class PlayerAvatarImageQueue {
     _activeCount = 0;
     _draining = false;
     _lastStartAt = DateTime.fromMillisecondsSinceEpoch(0);
-    resetPlayerAvatarImageProvidersForTest();
+    clearPlayerAvatarImageProviderCache();
   }
 }
 

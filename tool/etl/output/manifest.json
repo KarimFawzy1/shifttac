@@ -1,0 +1,16 @@
+{
+  "schema_version": 3,
+  "built_at": "2026-06-20T13:09:22+00:00",
+  "source_csv_hash": "sha256:ddba261c18b639c4571a7d3026b8a8a69bfee5c27750cf1ea3b616c9c5ee62a2",
+  "player_count": 28454,
+  "players_with_image_count": 12118,
+  "player_image_source": "wikidata_p2446_p18_and_qid_fast_path",
+  "player_images_fetched_at": "2026-06-20T12:59:17+00:00",
+  "attribute_count": 157,
+  "board_count": 120,
+  "player_attribute_rows": 77544,
+  "player_alias_rows": 84088,
+  "attribute_pair_stats_rows": 11112,
+  "db_path": "assets/db/tiki_taka.db",
+  "file_size_bytes": 20172800
+}

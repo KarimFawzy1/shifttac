@@ -6,9 +6,9 @@ and writes tool/etl/reports/tiki_taka_preflight_gate.json.
 
 Usage:
   python tool/etl/run_tiki_taka_preflight_gate.py
-  flutter test test/tiki_taka_database_smoke_test.dart \\
-    test/tiki_taka_attribute_assets_test.dart \\
-    test/tiki_taka_attribute_manifest_test.dart
+  flutter test test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart \\
+    test/features/tiki_taka/domain/services/tiki_taka_attribute_assets_test.dart \\
+    test/features/tiki_taka/domain/services/tiki_taka_attribute_manifest_test.dart
 """
 
 from __future__ import annotations
@@ -109,18 +109,18 @@ def _check_g1_g7() -> tuple[list[dict[str, object]], list[str]]:
     manifest = REPO_ROOT / "assets" / "tiki_taka" / "attrs" / "manifest.json"
     if manifest.is_file():
         entries = json.loads(manifest.read_text(encoding="utf-8"))
-        ok = len(entries) == 84
+        ok = len(entries) == 153
         checks.append({"id": "G2_manifest_entry_count", "path": str(manifest.relative_to(REPO_ROOT)), "passed": ok, "count": len(entries)})
         if not ok:
-            errors.append(f"G2: expected 84 manifest entries, found {len(entries)}")
+            errors.append(f"G2: expected 153 manifest entries, found {len(entries)}")
 
     return checks, errors
 
 
 FLUTTER_TESTS = (
-    "test/tiki_taka_database_smoke_test.dart",
-    "test/tiki_taka_attribute_assets_test.dart",
-    "test/tiki_taka_attribute_manifest_test.dart",
+    "test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart",
+    "test/features/tiki_taka/domain/services/tiki_taka_attribute_assets_test.dart",
+    "test/features/tiki_taka/domain/services/tiki_taka_attribute_manifest_test.dart",
 )
 
 
@@ -212,8 +212,8 @@ def main() -> int:
         "gap_closure_checks": gap_checks,
         "automated_steps": [d12_result, g3_result],
         "flutter_verification": flutter_results,
-        "d12_case_count": 10,
-        "d12_passed_count": 10 if d12_result.get("passed") else 0,
+        "d12_case_count": 18,
+        "d12_passed_count": 18 if d12_result.get("passed") else 0,
         "g1_g7_checklist": {
             "G1_pubspec_assets_registered": not any(
                 e.startswith("G1:") for e in gap_errors

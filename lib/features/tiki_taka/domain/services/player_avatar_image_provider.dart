@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
 import 'player_image_url_validator.dart';
@@ -24,7 +23,6 @@ ImageProvider<Object> playerAvatarImageProvider(String url) {
   );
 }
 
-@visibleForTesting
-void resetPlayerAvatarImageProvidersForTest() {
+void clearPlayerAvatarImageProviderCache() {
   _providersByUrl.clear();
 }

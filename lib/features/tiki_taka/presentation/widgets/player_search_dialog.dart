@@ -604,6 +604,7 @@ class _SearchResultsPanel extends StatelessWidget {
           ),
           child: ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 4.h),
+            // ignore: deprecated_member_use
             cacheExtent: 1200,
             itemCount: results.length,
             separatorBuilder: (context, index) => Divider(

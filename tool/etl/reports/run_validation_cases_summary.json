@@ -1,0 +1,139 @@
+{
+  "phase": "D12",
+  "run_at": "2026-06-20T13:13:32+00:00",
+  "db_path": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\assets\\db\\tiki_taka.db",
+  "fixtures": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\fixtures\\validation_cases.yaml",
+  "case_count": 18,
+  "passed_count": 18,
+  "failed_count": 0,
+  "validation_passed": true,
+  "results": [
+    {
+      "id": "mo_salah_egypt_liverpool",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "mo_salah_liverpool_chelsea",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "jude_bellingham_dortmund_bundesliga",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "etoo_barcelona_cameroon",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "salah_not_at_dortmund",
+      "type": "player_intersection",
+      "expected": "invalid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "bellingham_not_liverpool_same_club_cell",
+      "type": "player_intersection",
+      "expected": "invalid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "mo_salah_alias_resolves",
+      "type": "alias_lookup",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "egypt_liverpool_pair_viable",
+      "type": "pair_stats",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "liverpool_chelsea_pair_viable",
+      "type": "pair_stats",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "premier_serie_pair_viable",
+      "type": "pair_stats",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "forbidden_club_nation_zero",
+      "type": "pair_stats",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "boards_meet_minimum_count",
+      "type": "board_count",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "mohamed_prefix_search",
+      "type": "player_search",
+      "expected": null,
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "maradona_argentina_barcelona",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "distefano_spain_real_madrid",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "distefano_argentina_real_madrid",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "pele_brazil_santos",
+      "type": "player_intersection",
+      "expected": "valid",
+      "passed": true,
+      "error": null
+    },
+    {
+      "id": "santos_brazil_pair_exists",
+      "type": "pair_stats",
+      "expected": null,
+      "passed": true,
+      "error": null
+    }
+  ],
+  "failures": []
+}

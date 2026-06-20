@@ -611,17 +611,17 @@ python legendary-players/_check_db_gap.py
 
 ### 4.4 Manifest / size checks
 
-- [ ] `assets/db/tiki_taka.db` < 20 MB (`build_database.py` guard)
-- [ ] `output/manifest.json` documents increased `player_count`
-- [ ] `attribute_pair_stats` has no **forbidden** (0-count) pairs on shipped boards
-- [ ] Nation allowlist unchanged (still 52 nations in manifest — no additions from legendary work)
+- [x] `assets/db/tiki_taka.db` < 20 MB (`build_database.py` guard)
+- [x] `output/manifest.json` documents increased `player_count`
+- [x] `attribute_pair_stats` has no **forbidden** (0-count) pairs on shipped boards
+- [x] Nation allowlist unchanged (still 52 nations in manifest — no additions from legendary work)
 
 **DoD Phase 4:**
 
-- [ ] All validation cases pass
-- [ ] Preflight gate passes
-- [ ] `_check_db_gap.py` within expected range
-- [ ] Asset manifest unchanged for nations (no new nation SVGs)
+- [x] All validation cases pass
+- [x] Preflight gate passes
+- [x] `_check_db_gap.py` within expected range
+- [x] Asset manifest unchanged for nations (no new nation SVGs)
 
 **Git commit & push:**
 
