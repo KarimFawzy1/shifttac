@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../data/local/daos/board_dao.dart';
 import '../../data/local/daos/player_search_dao.dart';
 import '../../data/local/daos/validation_dao.dart';
+import '../../data/local/search_query_normalizer.dart';
 import '../../data/local/tiki_taka_database.dart';
 import '../../data/models/tiki_board.dart';
 import '../../data/models/tiki_player_search_result.dart';
@@ -237,6 +238,18 @@ class TikiTakaCubit extends Cubit<TikiTakaState> {
 
   Future<void> searchPlayers(String query) async {
     final generation = ++_searchGeneration;
+    final trimmed = query.trim();
+    if (trimmed.length < kMinPlayerSearchQueryLength) {
+      emit(
+        state.copyWith(
+          searchQuery: query,
+          searchResults: const [],
+          isSearching: false,
+        ),
+      );
+      return;
+    }
+
     emit(state.copyWith(searchQuery: query, isSearching: true));
 
     final results = await _playerSearchDao.search(query);

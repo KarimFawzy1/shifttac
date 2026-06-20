@@ -1,5 +1,8 @@
 import 'package:diacritic/diacritic.dart';
 
+/// Minimum trimmed characters before gameplay search runs (fewer Wikidata fetches).
+const int kMinPlayerSearchQueryLength = 3;
+
 /// Normalizes user search input to match ETL `search_text` / alias fields.
 ///
 /// Mirrors [make_search_text] in `tool/etl/search_transliteration.py`.

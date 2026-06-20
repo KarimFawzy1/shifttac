@@ -10,6 +10,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/modal_backdrop.dart';
 import '../../data/models/tiki_attribute.dart';
 import '../../data/models/tiki_player_search_result.dart';
+import '../../data/local/search_query_normalizer.dart';
 import '../../domain/services/tiki_attribute_asset_manifest.dart';
 import '../state/tiki_taka_cubit.dart';
 import '../state/tiki_taka_state.dart';
@@ -575,6 +576,16 @@ class _SearchResultsPanel extends StatelessWidget {
         child: _StatusMessage(
           icon: Icons.person_search_outlined,
           message: 'Search for a player who matches both attributes.',
+        ),
+      );
+    }
+
+    if (trimmedQuery.length < kMinPlayerSearchQueryLength) {
+      return Center(
+        child: _StatusMessage(
+          icon: Icons.person_search_outlined,
+          message:
+              'Type at least $kMinPlayerSearchQueryLength characters to search.',
         ),
       );
     }
