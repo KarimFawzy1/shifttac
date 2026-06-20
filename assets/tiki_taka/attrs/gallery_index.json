@@ -1,0 +1,742 @@
+[
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/AC-Milan.png",
+    "label": "AC Milan"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Ajax.png",
+    "label": "Ajax"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Al-Ahli.png",
+    "label": "Al Ahli"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Al-Hilal.png",
+    "label": "Al Hilal"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Al-Ittihad.png",
+    "label": "Al Ittihad"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Al-Nassr.png",
+    "label": "Al Nassr"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Al-Shabab.png",
+    "label": "Al Shabab"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Anderlecht.png",
+    "label": "Anderlecht"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Arsenal.png",
+    "label": "Arsenal"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Aston-Villa.png",
+    "label": "Aston Villa"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Atalanta.png",
+    "label": "Atalanta"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Athletic-Bilbao.png",
+    "label": "Athletic Bilbao"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Atlético-Madrid.png",
+    "label": "Atlético Madrid"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Barcelona.png",
+    "label": "Barcelona"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Bayer-Leverkusen.png",
+    "label": "Bayer Leverkusen"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Bayern-Munich.png",
+    "label": "Bayern Munich"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Benfica.png",
+    "label": "Benfica"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Boca-Juniors.png",
+    "label": "Boca Juniors"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Bologna.png",
+    "label": "Bologna"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Borussia-Dortmund.png",
+    "label": "Borussia Dortmund"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Botafogo.png",
+    "label": "Botafogo"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Brentford.png",
+    "label": "Brentford"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Brighton.png",
+    "label": "Brighton"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Burnley.png",
+    "label": "Burnley"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Celta-Vigo.png",
+    "label": "Celta Vigo"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Celtic.png",
+    "label": "Celtic"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Chelsea.png",
+    "label": "Chelsea"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Club-Brugge.png",
+    "label": "Club Brugge"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Como.png",
+    "label": "Como"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Copenhagen.png",
+    "label": "Copenhagen"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Corinthians.png",
+    "label": "Corinthians"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Crystal-Palace.png",
+    "label": "Crystal Palace"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Deportivo-La-Coruña.png",
+    "label": "Deportivo La Coruña"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Dinamo-Zagreb.png",
+    "label": "Dinamo Zagreb"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Eintracht-Frankfurt.png",
+    "label": "Eintracht Frankfurt"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Espanyol.png",
+    "label": "Espanyol"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Everton.png",
+    "label": "Everton"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/FC-Basel.png",
+    "label": "FC Basel"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/FC-Köln.png",
+    "label": "FC Köln"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/FC-Nantes.png",
+    "label": "FC Nantes"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Fenerbahçe.png",
+    "label": "Fenerbahçe"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Feyenoord.png",
+    "label": "Feyenoord"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Fiorentina.png",
+    "label": "Fiorentina"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Flamengo.png",
+    "label": "Flamengo"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Fluminense.png",
+    "label": "Fluminense"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Fulham.png",
+    "label": "Fulham"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Galatasaray.png",
+    "label": "Galatasaray"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Genoa.png",
+    "label": "Genoa"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Hamburger-SV.png",
+    "label": "Hamburger SV"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Inter-Miami.png",
+    "label": "Inter Miami"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Inter-Milan.png",
+    "label": "Inter Milan"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Juventus.png",
+    "label": "Juventus"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Lazio.png",
+    "label": "Lazio"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Leeds-United.png",
+    "label": "Leeds United"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Leicester-City.png",
+    "label": "Leicester City"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Lille.png",
+    "label": "Lille"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Liverpool.png",
+    "label": "Liverpool"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Los-Angeles-Galaxy.png",
+    "label": "Los Angeles Galaxy"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Lyon.png",
+    "label": "Lyon"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Manchester-City.png",
+    "label": "Manchester City"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Manchester-United.png",
+    "label": "Manchester United"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Marseille.png",
+    "label": "Marseille"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Monaco.png",
+    "label": "Monaco"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Napoli.png",
+    "label": "Napoli"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Newcastle-United.png",
+    "label": "Newcastle United"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Nice.png",
+    "label": "Nice"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Nottingham-Forest.png",
+    "label": "Nottingham Forest"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Olympiacos.png",
+    "label": "Olympiacos"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Palmeiras.png",
+    "label": "Palmeiras"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Paris-Saint-Germain.png",
+    "label": "Paris Saint Germain"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Parma.png",
+    "label": "Parma"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Porto.png",
+    "label": "Porto"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/PSV-Eindhoven.png",
+    "label": "PSV Eindhoven"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Rangers.png",
+    "label": "Rangers"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Rayo-Vallecano.png",
+    "label": "Rayo Vallecano"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/RB-Leipzig.png",
+    "label": "RB Leipzig"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Real-Madrid.png",
+    "label": "Real Madrid"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Real-Sociedad.png",
+    "label": "Real Sociedad"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Real-Valladolid.png",
+    "label": "Real Valladolid"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Real-Zaragoza.png",
+    "label": "Real Zaragoza"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Red-Star-Belgrade.png",
+    "label": "Red Star Belgrade"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/River-Plate.png",
+    "label": "River Plate"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Roma.png",
+    "label": "Roma"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Santos.png",
+    "label": "Santos"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Schalke-04.png",
+    "label": "Schalke 04"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Sevilla.png",
+    "label": "Sevilla"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Southampton.png",
+    "label": "Southampton"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Sparta-Prague.png",
+    "label": "Sparta Prague"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Sporting-CP.png",
+    "label": "Sporting CP"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Stoke-City.png",
+    "label": "Stoke City"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Torino.png",
+    "label": "Torino"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Tottenham-Hotspur.png",
+    "label": "Tottenham Hotspur"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Udinese.png",
+    "label": "Udinese"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Union-Berlin.png",
+    "label": "Union Berlin"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Valencia.png",
+    "label": "Valencia"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/VfB-Stuttgart.png",
+    "label": "VfB Stuttgart"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/VfL-Wolfsburg.png",
+    "label": "VfL Wolfsburg"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Villarreal.png",
+    "label": "Villarreal"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/West-Ham-United.png",
+    "label": "West Ham United"
+  },
+  {
+    "kind": "club",
+    "path": "assets/tiki_taka/attrs/clubs/Wolverhampton.png",
+    "label": "Wolverhampton"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Algeria.svg",
+    "label": "Algeria"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Argentina.svg",
+    "label": "Argentina"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Australia.svg",
+    "label": "Australia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Belgium.svg",
+    "label": "Belgium"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Brazil.svg",
+    "label": "Brazil"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Bulgaria.svg",
+    "label": "Bulgaria"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Cameroon.svg",
+    "label": "Cameroon"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Chile.svg",
+    "label": "Chile"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Colombia.svg",
+    "label": "Colombia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Croatia.svg",
+    "label": "Croatia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Czech-Republic.svg",
+    "label": "Czech Republic"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Denmark.svg",
+    "label": "Denmark"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Egypt.svg",
+    "label": "Egypt"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/England.svg",
+    "label": "England"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Finland.svg",
+    "label": "Finland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/France.svg",
+    "label": "France"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Germany.svg",
+    "label": "Germany"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Ghana.svg",
+    "label": "Ghana"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Hungary.svg",
+    "label": "Hungary"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Ireland.svg",
+    "label": "Ireland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Italy.svg",
+    "label": "Italy"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Ivory-Coast.svg",
+    "label": "Ivory Coast"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Japan.svg",
+    "label": "Japan"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Liberia.svg",
+    "label": "Liberia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Mexico.svg",
+    "label": "Mexico"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Morocco.svg",
+    "label": "Morocco"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Netherlands.svg",
+    "label": "Netherlands"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Nigeria.svg",
+    "label": "Nigeria"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Northern-Ireland.svg",
+    "label": "Northern Ireland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Norway.svg",
+    "label": "Norway"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Peru.svg",
+    "label": "Peru"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Poland.svg",
+    "label": "Poland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Portugal.svg",
+    "label": "Portugal"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Romania.svg",
+    "label": "Romania"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Russia.svg",
+    "label": "Russia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Saudi-Arabia.svg",
+    "label": "Saudi Arabia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Scotland.svg",
+    "label": "Scotland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Senegal.svg",
+    "label": "Senegal"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Serbia.svg",
+    "label": "Serbia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Slovakia.svg",
+    "label": "Slovakia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/South-Korea.svg",
+    "label": "South Korea"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Spain.svg",
+    "label": "Spain"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Sweden.svg",
+    "label": "Sweden"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Switzerland.svg",
+    "label": "Switzerland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Ukraine.svg",
+    "label": "Ukraine"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/United-States.svg",
+    "label": "United States"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Uruguay.svg",
+    "label": "Uruguay"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Wales.svg",
+    "label": "Wales"
+  }
+]

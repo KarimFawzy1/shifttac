@@ -43,6 +43,7 @@ flutter:
     - assets/fonts/
     - assets/db/tiki_taka.db
     - assets/tiki_taka/attrs/manifest.json
+    - assets/tiki_taka/attrs/gallery_index.json
     - assets/tiki_taka/attrs/clubs/
     - assets/tiki_taka/attrs/leagues/
     - assets/tiki_taka/attrs/nations/

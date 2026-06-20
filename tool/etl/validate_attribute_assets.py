@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Validate Tiki-Taka attribute SVG coverage against the shipped DB and manifest.
+"""Validate Tiki-Taka attribute asset coverage against the shipped DB and manifest.
 
 Checks:
   - every club, nation, and league row in attributes has a manifest entry,
-  - every manifest entry resolves to an existing bundled SVG file,
+  - every manifest entry resolves to an existing bundled asset file,
   - position attributes are excluded from the manifest.
 
 Writes: tool/etl/reports/validate_attribute_assets_summary.json
@@ -135,7 +135,7 @@ def validate_assets(
             f"{len(missing_manifest_entries)} attribute(s) missing manifest entries"
         )
     if missing_files:
-        errors.append(f"{len(missing_files)} manifest path(s) missing bundled SVG files")
+        errors.append(f"{len(missing_files)} manifest path(s) missing bundled asset files")
     if orphan_manifest_entries:
         errors.append(
             f"{len(orphan_manifest_entries)} manifest entry(ies) not present in DB"

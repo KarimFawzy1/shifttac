@@ -7,7 +7,7 @@ import '../../data/models/tiki_attribute.dart';
 import '../../domain/services/tiki_attribute_asset_manifest.dart';
 import 'tiki_attribute_svg_asset.dart';
 
-/// Renders a club, league, or nation SVG, or position text for board headers.
+/// Renders a club PNG, league/nation SVG, or position text for board headers.
 class TikiAttributeIcon extends StatelessWidget {
   const TikiAttributeIcon({
     super.key,
@@ -21,7 +21,6 @@ class TikiAttributeIcon extends StatelessWidget {
   final double? iconSize;
 
   /// Tall club crests sit in a square slot; boost them to match league/nation weight.
-  @visibleForTesting
   static const double clubVisualScale = 1.6;
 
   @visibleForTesting
@@ -57,11 +56,12 @@ class TikiAttributeIcon extends StatelessWidget {
         height: size,
         child: ClipRect(
           child: Center(
-            child: TikiAttributeSvgAsset(
-              assetPath: assetPath,
-              size: renderSize,
-              rasterize: true,
-              errorBuilder: (context) {
+            child: Image.asset(
+              assetPath,
+              width: renderSize,
+              height: renderSize,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
                 return _FallbackLabel(attribute: attribute, size: size);
               },
             ),

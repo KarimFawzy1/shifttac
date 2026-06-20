@@ -6,7 +6,8 @@ Manifest format (flat JSON object):
 
 Mapping strategy (preferred):
   1. Read club/nation/league rows from attributes (position rows are excluded).
-  2. Derive SVG filename from display_name: spaces -> hyphens, append .svg.
+  2. Derive asset filename from display_name: spaces -> hyphens, clubs use .png,
+     nations and leagues use .svg.
   3. Resolve under assets/tiki_taka/attrs/{clubs|nations|leagues}/.
   4. Apply optional overrides from tool/etl/config/attribute_asset_overrides.yaml.
 
@@ -65,13 +66,14 @@ def _load_overrides(path: Path) -> dict[str, str]:
     return overrides
 
 
-def display_name_to_filename(display_name: str) -> str:
-    return f"{display_name.replace(' ', '-')}.svg"
+def display_name_to_filename(display_name: str, attribute_type: str) -> str:
+    extension = ".png" if attribute_type == "club" else ".svg"
+    return f"{display_name.replace(' ', '-')}{extension}"
 
 
 def default_asset_path(attribute_type: str, display_name: str) -> str:
     subdir = TYPE_SUBDIRS[attribute_type]
-    filename = display_name_to_filename(display_name)
+    filename = display_name_to_filename(display_name, attribute_type)
     return f"assets/tiki_taka/attrs/{subdir}/{filename}"
 
 
@@ -108,7 +110,7 @@ def build_manifest(
         disk_path = REPO_ROOT / asset_path
         if not disk_path.is_file():
             raise FileNotFoundError(
-                f"Missing SVG for {icon_key} ({display_name}): {asset_path}"
+                f"Missing asset for {icon_key} ({display_name}): {asset_path}"
             )
 
         manifest[icon_key] = asset_path.replace("\\", "/")

@@ -9,9 +9,10 @@ import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/screen_header.dart';
 import '../../domain/services/tiki_attribute_asset_manifest.dart';
 import '../widgets/tiki_attribute_header.dart';
+import '../widgets/tiki_attribute_icon.dart';
 import '../widgets/tiki_attribute_svg_asset.dart';
 
-/// Scrollable list of every bundled Tiki-Taka attribute SVG at gameplay size.
+/// Scrollable list of every bundled club PNG and nation SVG at gameplay size.
 class TikiAttributeGalleryScreen extends StatelessWidget {
   const TikiAttributeGalleryScreen({super.key});
 
@@ -28,15 +29,15 @@ class TikiAttributeGalleryScreen extends StatelessWidget {
         onLeadingPressed: () => Navigator.of(context).pop(),
         leadingSemanticLabel: 'Back',
       ),
-      child: FutureBuilder<TikiAttributeAssetManifest>(
-        future: TikiAttributeAssetManifest.load(),
+      child: FutureBuilder<List<TikiGalleryAsset>>(
+        future: TikiAttributeAssetManifest.loadGalleryAssets(),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final manifest = snapshot.data;
-          if (manifest == null) {
+          final assets = snapshot.data;
+          if (assets == null || assets.isEmpty) {
             return Center(
               child: Text(
                 'Could not load attribute assets.',
@@ -47,7 +48,8 @@ class TikiAttributeGalleryScreen extends StatelessWidget {
             );
           }
 
-          final assetPaths = manifest.allAssetPaths;
+          final clubCount = assets.where((asset) => asset.isClub).length;
+          final nationCount = assets.length - clubCount;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,7 +61,7 @@ class TikiAttributeGalleryScreen extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.unit.h),
               Text(
-                '${assetPaths.length} SVGs',
+                '$clubCount clubs · $nationCount nations',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyMd.copyWith(
                   color: AppColors.onSurfaceVariant,
@@ -69,19 +71,14 @@ class TikiAttributeGalleryScreen extends StatelessWidget {
               Expanded(
                 child: ListView.separated(
                   physics: const BouncingScrollPhysics(),
-                  itemCount: assetPaths.length,
+                  itemCount: assets.length,
                   separatorBuilder: (context, index) =>
                       SizedBox(height: AppSpacing.stackSm.h),
                   itemBuilder: (context, index) {
-                    final assetPath = assetPaths[index];
-                    final label =
-                        TikiAttributeAssetManifest.displayNameForAssetPath(
-                      assetPath,
-                    );
+                    final asset = assets[index];
 
                     return _GalleryRow(
-                      assetPath: assetPath,
-                      label: label,
+                      asset: asset,
                       iconSize: iconSize,
                     );
                   },
@@ -97,13 +94,11 @@ class TikiAttributeGalleryScreen extends StatelessWidget {
 
 class _GalleryRow extends StatelessWidget {
   const _GalleryRow({
-    required this.assetPath,
-    required this.label,
+    required this.asset,
     required this.iconSize,
   });
 
-  final String assetPath;
-  final String label;
+  final TikiGalleryAsset asset;
   final double iconSize;
 
   @override
@@ -120,20 +115,25 @@ class _GalleryRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            TikiAttributeSvgAsset(
-              assetPath: assetPath,
-              size: iconSize,
-              rasterize: true,
-              semanticsLabel: label,
-              errorBuilder: (context) => _SvgErrorPlaceholder(size: iconSize),
-            ),
+            _GalleryAssetIcon(asset: asset, iconSize: iconSize),
             SizedBox(width: AppSpacing.stackSm.w),
             Expanded(
-              child: Text(
-                label,
-                style: AppTextStyles.bodyMd.copyWith(
-                  color: AppColors.onSurface,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    asset.label,
+                    style: AppTextStyles.bodyMd.copyWith(
+                      color: AppColors.onSurface,
+                    ),
+                  ),
+                  Text(
+                    asset.isClub ? 'Club' : 'Nation',
+                    style: AppTextStyles.labelSm.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -143,8 +143,52 @@ class _GalleryRow extends StatelessWidget {
   }
 }
 
-class _SvgErrorPlaceholder extends StatelessWidget {
-  const _SvgErrorPlaceholder({required this.size});
+class _GalleryAssetIcon extends StatelessWidget {
+  const _GalleryAssetIcon({
+    required this.asset,
+    required this.iconSize,
+  });
+
+  final TikiGalleryAsset asset;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    if (asset.isClub) {
+      final renderSize = iconSize * TikiAttributeIcon.clubVisualScale;
+
+      return SizedBox(
+        width: iconSize,
+        height: iconSize,
+        child: ClipRect(
+          child: Center(
+            child: Image.asset(
+              asset.path,
+              width: renderSize,
+              height: renderSize,
+              fit: BoxFit.contain,
+              semanticLabel: asset.label,
+              errorBuilder: (context, error, stackTrace) {
+                return _AssetErrorPlaceholder(size: iconSize);
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
+    return TikiAttributeSvgAsset(
+      assetPath: asset.path,
+      size: iconSize,
+      rasterize: true,
+      semanticsLabel: asset.label,
+      errorBuilder: (context) => _AssetErrorPlaceholder(size: iconSize),
+    );
+  }
+}
+
+class _AssetErrorPlaceholder extends StatelessWidget {
+  const _AssetErrorPlaceholder({required this.size});
 
   final double size;
 

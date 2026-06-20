@@ -63,6 +63,13 @@ Widget _wrap(Widget child) {
   );
 }
 
+Finder _clubImageWithAsset(String assetPath) {
+  return find.byWidgetPredicate(
+    (widget) => widget is Image && widget.image is AssetImage &&
+        (widget.image as AssetImage).assetName == assetPath,
+  );
+}
+
 Finder _svgWithAsset(String assetPath) {
   return find.byWidgetPredicate(
     (widget) =>
@@ -105,11 +112,11 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('club header displays SVG', (tester) async {
+    testWidgets('club header displays PNG', (tester) async {
       await pumpHeader(tester, attribute: _liverpoolClub);
 
       expect(
-        _svgWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.svg'),
+        _clubImageWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.png'),
         findsOneWidget,
       );
       expect(find.bySemanticsLabel('Club: Liverpool'), findsOneWidget);
@@ -179,7 +186,7 @@ void main() {
       expect(TikiAttributeIcon.visualScaleFor(_premierLeague), 1.0);
     });
 
-    testWidgets('club SVG uses boosted render size', (tester) async {
+    testWidgets('club PNG uses boosted render size', (tester) async {
       const slotSize = 30.0;
 
       await tester.pumpWidget(
@@ -193,10 +200,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final clubSvg = tester.widget<TikiAttributeSvgAsset>(
-        find.byType(TikiAttributeSvgAsset),
+      final clubImage = tester.widget<Image>(
+        _clubImageWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.png'),
       );
-      expect(clubSvg.size, slotSize * TikiAttributeIcon.clubVisualScale);
+      expect(clubImage.width, slotSize * TikiAttributeIcon.clubVisualScale);
+      expect(clubImage.height, slotSize * TikiAttributeIcon.clubVisualScale);
     });
 
     testWidgets('league SVG keeps unscaled render size', (tester) async {
@@ -229,10 +237,10 @@ void main() {
 
       expect(
         manifest.pathForIconKey('club_31'),
-        'assets/tiki_taka/attrs/clubs/Liverpool.svg',
+        'assets/tiki_taka/attrs/clubs/Liverpool.png',
       );
       expect(
-        _svgWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.svg'),
+        _clubImageWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.png'),
         findsOneWidget,
       );
     });
@@ -267,7 +275,7 @@ void main() {
       expect(find.byType(TikiAttributeHeader), findsNWidgets(6));
       expect(find.text('FWD'), findsOneWidget);
       expect(
-        _svgWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.svg'),
+        _clubImageWithAsset('assets/tiki_taka/attrs/clubs/Liverpool.png'),
         findsOneWidget,
       );
     });

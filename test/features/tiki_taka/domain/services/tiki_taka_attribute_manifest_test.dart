@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Phase G2 DoD: icon_key manifest maps shipped attributes to bundled SVGs.
+/// Phase G2 DoD: icon_key manifest maps shipped attributes to bundled assets.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -25,11 +25,11 @@ void main() {
     }
   });
 
-  test('manifest covers 84 club, league, and nation icon_keys', () {
-    expect(manifest.length, 84);
+  test('manifest covers all club, league, and nation icon_keys', () {
+    expect(manifest.length, 153);
     expect(
       manifest.keys.where((key) => key.startsWith('club_')).length,
-      54,
+      100,
     );
     expect(
       manifest.keys.where((key) => key.startsWith('league_')).length,
@@ -37,14 +37,14 @@ void main() {
     );
     expect(
       manifest.keys.where((key) => key.startsWith('nation_')).length,
-      25,
+      48,
     );
   });
 
   test('known icon_keys map to expected asset paths', () {
     expect(
       manifest['club_31'],
-      'assets/tiki_taka/attrs/clubs/Liverpool.svg',
+      'assets/tiki_taka/attrs/clubs/Liverpool.png',
     );
     expect(
       manifest['league_gb1'],
@@ -56,32 +56,46 @@ void main() {
     );
   });
 
-  testWidgets('manifest paths load via SvgPicture.asset', (tester) async {
+  testWidgets('manifest paths load via bundled asset widgets', (tester) async {
     final samples = [
-      manifest['club_31']! as String,
-      manifest['league_gb1']! as String,
-      manifest['nation_egypt']! as String,
+      (manifest['club_31']! as String, false),
+      (manifest['league_gb1']! as String, true),
+      (manifest['nation_egypt']! as String, true),
     ];
 
-    for (final path in samples) {
+    for (final (path, isSvg) in samples) {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SvgPicture.asset(path, width: 24, height: 24),
+            body: isSvg
+                ? SvgPicture.asset(path, width: 24, height: 24)
+                : Image.asset(path, width: 24, height: 24),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.byWidgetPredicate(
-          (widget) =>
-              widget is SvgPicture &&
-              widget.bytesLoader is SvgAssetLoader &&
-              (widget.bytesLoader as SvgAssetLoader).assetName == path,
-        ),
-        findsOneWidget,
-      );
+      if (isSvg) {
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is SvgPicture &&
+                widget.bytesLoader is SvgAssetLoader &&
+                (widget.bytesLoader as SvgAssetLoader).assetName == path,
+          ),
+          findsOneWidget,
+        );
+      } else {
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Image &&
+                widget.image is AssetImage &&
+                (widget.image as AssetImage).assetName == path,
+          ),
+          findsOneWidget,
+        );
+      }
     }
   });
 }
