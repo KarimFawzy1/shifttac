@@ -16,6 +16,7 @@ import 'package:shifttac/shared/widgets/board_winning_line_overlay.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_cubit.dart';
 import 'package:shifttac/features/tiki_taka/presentation/state/tiki_taka_state.dart';
 import 'package:shifttac/features/tiki_taka/domain/services/player_avatar_image_queue.dart';
+import 'package:shifttac/features/tiki_taka/presentation/debug/tiki_taka_debug_settings.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_avatar.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/player_diagonal_name.dart';
 import 'package:shifttac/features/tiki_taka/presentation/widgets/tiki_taka_board.dart';
@@ -133,7 +134,10 @@ TikiTakaCubit _cubitWithBoard(TikiTakaTestDatabaseHandle handle) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  tearDown(PlayerAvatarImageQueue.instance.resetForTest);
+  tearDown(() {
+    PlayerAvatarImageQueue.instance.resetForTest();
+    TikiTakaDebugSettings.instance.resetForTest();
+  });
 
   late TikiTakaTestDatabaseHandle databaseHandle;
 
@@ -218,6 +222,46 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.byType(Transform), findsWidgets);
       expect(avatar.unavailableFallback, isA<PlayerDiagonalName>());
+    });
+
+    testWidgets(
+        'filled cell honors debug loading preview toggle',
+        (tester) async {
+      TikiTakaDebugSettings.instance.forceBoardAvatarLoading = true;
+      addTearDown(TikiTakaDebugSettings.instance.resetForTest);
+
+      const player = TikiPlayerSearchResult(
+        id: 'tm:148455',
+        displayName: 'Mohamed Salah',
+        imageUrl:
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Mohamed%20Salah%202018.jpg?width=128',
+      );
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: AppConstants.designSize,
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: TikiTakaCell(
+                    cell: const TikiCell(row: 0, col: 0, player: player),
+                    interactive: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final avatar = tester.widget<PlayerAvatar>(find.byType(PlayerAvatar));
+      expect(avatar.forceLoadingFallback, isTrue);
+      expect(find.byType(Image), findsNothing);
+      expect(find.byType(Transform), findsWidgets);
     });
 
     testWidgets(

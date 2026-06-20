@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:characters/characters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -9,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/models/tiki_cell.dart';
 import '../../domain/services/player_image_url_validator.dart';
+import '../debug/tiki_taka_debug_settings.dart';
 import 'player_avatar.dart';
 import 'player_diagonal_name.dart';
 
@@ -28,7 +28,6 @@ class TikiTakaCell extends StatelessWidget {
   final bool isActive;
 
   static const double _outerRadius = AppSpacing.radiusMd;
-  static const bool _forceBoardAvatarLoadingForTest = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,17 +86,23 @@ class TikiTakaCell extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          return PlayerAvatar(
-            imageUrl: cell.player!.imageUrl,
-            playerName: displayName,
-            size: size,
-            fit: BoxFit.cover,
-            borderRadius: BorderRadius.circular(innerRadius),
-            forceLoadingFallback: _forceBoardAvatarLoadingForTest,
-            loadingFallback: _AnimatedDiagonalLoadingName(
-              displayName: displayName,
-            ),
-            unavailableFallback: PlayerDiagonalName(displayName: displayName),
+          return ListenableBuilder(
+            listenable: TikiTakaDebugSettings.instance,
+            builder: (context, _) {
+              return PlayerAvatar(
+                imageUrl: cell.player!.imageUrl,
+                playerName: displayName,
+                size: size,
+                fit: BoxFit.cover,
+                borderRadius: BorderRadius.circular(innerRadius),
+                forceLoadingFallback:
+                    TikiTakaDebugSettings.instance.forceBoardAvatarLoading,
+                loadingFallback: _AnimatedDiagonalLoadingName(
+                  displayName: displayName,
+                ),
+                unavailableFallback: PlayerDiagonalName(displayName: displayName),
+              );
+            },
           );
         },
       );

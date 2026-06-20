@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +14,7 @@ import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/widgets/app_scroll_view.dart';
 import '../../../../core/widgets/secondary_button.dart';
 import '../../../../shared/widgets/screen_header.dart';
+import '../../../tiki_taka/presentation/debug/tiki_taka_debug_settings.dart';
 import '../widgets/credits_dialog.dart';
 import '../widgets/settings_tile.dart';
 
@@ -131,6 +133,36 @@ class _SettingsBody extends StatelessWidget {
                   ),
                 ],
               ),
+              if (kDebugMode) ...[
+                SizedBox(height: AppSpacing.stackMd.h),
+                ListenableBuilder(
+                  listenable: TikiTakaDebugSettings.instance,
+                  builder: (context, _) {
+                    final debug = TikiTakaDebugSettings.instance;
+                    return SettingsSection(
+                      title: 'Debug',
+                      children: [
+                        SettingsTile(
+                          icon: Icon(
+                            Icons.bug_report_outlined,
+                            size: 20.sp,
+                            color: AppColors.onSurface,
+                          ),
+                          title: 'Board cell loading preview',
+                          subtitle:
+                              'Keep animated name placeholders on filled board cells',
+                          trailing: SettingsSwitch(
+                            value: debug.forceBoardAvatarLoading,
+                            onChanged: (value) {
+                              debug.forceBoardAvatarLoading = value;
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
               SizedBox(height: AppSpacing.stackMd.h),
               SettingsSection(
                 title: 'About',
