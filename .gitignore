@@ -52,3 +52,7 @@ docs/implementation-rules.md
 transfermarkt-datasets/
 tool/
 assets/db/
+
+# Legendary players — local cache and backups
+legendary-players/.wikidata_cache.json
+legendary-players/old_tiki_taka.db
