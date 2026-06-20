@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""Generate tool/etl/config/club_top5_league.yaml from allowlist + clubs.csv.
+
+Maps allowlisted club_id → top-5 competition_id (GB1, ES1, IT1, L1, FR1) for
+Path B league_club edges. Clubs outside top-5 domestic leagues are omitted.
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import sys
+from pathlib import Path
+
+import yaml
+
+_ETL = Path(__file__).resolve().parents[1]
+REPO = _ETL.parents[1]
+CLUBS_ALLOWLIST = _ETL / "config" / "clubs_allowlist.yaml"
+CLUBS_CSV = _ETL / "staging" / "normalized" / "clubs.csv"
+OUTPUT = _ETL / "config" / "club_top5_league.yaml"
+
+TOP5 = frozenset({"GB1", "ES1", "IT1", "L1", "FR1"})
+
+# Display names in clubs_allowlist.yaml → top-5 league (fallback when clubs.csv missing)
+LEAGUE_BY_DISPLAY_NAME: dict[str, str] = {
+    name: "GB1"
+    for name in (
+        "Arsenal",
+        "Aston Villa",
+        "Brentford",
+        "Brighton",
+        "Burnley",
+        "Chelsea",
+        "Crystal Palace",
+        "Everton",
+        "Fulham",
+        "Leeds United",
+        "Leicester City",
+        "Liverpool",
+        "Manchester City",
+        "Manchester United",
+        "Newcastle United",
+        "Nottingham Forest",
+        "Southampton",
+        "Tottenham Hotspur",
+        "West Ham United",
+        "Wolverhampton",
+    )
+}
+LEAGUE_BY_DISPLAY_NAME.update(
+    {
+        name: "ES1"
+        for name in (
+            "Atlético Madrid",
+            "Barcelona",
+            "Real Madrid",
+            "Sevilla",
+            "Valencia",
+            "Villarreal",
+            "Espanyol",
+            "Deportivo La Coruña",
+            "Celta Vigo",
+            "Athletic Bilbao",
+            "Real Sociedad",
+            "Real Zaragoza",
+            "Rayo Vallecano",
+            "Real Valladolid",
+        )
+    }
+)
+LEAGUE_BY_DISPLAY_NAME.update(
+    {
+        name: "IT1"
+        for name in (
+            "AC Milan",
+            "Atalanta",
+            "Bologna",
+            "Fiorentina",
+            "Inter Milan",
+            "Juventus",
+            "Lazio",
+            "Napoli",
+            "Roma",
+            "Parma",
+            "Genoa",
+            "Udinese",
+            "Torino",
+            "Como",
+        )
+    }
+)
+LEAGUE_BY_DISPLAY_NAME.update(
+    {
+        name: "L1"
+        for name in (
+            "Bayern Munich",
+            "Bayer Leverkusen",
+            "Borussia Dortmund",
+            "Eintracht Frankfurt",
+            "RB Leipzig",
+            "Union Berlin",
+            "VfB Stuttgart",
+            "VfL Wolfsburg",
+            "Hamburger SV",
+            "FC Köln",
+            "Schalke 04",
+        )
+    }
+)
+LEAGUE_BY_DISPLAY_NAME.update(
+    {
+        name: "FR1"
+        for name in (
+            "Lille",
+            "Lyon",
+            "Marseille",
+            "Monaco",
+            "Nice",
+            "Paris Saint Germain",
+            "FC Nantes",
+        )
+    }
+)
+
+
+def load_domestic_from_csv() -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    if not CLUBS_CSV.is_file():
+        return mapping
+    with CLUBS_CSV.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            club_id = (row.get("club_id") or "").strip()
+            domestic = (row.get("domestic_competition_id") or "").strip().upper()
+            if club_id and domestic:
+                mapping[club_id] = domestic
+    return mapping
+
+
+def build_mapping() -> tuple[dict[str, str], list[str]]:
+    allowlist = yaml.safe_load(CLUBS_ALLOWLIST.read_text(encoding="utf-8"))
+    clubs: dict[str, str] = allowlist.get("clubs") or {}
+    csv_domestic = load_domestic_from_csv()
+    mapping: dict[str, str] = {}
+    errors: list[str] = []
+
+    for display_name, club_id in clubs.items():
+        club_id = str(club_id)
+        domestic = csv_domestic.get(club_id) or LEAGUE_BY_DISPLAY_NAME.get(display_name)
+        if not domestic:
+            continue
+        domestic = domestic.upper()
+        if domestic not in TOP5:
+            continue
+        if display_name in LEAGUE_BY_DISPLAY_NAME and LEAGUE_BY_DISPLAY_NAME[display_name] != domestic:
+            errors.append(
+                f"{display_name} ({club_id}): csv={domestic} "
+                f"!= expected={LEAGUE_BY_DISPLAY_NAME[display_name]}"
+            )
+        mapping[club_id] = domestic
+
+    expected_top5 = {
+        str(clubs[name])
+        for name in LEAGUE_BY_DISPLAY_NAME
+        if name in clubs
+    }
+    missing = sorted(expected_top5 - set(mapping))
+    if missing:
+        errors.append(f"Missing top-5 mappings for club_ids: {', '.join(missing)}")
+
+    return dict(sorted(mapping.items(), key=lambda item: item[0])), errors
+
+
+def write_yaml(mapping: dict[str, str]) -> None:
+    allowlist = yaml.safe_load(CLUBS_ALLOWLIST.read_text(encoding="utf-8"))
+    id_to_name = {str(v): k for k, v in (allowlist.get("clubs") or {}).items()}
+    lines = [
+        "# club_id → top-5 competition_id (Path B league_club)",
+        "# Generated by tool/etl/scripts/generate_club_top5_league.py",
+        'version: "1"',
+        "mapping:",
+    ]
+    for club_id, league in mapping.items():
+        name = id_to_name.get(club_id, club_id)
+        lines.append(f'  "{club_id}": {league}  # {name}')
+    OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--verify", action="store_true", help="Validate existing YAML only")
+    args = parser.parse_args()
+
+    if args.verify:
+        if not OUTPUT.is_file():
+            print(f"Missing {OUTPUT}", file=sys.stderr)
+            return 1
+        cfg = yaml.safe_load(OUTPUT.read_text(encoding="utf-8"))
+        mapping = {str(k): str(v).upper() for k, v in (cfg.get("mapping") or {}).items()}
+    else:
+        mapping, errors = build_mapping()
+        if errors:
+            for err in errors:
+                print(f"ERROR: {err}", file=sys.stderr)
+            return 1
+        write_yaml(mapping)
+        print(f"Wrote {OUTPUT} ({len(mapping)} clubs)")
+
+    _, build_errors = build_mapping()
+    if build_errors:
+        for err in build_errors:
+            print(f"VERIFY FAIL: {err}", file=sys.stderr)
+        return 1
+
+    print(f"Verified {len(mapping)} top-5 club mappings")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

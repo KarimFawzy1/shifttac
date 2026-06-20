@@ -1,0 +1,44 @@
+{
+  "intentionally_stripped_nations": [
+    "North Macedonia",
+    "Iran",
+    "Georgia",
+    "Paraguay",
+    "Zambia",
+    "South Africa",
+    "New Zealand"
+  ],
+  "policy": "Do not add these nations to nations_allowlist.yaml or EXCEPTION_NATIONS.",
+  "players_in_csv_with_blank_nationality": [
+    {
+      "player_name": "Darko Pančev",
+      "transfermarkt_id": "100098",
+      "clubs": [
+        "Red Star Belgrade",
+        "Inter Milan"
+      ]
+    },
+    {
+      "player_name": "Ali Daei",
+      "transfermarkt_id": "335",
+      "clubs": [
+        "Bayern Munich",
+        "Al-Shabab"
+      ]
+    },
+    {
+      "player_name": "Kakha Kaladze",
+      "transfermarkt_id": "3430",
+      "clubs": [
+        "AC Milan",
+        "Genoa"
+      ]
+    }
+  ],
+  "reference_players_not_in_csv": {
+    "Paraguay": "José Luis Chilavert (not in with_tm_id CSV — TM id unresolved)",
+    "Zambia": "Kalusha Bwalya (not in with_tm_id CSV — TM id unresolved)",
+    "South Africa": "Lucas Radebe (not in with_tm_id CSV — TM id unresolved)",
+    "New Zealand": "Wynton Rufer (not in with_tm_id CSV — TM id unresolved)"
+  }
+}

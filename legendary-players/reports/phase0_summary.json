@@ -1,0 +1,56 @@
+{
+  "completed_at": "2026-06-20T12:32:45.286898+00:00",
+  "phase": "0",
+  "csv_rows": 336,
+  "empty_nationality_count": 3,
+  "empty_clubs_count": 7,
+  "qualification_preview": {
+    "csv_rows": 336,
+    "included_preview": 336,
+    "excluded_insufficient_attributes": 0,
+    "excluded_players": []
+  },
+  "players_without_allowlisted_clubs": [
+    {
+      "player_name": "Lev Yashin",
+      "transfermarkt_id": "174987",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (GK)"
+    },
+    {
+      "player_name": "Gigi Riva",
+      "transfermarkt_id": "145348",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (FWD)"
+    },
+    {
+      "player_name": "Hans-Peter Briegel",
+      "transfermarkt_id": "71378",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (DEF)"
+    },
+    {
+      "player_name": "Nándor Hidegkuti",
+      "transfermarkt_id": "105334",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (FWD)"
+    },
+    {
+      "player_name": "József Bozsik",
+      "transfermarkt_id": "136476",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (MID)"
+    },
+    {
+      "player_name": "Valentin Ivanov",
+      "transfermarkt_id": "151247",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (FWD)"
+    },
+    {
+      "player_name": "Lakhdar Belloumi",
+      "transfermarkt_id": "117732",
+      "notes": "No allowlisted clubs; qualifies at ingest via nation + position (MID)"
+    }
+  ],
+  "top5_club_mappings": 66,
+  "acceptance": {
+    "stripped_nations_documented": true,
+    "verify_club_mapping_passed": true,
+    "club_top5_league_generated": true
+  }
+}
