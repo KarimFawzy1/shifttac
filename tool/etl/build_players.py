@@ -26,7 +26,7 @@ _ETL_DIR = Path(__file__).resolve().parent
 if str(_ETL_DIR) not in sys.path:
     sys.path.insert(0, str(_ETL_DIR))
 
-from etl_common import REPORTS, STAGING_NORM  # noqa: E402
+from etl_common import REPORTS, STAGING_NORM, load_yaml  # noqa: E402
 from search_rank import compute_search_rank, load_search_rank_boosts  # noqa: E402
 
 STAGING = _ETL_DIR / "staging"
@@ -62,6 +62,49 @@ def tm_id(player_id: str) -> str:
 
 def attribute_kind(attribute_id: str) -> str:
     return attribute_id.split(":", 1)[0] if ":" in attribute_id else ""
+
+
+def load_shipped_attribute_ids() -> set[str]:
+    """Attribute ids that exist in the shipped SQLite attributes table."""
+    ids: set[str] = set()
+    for club_id in (load_yaml("clubs_allowlist.yaml").get("clubs") or {}).values():
+        ids.add(f"club:{club_id}")
+    for comp_id in (load_yaml("leagues_allowlist.yaml").get("leagues") or {}).values():
+        ids.add(f"league:{str(comp_id).upper()}")
+    for filename in ("attributes_nation.csv", "attributes_position.csv"):
+        path = STAGING / filename
+        if not path.is_file():
+            continue
+        with path.open(encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                attribute_id = (row.get("id") or "").strip()
+                if attribute_id:
+                    ids.add(attribute_id)
+    return ids
+
+
+def filter_edges_to_shipped_attributes(
+    rows: list[dict[str, str]],
+    shipped_ids: set[str],
+) -> tuple[list[dict[str, str]], dict[str, set[str]], dict[str, set[str]], int]:
+    filtered: list[dict[str, str]] = []
+    distinct_attrs: dict[str, set[str]] = defaultdict(set)
+    kinds: dict[str, set[str]] = defaultdict(set)
+    dropped = 0
+
+    for row in rows:
+        player_id = row["player_id"]
+        attribute_id = row["attribute_id"]
+        if attribute_id not in shipped_ids:
+            dropped += 1
+            continue
+        filtered.append(row)
+        distinct_attrs[player_id].add(attribute_id)
+        kind = attribute_kind(attribute_id)
+        if kind:
+            kinds[player_id].add(kind)
+
+    return filtered, distinct_attrs, kinds, dropped
 
 
 def load_all_edges() -> tuple[list[dict[str, str]], dict[str, set[str]], dict[str, set[str]]]:
@@ -206,11 +249,44 @@ def write_players_table(
     return rows
 
 
+SOURCE_PRIORITY = (
+    "legendary_career",
+    "legendary_club",
+    "legendary_nation",
+    "legendary_league",
+    "legendary_position",
+    "appearance",
+    "transfer",
+    "league_club",
+    "league_appearance",
+    "derived_nation",
+    "derived_position",
+)
+
+
+def source_rank(source: str) -> int:
+    try:
+        return SOURCE_PRIORITY.index(source)
+    except ValueError:
+        return len(SOURCE_PRIORITY)
+
+
 def write_player_attributes(
     all_edges: list[dict[str, str]], qualified: set[str]
 ) -> list[dict[str, str]]:
-    rows = [e for e in all_edges if e["player_id"] in qualified]
-    rows.sort(key=lambda r: (r["player_id"], r["attribute_id"], r["source"]))
+    best_by_key: dict[tuple[str, str], dict[str, str]] = {}
+    for edge in all_edges:
+        if edge["player_id"] not in qualified:
+            continue
+        key = (edge["player_id"], edge["attribute_id"])
+        existing = best_by_key.get(key)
+        if existing is None or source_rank(edge["source"]) < source_rank(existing["source"]):
+            best_by_key[key] = edge
+
+    rows = sorted(
+        best_by_key.values(),
+        key=lambda r: (r["player_id"], r["attribute_id"], r["source"]),
+    )
 
     with PLAYER_ATTRIBUTES_PATH.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=ATTRIBUTE_FIELDS)
@@ -251,7 +327,12 @@ def validate_output(
 
 def main() -> int:
     try:
-        all_edges, distinct_attrs, kinds = load_all_edges()
+        raw_edges, _, _ = load_all_edges()
+        shipped_ids = load_shipped_attribute_ids()
+        all_edges, distinct_attrs, kinds, dropped_edges = filter_edges_to_shipped_attributes(
+            raw_edges,
+            shipped_ids,
+        )
         profiles = load_player_profiles()
         positions = load_position_cache()
     except FileNotFoundError as exc:
@@ -292,6 +373,7 @@ def main() -> int:
         "player_count": player_count,
         "manifest_player_count": player_count,
         "attribute_edge_rows": edge_rows,
+        "dropped_non_shipped_attribute_edges": dropped_edges,
         "total_tm_players_in_normalized_csv": total_tm_players,
         "players_with_any_attribute_edge": len(distinct_attrs),
         "players_excluded_by_filter": total_tm_players - player_count,

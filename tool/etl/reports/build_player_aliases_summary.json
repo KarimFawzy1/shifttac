@@ -1,0 +1,61 @@
+{
+  "phase": "D8",
+  "built_at": "2026-06-20T13:05:20+00:00",
+  "output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\player_aliases.csv",
+  "build_stats": {
+    "total_alias_rows": 84088,
+    "phrase_ngram_aliases": 4691,
+    "unique_surnames_added": 14741,
+    "yaml_aliases_added": 6,
+    "players_indexed": 28454
+  },
+  "spot_checks": {
+    "prefix_salah_match_count": 9,
+    "prefix_salah_includes_mohamed_salah": true,
+    "prefix_salah_sample_names": [
+      "Anass Salah-Eddine",
+      "Ibrahim Salah",
+      "Mohamed Salah",
+      "Salah Basha",
+      "Salah Mohsen",
+      "Salah Oulad",
+      "Salaheddine Chihab",
+      "Salaheddine Errahouli"
+    ],
+    "collision_check": {
+      "surname_prefix": "silva",
+      "match_count": 106,
+      "sample_names": [
+        "Adrien Silva",
+        "Alex da Silva",
+        "Alves Da Silva",
+        "Anderson Silva",
+        "Andr\u00e9 Silva"
+      ]
+    },
+    "ngram_spot_checks": [
+      {
+        "prefix": "van dijk",
+        "expected_id": "tm:139208",
+        "expected_name": "Virgil van Dijk",
+        "passed": true,
+        "match_count": 4
+      },
+      {
+        "prefix": "kolo muani",
+        "expected_id": "tm:487969",
+        "expected_name": "Randal Kolo Muani",
+        "passed": true,
+        "match_count": 1
+      },
+      {
+        "prefix": "de jong",
+        "expected_id": "tm:326330",
+        "expected_name": "Frenkie de Jong",
+        "passed": true,
+        "match_count": 10
+      }
+    ]
+  },
+  "spot_check_passed": true
+}

@@ -1,0 +1,15 @@
+{
+  "manifest_path": "assets/tiki_taka/attrs/manifest.json",
+  "db_path": "assets/db/tiki_taka.db",
+  "entry_count": 153,
+  "counts_by_type": {
+    "club": 100,
+    "league": 5,
+    "nation": 48
+  },
+  "override_count": 0,
+  "excluded_types": [
+    "position"
+  ],
+  "strategy": "display_name slug + optional icon_key overrides"
+}

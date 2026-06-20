@@ -1,0 +1,21 @@
+{
+  "phase": "D9",
+  "built_at": "2026-06-20T13:05:21+00:00",
+  "output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\attribute_pair_stats.csv",
+  "forbidden_pairs_report": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\forbidden_pairs.json",
+  "total_pair_stats": 11112,
+  "total_cross_type_pairs": 6152,
+  "same_type_club_pairs": 4950,
+  "same_type_league_pairs": 10,
+  "template_runtime_pairs": 10365,
+  "pairs_with_count_gte_3": 2154,
+  "template_pairs_with_count_gte_3": 1666,
+  "forbidden_template_pair_count": 7039,
+  "boards_staged": true,
+  "board_slot_pairs_checked": 528,
+  "board_coverage_errors": [],
+  "spot_check_salah_egypt_liverpool": 1,
+  "spot_check_liverpool_chelsea": 8,
+  "spot_check_gb1_it1": 413,
+  "validation_passed": true
+}

@@ -38,7 +38,7 @@ PLAYER_IMAGE_SUMMARY_PATH = REPORTS / "fetch_player_images_summary.json"
 SCHEMA_VERSION = 3
 MAX_DB_BYTES = 20 * 1024 * 1024
 
-PLAYER_IMAGE_SOURCE = "wikidata_p2446_p18"
+PLAYER_IMAGE_SOURCE = "wikidata_p2446_p18_and_qid_fast_path"
 PLAYER_IMAGES_PATH = STAGING / "player_images.csv"
 
 SOURCE_CSV_FILES = (

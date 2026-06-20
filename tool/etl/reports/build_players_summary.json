@@ -1,0 +1,16 @@
+{
+  "phase": "D7",
+  "built_at": "2026-06-20T13:05:19+00:00",
+  "players_table_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\players_table.csv",
+  "player_attributes_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\player_attributes.csv",
+  "manifest_preview": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\manifest_preview.json",
+  "player_count": 28454,
+  "manifest_player_count": 28454,
+  "attribute_edge_rows": 77544,
+  "dropped_non_shipped_attribute_edges": 345,
+  "total_tm_players_in_normalized_csv": 47923,
+  "players_with_any_attribute_edge": 47713,
+  "players_excluded_by_filter": 19469,
+  "filter_note": "Included 28,454 of 47,923 TM players (\u22652 distinct attributes incl. club/nation/league/position)",
+  "validation_passed": true
+}

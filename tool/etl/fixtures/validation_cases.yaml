@@ -1,0 +1,127 @@
+# Phase D12 — frozen QA cases against the shipped SQLite database.
+#
+# Re-run after each monthly CSV refresh (after build_database.py):
+#   python tool/etl/run_validation_cases.py
+#
+# Optional: pass --db to point at tool/etl/output/tiki_taka.db instead of the asset.
+
+version: "1"
+db_path: assets/db/tiki_taka.db
+
+cases:
+  - id: mo_salah_egypt_liverpool
+    type: player_intersection
+    player_id: "148455"
+    row_attr: nation:egypt
+    col_attr: club:31
+    expected: valid
+
+  - id: mo_salah_liverpool_chelsea
+    type: player_intersection
+    player_id: "148455"
+    row_attr: club:31
+    col_attr: club:631
+    expected: valid
+
+  - id: jude_bellingham_dortmund_bundesliga
+    type: player_intersection
+    player_id: "581678"
+    row_attr: club:16
+    col_attr: league:L1
+    expected: valid
+
+  - id: etoo_barcelona_cameroon
+    type: player_intersection
+    player_id: "4257"
+    row_attr: club:131
+    col_attr: nation:cameroon
+    expected: valid
+
+  - id: salah_not_at_dortmund
+    type: player_intersection
+    player_id: "148455"
+    row_attr: nation:egypt
+    col_attr: club:16
+    expected: invalid
+
+  - id: bellingham_not_liverpool_same_club_cell
+    type: player_intersection
+    player_id: "581678"
+    row_attr: club:31
+    col_attr: club:31
+    expected: invalid
+
+  - id: mo_salah_alias_resolves
+    type: alias_lookup
+    alias: mo salah
+    expected_player_id: "148455"
+
+  - id: egypt_liverpool_pair_viable
+    type: pair_stats
+    row_attr: nation:egypt
+    col_attr: club:31
+    min_player_count: 1
+    sample_includes_player_id: "148455"
+
+  - id: liverpool_chelsea_pair_viable
+    type: pair_stats
+    row_attr: club:31
+    col_attr: club:631
+    min_player_count: 1
+    sample_includes_player_id: "148455"
+
+  - id: premier_serie_pair_viable
+    type: pair_stats
+    row_attr: league:GB1
+    col_attr: league:IT1
+    min_player_count: 1
+
+  - id: forbidden_club_nation_zero
+    type: pair_stats
+    row_attr: club:1025
+    col_attr: nation:cameroon
+    max_player_count: 0
+
+  - id: boards_meet_minimum_count
+    type: board_count
+    min_boards: 120
+
+  - id: mohamed_prefix_search
+    type: player_search
+    search_prefix: mohamed
+    must_include_player_id: "148455"
+    min_results: 1
+
+  - id: maradona_argentina_barcelona
+    type: player_intersection
+    player_id: "8024"
+    row_attr: nation:argentina
+    col_attr: club:131
+    expected: valid
+
+  - id: distefano_spain_real_madrid
+    type: player_intersection
+    player_id: "135778"
+    row_attr: nation:spain
+    col_attr: club:418
+    expected: valid
+
+  - id: distefano_argentina_real_madrid
+    type: player_intersection
+    player_id: "135778"
+    row_attr: nation:argentina
+    col_attr: club:418
+    expected: valid
+
+  - id: pele_brazil_santos
+    type: player_intersection
+    player_id: "17121"
+    row_attr: nation:brazil
+    col_attr: club:221
+    expected: valid
+
+  - id: santos_brazil_pair_exists
+    type: pair_stats
+    row_attr: club:221
+    col_attr: nation:brazil
+    min_player_count: 1
