@@ -85,6 +85,27 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 | Shared test helpers | `test/features/tiki_taka/support/` |
 | Release performance + smoke | `test/features/tiki_taka/release/` |
 
+## Search and player avatars (runtime)
+
+### Search gate
+
+- Minimum query length: **3** trimmed characters (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`)
+- Enforced in `TikiTakaCubit.searchPlayers` and `PlayerSearchDialog`
+- Debounce: **300 ms**
+- SQL order: `search_rank DESC`, prefix match, then `display_name`
+
+Regression tests: `test/features/tiki_taka/data/legendary_players_smoke_test.dart`, `player_search_dialog_test.dart`.
+
+### Avatars (cosmetic, online optional)
+
+Gameplay is fully offline. Player face images are loaded at runtime from HTTPS Commons URLs in `players.image_url`:
+
+- `PlayerAvatar` + `PlayerAvatarImageQueue` — throttled fetch (max 5 concurrent, 200 ms stagger)
+- Shows `CircularProgressIndicator` while loading; falls back to placeholder or `PlayerDiagonalName` on failure
+- Does **not** affect search, validation, or board placement
+
+ETL resolves images via Wikidata (including legendary QID fast-path). See [player-image-plan.md](../../../docs/player-image-plan.md).
+
 ## Release checks (T12)
 
 ```bash
@@ -93,7 +114,7 @@ powershell -File tool/release/run_tiki_taka_release_checks.ps1
 flutter build apk --release
 ```
 
-Current bundled asset budgets (v1): SQLite **17.6 MB** / 20 MB cap, attribute SVGs **84 files · 3.0 MB** / 8 MB cap. Tiki-Taka uses no runtime network APIs.
+Current bundled asset budgets: SQLite **~19.2 MB** / 20 MB cap, attribute SVGs **84 files · 3.0 MB** / 8 MB cap. Gameplay uses no live APIs; avatar images may fetch Commons URLs when online.
 
 Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 
@@ -104,3 +125,4 @@ Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](..
 | [tiki-taka-toe-rules.md](../../../docs/tiki-taka-toe-rules.md) | Gameplay spec (Section 30, Appendix A) |
 | [tiki-taka-database-contract.md](../../../docs/tiki-taka-database-contract.md) | SQLite open strategy |
 | [dataset-plan.md](../../../docs/dataset-plan.md) | ETL schema and tables |
+| [legendary-players/legendary_players_plan.md](../../../legendary-players/legendary_players_plan.md) | Legendary player ETL (complete) |
