@@ -315,30 +315,22 @@ Search player...
 
 ### Step 3 — User types player name
 
-As the user types, a list of matching players is displayed.
+Search runs only after the user enters **at least 3 trimmed characters** (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`). Below that threshold, the dialog shows: “Type at least 3 characters to search.”
 
-The search should support:
+Queries are debounced by **300 ms** before hitting SQLite.
+
+Matching players appear in a scrollable list ordered by:
+
+1. `players.search_rank DESC` (legendary boosts — see `legendary_search_rank_boost.yaml`)
+2. Prefix match quality on `search_text` / aliases
+3. `display_name` alphabetically
+
+The search supports:
 
 * Full names
 * Common names
 * Aliases
-* Accent-insensitive search
-
-Examples:
-
-```text
-Cristiano Ronaldo
-Ronaldo
-CR7
-
-Lionel Messi
-Messi
-
-Kylian Mbappé
-Mbappe
-```
-
-Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). See [dataset-plan.md](./dataset-plan.md) — Phase D8.
+* Accent-insensitive search (normalized `search_text`)
 
 ---
 
@@ -778,7 +770,9 @@ Source data is the [transfermarkt-datasets](https://github.com/dcaribou/transfer
 ```text
 transfermarkt-datasets/*.csv     (build-time input only)
 ↓
-tool/etl/config/*.yaml           (allowlists, aliases, position map)
+tool/etl/config/*.yaml           (allowlists, aliases, position map, legendary boosts)
+↓
+tool/etl/ingest_legendary_players.py + merge_legendary_supplements.py
 ↓
 tool/etl/build_database.py       (clean → merge → sqlite)
 ↓
@@ -796,7 +790,7 @@ Full ETL phases, merge rules, and schema are defined in [dataset-plan.md](./data
 
 * Open `assets/db/tiki_taka.db` **read-only** at app start or first Tiki-Taka session.
 * Validate answers with SQL joins on `player_attributes` (independent AND rule).
-* Search players via `players.search_text` and `player_aliases`.
+* Search players via `players.search_text` and `player_aliases` (minimum **3** characters; ordered by `search_rank` then prefix match).
 * Load board layout from `boards` + `board_slots`.
 * Match state (hearts, timer, filled cells, used player IDs) lives **in memory** in the game engine/cubit — not in SQLite.
 * Optionally fetch **display-only** player face images over HTTPS from Wikimedia Commons URLs stored in `players.image_url`. Image load failures degrade to a placeholder; gameplay is never blocked.
@@ -1155,8 +1149,8 @@ Locked for Flutter implementation. See also [dataset-plan2.md](./dataset-plan2.m
 | Local multiplayer turn/steal rules | Future F1 |
 | AI opponent | Future F2 |
 | Coach attributes and ETL | Future F3 |
-| National-team citizenship edges | v1.1 |
-| Dual citizenship (both nation edges) | v1.1+ |
+| National-team citizenship edges | Partial — legendary profile edges shipped; full TM national-team ETL deferred |
+| Dual citizenship (both nation edges) | Shipped for legendary profiles (e.g. Di Stéfano → Argentina + Spain); TM dual-nation ETL deferred |
 | Stop timer on first win (non-continue path) | Optional future tweak |
 | Edit filled cells | Future feature |
 | Rich board browser | Future F4 |
@@ -1175,7 +1169,7 @@ Use this list for implementation gates and doc alignment.
 * [x] **No turns** — no X/O switching, turn indicator, or move counter
 * [x] **Failed answer** — removes heart; cell stays empty
 * [x] **Duplicate player banned** — same `player_id` cannot be reused on the board
-* [x] **Search must select DB player** — prefix search on `players` / `player_aliases`; free-text without selection is not a valid answer
+* [x] **Search must select DB player** — prefix search on `players` / `player_aliases` after **≥3 characters**; ordered by `search_rank`; free-text without selection is not a valid answer
 * [x] **First win** — first 3-in-a-row shows win dialog (Restart / Go Home / Continue Playing)
 * [x] **Optional full-board completion** — Continue Playing toward all 9 cells filled
 * [x] **Coach attributes deferred**
@@ -1189,10 +1183,11 @@ Use this list for implementation gates and doc alignment.
 | Doc | Role |
 | --- | --- |
 | [dataset-plan.md](./dataset-plan.md) | ETL pipeline, SQLite schema, allowlists, board curation |
+| [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md) | Legendary player ingest, merge, search boosts |
 | [player-image-plan.md](./player-image-plan.md) | Player image ETL, runtime placeholder, maintainability runbook |
 | [rules.md](./rules.md) | Mode comparison across the app |
 | [classic-rules.md](./classic-rules.md) | Classic Tic Tac Toe rules (shared win checker concept) |
 
 ---
 
-*Last updated: 2026-06-09 — player image display rules (P8); Section 9, 19, 23, 30, and Appendix A aligned with [player-image-plan.md](./player-image-plan.md).*
+*Last updated: 2026-06-22 — 3-character search gate, schema v3 `search_rank`, legendary ETL in pipeline diagram.*

@@ -193,8 +193,11 @@ Subset of players with at least **two** allowlisted attribute links (after merge
 | `position` | TEXT | `GK` \| `DEF` \| `MID` \| `FWD` |
 | `nation` | TEXT | normalized citizenship (cache) |
 | `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2) |
+| `search_rank` | INTEGER NOT NULL DEFAULT 0 | Sort boost for search results (schema v3; legendary players) |
 
 **Player image ETL:** `tool/etl/fetch_player_images.py` writes `staging/player_images.csv`; D11 merges into `image_url`. Maintainability runbook: [player-image-plan.md](./player-image-plan.md#maintainability--future-updates).
+
+**Legendary supplements:** `tool/etl/ingest_legendary_players.py` + `merge_legendary_supplements.py` add profiles and edges not in Transfermarkt CSVs. Full plan: [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md).
 
 ### `player_attributes`
 
@@ -217,6 +220,11 @@ Core graph: **independent** edges used for AND validation.
 | `citizenship` | `country_of_citizenship` on `players.csv` |
 | `league_appearance` | appearance with `competition_id` in top-5 set |
 | `league_club` | player at club whose `domestic_competition_id` is top-5 |
+| `legendary_career` | club edge from legendary CSV career data |
+| `legendary_club` | club edge from legendary supplement |
+| `legendary_nation` | nation edge from legendary supplement |
+| `legendary_league` | league edge from legendary supplement |
+| `legendary_profile` / `legendary_citizenship` | profile-derived edges (e.g. dual nationality) |
 
 ### `player_aliases` (recommended)
 
@@ -533,6 +541,7 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 
 - [x] Script implemented (Phase P2 in [player-image-plan.md](./player-image-plan.md)).
 - [x] Shipped in schema v2 DB — 11,867 / 28,221 players with `image_url` (2026-06-09); missing CSV → all `image_url` NULL.
+- [x] Schema v3 (2026-06-20): **12,118 / 28,454** with `image_url`; legendary QID fast-path adds 332/335 legend images.
 
 ---
 
@@ -605,22 +614,31 @@ Example cases:
 
 ## Monthly Refresh Workflow
 
+Preferred entry point: `tool/etl/run_pipeline.ps1` (runs all steps below).
+
 ```text
 1. Replace transfermarkt-datasets/*.csv
-2. python tool/etl/build_players.py          # if player set changed
-3. python tool/etl/fetch_player_images.py --only-missing   # new player images (see player-image-plan.md)
-4. python tool/etl/build_database.py
-5. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
-6. Bump meta.schema_version if schema changed
-7. Copy tiki_taka.db → assets/db/
-8. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
+2. python tool/etl/build_players.py          # normalized player set
+3. python tool/etl/ingest_legendary_players.py   # legendary CSV → staging/legendary/
+4. python tool/etl/merge_legendary_supplements.py # merge into staging before D7
+5. python tool/etl/build_players.py          # re-run if player set changed
+6. python tool/etl/fetch_player_images.py --only-missing   # see player-image-plan.md
+7. python tool/etl/build_database.py
+8. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
+9. Bump meta.schema_version if schema changed
+10. Copy tiki_taka.db → assets/db/
+11. python tool/etl/run_validation_cases.py (also runs at end of build_database.py)
 ```
+
+Current shipped manifest (`tool/etl/output/manifest.json`): `schema_version: 3`, `player_count: 28454`, `players_with_image_count: 12118`, `file_size_bytes: ~19.2 MB`.
 
 If `player_count` for a live board drops below threshold, retire `board_id` or regenerate boards.
 
 ---
 
-## Flutter Connection (when mode is implemented)
+## Flutter Connection
+
+Tiki-Taka mode is **shipped**. Runtime opens a read-only copy of `assets/db/tiki_taka.db`.
 
 ```text
 lib/features/tiki_taka/
@@ -667,8 +685,10 @@ Same `player_attributes` table; validation query unchanged.
 | D4 | League edges |
 | D5 | Nation edges |
 | D6 | Position edges |
+| D6b | Legendary ingest (`ingest_legendary_players.py`) |
+| D6c | Legendary merge (`merge_legendary_supplements.py`) |
 | D7 | `players` subset |
-| D7b | `player_images.csv` (optional; schema v2) |
+| D7b | `player_images.csv` (schema v2+) |
 | D8 | Aliases |
 | D9 | `attribute_pair_stats` |
 | D10 | `boards` |
@@ -709,7 +729,8 @@ Post-v1 topics (national-team caps, dual citizenship, multiplayer steal rules, A
 | `assets/db/tiki_taka.db` | Shipped database |
 | `docs/dataset-plan.md` | This file |
 | `docs/tiki-taka-toe-rules.md` | Gameplay rules specification |
+| `legendary-players/legendary_players_plan.md` | Legendary player ETL implementation (complete) |
 
 ---
 
-*Last updated: 2026-06-06 — open product decisions resolved; points to tiki-taka-toe-rules Section 30.*
+*Last updated: 2026-06-22 — schema v3 (`search_rank`), legendary ETL pipeline, refreshed manifest counts.*

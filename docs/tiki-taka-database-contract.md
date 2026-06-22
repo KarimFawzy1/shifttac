@@ -9,8 +9,8 @@ This document defines how the Flutter app opens and uses the bundled SQLite data
 | Read-only queries against `assets/db/tiki_taka.db` | Live Transfermarkt APIs |
 | Copy bundled asset to an app-local file before open | Writing match state to SQLite |
 | Search, validation, board load DAOs (Phase T2+) | Coach attributes, multiplayer sync |
-| Reading nullable `players.image_url` for **display-only** player avatars (schema v2+) | Live Wikidata / Commons calls from the app |
-| `Image.network` against HTTPS Commons URLs stored in DB when online | Transfermarkt `image_url` hotlinking |
+| Reading nullable `players.image_url` for **display-only** player avatars (schema v2+) | Live Wikidata / Commons calls for **gameplay validation** |
+| Runtime Commons avatar fetch via `PlayerAvatarImageQueue` when online (cosmetic) | Transfermarkt `image_url` hotlinking |
 
 Gameplay match state (hearts, timer, filled cells, used player IDs) stays **in memory** in the game engine/cubit — never persisted to this database.
 
@@ -51,6 +51,8 @@ Re-copy the bundled DB when **either** meta value changes after an app update:
 When the fingerprint changes, delete or overwrite the previous local copy, copy the new asset, persist the new fingerprint, then open.
 
 **Schema v2 (player images):** When `meta.schema_version` changes from `1` to `2`, the app re-copies the bundled DB even if `source_csv_hash` is unchanged. The v2 `players` table adds nullable `image_url` (Commons thumbnail URLs resolved at ETL — see [player-image-plan.md](./player-image-plan.md)).
+
+**Schema v3 (search ranking):** Adds `players.search_rank INTEGER NOT NULL DEFAULT 0` and index `idx_players_search_rank`. Search DAO orders by `search_rank DESC` before prefix match. Legendary boosts configured in `tool/etl/config/legendary_search_rank_boost.yaml`.
 
 ## `players.image_url` (schema v2+)
 
