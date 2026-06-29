@@ -78,6 +78,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 | Area | Location |
 | --- | --- |
 | DB smoke | `test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart` |
+| Legendary regression | `test/features/tiki_taka/data/legendary_players_smoke_test.dart` |
 | DAO integration | `test/features/tiki_taka/data/local/*_dao_test.dart` |
 | Engine + validator flows | `test/features/tiki_taka/domain/logic/tiki_taka_game_engine_test.dart` |
 | Cubit integration flows | `test/features/tiki_taka/presentation/state/tiki_taka_cubit_test.dart` |
@@ -93,7 +94,11 @@ powershell -File tool/release/run_tiki_taka_release_checks.ps1
 flutter build apk --release
 ```
 
-Current bundled asset budgets (v1): SQLite **17.6 MB** / 20 MB cap, attribute SVGs **84 files · 3.0 MB** / 8 MB cap. Tiki-Taka uses no runtime network APIs.
+Current bundled asset budgets: SQLite **~20.2 MB** (schema v3, 28,454 players) / 20 MB cap, attribute SVGs **84 files · 3.0 MB** / 8 MB cap. Tiki-Taka uses no runtime network APIs for search or validation.
+
+## Search UX
+
+Player search in the dialog requires **≥3 trimmed characters** before querying (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`). Enforced in `TikiTakaCubit` and `PlayerSearchDialog`; the DAO has no minimum for direct/test callers.
 
 Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 
@@ -103,4 +108,5 @@ Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](..
 | --- | --- |
 | [tiki-taka-toe-rules.md](../../../docs/tiki-taka-toe-rules.md) | Gameplay spec (Section 30, Appendix A) |
 | [tiki-taka-database-contract.md](../../../docs/tiki-taka-database-contract.md) | SQLite open strategy |
-| [dataset-plan.md](../../../docs/dataset-plan.md) | ETL schema and tables |
+| [dataset-plan.md](../../../docs/dataset-plan.md) | ETL schema, legendary supplements, search_rank |
+| [legendary_players_plan.md](../../../legendary-players/legendary_players_plan.md) | Legendary player ETL runbook (shipped) |

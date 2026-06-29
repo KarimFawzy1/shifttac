@@ -193,8 +193,11 @@ Subset of players with at least **two** allowlisted attribute links (after merge
 | `position` | TEXT | `GK` \| `DEF` \| `MID` \| `FWD` |
 | `nation` | TEXT | normalized citizenship (cache) |
 | `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2) |
+| `search_rank` | INTEGER NOT NULL DEFAULT 0 | Search ordering boost (schema v3); see below |
 
 **Player image ETL:** `tool/etl/fetch_player_images.py` writes `staging/player_images.csv`; D11 merges into `image_url`. Maintainability runbook: [player-image-plan.md](./player-image-plan.md#maintainability--future-updates).
+
+**Search rank (schema v3):** Computed at ETL in `tool/etl/search_rank.py` as `max(market_value, highest_market_value) + manual_boost`. Legendary players receive boosts via `tool/etl/config/legendary_search_rank_boost.yaml`. Runtime search orders by `search_rank DESC`, then prefix match preference (`player_search_dao.dart`).
 
 ### `player_attributes`
 
@@ -565,6 +568,33 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 
 ---
 
+### Legendary player supplements (post-D6)
+
+**Goal:** Add curated legends (Maradona, Pelé, Di Stéfano, etc.) missing from Transfermarkt exports.
+
+**Pipeline** (runs after D6, before D7 in `tool/etl/run_pipeline.ps1`):
+
+```text
+legendary-players/ingest_legendary_players.py
+  → staging/legendary/*.csv
+merge_legendary_supplements.py
+  → merged into player build
+build_players.py (profile fallback from legendary_player_profiles.csv)
+search_rank.py + legendary_search_rank_boost.yaml
+fetch_player_images.py (Wikidata QID fast path for legends)
+build_database.py → schema v3
+```
+
+**Additional `player_attributes.source` values:** `legendary_career`, `legendary_citizenship`, `legendary_profile`, `league_club`.
+
+**Detailed runbook:** [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md)
+
+**Shipped stats (2026-06-20):** schema v3, 28,454 players, 12,118 with images, ~20.2 MB — see `tool/etl/output/manifest.json`.
+
+**Flutter regression:** `flutter test test/features/tiki_taka/data/legendary_players_smoke_test.dart`
+
+---
+
 ### Phase D12 — QA & regression pack
 
 **Goal:** Frozen tests on data, not only code.
@@ -607,13 +637,16 @@ Example cases:
 
 ```text
 1. Replace transfermarkt-datasets/*.csv
-2. python tool/etl/build_players.py          # if player set changed
-3. python tool/etl/fetch_player_images.py --only-missing   # new player images (see player-image-plan.md)
-4. python tool/etl/build_database.py
-5. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
-6. Bump meta.schema_version if schema changed
-7. Copy tiki_taka.db → assets/db/
-8. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
+2. python tool/etl/ingest_legendary_players.py && merge_legendary_supplements.py   # legendary supplements
+3. python tool/etl/build_players.py          # if player set changed
+4. python tool/etl/fetch_player_images.py --only-missing   # new player images (see player-image-plan.md)
+5. python tool/etl/build_database.py
+6. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
+7. Bump meta.schema_version if schema changed
+8. Copy tiki_taka.db → assets/db/
+9. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
+10. `flutter test test/features/tiki_taka/data/legendary_players_smoke_test.dart`
+11. `flutter test test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart`
 ```
 
 If `player_count` for a live board drops below threshold, retire `board_id` or regenerate boards.

@@ -315,16 +315,19 @@ Search player...
 
 ### Step 3 — User types player name
 
-As the user types, a list of matching players is displayed.
+The search dialog requires **at least 3 trimmed characters** before results appear (`PlayerSearchDialog` / `TikiTakaCubit`). Shorter input shows a hint: "Type at least 3 characters to search."
 
-The search should support:
+Once the threshold is met, matching players are displayed as the user types.
+
+The search supports:
 
 * Full names
 * Common names
 * Aliases
-* Accent-insensitive search
+* Accent-insensitive prefix match
+* Ranking by `search_rank` (schema v3) so notable players surface first
 
-Examples:
+Examples (queries must be ≥3 characters to run in UI):
 
 ```text
 Cristiano Ronaldo
@@ -338,7 +341,7 @@ Kylian Mbappé
 Mbappe
 ```
 
-Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). See [dataset-plan.md](./dataset-plan.md) — Phase D8.
+Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). See [dataset-plan.md](./dataset-plan.md) — Phase D8 and schema v3 `search_rank`.
 
 ---
 
@@ -833,7 +836,7 @@ The shippable database file is `tiki_taka.db`. Schema version is stored in the `
 | --- | --- |
 | `meta` | `schema_version`, `built_at`, source hash |
 | `attributes` | Board headers — clubs, nations, leagues, positions (`club:31`, `nation:egypt`, `league:GB1`, `pos:FWD`) |
-| `players` | Filtered player subset with `display_name`, `search_text`, position/nation cache, optional `image_url` (Commons thumbnail, schema v2) |
+| `players` | Filtered player subset with `display_name`, `search_text`, position/nation cache, optional `image_url` (schema v2), `search_rank` (schema v3) |
 | `player_attributes` | Independent player ↔ attribute edges (provenance via `source` column) |
 | `player_aliases` | Alternate search strings (surnames, nicknames, manual overrides) |
 | `attribute_pair_stats` | Precomputed intersection counts for board viability |
@@ -850,6 +853,9 @@ The shippable database file is `tiki_taka.db`. Schema version is stored in the `
 | `league_appearance` | Top-5 league from appearance competition |
 | `league_club` | Top-5 league derived from club domestic competition |
 | `profile` | Position bucket from player profile |
+| `legendary_career` | Legendary player club stint (ETL supplement) |
+| `legendary_citizenship` | Legendary player nation edge |
+| `legendary_profile` | Legendary player profile-derived edge |
 
 ### Not in v1 SQLite
 
