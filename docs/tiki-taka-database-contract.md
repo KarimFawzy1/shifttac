@@ -52,6 +52,8 @@ When the fingerprint changes, delete or overwrite the previous local copy, copy 
 
 **Schema v2 (player images):** When `meta.schema_version` changes from `1` to `2`, the app re-copies the bundled DB even if `source_csv_hash` is unchanged. The v2 `players` table adds nullable `image_url` (Commons thumbnail URLs resolved at ETL — see [player-image-plan.md](./player-image-plan.md)).
 
+**Schema v3 (search ranking):** Adds `players.search_rank INTEGER NOT NULL DEFAULT 0` and index `idx_players_search_rank`. Re-copy when v2→v3 even if CSV hash is unchanged. v3 retains `image_url` from v2.
+
 ## `players.image_url` (schema v2+)
 
 | Column | Type | Notes |
@@ -61,6 +63,16 @@ When the fingerprint changes, delete or overwrite the previous local copy, copy 
 - Populated at **build time** by `tool/etl/fetch_player_images.py` + `build_database.py`.
 - DAOs expose the column to the UI as optional `imageUrl` on search/validation results (Phase P4+).
 - The app **reads** this column only; it never updates image URLs at runtime.
+
+## `players.search_rank` (schema v3+)
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `search_rank` | INTEGER NOT NULL DEFAULT 0 | ETL-computed ranking boost; higher = listed first in search |
+
+- Populated at build time by `tool/etl/search_rank.py` (market value + manual boosts from `legendary_search_rank_boost.yaml`).
+- `PlayerSearchDao` orders results: `search_rank DESC`, then exact-prefix preference, then name.
+- The **UI** requires at least **3 trimmed characters** before running search (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`). The DAO itself has no minimum length — direct DAO callers (tests) may query shorter strings.
 
 ## Read-only guarantee
 
@@ -110,7 +122,8 @@ search · validate · load board
 | --- | --- |
 | `lib/features/tiki_taka/data/local/tiki_taka_database.dart` | `DefaultTikiTakaDatabase` service (T1) |
 | `lib/features/tiki_taka/data/local/tiki_taka_database_paths.dart` | Asset/local paths and fingerprint keys |
-| `test/tiki_taka_database_smoke_test.dart` | Dev smoke test (FFI, read-only) |
+| `test/features/tiki_taka/release/tiki_taka_database_smoke_test.dart` | Schema v1/2/3 smoke test (read-only) |
+| `test/features/tiki_taka/data/legendary_players_smoke_test.dart` | Legendary player validation + search rank regression |
 | `docs/dataset-plan.md` | ETL schema and table definitions |
 | `docs/player-image-plan.md` | Player image ETL, schema v2, maintainability runbook |
 | `docs/tiki-taka-toe-rules.md` §19–20 | Product data-source rules |
