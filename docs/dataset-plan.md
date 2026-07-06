@@ -192,9 +192,12 @@ Subset of players with at least **two** allowlisted attribute links (after merge
 | `search_text` | TEXT | lowercased, ASCII-folded for prefix search |
 | `position` | TEXT | `GK` \| `DEF` \| `MID` \| `FWD` |
 | `nation` | TEXT | normalized citizenship (cache) |
-| `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2) |
+| `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2+) |
+| `search_rank` | INTEGER | Descending sort key for prefix search; TM market value + legendary boost (schema v3) |
 
 **Player image ETL:** `tool/etl/fetch_player_images.py` writes `staging/player_images.csv`; D11 merges into `image_url`. Maintainability runbook: [player-image-plan.md](./player-image-plan.md#maintainability--future-updates).
+
+**Legendary players:** Curated rows from `legendary-players/legendary_players_with_tm_id.csv` merge via `tool/etl/ingest_legendary_players.py` + `merge_legendary_supplements.py`. See [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md).
 
 ### `player_attributes`
 
