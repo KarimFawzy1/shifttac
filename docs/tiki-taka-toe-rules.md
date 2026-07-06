@@ -315,7 +315,7 @@ Search player...
 
 ### Step 3 — User types player name
 
-As the user types, a list of matching players is displayed.
+As the user types, a list of matching players is displayed once the query has at least **3 trimmed characters** (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`). Shorter input shows inline hint copy and does not query SQLite — this reduces Wikidata fetches and keeps search responsive.
 
 The search should support:
 
