@@ -65,7 +65,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T4** — `TikiTakaCubit` (board load, search, validation, timer, hearts, lifecycle)
 - **T5** — `TikiAttributeHeader`, `TikiAttributeIcon`, `TikiBoardFrame`, `TikiAttributeAssetManifest` (G2 manifest SVG headers, position text, fallbacks, semantics)
 - **T6** — `TikiTakaGameplayScreen`, `TikiTakaBoard`, `TikiTakaCell`, `TikiTakaHud` (SQLite board skeleton, headers, hearts, timer)
-- **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback)
+- **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback). Queries shorter than **3 characters** (`kMinPlayerSearchQueryLength`) show hint copy and skip SQLite.
 - **T8** — `TikiTakaFirstWinDialog`, `TikiTakaCompletionDialog`, `TikiTakaLostDialog`, `TikiTakaPauseSheet` (outcome flows, pause, restart, exit)
 - **T9** — `AppRoutes.tikiTaka`, `TikiTakaEntryScreen`, home card (routing and home entry; dedicated route, not `GameMode`)
 - **T10** — `HowToPlayTikiTakaSection`, static rules copy in How to Play tab
@@ -104,3 +104,4 @@ Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](..
 | [tiki-taka-toe-rules.md](../../../docs/tiki-taka-toe-rules.md) | Gameplay spec (Section 30, Appendix A) |
 | [tiki-taka-database-contract.md](../../../docs/tiki-taka-database-contract.md) | SQLite open strategy |
 | [dataset-plan.md](../../../docs/dataset-plan.md) | ETL schema and tables |
+| [legendary-players/legendary_players_plan.md](../../../legendary-players/legendary_players_plan.md) | Curated legendary player ingest and QA |
