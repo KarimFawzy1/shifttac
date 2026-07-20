@@ -442,27 +442,36 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 - `display_name` from `players.name`
 - `search_text` = normalized name
 - `position` / `nation` caches
+- `search_rank` (schema v3) via `tool/etl/search_rank.py`:
+  `max(market_value, highest_market_value) + manual_boost` from
+  `legendary_search_rank_boost.yaml` (legendary players rank above TM-only rows)
 
 **DoD:**
 
 - [x] DB player count documented in manifest (expect thousands, not full 47k if filtered).
 - [x] No player row with < 2 attributes.
+- [x] Index `idx_players_search_rank` created in `build_database.py`.
 
 ---
 
 ### Phase D8 — Aliases & search index
 
-**Goal:** Search UX (“Mo Salah”, “Salah”).
+**Goal:** Search UX (“Mo Salah”, “Salah”) with legendary-friendly ordering.
 
 **Steps:**
 
 1. `search_text` on full name.
 2. Insert `player_aliases`: surname-only if unique enough; entries from `name_aliases.yaml`.
 3. Optional: strip accents (Salah ↔ Mohamed Salah).
+4. Runtime search (`PlayerSearchDao`) orders by `search_rank DESC`, then prefix
+   match quality, then name. UI requires **≥ 3 characters** before querying
+   (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`) to avoid
+   broad prefix scans and unnecessary Commons avatar fetches.
 
 **DoD:**
 
 - [x] Prefix search on `salah` returns Mohamed Salah.
+- [x] Prefix search on `mar` returns Maradona in top results (legendary boost).
 - [x] Colliding surnames return multiple rows (acceptable).
 
 ---
@@ -610,14 +619,19 @@ Example cases:
 
 ```text
 1. Replace transfermarkt-datasets/*.csv
-2. python tool/etl/build_players.py          # if player set changed
-3. python tool/etl/fetch_player_images.py --only-missing   # new player images (see player-image-plan.md)
-4. python tool/etl/build_database.py
-5. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
-6. Bump meta.schema_version if schema changed
-7. Copy tiki_taka.db → assets/db/
-8. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
+2. python tool/etl/ingest_legendary_players.py       # legendary CSV → staging/legendary/
+3. Run D3–D6 TM ETL stages (or full run_pipeline.ps1)
+4. python tool/etl/merge_legendary_supplements.py    # before D7 player build
+5. python tool/etl/build_players.py                  # if player set changed
+6. python tool/etl/fetch_player_images.py --only-missing   # Wikidata/Commons avatars
+7. python tool/etl/build_database.py                 # SCHEMA_VERSION 3 + search_rank
+8. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
+9. Bump meta.schema_version if schema changed
+10. Copy tiki_taka.db → assets/db/
+11. python tool/etl/run_validation_cases.py (also runs at end of build_database.py)
 ```
+
+Legendary pipeline details: [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md).
 
 If `player_count` for a live board drops below threshold, retire `board_id` or regenerate boards.
 
