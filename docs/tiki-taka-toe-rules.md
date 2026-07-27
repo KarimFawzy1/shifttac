@@ -338,7 +338,7 @@ Kylian Mbappé
 Mbappe
 ```
 
-Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). See [dataset-plan.md](./dataset-plan.md) — Phase D8.
+Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). Results are ordered by `search_rank DESC`, then prefix match quality. Minimum query length is **3 trimmed characters** (enforced in cubit/UI, not DAO). See [dataset-plan.md](./dataset-plan.md) — Phase D8.
 
 ---
 

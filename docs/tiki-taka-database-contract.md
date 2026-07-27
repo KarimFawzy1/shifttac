@@ -52,7 +52,13 @@ When the fingerprint changes, delete or overwrite the previous local copy, copy 
 
 **Schema v2 (player images):** When `meta.schema_version` changes from `1` to `2`, the app re-copies the bundled DB even if `source_csv_hash` is unchanged. The v2 `players` table adds nullable `image_url` (Commons thumbnail URLs resolved at ETL — see [player-image-plan.md](./player-image-plan.md)).
 
-**Schema v3 (`search_rank`):** Adds integer `search_rank` on `players` for prefix search ordering (market value + legendary boost from ETL). Shipped DB is ~20 MB and includes 329+ legendary players merged from the curated CSV.
+**Schema v3 (`search_rank`):** Adds integer `search_rank` on `players` for prefix search ordering. Fingerprint `{schema_version}:{source_csv_hash}` triggers re-copy on app update.
+
+Shipped DB (2026-06-20): schema 3, ~19.2 MB, 28,454 players, **335 curated legends** in `players` (315 with `legendary_*` provenance; 20 overlap TM-only edges).
+
+`search_rank` = max(TM market value fields) + manual boost from `tool/etl/config/legendary_search_rank_boost.yaml` (top legends ~120M EUR-equiv).
+
+Runtime search requires **≥3 trimmed characters** before SQLite query (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`); ordering is `search_rank DESC` then prefix match quality.
 
 ## `players.search_rank` (schema v3+)
 

@@ -124,25 +124,24 @@ These players can still ship if they meet the two-attribute gate via **clubs**, 
 
 ---
 
-## Current Gap Summary (baseline — re-run after Phase 0)
+## Post-ship status (2026-06-20)
 
 | Metric | Count | Notes |
 | --- | ---: | --- |
-| CSV rows | 336 | All have `transfermarkt_id` + `wikidata_qid` |
-| Already in shipped DB | ~3 | Maradona-era overlap with TM scrape |
-| In TM `normalized/players.csv` | ~102 | Will merge via normal D3–D6 |
-| **Not in TM dataset** | **~233** | Require legendary supplement ingest |
-| Empty nationality (post-filter) | 3 | In CSV — seven nations stripped by policy (see §5); four TM-unresolved players not in CSV |
-| Empty clubs (post-filter) | 7 | Career clubs not in allowlist — see §0.2 |
-| Nations stripped by filter | 7 | **Intentional** — do not restore to allowlist |
-| Club stints stripped | ~829 | Restored by 100-club allowlist re-filter |
+| CSV rows | 336 | 335 unique `transfermarkt_id` values |
+| In `players` table | 335 | 0 exclusions after club supplements |
+| With `legendary_*` edges | 315 | 20 TM-overlap legends use TM edges only |
+| New profiles merged | 233 | per `merge_legendary_summary.json` |
+| `search_rank` boost (top legends) | ~120M | `legendary_search_rank_boost.yaml` |
 
-Re-run baseline script before Phase 1:
+Re-run gap scripts after CSV or allowlist changes:
 
 ```powershell
 python legendary-players/_gap_analysis.py
 python legendary-players/_check_db_gap.py
 ```
+
+> **Historical baseline:** Pre-merge gap analysis (July 2026 planning) showed ~3 legends already in DB and ~233 requiring supplement ingest. That work is complete — see table above.
 
 ---
 
@@ -463,8 +462,8 @@ Add `tool/etl/config/legendary_search_rank_boost.yaml`:
 
 ```yaml
 # transfermarkt_id → manual boost (legendaries surface above obscure TM players)
-"8024": 500   # Maradona
-"17121": 500  # Pelé
+"8024": 120000000   # Maradona
+"17121": 120000000  # Pelé
 ```
 
 Wire into `search_rank.load_search_rank_boosts()` merge.
@@ -609,14 +608,14 @@ python tool/etl/run_tiki_taka_preflight_gate.py
 python legendary-players/_check_db_gap.py
 ```
 
-**Expected:** `included_legendary_count >= 329` (336 minus documented exclusions).
+**Expected:** `included_legendary_count >= 335` (336 CSV rows minus documented exclusions).
 
 ### 4.4 Manifest / size checks
 
 - [x] `assets/db/tiki_taka.db` < 20 MB (`build_database.py` guard)
 - [x] `output/manifest.json` documents increased `player_count`
 - [x] `attribute_pair_stats` has no **forbidden** (0-count) pairs on shipped boards
-- [x] Nation allowlist unchanged (still 52 nations in manifest — no additions from legendary work)
+- [x] Nation allowlist unchanged (still **48 nations** in manifest — no additions from legendary work)
 
 **DoD Phase 4:**
 
