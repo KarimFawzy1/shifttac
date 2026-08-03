@@ -52,6 +52,22 @@ When the fingerprint changes, delete or overwrite the previous local copy, copy 
 
 **Schema v2 (player images):** When `meta.schema_version` changes from `1` to `2`, the app re-copies the bundled DB even if `source_csv_hash` is unchanged. The v2 `players` table adds nullable `image_url` (Commons thumbnail URLs resolved at ETL — see [player-image-plan.md](./player-image-plan.md)).
 
+**Schema v3 (`search_rank`):** Adds integer `search_rank` on `players` for prefix search ordering. Fingerprint `{schema_version}:{source_csv_hash}` triggers re-copy on app update.
+
+Shipped DB (2026-06-20): schema 3, ~19.2 MB, 28,454 players, **335 curated legends** in `players` (315 with `legendary_*` provenance; 20 overlap TM-only edges).
+
+`search_rank` = max(TM market value fields) + manual boost from `tool/etl/config/legendary_search_rank_boost.yaml` (top legends ~120M EUR-equiv).
+
+Runtime search requires **≥3 trimmed characters** before SQLite query (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`); ordering is `search_rank DESC` then prefix match quality.
+
+## `players.search_rank` (schema v3+)
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `search_rank` | INTEGER | Higher ranks surface first in `PlayerSearchDao`; legendary boosts from `tool/etl/config/legendary_search_rank_boost.yaml` |
+
+Search query: `ORDER BY p.search_rank DESC, …` in [player_search_dao.dart](../lib/features/tiki_taka/data/local/daos/player_search_dao.dart).
+
 ## `players.image_url` (schema v2+)
 
 | Column | Type | Notes |
@@ -113,6 +129,7 @@ search · validate · load board
 | `test/tiki_taka_database_smoke_test.dart` | Dev smoke test (FFI, read-only) |
 | `docs/dataset-plan.md` | ETL schema and table definitions |
 | `docs/player-image-plan.md` | Player image ETL, schema v2, maintainability runbook |
+| `legendary-players/legendary_players_plan.md` | Legendary player ingest, merge, and QA pipeline |
 | `docs/tiki-taka-toe-rules.md` §19–20 | Product data-source rules |
 
 ## Implementation phases
