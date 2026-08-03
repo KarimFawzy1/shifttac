@@ -65,7 +65,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 - **T4** — `TikiTakaCubit` (board load, search, validation, timer, hearts, lifecycle)
 - **T5** — `TikiAttributeHeader`, `TikiAttributeIcon`, `TikiBoardFrame`, `TikiAttributeAssetManifest` (G2 manifest SVG headers, position text, fallbacks, semantics)
 - **T6** — `TikiTakaGameplayScreen`, `TikiTakaBoard`, `TikiTakaCell`, `TikiTakaHud` (SQLite board skeleton, headers, hearts, timer)
-- **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback)
+- **T7** — `PlayerSearchDialog`, `PlayerSearchResultTile` (DB search, attribute context, selection-only answers, invalid feedback). Queries shorter than **3 characters** (`kMinPlayerSearchQueryLength`) show hint copy and skip SQLite. Results ordered by `search_rank DESC` (legendary boost from ETL).
 - **T8** — `TikiTakaFirstWinDialog`, `TikiTakaCompletionDialog`, `TikiTakaLostDialog`, `TikiTakaPauseSheet` (outcome flows, pause, restart, exit)
 - **T9** — `AppRoutes.tikiTaka`, `TikiTakaEntryScreen`, home card (routing and home entry; dedicated route, not `GameMode`)
 - **T10** — `HowToPlayTikiTakaSection`, static rules copy in How to Play tab
@@ -84,6 +84,7 @@ See [docs/dataset-plan2.md](../../../docs/dataset-plan2.md):
 | Widget regression | `test/features/tiki_taka/presentation/widgets/`, `screens/tiki_taka_gameplay_screen_test.dart` |
 | Shared test helpers | `test/features/tiki_taka/support/` |
 | Release performance + smoke | `test/features/tiki_taka/release/` |
+| Legendary validation/search | `test/features/tiki_taka/data/legendary_players_smoke_test.dart` |
 
 ## Release checks (T12)
 
@@ -93,7 +94,7 @@ powershell -File tool/release/run_tiki_taka_release_checks.ps1
 flutter build apk --release
 ```
 
-Current bundled asset budgets (v1): SQLite **17.6 MB** / 20 MB cap, attribute SVGs **84 files · 3.0 MB** / 8 MB cap. Tiki-Taka uses no runtime network APIs.
+Current bundled asset budgets (schema v3): SQLite **19.2 MB** / 20 MB cap, attribute SVGs **53 files · 0.46 MB** / 8 MB cap. Tiki-Taka uses no runtime network APIs.
 
 Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](../../../core/routing/app_routes.dart).
 
@@ -104,3 +105,4 @@ Home navigation and routes are added in **Phase T9** via [AppRoutes.tikiTaka](..
 | [tiki-taka-toe-rules.md](../../../docs/tiki-taka-toe-rules.md) | Gameplay spec (Section 30, Appendix A) |
 | [tiki-taka-database-contract.md](../../../docs/tiki-taka-database-contract.md) | SQLite open strategy |
 | [dataset-plan.md](../../../docs/dataset-plan.md) | ETL schema and tables |
+| [legendary-players/legendary_players_plan.md](../../../legendary-players/legendary_players_plan.md) | Curated legendary player ingest and QA |

@@ -315,7 +315,7 @@ Search player...
 
 ### Step 3 — User types player name
 
-As the user types, a list of matching players is displayed.
+As the user types, a list of matching players is displayed once the query has at least **3 trimmed characters** (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`). Shorter input shows inline hint copy and does not query SQLite — this reduces Wikidata fetches and keeps search responsive.
 
 The search should support:
 
@@ -338,7 +338,7 @@ Kylian Mbappé
 Mbappe
 ```
 
-Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). See [dataset-plan.md](./dataset-plan.md) — Phase D8.
+Search runs against the local `players` table and `player_aliases` (prefix match on normalized `search_text` / alias). Results are ordered by `search_rank DESC`, then prefix match quality. Minimum query length is **3 trimmed characters** (enforced in cubit/UI, not DAO). See [dataset-plan.md](./dataset-plan.md) — Phase D8.
 
 ---
 
