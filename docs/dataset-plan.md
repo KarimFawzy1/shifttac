@@ -87,9 +87,11 @@ BUILD TIME (developer machine, repeat monthly)
   transfermarkt-datasets/*.csv
   tool/etl/config/*.yaml          # allowlists + aliases
   tool/etl/build_players.py       # D7 — players_table.csv
+  tool/etl/ingest_legendary_players.py   # legendary CSV → staging/legendary/
   tool/etl/fetch_player_images.py # D7b — player_images.csv (Wikidata; schema v2)
        ↓
-  tool/etl/build_database.py      # D11 — merge → sqlite
+  tool/etl/merge_legendary_supplements.py  # after D3–D6, before D7
+  tool/etl/build_database.py      # D11 — merge → sqlite (SCHEMA_VERSION 3)
        ↓
   tool/etl/output/tiki_taka.db
   tool/etl/output/manifest.json
@@ -120,15 +122,13 @@ ETL only emits attributes (and players) inside these lists. IDs are resolved fro
 
 Premier League, La Liga, Serie A, Bundesliga, Ligue 1 → `league:GB1` … `league:FR1`.
 
-### Clubs (56)
+### Clubs (100)
 
-Real Madrid, Barcelona, Atlético Madrid, Manchester United, Liverpool, Arsenal, Manchester City, Chelsea, Tottenham Hotspur, Newcastle United, Aston Villa, Everton, West Ham United, Brighton, Fulham, Brentford, Wolverhampton, Crystal Palace, Bayern Munich, Borussia Dortmund, Bayer Leverkusen, RB Leipzig, VfB Stuttgart, Eintracht Frankfurt, Union Berlin, Juventus, AC Milan, Inter Milan, Napoli, Roma, Lazio, Atalanta, Fiorentina, Bologna, Paris Saint-Germain, Monaco, Marseille, Lyon, Lille, Nice, Benfica, Porto, Sporting CP, Ajax, PSV Eindhoven, Galatasaray, Sevilla, Valencia, Villarreal, Copenhagen, Leeds United, Boca Juniors, Flamengo, Santos.
+Shipped schema v3 DB includes 100 clubs (expanded from the original 56-club v1 list). Maintain `tool/etl/config/clubs_allowlist.yaml` mapping **display name → `club_id`** (verified against `clubs.csv`). See also `tool/etl/config/legendary_club_aliases.yaml` for curated career stints.
 
-**ETL task:** maintain `tool/etl/config/clubs_allowlist.yaml` mapping **display name → `club_id`** (verified once against `clubs.csv`).
+### Nations (48)
 
-### Nations (25)
-
-France, Spain, Argentina, England, Portugal, Brazil, Netherlands, Morocco, Belgium, Germany, Croatia, Italy, Colombia, Senegal, Mexico, United States, Uruguay, Japan, Switzerland, Denmark, Egypt, Algeria, Nigeria, Ivory Coast, Cameroon.
+Shipped schema v3 DB includes 48 nations (expanded from the original 25-nation v1 list). Seven CSV nationalities are intentionally stripped per [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md) §5.
 
 **Nation source v1:** `players.country_of_citizenship` (normalized). Optional v1.1: national-team appearances from `games` + `appearances` where competition is national-team.
 
@@ -192,9 +192,12 @@ Subset of players with at least **two** allowlisted attribute links (after merge
 | `search_text` | TEXT | lowercased, ASCII-folded for prefix search |
 | `position` | TEXT | `GK` \| `DEF` \| `MID` \| `FWD` |
 | `nation` | TEXT | normalized citizenship (cache) |
-| `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2) |
+| `image_url` | TEXT NULL | HTTPS Commons thumbnail from Wikidata ETL; `NULL` when unresolved (schema v2+) |
+| `search_rank` | INTEGER | Descending sort key for prefix search; TM market value + legendary boost (schema v3) |
 
 **Player image ETL:** `tool/etl/fetch_player_images.py` writes `staging/player_images.csv`; D11 merges into `image_url`. Maintainability runbook: [player-image-plan.md](./player-image-plan.md#maintainability--future-updates).
+
+**Legendary players:** Curated rows from `legendary-players/legendary_players_with_tm_id.csv` merge via `tool/etl/ingest_legendary_players.py` + `merge_legendary_supplements.py`. See [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md).
 
 ### `player_attributes`
 
@@ -217,6 +220,9 @@ Core graph: **independent** edges used for AND validation.
 | `citizenship` | `country_of_citizenship` on `players.csv` |
 | `league_appearance` | appearance with `competition_id` in top-5 set |
 | `league_club` | player at club whose `domestic_competition_id` is top-5 |
+| `legendary_career` | Curated club stints from legendary CSV |
+| `legendary_citizenship` | Curated nation edges (incl. Di Stéfano dual-nation) |
+| `legendary_profile` | Curated position bucket |
 
 ### `player_aliases` (recommended)
 
@@ -439,27 +445,36 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 - `display_name` from `players.name`
 - `search_text` = normalized name
 - `position` / `nation` caches
+- `search_rank` (schema v3) via `tool/etl/search_rank.py`:
+  `max(market_value, highest_market_value) + manual_boost` from
+  `legendary_search_rank_boost.yaml` (legendary players rank above TM-only rows)
 
 **DoD:**
 
 - [x] DB player count documented in manifest (expect thousands, not full 47k if filtered).
 - [x] No player row with < 2 attributes.
+- [x] Index `idx_players_search_rank` created in `build_database.py`.
 
 ---
 
 ### Phase D8 — Aliases & search index
 
-**Goal:** Search UX (“Mo Salah”, “Salah”).
+**Goal:** Search UX (“Mo Salah”, “Salah”) with legendary-friendly ordering.
 
 **Steps:**
 
 1. `search_text` on full name.
 2. Insert `player_aliases`: surname-only if unique enough; entries from `name_aliases.yaml`.
 3. Optional: strip accents (Salah ↔ Mohamed Salah).
+4. Runtime search (`PlayerSearchDao`) orders by `search_rank DESC`, then prefix
+   match quality, then name. UI requires **≥ 3 characters** before querying
+   (`kMinPlayerSearchQueryLength` in `search_query_normalizer.dart`) to avoid
+   broad prefix scans and unnecessary Commons avatar fetches.
 
 **DoD:**
 
 - [x] Prefix search on `salah` returns Mohamed Salah.
+- [x] Prefix search on `mar` returns Maradona in top results (legendary boost).
 - [x] Colliding surnames return multiple rows (acceptable).
 
 ---
@@ -532,7 +547,7 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 **DoD:**
 
 - [x] Script implemented (Phase P2 in [player-image-plan.md](./player-image-plan.md)).
-- [x] Shipped in schema v2 DB — 11,867 / 28,221 players with `image_url` (2026-06-09); missing CSV → all `image_url` NULL.
+- [x] Shipped in schema v3 DB — 12,118 / 28,454 players with `image_url` (2026-06-20); missing CSV → all `image_url` NULL.
 
 ---
 
@@ -547,11 +562,12 @@ tool/etl/config/name_aliases.yaml       # nation + player spelling overrides
 
     ```json
     {
-      "schema_version": 1,
+      "schema_version": 3,
       "built_at": "ISO-8601",
       "source_csv_hash": "sha256:…",
-      "player_count": 0,
-      "attribute_count": 0,
+      "player_count": 28454,
+      "players_with_image_count": 12118,
+      "attribute_count": 157,
       "board_count": 0
     }
     ```
@@ -607,14 +623,19 @@ Example cases:
 
 ```text
 1. Replace transfermarkt-datasets/*.csv
-2. python tool/etl/build_players.py          # if player set changed
-3. python tool/etl/fetch_player_images.py --only-missing   # new player images (see player-image-plan.md)
-4. python tool/etl/build_database.py
-5. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
-6. Bump meta.schema_version if schema changed
-7. Copy tiki_taka.db → assets/db/
-8. `python tool/etl/run_validation_cases.py` (also runs at end of `build_database.py`)
+2. python tool/etl/ingest_legendary_players.py       # legendary CSV → staging/legendary/
+3. Run D3–D6 TM ETL stages (or partial `run_pipeline.ps1` — stops at D7; run D7b, aliases, pair stats, boards, and `build_database.py` separately)
+4. python tool/etl/merge_legendary_supplements.py    # before D7 player build
+5. python tool/etl/build_players.py                  # if player set changed
+6. python tool/etl/fetch_player_images.py --only-missing   # Wikidata/Commons avatars
+7. python tool/etl/build_database.py                 # SCHEMA_VERSION 3 + search_rank
+8. Review tool/etl/reports/ (unmapped nations, forbidden pairs, row deltas, image summary)
+9. Bump meta.schema_version if schema changed
+10. Copy tiki_taka.db → assets/db/
+11. python tool/etl/run_validation_cases.py (also runs at end of build_database.py)
 ```
+
+Legendary pipeline details: [legendary-players/legendary_players_plan.md](../legendary-players/legendary_players_plan.md).
 
 If `player_count` for a live board drops below threshold, retire `board_id` or regenerate boards.
 
@@ -705,11 +726,11 @@ Post-v1 topics (national-team caps, dual citizenship, multiplayer steal rules, A
 | Path | Role |
 | --- | --- |
 | `transfermarkt-datasets/` | Raw CSV input (gitignored recommended) |
-| `tool/etl/` | Build scripts (to be created) |
+| `tool/etl/` | ETL build scripts (see monthly workflow above) |
 | `assets/db/tiki_taka.db` | Shipped database |
 | `docs/dataset-plan.md` | This file |
 | `docs/tiki-taka-toe-rules.md` | Gameplay rules specification |
 
 ---
 
-*Last updated: 2026-06-06 — open product decisions resolved; points to tiki-taka-toe-rules Section 30.*
+*Last updated: 2026-08-10 — legendary merge shipped (335 players); schema v3 `search_rank`; 3-char minimum player search.*

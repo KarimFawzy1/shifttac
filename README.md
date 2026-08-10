@@ -380,3 +380,5 @@ Project structure reference: [docs/structure.md](docs/structure.md)
 Design system reference: [docs/design.md](docs/design.md)
 
 Gameplay rules reference: [docs/rules.md](docs/rules.md)
+
+Tiki-Taka mode reference: [docs/tiki-taka-toe-rules.md](docs/tiki-taka-toe-rules.md) · [docs/tiki-taka-database-contract.md](docs/tiki-taka-database-contract.md) · [legendary-players/legendary_players_plan.md](legendary-players/legendary_players_plan.md)
