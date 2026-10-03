@@ -506,6 +506,11 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Angola.svg",
+    "label": "Angola"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Argentina.svg",
     "label": "Argentina"
   },
@@ -521,6 +526,11 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Benin.svg",
+    "label": "Benin"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Brazil.svg",
     "label": "Brazil"
   },
@@ -531,8 +541,18 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Burkina-Faso.svg",
+    "label": "Burkina Faso"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Cameroon.svg",
     "label": "Cameroon"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Chad.svg",
+    "label": "Chad"
   },
   {
     "kind": "nation",
@@ -561,6 +581,11 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/DR-Congo.svg",
+    "label": "DR Congo"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Egypt.svg",
     "label": "Egypt"
   },
@@ -568,6 +593,16 @@
     "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/England.svg",
     "label": "England"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Eritrea.svg",
+    "label": "Eritrea"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Ethiopia.svg",
+    "label": "Ethiopia"
   },
   {
     "kind": "nation",
@@ -581,6 +616,21 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/French-Guiana.svg",
+    "label": "French Guiana"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Gabon.svg",
+    "label": "Gabon"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Gambia.svg",
+    "label": "Gambia"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Germany.svg",
     "label": "Germany"
   },
@@ -588,6 +638,11 @@
     "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Ghana.svg",
     "label": "Ghana"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Guinea.svg",
+    "label": "Guinea"
   },
   {
     "kind": "nation",
@@ -611,13 +666,43 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Jamaica.svg",
+    "label": "Jamaica"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Japan.svg",
     "label": "Japan"
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Jordan.svg",
+    "label": "Jordan"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Kenya.svg",
+    "label": "Kenya"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Liberia.svg",
     "label": "Liberia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Malawi.svg",
+    "label": "Malawi"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Mali.svg",
+    "label": "Mali"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Mauritania.svg",
+    "label": "Mauritania"
   },
   {
     "kind": "nation",
@@ -628,6 +713,16 @@
     "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Morocco.svg",
     "label": "Morocco"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Mozambique.svg",
+    "label": "Mozambique"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Namibia.svg",
+    "label": "Namibia"
   },
   {
     "kind": "nation",
@@ -648,6 +743,11 @@
     "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Norway.svg",
     "label": "Norway"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Palestine.svg",
+    "label": "Palestine"
   },
   {
     "kind": "nation",
@@ -676,6 +776,11 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Rwanda.svg",
+    "label": "Rwanda"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Saudi-Arabia.svg",
     "label": "Saudi Arabia"
   },
@@ -701,6 +806,16 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Slovenia.svg",
+    "label": "Slovenia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/South-Africa.svg",
+    "label": "South Africa"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/South-Korea.svg",
     "label": "South Korea"
   },
@@ -711,6 +826,11 @@
   },
   {
     "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Sudan.svg",
+    "label": "Sudan"
+  },
+  {
+    "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Sweden.svg",
     "label": "Sweden"
   },
@@ -718,6 +838,26 @@
     "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Switzerland.svg",
     "label": "Switzerland"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Syria.svg",
+    "label": "Syria"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Togo.svg",
+    "label": "Togo"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Tunisia.svg",
+    "label": "Tunisia"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Uganda.svg",
+    "label": "Uganda"
   },
   {
     "kind": "nation",
@@ -738,5 +878,10 @@
     "kind": "nation",
     "path": "assets/tiki_taka/attrs/nations/Wales.svg",
     "label": "Wales"
+  },
+  {
+    "kind": "nation",
+    "path": "assets/tiki_taka/attrs/nations/Zambia.svg",
+    "label": "Zambia"
   }
 ]

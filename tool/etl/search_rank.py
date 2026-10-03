@@ -13,6 +13,7 @@ _LEGENDARY_CSV = _ROOT / "legendary-players" / "legendary_players_with_tm_id.csv
 
 _BOOST_CONFIG = "search_rank_boost.yaml"
 _LEGENDARY_BOOST_CONFIG = "legendary_search_rank_boost.yaml"
+_EGYPTIAN_BOOST_CONFIG = "egyptian_search_rank_boost.yaml"
 
 # Retired legends need ~120M to rank above active prefix matches on short queries.
 LEGENDARY_SEARCH_RANK_FLOOR = 120_000_000
@@ -51,6 +52,8 @@ def load_search_rank_boosts() -> dict[str, int]:
     """TM player_id (no tm: prefix) -> extra rank points in EUR."""
     boosts = _load_boost_file(_BOOST_CONFIG)
     for player_id, points in _load_boost_file(_LEGENDARY_BOOST_CONFIG).items():
+        boosts[player_id] = max(boosts.get(player_id, 0), points)
+    for player_id, points in _load_boost_file(_EGYPTIAN_BOOST_CONFIG).items():
         boosts[player_id] = max(boosts.get(player_id, 0), points)
     return boosts
 

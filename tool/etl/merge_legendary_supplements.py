@@ -22,6 +22,7 @@ ROOT = _ETL_DIR.parents[1]
 STAGING = _ETL_DIR / "staging"
 LEGENDARY_DIR = STAGING / "legendary"
 LEGENDARY_CSV = ROOT / "legendary-players" / "legendary_players_with_tm_id.csv"
+EGYPTIAN_CSV = ROOT / "egyptian-players" / "egyptian_players_with_tm_id.csv"
 SUMMARY_PATH = REPORTS / "merge_legendary_summary.json"
 
 EDGE_TARGETS: tuple[tuple[str, str], ...] = (
@@ -97,14 +98,15 @@ def merge_edge_file(target_name: str, legendary_name: str) -> dict[str, int]:
 
 
 def load_legendary_citizenship() -> dict[str, str]:
-    if not LEGENDARY_CSV.is_file():
-        return {}
     mapping: dict[str, str] = {}
-    with LEGENDARY_CSV.open(encoding="utf-8", newline="") as handle:
-        for row in csv.DictReader(handle):
-            tm_id = (row.get("transfermarkt_id") or "").strip()
-            if tm_id:
-                mapping[tm_id] = collapse_whitespace(row.get("Nationality") or "")
+    for path in (LEGENDARY_CSV, EGYPTIAN_CSV):
+        if not path.is_file():
+            continue
+        with path.open(encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                tm_id = (row.get("transfermarkt_id") or "").strip()
+                if tm_id:
+                    mapping[tm_id] = collapse_whitespace(row.get("Nationality") or "")
     return mapping
 
 

@@ -1,0 +1,439 @@
+Tiki-Taka Attribute Combinations (v1)
+=====================================
+Reference for board generation and gameplay intersections.
+Sources: docs/tiki-taka-toe-rules.md (§17), tool/etl/*, TikiRandomBoardGenerator.
+
+Last updated: 2026-06-20 (pair stats from current ETL build)
+
+
+1. Core validity rule (rules §17, lines 604–608)
+-------------------------------------------------
+A board is valid only if EVERY playable cell has at least one valid answer.
+
+For each cell intersection:
+
+    rowAttribute × columnAttribute
+
+the database must contain at least 1 valid player who has BOTH attributes
+(independently — they need not overlap in the same career spell).
+
+Shipped default: min_intersection = 3 (medium). Easy = 5. Hard = 1 (manual QA).
+
+A pair with player_count = 0 is FORBIDDEN and must never appear on a board.
+
+
+2. Attribute types on the board
+-------------------------------
+Each 3×3 board has 3 row headers + 3 column headers (6 distinct attribute IDs).
+Each of the 9 cells validates: player has row[r] AND col[c].
+
+Type          ID prefix   v1 allowlist count   Examples
+------------  ----------  -------------------  ---------------------------
+Club          club:       100                  Liverpool, Real Madrid, Barcelona
+Nation        nation:     48                   Brazil, Egypt, Argentina, France
+League        league:     5                    GB1, ES1, IT1, L1, FR1
+Position      pos:        4                    GK, DEF, MID, FWD
+
+Deferred (not in v1 boards): Coach attributes.
+
+
+3. Cell-level attribute-type combinations
+-----------------------------------------
+These are the TYPE pairs that can appear at a single cell (row type × col type).
+Order does not matter for validation (club×nation = nation×club).
+
+A) Shipped in ETL pre-generated boards (D10 templates)
+   ----------------------------------------------------
+   club × nation     Default recommended layout (rows = clubs, cols = nations)
+   league × club     Alternate recommended layout (rows = leagues, cols = clubs)
+
+   Example cells:
+     Liverpool × Egypt        → Mohamed Salah
+     GB1 × Barcelona          → players who appeared in PL and played for Barcelona
+     Real Madrid × Brazil     → Brazilian players who played for Real Madrid
+
+B) Also supported at runtime (TikiRandomBoardGenerator + attribute_pair_stats)
+   ---------------------------------------------------------------------------
+   club × club         Same-type; e.g. Liverpool × Chelsea → Salah
+   league × league     Same-type; e.g. GB1 × ES1
+   club × league       e.g. Liverpool × GB1
+   club × position     e.g. Liverpool × FWD
+   nation × club       (mirror of club × nation)
+   nation × league     e.g. Brazil × GB1
+   nation × position   e.g. Brazil × FWD
+   league × position   e.g. GB1 × MID
+   position × club     (mirror of club × position)
+   position × nation   (mirror of nation × position)
+   position × league   (mirror of league × position)
+
+   Current pair-stats coverage (total pairs / pairs with count ≥ 3):
+     club × club       4950 / 749
+     club × nation     4800 / 583
+     club × league      500 / 324
+     club × pos         400 / 240
+     league × nation    240 / 125
+     league × league     10 /  10
+     league × pos        20 /  20
+     nation × pos       192 / 103
+
+C) NOT displayed in v1 gameplay (forbidden by board layout rules)
+   -------------------------------------------------------------
+   nation × nation     Nation appears on at most ONE axis; no nation×nation cells
+   position × position At most ONE position header on the entire board
+   coach × *           Coaches deferred post-v1
+   * × coach           Coaches deferred post-v1
+
+D) Rejected at build time even if data existed
+   --------------------------------------------
+   Same attribute ID on both row and column (e.g. Liverpool × Liverpool)
+   Any cell with player_count = 0
+   Attributes outside v1 allowlists
+   Boards where too many cells have only 1–2 obscure answers (below MIN_INTERSECTION)
+
+
+4. Board layout templates (how headers are composed)
+----------------------------------------------------
+
+4a. ETL pre-generated boards (bundled in tiki_taka.db)
+    Config: tool/etl/config/board_generation.yaml
+    Generator: tool/etl/generate_boards.py
+
+    Template ID     Row headers       Column headers    Selection weight
+    -------------   --------------    ----------------  ------------------
+    club_nation     3 clubs           3 nations         50%  (equal rng.choice)
+    league_club     3 leagues         3 clubs           50%  (equal rng.choice)
+
+    All 9 cells in these boards use only the cross-type pairs listed in §3A.
+    Featured boards in featured_boards.yaml are hand-curated from these templates.
+
+4b. Runtime random boards (fresh board each entry/restart)
+    Generator: lib/features/tiki_taka/domain/services/tiki_random_board_generator.dart
+
+    Each template defines how many of each type appear on rows vs columns.
+    Format: (row: clubs, nations, leagues, positions | col: clubs, nations, leagues, positions)
+
+    #   Row composition          Col composition          Weight   ~%
+    --  ---------------------    ---------------------    ------   ----
+    1   3 clubs                  3 clubs                  30       26.3%
+    2   3 clubs                  1 nation + 1 league + 1 position   25   21.9%
+    3   1 nation + 1 league + 1 position   3 clubs      25       21.9%
+    4   2 clubs + 1 league       2 clubs + 1 league     12       10.5%
+    5   2 clubs + 1 nation       3 clubs                  8        7.0%
+    6   3 clubs                  2 clubs + 1 nation       8        7.0%
+    7   3 clubs                  2 clubs + 1 league       6        5.3%
+                                                    Total weight = 114
+
+    Cell types produced by each runtime template:
+
+    #1  club×club only (full club grid — most common)
+    #2  club×nation, club×league, club×position
+    #3  nation×club, league×club, position×club
+    #4  club×club, club×league, league×club, league×league
+    #5  club×club, nation×club
+    #6  club×club, club×nation
+    #7  club×club, club×league
+
+    Layout constraints enforced at runtime:
+      - At most 1 nation per axis (row or col)
+      - At most 1 league per axis
+      - At most 1 position on the entire board (row + col combined)
+      - Nation on at most one axis (never nation rows AND nation cols)
+      - No attribute ID repeated across both axes
+      - All 9 cells must have player_count ≥ min_intersection (default 3)
+
+
+5. Weights summary
+------------------
+
+WHAT IS WEIGHTED                          HOW
+----------------------------------------  ------------------------------------------
+Runtime board layout template             Integer weights in TikiRandomBoardGenerator
+                                          (§4b table; total 114, rolled uniformly)
+
+ETL auto board template                   Equal 50/50 between club_nation and league_club
+                                          (rng.choice over templates list)
+
+Individual clubs / nations / leagues      NOT weighted — uniform random pick from the
+/ positions on a board                    viable pool (attributes that satisfy partner
+                                          map and min_intersection threshold)
+
+Specific attribute pair popularity        NOT weighted for board generation — viability
+                                          only (player_count ≥ threshold)
+
+Search result ordering                    Separate from boards — search_rank_boost.yaml
+                                          and legendary_search_rank_boost.yaml affect
+                                          player search, not which headers appear.
+
+
+6. Named combination examples (gameplay)
+----------------------------------------
+Combination              Example cell              Example valid player
+-----------------------  ------------------------  ---------------------------
+club × nation            Egypt × Liverpool         Mohamed Salah
+club × club              Liverpool × Chelsea       Mohamed Salah (played both)
+league × club            Premier League × Barcelona  PL alumni at Barcelona
+league × league          GB1 × ES1                 players in both top-5 leagues
+club × league            Liverpool × GB1             Liverpool PL players
+club × position          Liverpool × FWD           Liverpool forwards
+nation × position        Brazil × FWD                Brazilian forwards
+nation × league          Brazil × GB1                Brazilians with PL appearances
+
+
+7. Difficulty vs intersection counts (rules §17)
+------------------------------------------------
+Difficulty is driven by the WEAKEST cell on the board (min of 9 player_counts).
+
+  Easy     every cell ≥ 5 valid players
+  Medium   every cell ≥ 3 valid players  (default ETL + runtime)
+  Hard     every cell ≥ 1 valid player   (manual QA; pairs with 1–2 answers flagged risky)
+
+ETL quality bands (build_attribute_pair_stats.py):
+  player_count 0     Forbidden
+  player_count 1–2   Risky — manual QA only
+  player_count ≥ 3   OK for casual / medium
+  player_count ≥ 5   Easy mode
+  player_count ≥ 10  Ideal
+
+
+8. Legendary players note
+-------------------------
+Legendary CSV ingest uses the same attribute IDs and intersection rules.
+A legendary player appears in a cell only if they have BOTH row and column
+attributes after ETL (club career, citizenship nation, league_club derivation,
+position bucket). Players with fewer than 2 distinct attributes are excluded
+from the database entirely (see legendary_players_plan.md).
+
+Dual-nation exception: "Argentina / Spain" (Di Stéfano) maps to both
+nation:argentina and nation:spain edges.
+
+
+9. Quick reference — all valid v1 cell TYPE combinations
+--------------------------------------------------------
+Displayed in gameplay (when pair stats ≥ min_intersection):
+
+  club      × club
+  club      × nation
+  club      × league
+  club      × position
+  nation    × club
+  nation    × league
+  nation    × position
+  league    × club
+  league    × league
+  league    × position
+  position  × club
+  position  × nation
+  position  × league
+
+Not displayed:
+
+  nation    × nation
+  position  × position
+  coach     × *
+  *         × coach
+
+Default product template (rules §30): Clubs × Nations.
+Alternate ETL template: Leagues × Clubs.
+Runtime play heavily favors club×club (weight 30/114 ≈ 26% of boards).
+
+Board template weights
+Runtime (TikiRandomBoardGenerator, total weight 114):
+
+| Template                                    | Weight |  ~% |
+|---------------------------------------------|--------|-----|
+| 3 clubs × 3 clubs                           |   30   | 26% |
+| 3 clubs × (nation + league + position)      |   25   | 22% |
+| (nation + league + position) × 3 clubs      |   25   | 22% |
+| (2 clubs + 1 league) × (2 clubs + 1 league) |   12   | 11% |
+| (2 clubs + 1 nation) × 3 clubs              |   8    | 7%  |
+| 3 clubs × (2 clubs + 1 nation)              |   8    | 7%  |
+| 3 clubs × (2 clubs + 1 league)              |   6    | 5%  |
+
+
+10. v1 attribute allowlists (full inventory)
+--------------------------------------------
+Source: tool/etl/config/clubs_allowlist.yaml, nations_allowlist.yaml,
+leagues_allowlist.yaml. Positions are fixed buckets (no YAML).
+
+Counts: 100 clubs · 48 nations · 5 leagues · 4 positions
+
+
+10a. Clubs (100)
+----------------
+Display name                    Attribute ID
+--------------                  ------------
+AC Milan                        club:5
+Ajax                            club:610
+Al Ahli                         club:18487
+Al Hilal                        club:1114
+Al Ittihad                      club:8023
+Al Nassr                        club:18544
+Al Shabab                       club:9840
+Anderlecht                      club:58
+Arsenal                         club:11
+Aston Villa                     club:405
+Atalanta                        club:800
+Athletic Bilbao                 club:621
+Atlético Madrid                 club:13
+Barcelona                       club:131
+Bayer Leverkusen                club:15
+Bayern Munich                   club:27
+Benfica                         club:294
+Boca Juniors                    club:189
+Bologna                         club:1025
+Borussia Dortmund               club:16
+Botafogo                        club:537
+Brentford                       club:1148
+Brighton                        club:1237
+Burnley                         club:1132
+Celta Vigo                      club:940
+Celtic                          club:371
+Chelsea                         club:631
+Club Brugge                     club:2282
+Como                            club:1047
+Copenhagen                      club:190
+Corinthians                     club:199
+Crystal Palace                  club:873
+Deportivo La Coruña             club:897
+Dinamo Zagreb                   club:419
+Eintracht Frankfurt             club:24
+Espanyol                        club:714
+Everton                         club:29
+FC Basel                        club:26
+FC Köln                         club:3
+FC Nantes                       club:995
+Fenerbahçe                      club:36
+Feyenoord                       club:234
+Fiorentina                      club:430
+Flamengo                        club:614
+Fluminense                      club:2462
+Fulham                          club:931
+Galatasaray                     club:141
+Genoa                           club:252
+Hamburger SV                    club:41
+Inter Miami                     club:69261
+Inter Milan                     club:46
+Juventus                        club:506
+Lazio                           club:398
+Leeds United                    club:399
+Leicester City                  club:1003
+Lille                           club:1082
+Liverpool                       club:31
+Los Angeles Galaxy              club:1061
+Lyon                            club:1041
+Manchester City                 club:281
+Manchester United               club:985
+Marseille                       club:244
+Monaco                          club:162
+Napoli                          club:6195
+Newcastle United                club:762
+Nice                            club:417
+Nottingham Forest               club:703
+Olympiacos                      club:683
+Palmeiras                       club:1023
+Paris Saint Germain             club:583
+Parma                           club:130
+Porto                           club:720
+PSV Eindhoven                   club:383
+Rangers                         club:1039
+Rayo Vallecano                  club:367
+RB Leipzig                      club:23826
+Real Madrid                     club:418
+Real Sociedad                   club:681
+Real Valladolid                 club:366
+Real Zaragoza                   club:142
+Red Star Belgrade               club:159
+River Plate                     club:209
+Roma                            club:12
+Santos                          club:221
+Schalke 04                      club:33
+Sevilla                         club:150
+Southampton                     club:180
+Sparta Prague                   club:197
+Sporting CP                     club:336
+Stoke City                      club:512
+Torino                          club:416
+Tottenham Hotspur               club:148
+Udinese                         club:410
+Union Berlin                    club:89
+Valencia                        club:1049
+VfB Stuttgart                   club:79
+VfL Wolfsburg                   club:82
+Villarreal                      club:1050
+West Ham United                 club:379
+Wolverhampton                   club:543
+
+
+10b. Nations (48)
+-----------------
+Display name                    Attribute ID
+--------------                  ------------
+Algeria                         nation:algeria
+Argentina                       nation:argentina
+Australia                       nation:australia
+Belgium                         nation:belgium
+Brazil                          nation:brazil
+Bulgaria                        nation:bulgaria
+Cameroon                        nation:cameroon
+Chile                           nation:chile
+Colombia                        nation:colombia
+Croatia                         nation:croatia
+Czech Republic                  nation:czech_republic
+Denmark                         nation:denmark
+Egypt                           nation:egypt
+England                         nation:england
+Finland                         nation:finland
+France                          nation:france
+Germany                         nation:germany
+Ghana                           nation:ghana
+Hungary                         nation:hungary
+Ireland                         nation:ireland
+Italy                           nation:italy
+Ivory Coast                     nation:ivory_coast
+Japan                           nation:japan
+Liberia                         nation:liberia
+Mexico                          nation:mexico
+Morocco                         nation:morocco
+Netherlands                     nation:netherlands
+Nigeria                         nation:nigeria
+Northern Ireland                nation:northern_ireland
+Norway                          nation:norway
+Peru                            nation:peru
+Poland                          nation:poland
+Portugal                        nation:portugal
+Romania                         nation:romania
+Russia                          nation:russia
+Saudi Arabia                    nation:saudi_arabia
+Scotland                        nation:scotland
+Senegal                         nation:senegal
+Serbia                          nation:serbia
+Slovakia                        nation:slovakia
+South Korea                     nation:south_korea
+Spain                           nation:spain
+Sweden                          nation:sweden
+Switzerland                     nation:switzerland
+Ukraine                         nation:ukraine
+United States                   nation:united_states
+Uruguay                         nation:uruguay
+Wales                           nation:wales
+
+
+10c. Leagues (5)
+----------------
+Display name                    Attribute ID
+--------------                  ------------
+Premier League                  league:GB1
+La Liga                         league:ES1
+Serie A                         league:IT1
+Bundesliga                      league:L1
+Ligue 1                         league:FR1
+
+
+10d. Positions (4)
+------------------
+Display name                    Attribute ID    Board label
+--------------                  ------------    -----------
+Goalkeeper                      pos:GK          GK
+Defender                        pos:DEF         DEF
+Midfielder                      pos:MID         MID
+Forward                         pos:FWD         FWD

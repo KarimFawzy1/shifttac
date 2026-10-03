@@ -26,7 +26,7 @@ void main() {
   });
 
   test('manifest covers all club, league, and nation icon_keys', () {
-    expect(manifest.length, 153);
+    expect(manifest.length, 182);
     expect(
       manifest.keys.where((key) => key.startsWith('club_')).length,
       100,
@@ -37,7 +37,7 @@ void main() {
     );
     expect(
       manifest.keys.where((key) => key.startsWith('nation_')).length,
-      48,
+      77,
     );
   });
 

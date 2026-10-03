@@ -1,0 +1,1850 @@
+{
+  "summary": {
+    "players_analyzed": 787,
+    "unique_club_strings": 544,
+    "missing_club_strings": 448,
+    "missing_club_mentions": 773,
+    "matched_club_mentions": 1783,
+    "unique_nationalities": 43,
+    "missing_nationalities": 0,
+    "already_allowed_nationalities": [
+      "Algeria",
+      "Angola",
+      "Benin",
+      "Brazil",
+      "Burkina Faso",
+      "Cameroon",
+      "Chad",
+      "Colombia",
+      "DR Congo",
+      "Egypt",
+      "Eritrea",
+      "Ethiopia",
+      "France",
+      "French Guiana",
+      "Gabon",
+      "Gambia",
+      "Ghana",
+      "Guinea",
+      "Ivory Coast",
+      "Jamaica",
+      "Jordan",
+      "Kenya",
+      "Liberia",
+      "Malawi",
+      "Mali",
+      "Mauritania",
+      "Morocco",
+      "Mozambique",
+      "Namibia",
+      "Nigeria",
+      "Palestine",
+      "Peru",
+      "Rwanda",
+      "Senegal",
+      "Slovenia",
+      "South Africa",
+      "Sudan",
+      "Syria",
+      "Togo",
+      "Tunisia",
+      "Uganda",
+      "Uruguay",
+      "Zambia"
+    ]
+  },
+  "missing_clubs": [
+    {
+      "club": "El Entag El Harby",
+      "player_mentions": 39
+    },
+    {
+      "club": "El Dakhleya",
+      "player_mentions": 29
+    },
+    {
+      "club": "Aswan",
+      "player_mentions": 21
+    },
+    {
+      "club": "Tala’ea El Gaish",
+      "player_mentions": 19
+    },
+    {
+      "club": "CS Sfaxien",
+      "player_mentions": 12
+    },
+    {
+      "club": "Lierse",
+      "player_mentions": 10
+    },
+    {
+      "club": "Wydad Casablanca",
+      "player_mentions": 9
+    },
+    {
+      "club": "Raja Casablanca",
+      "player_mentions": 9
+    },
+    {
+      "club": "Tersana",
+      "player_mentions": 7
+    },
+    {
+      "club": "Konyaspor",
+      "player_mentions": 7
+    },
+    {
+      "club": "El-Entag El-Harby",
+      "player_mentions": 7
+    },
+    {
+      "club": "Tanta",
+      "player_mentions": 6
+    },
+    {
+      "club": "El Mansoura",
+      "player_mentions": 6
+    },
+    {
+      "club": "PAOK",
+      "player_mentions": 5
+    },
+    {
+      "club": "Trabzonspor",
+      "player_mentions": 5
+    },
+    {
+      "club": "Qatar SC",
+      "player_mentions": 5
+    },
+    {
+      "club": "El-Mansoura",
+      "player_mentions": 5
+    },
+    {
+      "club": "Al-Ahli (Jeddah)",
+      "player_mentions": 4
+    },
+    {
+      "club": "Hull City",
+      "player_mentions": 4
+    },
+    {
+      "club": "Bordeaux",
+      "player_mentions": 4
+    },
+    {
+      "club": "Club Africain",
+      "player_mentions": 4
+    },
+    {
+      "club": "Rio Ave",
+      "player_mentions": 4
+    },
+    {
+      "club": "Ankaragücü",
+      "player_mentions": 4
+    },
+    {
+      "club": "Petro de Luanda",
+      "player_mentions": 4
+    },
+    {
+      "club": "Yeni Malatyaspor",
+      "player_mentions": 4
+    },
+    {
+      "club": "ASEC Mimosas",
+      "player_mentions": 4
+    },
+    {
+      "club": "Asante Kotoko",
+      "player_mentions": 4
+    },
+    {
+      "club": "Baniyas",
+      "player_mentions": 3
+    },
+    {
+      "club": "Al-Taawoun",
+      "player_mentions": 3
+    },
+    {
+      "club": "Nogoom",
+      "player_mentions": 3
+    },
+    {
+      "club": "Neuchâtel Xamax",
+      "player_mentions": 3
+    },
+    {
+      "club": "Al Ain",
+      "player_mentions": 3
+    },
+    {
+      "club": "Kocaelispor",
+      "player_mentions": 3
+    },
+    {
+      "club": "Gençlerbirliği",
+      "player_mentions": 3
+    },
+    {
+      "club": "Kazma",
+      "player_mentions": 3
+    },
+    {
+      "club": "Middlesbrough",
+      "player_mentions": 3
+    },
+    {
+      "club": "Wigan Athletic",
+      "player_mentions": 3
+    },
+    {
+      "club": "Metz",
+      "player_mentions": 3
+    },
+    {
+      "club": "Mamelodi Sundowns",
+      "player_mentions": 3
+    },
+    {
+      "club": "Lens",
+      "player_mentions": 3
+    },
+    {
+      "club": "Nacional",
+      "player_mentions": 3
+    },
+    {
+      "club": "Saint-Étienne",
+      "player_mentions": 3
+    },
+    {
+      "club": "Olympic Club",
+      "player_mentions": 3
+    },
+    {
+      "club": "El Raja",
+      "player_mentions": 3
+    },
+    {
+      "club": "Esperance",
+      "player_mentions": 3
+    },
+    {
+      "club": "Charleroi",
+      "player_mentions": 3
+    },
+    {
+      "club": "Etoile du Sahel",
+      "player_mentions": 3
+    },
+    {
+      "club": "TP Mazembe",
+      "player_mentions": 3
+    },
+    {
+      "club": "Étoile du Sahel",
+      "player_mentions": 3
+    },
+    {
+      "club": "Denizlispor",
+      "player_mentions": 2
+    },
+    {
+      "club": "Beşiktaş",
+      "player_mentions": 2
+    },
+    {
+      "club": "Gent",
+      "player_mentions": 2
+    },
+    {
+      "club": "Barnsley",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al-Rayyan",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al-Jazira",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al-Raed",
+      "player_mentions": 2
+    },
+    {
+      "club": "Sekka El Hadid",
+      "player_mentions": 2
+    },
+    {
+      "club": "Midtjylland",
+      "player_mentions": 2
+    },
+    {
+      "club": "Werder Bremen",
+      "player_mentions": 2
+    },
+    {
+      "club": "Mainz 05",
+      "player_mentions": 2
+    },
+    {
+      "club": "West Bromwich Albion",
+      "player_mentions": 2
+    },
+    {
+      "club": "1. FC Kaiserslautern",
+      "player_mentions": 2
+    },
+    {
+      "club": "Derby County",
+      "player_mentions": 2
+    },
+    {
+      "club": "Luzern",
+      "player_mentions": 2
+    },
+    {
+      "club": "Strasbourg",
+      "player_mentions": 2
+    },
+    {
+      "club": "Eastern Company",
+      "player_mentions": 2
+    },
+    {
+      "club": "Ala'ab Damanhour",
+      "player_mentions": 2
+    },
+    {
+      "club": "Africa Sports",
+      "player_mentions": 2
+    },
+    {
+      "club": "Difaâ El Jadidi",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al Ettifaq",
+      "player_mentions": 2
+    },
+    {
+      "club": "Bari",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al Wahda",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al-Arabi",
+      "player_mentions": 2
+    },
+    {
+      "club": "Volos",
+      "player_mentions": 2
+    },
+    {
+      "club": "Angers",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al-Wakrah",
+      "player_mentions": 2
+    },
+    {
+      "club": "Marítimo",
+      "player_mentions": 2
+    },
+    {
+      "club": "Hansa Rostock",
+      "player_mentions": 2
+    },
+    {
+      "club": "Telephonat Beni Suef",
+      "player_mentions": 2
+    },
+    {
+      "club": "Atromitos",
+      "player_mentions": 2
+    },
+    {
+      "club": "Anorthosis",
+      "player_mentions": 2
+    },
+    {
+      "club": "Olympic",
+      "player_mentions": 2
+    },
+    {
+      "club": "Ittihad Jeddah",
+      "player_mentions": 2
+    },
+    {
+      "club": "Enugu Rangers",
+      "player_mentions": 2
+    },
+    {
+      "club": "Sivasspor",
+      "player_mentions": 2
+    },
+    {
+      "club": "Le Havre",
+      "player_mentions": 2
+    },
+    {
+      "club": "Aluminium Nag Hammadi",
+      "player_mentions": 2
+    },
+    {
+      "club": "Omonia",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al Wehda",
+      "player_mentions": 2
+    },
+    {
+      "club": "FAR Rabat",
+      "player_mentions": 2
+    },
+    {
+      "club": "Silkeborg",
+      "player_mentions": 2
+    },
+    {
+      "club": "Columbus Crew",
+      "player_mentions": 2
+    },
+    {
+      "club": "AS Vita Club",
+      "player_mentions": 2
+    },
+    {
+      "club": "Young Africans",
+      "player_mentions": 2
+    },
+    {
+      "club": "Primeiro de Agosto",
+      "player_mentions": 2
+    },
+    {
+      "club": "Simba",
+      "player_mentions": 2
+    },
+    {
+      "club": "Mansoura",
+      "player_mentions": 2
+    },
+    {
+      "club": "ES Sétif",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al Faisaly",
+      "player_mentions": 2
+    },
+    {
+      "club": "Gasco",
+      "player_mentions": 2
+    },
+    {
+      "club": "ES Setif",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al-Kroum",
+      "player_mentions": 2
+    },
+    {
+      "club": "Çaykur Rizespor",
+      "player_mentions": 2
+    },
+    {
+      "club": "El-Minya",
+      "player_mentions": 2
+    },
+    {
+      "club": "Lobi Stars",
+      "player_mentions": 2
+    },
+    {
+      "club": "US Monastir",
+      "player_mentions": 2
+    },
+    {
+      "club": "Kelantan",
+      "player_mentions": 2
+    },
+    {
+      "club": "Liberty Professionals",
+      "player_mentions": 2
+    },
+    {
+      "club": "Stade Tunisien",
+      "player_mentions": 2
+    },
+    {
+      "club": "Hajer",
+      "player_mentions": 2
+    },
+    {
+      "club": "El-Dakhleya",
+      "player_mentions": 2
+    },
+    {
+      "club": "Ashanti Gold",
+      "player_mentions": 2
+    },
+    {
+      "club": "Bayelsa United",
+      "player_mentions": 2
+    },
+    {
+      "club": "Al Ahli Benghazi",
+      "player_mentions": 2
+    },
+    {
+      "club": "ZESCO United",
+      "player_mentions": 2
+    },
+    {
+      "club": "El Sekka El Hadid",
+      "player_mentions": 2
+    },
+    {
+      "club": "Damietta",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sion",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Merrikh",
+      "player_mentions": 1
+    },
+    {
+      "club": "St. Pauli",
+      "player_mentions": 1
+    },
+    {
+      "club": "Mouscron",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kasımpaşa",
+      "player_mentions": 1
+    },
+    {
+      "club": "İstanbul Başakşehir",
+      "player_mentions": 1
+    },
+    {
+      "club": "Châteauroux",
+      "player_mentions": 1
+    },
+    {
+      "club": "Guingamp",
+      "player_mentions": 1
+    },
+    {
+      "club": "Delhi Dynamos",
+      "player_mentions": 1
+    },
+    {
+      "club": "Differdange",
+      "player_mentions": 1
+    },
+    {
+      "club": "De Graafschap",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Wasl",
+      "player_mentions": 1
+    },
+    {
+      "club": "Apollon Smyrnis",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Arabi (Doha)",
+      "player_mentions": 1
+    },
+    {
+      "club": "AB",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Siliya",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sunderland",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sheffield United",
+      "player_mentions": 1
+    },
+    {
+      "club": "Umm Salal",
+      "player_mentions": 1
+    },
+    {
+      "club": "Beira-Mar",
+      "player_mentions": 1
+    },
+    {
+      "club": "Marbella",
+      "player_mentions": 1
+    },
+    {
+      "club": "Witbank Spurs",
+      "player_mentions": 1
+    },
+    {
+      "club": "Brighton & Hove Albion",
+      "player_mentions": 1
+    },
+    {
+      "club": "Union SG",
+      "player_mentions": 1
+    },
+    {
+      "club": "Huddersfield Town",
+      "player_mentions": 1
+    },
+    {
+      "club": "KuPS",
+      "player_mentions": 1
+    },
+    {
+      "club": "MAS Fez",
+      "player_mentions": 1
+    },
+    {
+      "club": "Moreirense",
+      "player_mentions": 1
+    },
+    {
+      "club": "Perugia",
+      "player_mentions": 1
+    },
+    {
+      "club": "NEOM",
+      "player_mentions": 1
+    },
+    {
+      "club": "Lokomotiv Moscow",
+      "player_mentions": 1
+    },
+    {
+      "club": "Elazığspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Salmiya",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Ahed",
+      "player_mentions": 1
+    },
+    {
+      "club": "Espérance de Tunis",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Duhail",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Gharafa",
+      "player_mentions": 1
+    },
+    {
+      "club": "1. FC Saarbrücken",
+      "player_mentions": 1
+    },
+    {
+      "club": "Grasshopper",
+      "player_mentions": 1
+    },
+    {
+      "club": "Desportivo das Aves",
+      "player_mentions": 1
+    },
+    {
+      "club": "Hatayspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Concord",
+      "player_mentions": 1
+    },
+    {
+      "club": "Julius Berger",
+      "player_mentions": 1
+    },
+    {
+      "club": "Albacete",
+      "player_mentions": 1
+    },
+    {
+      "club": "Busan I'Cons",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Wehdat",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Ahli (Dubai)",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ittihad (Jeddah)",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Fateh",
+      "player_mentions": 1
+    },
+    {
+      "club": "Damac",
+      "player_mentions": 1
+    },
+    {
+      "club": "Union Douala",
+      "player_mentions": 1
+    },
+    {
+      "club": "Toulon",
+      "player_mentions": 1
+    },
+    {
+      "club": "Suez Cement",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Ahli Jeddah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Goldi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Akratitos",
+      "player_mentions": 1
+    },
+    {
+      "club": "Djoliba",
+      "player_mentions": 1
+    },
+    {
+      "club": "MC Alger",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Kholood",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Khaleej",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ajman",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bellinzona",
+      "player_mentions": 1
+    },
+    {
+      "club": "Messina",
+      "player_mentions": 1
+    },
+    {
+      "club": "Pistoiese",
+      "player_mentions": 1
+    },
+    {
+      "club": "Mons",
+      "player_mentions": 1
+    },
+    {
+      "club": "Olympique Safi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sochi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Blackburn Rovers",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bastia",
+      "player_mentions": 1
+    },
+    {
+      "club": "Hoffenheim",
+      "player_mentions": 1
+    },
+    {
+      "club": "Tianjin Quanjian",
+      "player_mentions": 1
+    },
+    {
+      "club": "Intercity",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Qanah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Tirol Innsbruck",
+      "player_mentions": 1
+    },
+    {
+      "club": "Estrela da Amadora",
+      "player_mentions": 1
+    },
+    {
+      "club": "Braga",
+      "player_mentions": 1
+    },
+    {
+      "club": "Alanyaspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Pendikspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bolivar",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Jazira",
+      "player_mentions": 1
+    },
+    {
+      "club": "Nordsjælland",
+      "player_mentions": 1
+    },
+    {
+      "club": "Shooting Stars",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Nasr Benghazi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ferencvaros",
+      "player_mentions": 1
+    },
+    {
+      "club": "Port Vale",
+      "player_mentions": 1
+    },
+    {
+      "club": "Chesterfield",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ipswich Town",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Shaab",
+      "player_mentions": 1
+    },
+    {
+      "club": "Panetolikos",
+      "player_mentions": 1
+    },
+    {
+      "club": "AEL",
+      "player_mentions": 1
+    },
+    {
+      "club": "Apollon Limassol",
+      "player_mentions": 1
+    },
+    {
+      "club": "Panserraikos",
+      "player_mentions": 1
+    },
+    {
+      "club": "Telecom Egypt",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Kharaitiyat",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Sadd",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rennes",
+      "player_mentions": 1
+    },
+    {
+      "club": "Portsmouth",
+      "player_mentions": 1
+    },
+    {
+      "club": "Montpellier",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sedan",
+      "player_mentions": 1
+    },
+    {
+      "club": "Real Madrid Castilla",
+      "player_mentions": 1
+    },
+    {
+      "club": "Malaga",
+      "player_mentions": 1
+    },
+    {
+      "club": "AEL Limassol",
+      "player_mentions": 1
+    },
+    {
+      "club": "Benfica Luanda",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sūduva",
+      "player_mentions": 1
+    },
+    {
+      "club": "Santa Cruz",
+      "player_mentions": 1
+    },
+    {
+      "club": "Atletico Mineiro",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bagnols-Pont",
+      "player_mentions": 1
+    },
+    {
+      "club": "Uzès Pont du Gard",
+      "player_mentions": 1
+    },
+    {
+      "club": "Luzenac",
+      "player_mentions": 1
+    },
+    {
+      "club": "Gazélec Ajaccio",
+      "player_mentions": 1
+    },
+    {
+      "club": "Paris FC",
+      "player_mentions": 1
+    },
+    {
+      "club": "Gil Vicente",
+      "player_mentions": 1
+    },
+    {
+      "club": "Nabarouh",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Ahli (Tripoli)",
+      "player_mentions": 1
+    },
+    {
+      "club": "AEL Larissa",
+      "player_mentions": 1
+    },
+    {
+      "club": "Eleven Wise",
+      "player_mentions": 1
+    },
+    {
+      "club": "El-Gaish",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kasimpasa",
+      "player_mentions": 1
+    },
+    {
+      "club": "KAC Kénitra",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ittihad Tanger",
+      "player_mentions": 1
+    },
+    {
+      "club": "LAFC",
+      "player_mentions": 1
+    },
+    {
+      "club": "Vodafone",
+      "player_mentions": 1
+    },
+    {
+      "club": "Aalborg",
+      "player_mentions": 1
+    },
+    {
+      "club": "Vendsyssel",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sirius",
+      "player_mentions": 1
+    },
+    {
+      "club": "El-Olimpi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Lokeren",
+      "player_mentions": 1
+    },
+    {
+      "club": "Metalurh Donetsk",
+      "player_mentions": 1
+    },
+    {
+      "club": "Mainz",
+      "player_mentions": 1
+    },
+    {
+      "club": "Augsburg",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sharjah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Antalyaspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "UD Songo",
+      "player_mentions": 1
+    },
+    {
+      "club": "Chippa United",
+      "player_mentions": 1
+    },
+    {
+      "club": "Royal Eagles",
+      "player_mentions": 1
+    },
+    {
+      "club": "Abha",
+      "player_mentions": 1
+    },
+    {
+      "club": "CF Mounana",
+      "player_mentions": 1
+    },
+    {
+      "club": "Tianjin Teda",
+      "player_mentions": 1
+    },
+    {
+      "club": "Le Havre II",
+      "player_mentions": 1
+    },
+    {
+      "club": "AS GNN",
+      "player_mentions": 1
+    },
+    {
+      "club": "Inter Allies",
+      "player_mentions": 1
+    },
+    {
+      "club": "Legon Cities",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Hazem",
+      "player_mentions": 1
+    },
+    {
+      "club": "Casa Sports",
+      "player_mentions": 1
+    },
+    {
+      "club": "Djurgården",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rapid Wien",
+      "player_mentions": 1
+    },
+    {
+      "club": "Amiens",
+      "player_mentions": 1
+    },
+    {
+      "club": "Gaziantep",
+      "player_mentions": 1
+    },
+    {
+      "club": "Red Star",
+      "player_mentions": 1
+    },
+    {
+      "club": "Beroe",
+      "player_mentions": 1
+    },
+    {
+      "club": "USM Alger",
+      "player_mentions": 1
+    },
+    {
+      "club": "CR Belouizdad",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Tai",
+      "player_mentions": 1
+    },
+    {
+      "club": "Chabab Atlas Khénifra",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Suqoor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ismailia Electricity",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sochaux B",
+      "player_mentions": 1
+    },
+    {
+      "club": "Altay",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bidvest Wits",
+      "player_mentions": 1
+    },
+    {
+      "club": "HJK",
+      "player_mentions": 1
+    },
+    {
+      "club": "1º de Agosto",
+      "player_mentions": 1
+    },
+    {
+      "club": "Coritiba",
+      "player_mentions": 1
+    },
+    {
+      "club": "Atlético Goianiense",
+      "player_mentions": 1
+    },
+    {
+      "club": "MKE Ankaragücü",
+      "player_mentions": 1
+    },
+    {
+      "club": "Gloria Bistrița",
+      "player_mentions": 1
+    },
+    {
+      "club": "Corona Brașov",
+      "player_mentions": 1
+    },
+    {
+      "club": "ADO Den Haag",
+      "player_mentions": 1
+    },
+    {
+      "club": "SC Villa",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kaloum Star",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Wahda",
+      "player_mentions": 1
+    },
+    {
+      "club": "Wydad",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sakaryaspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Wrexham",
+      "player_mentions": 1
+    },
+    {
+      "club": "Crewe Alexandra",
+      "player_mentions": 1
+    },
+    {
+      "club": "Pescara",
+      "player_mentions": 1
+    },
+    {
+      "club": "Crawley Town",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sparta Rotterdam",
+      "player_mentions": 1
+    },
+    {
+      "club": "Tours",
+      "player_mentions": 1
+    },
+    {
+      "club": "Manchego",
+      "player_mentions": 1
+    },
+    {
+      "club": "Lubumbashi Sport",
+      "player_mentions": 1
+    },
+    {
+      "club": "Nkana",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Sailiya",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rogaska",
+      "player_mentions": 1
+    },
+    {
+      "club": "Fehervar",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Qadsia",
+      "player_mentions": 1
+    },
+    {
+      "club": "Arouca",
+      "player_mentions": 1
+    },
+    {
+      "club": "AIK",
+      "player_mentions": 1
+    },
+    {
+      "club": "Degerfors",
+      "player_mentions": 1
+    },
+    {
+      "club": "USFA",
+      "player_mentions": 1
+    },
+    {
+      "club": "Siena",
+      "player_mentions": 1
+    },
+    {
+      "club": "Peterborough",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kilmarnock",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Ahly (Benghazi)",
+      "player_mentions": 1
+    },
+    {
+      "club": "Beni Ebeid",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Orobah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Novi Pazar",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bahia",
+      "player_mentions": 1
+    },
+    {
+      "club": "Swindon Town",
+      "player_mentions": 1
+    },
+    {
+      "club": "Arles-Avignon",
+      "player_mentions": 1
+    },
+    {
+      "club": "Portimonense",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ponte Preta",
+      "player_mentions": 1
+    },
+    {
+      "club": "Vasco da Gama",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rijeka",
+      "player_mentions": 1
+    },
+    {
+      "club": "Paderborn",
+      "player_mentions": 1
+    },
+    {
+      "club": "Valenciennes",
+      "player_mentions": 1
+    },
+    {
+      "club": "Damanhour",
+      "player_mentions": 1
+    },
+    {
+      "club": "Vorskla Poltava",
+      "player_mentions": 1
+    },
+    {
+      "club": "Atlanta United",
+      "player_mentions": 1
+    },
+    {
+      "club": "CS Constantine",
+      "player_mentions": 1
+    },
+    {
+      "club": "Nchanga Rangers",
+      "player_mentions": 1
+    },
+    {
+      "club": "Enyimba",
+      "player_mentions": 1
+    },
+    {
+      "club": "Malatyaspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Diyarbakırspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Queen's Park",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ittihad Tripoli",
+      "player_mentions": 1
+    },
+    {
+      "club": "El-Kuwait",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bursaspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "الاتفاق",
+      "player_mentions": 1
+    },
+    {
+      "club": "El-Kroum",
+      "player_mentions": 1
+    },
+    {
+      "club": "Fatih Karagümrük",
+      "player_mentions": 1
+    },
+    {
+      "club": "Brest",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Khaleej",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Ittihad Tripoli",
+      "player_mentions": 1
+    },
+    {
+      "club": "Warri Wolves",
+      "player_mentions": 1
+    },
+    {
+      "club": "Wa All Stars",
+      "player_mentions": 1
+    },
+    {
+      "club": "Dakhleya",
+      "player_mentions": 1
+    },
+    {
+      "club": "Académie de Sol Beni",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Uruba",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kaiserslautern",
+      "player_mentions": 1
+    },
+    {
+      "club": "Khazar Lankaran",
+      "player_mentions": 1
+    },
+    {
+      "club": "Heart of Lions",
+      "player_mentions": 1
+    },
+    {
+      "club": "Berekum Chelsea",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kafr El Sheikh",
+      "player_mentions": 1
+    },
+    {
+      "club": "AFC Leopards",
+      "player_mentions": 1
+    },
+    {
+      "club": "Hearts of Oak",
+      "player_mentions": 1
+    },
+    {
+      "club": "El-Zohour",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Hazem",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Shaab",
+      "player_mentions": 1
+    },
+    {
+      "club": "Great Olympics",
+      "player_mentions": 1
+    },
+    {
+      "club": "Málaga",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kampala Capital City Authority",
+      "player_mentions": 1
+    },
+    {
+      "club": "Berekum Arsenal",
+      "player_mentions": 1
+    },
+    {
+      "club": "Mouloudia Oujda",
+      "player_mentions": 1
+    },
+    {
+      "club": "Mouna FC",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Wakrah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Auxerre",
+      "player_mentions": 1
+    },
+    {
+      "club": "Žilina",
+      "player_mentions": 1
+    },
+    {
+      "club": "Hoverla Uzhhorod",
+      "player_mentions": 1
+    },
+    {
+      "club": "Arsenal Tula",
+      "player_mentions": 1
+    },
+    {
+      "club": "Heartland",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sliema Wanderers",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Qadsiah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Akwa United",
+      "player_mentions": 1
+    },
+    {
+      "club": "LPRC Oilers",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bechem United",
+      "player_mentions": 1
+    },
+    {
+      "club": "Fuenlabrada",
+      "player_mentions": 1
+    },
+    {
+      "club": "Eskişehirspor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Panionios",
+      "player_mentions": 1
+    },
+    {
+      "club": "El-Watan",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Batin",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Qanah",
+      "player_mentions": 1
+    },
+    {
+      "club": "Pro Sesto",
+      "player_mentions": 1
+    },
+    {
+      "club": "Guizhou Zhicheng",
+      "player_mentions": 1
+    },
+    {
+      "club": "Vancouver Whitecaps",
+      "player_mentions": 1
+    },
+    {
+      "club": "Feirense",
+      "player_mentions": 1
+    },
+    {
+      "club": "Larissa",
+      "player_mentions": 1
+    },
+    {
+      "club": "Apollon Kalamarias",
+      "player_mentions": 1
+    },
+    {
+      "club": "Veria",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ionikos",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Dhafra",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kayserispor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Naft",
+      "player_mentions": 1
+    },
+    {
+      "club": "Evian",
+      "player_mentions": 1
+    },
+    {
+      "club": "Vitória Guimarães",
+      "player_mentions": 1
+    },
+    {
+      "club": "Guarani",
+      "player_mentions": 1
+    },
+    {
+      "club": "Louletano",
+      "player_mentions": 1
+    },
+    {
+      "club": "Desportivo Brasil",
+      "player_mentions": 1
+    },
+    {
+      "club": "América Mineiro",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bolívar",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Hilal Omdurman",
+      "player_mentions": 1
+    },
+    {
+      "club": "Deportivo Cali",
+      "player_mentions": 1
+    },
+    {
+      "club": "Once Caldas",
+      "player_mentions": 1
+    },
+    {
+      "club": "Kuwait SC",
+      "player_mentions": 1
+    },
+    {
+      "club": "Raja",
+      "player_mentions": 1
+    },
+    {
+      "club": "USO",
+      "player_mentions": 1
+    },
+    {
+      "club": "Tourbillon",
+      "player_mentions": 1
+    },
+    {
+      "club": "Terek Grozny",
+      "player_mentions": 1
+    },
+    {
+      "club": "Bhayangkara",
+      "player_mentions": 1
+    },
+    {
+      "club": "Nkufo Academy",
+      "player_mentions": 1
+    },
+    {
+      "club": "AS Fortuna",
+      "player_mentions": 1
+    },
+    {
+      "club": "Unisport Bafang",
+      "player_mentions": 1
+    },
+    {
+      "club": "Progresso Sambizanga",
+      "player_mentions": 1
+    },
+    {
+      "club": "Raja Beni Mellal",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Ahli Gaza",
+      "player_mentions": 1
+    },
+    {
+      "club": "Gaziantep BB",
+      "player_mentions": 1
+    },
+    {
+      "club": "SFK Riga",
+      "player_mentions": 1
+    },
+    {
+      "club": "Senica",
+      "player_mentions": 1
+    },
+    {
+      "club": "Caracas",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rail Club du Kadiogo",
+      "player_mentions": 1
+    },
+    {
+      "club": "Grazer AK",
+      "player_mentions": 1
+    },
+    {
+      "club": "CF Montréal",
+      "player_mentions": 1
+    },
+    {
+      "club": "Beni Suef",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Tahaddi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Aluminium",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rizespor",
+      "player_mentions": 1
+    },
+    {
+      "club": "Real Betis",
+      "player_mentions": 1
+    },
+    {
+      "club": "Orlando City",
+      "player_mentions": 1
+    },
+    {
+      "club": "New York Red Bulls",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Nasr",
+      "player_mentions": 1
+    },
+    {
+      "club": "FC Masr",
+      "player_mentions": 1
+    },
+    {
+      "club": "Standard Liège",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Aluminum",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al-Ahly Benghazi",
+      "player_mentions": 1
+    },
+    {
+      "club": "Defence Force",
+      "player_mentions": 1
+    },
+    {
+      "club": "Saint George",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Hilal Benghazi",
+      "player_mentions": 1
+    },
+    {
+      "club": "NAC Breda",
+      "player_mentions": 1
+    },
+    {
+      "club": "JS Kabylie",
+      "player_mentions": 1
+    },
+    {
+      "club": "Sofapaka",
+      "player_mentions": 1
+    },
+    {
+      "club": "Medeama",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Wehdat",
+      "player_mentions": 1
+    },
+    {
+      "club": "Rangers International",
+      "player_mentions": 1
+    },
+    {
+      "club": "Dulwich Hamlet",
+      "player_mentions": 1
+    },
+    {
+      "club": "Al Ahly Tripoli",
+      "player_mentions": 1
+    },
+    {
+      "club": "Dreams FC",
+      "player_mentions": 1
+    },
+    {
+      "club": "Cowdenbeath",
+      "player_mentions": 1
+    },
+    {
+      "club": "Providence Clamdiggers",
+      "player_mentions": 1
+    },
+    {
+      "club": "Fall River Marksmen",
+      "player_mentions": 1
+    },
+    {
+      "club": "New York Nationals",
+      "player_mentions": 1
+    },
+    {
+      "club": "Maritimo",
+      "player_mentions": 1
+    },
+    {
+      "club": "Ghazl Suez",
+      "player_mentions": 1
+    }
+  ]
+}

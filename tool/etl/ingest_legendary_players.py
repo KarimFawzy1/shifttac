@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -28,6 +29,7 @@ from etl_common import (  # noqa: E402
 
 ROOT = _ETL_DIR.parents[1]
 CSV_PATH = ROOT / "legendary-players" / "legendary_players_with_tm_id.csv"
+EGYPTIAN_CSV = ROOT / "egyptian-players" / "egyptian_players_with_tm_id.csv"
 MANUAL_CLUB_FIXES = ROOT / "legendary-players" / "manual_club_fixes.csv"
 STAGING_LEGENDARY = _ETL_DIR / "staging" / "legendary"
 EXCLUDED_REPORT = ROOT / "legendary-players" / "reports" / "excluded_players.json"
@@ -122,7 +124,7 @@ class PlayerEdges:
 
 
 def parse_clubs(raw: str) -> list[str]:
-    return [part.strip() for part in (raw or "").split(",") if part.strip()]
+    return [part.strip() for part in re.split(r"[,;]", raw or "") if part.strip()]
 
 
 def load_club_resolver() -> tuple[dict[str, str], dict[str, str]]:
@@ -130,6 +132,7 @@ def load_club_resolver() -> tuple[dict[str, str], dict[str, str]]:
     clubs_cfg = load_yaml("clubs_allowlist.yaml").get("clubs") or {}
     clubs = {str(name): str(club_id) for name, club_id in clubs_cfg.items()}
     aliases = dict(load_yaml("legendary_club_aliases.yaml").get("aliases") or {})
+    aliases.update(load_yaml("egyptian_club_aliases.yaml").get("aliases") or {})
     return clubs, aliases
 
 
@@ -402,14 +405,19 @@ def ingest_rows(rows: list[dict[str, str]]) -> dict[str, object]:
 
 
 def main() -> int:
-    if not CSV_PATH.is_file():
-        print(f"Missing {CSV_PATH}", file=sys.stderr)
+    rows: list[dict[str, str]] = []
+    for path in (CSV_PATH, EGYPTIAN_CSV):
+        if not path.is_file():
+            continue
+        rows.extend(csv.DictReader(path.open(encoding="utf-8")))
+
+    if not rows:
+        print(f"Missing supplement CSVs: {CSV_PATH} and/or {EGYPTIAN_CSV}", file=sys.stderr)
         return 1
 
-    rows = list(csv.DictReader(CSV_PATH.open(encoding="utf-8")))
     summary = ingest_rows(rows)
 
-    print(f"Ingested {summary['included_preview']} / {summary['csv_rows']} legendary players")
+    print(f"Ingested {summary['included_preview']} / {summary['csv_rows']} supplement players")
     print(f"Excluded (<2 attributes): {summary['excluded_insufficient_attributes']}")
     print(f"League edges: {summary['league_edges_added']}")
     print(f"Summary: {SUMMARY_PATH}")

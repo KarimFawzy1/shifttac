@@ -1,0 +1,22 @@
+{
+  "master_rows": 796,
+  "ranked_rows": 796,
+  "output_rows": 787,
+  "rows_removed_by_dedup": 9,
+  "missing_dob": 401,
+  "missing_wikidata_qid": 787,
+  "missing_popularity_score": 0,
+  "alias_merge_notes": [
+    "Merged duplicate rows for Ahmed Magdy",
+    "Merged duplicate rows for Mohamed Abou Gabal (Gabaski)",
+    "Merged duplicate rows for Achraf Bencharki",
+    "Merged duplicate rows for Ahmed Eid",
+    "Merged duplicate rows for Osama Ibrahim",
+    "Merged duplicate rows for Mohamed Ragab",
+    "Merged duplicate rows for Mohamed Ashraf",
+    "Merged duplicate rows for Mohamed Ashraf",
+    "Merged duplicate rows for Mohamed Essam"
+  ],
+  "identity_merge_notes": [],
+  "output_csv": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\egyptian-players\\egyptian_players_combined.csv"
+}
