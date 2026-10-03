@@ -1,0 +1,65 @@
+{
+  "phase": "D1",
+  "built_at": "2026-06-01T14:06:05+00:00",
+  "source_dir": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\transfermarkt-datasets",
+  "staging_dir": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging",
+  "date_anomaly_cutoff": "2027-06-01",
+  "files": {
+    "players.csv": {
+      "rows_read": 47690,
+      "rows_written": 47690,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 0,
+      "date_parse_failures": 0
+    },
+    "clubs.csv": {
+      "rows_read": 796,
+      "rows_written": 796,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 0,
+      "date_parse_failures": 0
+    },
+    "competitions.csv": {
+      "rows_read": 67,
+      "rows_written": 67,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 0,
+      "date_parse_failures": 0
+    },
+    "countries.csv": {
+      "rows_read": 118,
+      "rows_written": 118,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 0,
+      "date_parse_failures": 0
+    },
+    "transfers.csv": {
+      "rows_read": 174222,
+      "rows_written": 174195,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 27,
+      "date_parse_failures": 0
+    },
+    "appearances.csv": {
+      "rows_read": 1885448,
+      "rows_written": 1885448,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 0,
+      "date_parse_failures": 0
+    },
+    "national_teams.csv": {
+      "rows_read": 118,
+      "rows_written": 118,
+      "rows_dropped_null_id": 0,
+      "date_anomalies": 0,
+      "date_parse_failures": 0
+    }
+  },
+  "totals": {
+    "rows_read": 2108459,
+    "rows_written": 2108432,
+    "rows_dropped_null_id": 0,
+    "date_anomalies": 27,
+    "date_parse_failures": 0
+  }
+}

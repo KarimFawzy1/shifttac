@@ -48,9 +48,17 @@ app.*.map.json
 docs/development-roadmap.md
 docs/implementation-rules.md
 
-# Large / local datasets and ETL (not tracked in VCS)
+# Raw Transfermarkt dumps. game_lineups.csv, game_events.csv, and
+# appearances.csv are each over GitHub's 100 MB file limit.
 transfermarkt-datasets/
-tool/
+
+# Generated ETL intermediates. Rebuild from transfermarkt-datasets.
+tool/etl/staging/
+tool/etl/output/*.db
+tool/**/__pycache__/
+tool/**/.pytest_cache/
+
+# Shipped database is already tracked; ignore other local drops here.
 assets/db/
 
 # Legendary players — local cache and backups

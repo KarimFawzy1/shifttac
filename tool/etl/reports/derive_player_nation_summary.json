@@ -1,0 +1,25 @@
+{
+  "phase": "D5",
+  "built_at": "2026-06-01T14:19:26+00:00",
+  "player_nation_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\player_nation.csv",
+  "attributes_nation_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\attributes_nation.csv",
+  "player_nation_edges": 25337,
+  "attributes_nation_rows": 25,
+  "distinct_nation_slugs_with_players": 25,
+  "players_with_unmapped_citizenship": 22080,
+  "spot_checks": {
+    "drogba": {
+      "player_id": "3924",
+      "nation_attribute": "nation:ivory_coast",
+      "club_attributes": [
+        "club:141",
+        "club:631"
+      ]
+    },
+    "dual_citizenship": {
+      "supported": false,
+      "limitation": "v1 emits one nation edge per player from country_of_citizenship only. Transfermarkt does not expose a second citizenship field in players.csv; dual citizenship would require an additional source in a future schema version."
+    }
+  },
+  "spot_check_passed": true
+}

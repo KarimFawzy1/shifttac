@@ -1,0 +1,88 @@
+{
+  "phase": "D3",
+  "built_at": "2026-06-01T14:14:26+00:00",
+  "output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\player_club.csv",
+  "edge_rows": 14216,
+  "distinct_player_club_pairs": 9189,
+  "edges_by_source": {
+    "appearance": 8050,
+    "transfer": 6166
+  },
+  "supplemental_edges_added": 1,
+  "spot_checks": {
+    "salah": {
+      "player_id": "148455",
+      "clubs": {
+        "12": [
+          "appearance",
+          "transfer"
+        ],
+        "31": [
+          "appearance",
+          "transfer"
+        ],
+        "631": [
+          "appearance",
+          "transfer"
+        ],
+        "430": [
+          "appearance",
+          "transfer"
+        ]
+      }
+    },
+    "etoo": {
+      "player_id": "4257",
+      "clubs": {
+        "29": [
+          "appearance"
+        ],
+        "131": [
+          "transfer"
+        ],
+        "631": [
+          "appearance"
+        ]
+      },
+      "pl_clubs": [
+        "29",
+        "631"
+      ],
+      "has_barcelona": true
+    }
+  },
+  "duplicate_source_check": {
+    "multi_source_pair_count": 5027,
+    "salah_liverpool_sources": [
+      "appearance",
+      "transfer"
+    ],
+    "salah_join_row_count": 4,
+    "salah_distinct_count": 1,
+    "sample_multi_source": {
+      "256448:12": [
+        "appearance",
+        "transfer"
+      ],
+      "139396:336": [
+        "appearance",
+        "transfer"
+      ],
+      "131978:29": [
+        "appearance",
+        "transfer"
+      ],
+      "175169:29": [
+        "appearance",
+        "transfer"
+      ],
+      "346567:398": [
+        "appearance",
+        "transfer"
+      ]
+    },
+    "salah_dual_source_ok": true
+  },
+  "spot_check_passed": true,
+  "duplicate_check_passed": true
+}

@@ -1,0 +1,466 @@
+﻿=== Dart map chars: ETL NFKD strip vs Dart transliteration ===
+  MISMATCH U+00DF: dart='ss' etl=''
+  OK       U+00E0: dart='a' etl='a'
+  OK       U+00E1: dart='a' etl='a'
+  OK       U+00E2: dart='a' etl='a'
+  OK       U+00E3: dart='a' etl='a'
+  OK       U+00E4: dart='a' etl='a'
+  OK       U+00E5: dart='a' etl='a'
+  MISMATCH U+00E6: dart='ae' etl=''
+  OK       U+00E7: dart='c' etl='c'
+  OK       U+00E8: dart='e' etl='e'
+  OK       U+00E9: dart='e' etl='e'
+  OK       U+00EA: dart='e' etl='e'
+  OK       U+00EB: dart='e' etl='e'
+  OK       U+00EC: dart='i' etl='i'
+  OK       U+00ED: dart='i' etl='i'
+  OK       U+00EE: dart='i' etl='i'
+  OK       U+00EF: dart='i' etl='i'
+  OK       U+00F1: dart='n' etl='n'
+  OK       U+00F2: dart='o' etl='o'
+  OK       U+00F3: dart='o' etl='o'
+  OK       U+00F4: dart='o' etl='o'
+  OK       U+00F5: dart='o' etl='o'
+  OK       U+00F6: dart='o' etl='o'
+  MISMATCH U+00F8: dart='o' etl=''
+  OK       U+00F9: dart='u' etl='u'
+  OK       U+00FA: dart='u' etl='u'
+  OK       U+00FB: dart='u' etl='u'
+  OK       U+00FC: dart='u' etl='u'
+  OK       U+00FD: dart='y' etl='y'
+  OK       U+00FF: dart='y' etl='y'
+  MISMATCH U+0153: dart='oe' etl=''
+
+Dart-map mismatches: 4
+
+=== Football-name letters outside Dart map ===
+  U+00C6: etl='' (dart keeps: '├ª')
+  U+00D8: etl='' (dart keeps: '├╕')
+  U+00E2: etl='a' (dart keeps: '├ó')
+  U+00EE: etl='i' (dart keeps: '├«')
+  U+00F0: etl='' (dart keeps: '├░')
+  U+0103: etl='a' (dart keeps: '─â')
+  U+0104: etl='a' (dart keeps: '─à')
+  U+0105: etl='a' (dart keeps: '─à')
+  U+0106: etl='c' (dart keeps: '─ç')
+  U+0107: etl='c' (dart keeps: '─ç')
+  U+010C: etl='c' (dart keeps: '─ì')
+  U+010D: etl='c' (dart keeps: '─ì')
+  U+0110: etl='' (dart keeps: '─æ')
+  U+0111: etl='' (dart keeps: '─æ')
+  U+0117: etl='e' (dart keeps: '─ù')
+  U+0118: etl='e' (dart keeps: '─Ö')
+  U+0119: etl='e' (dart keeps: '─Ö')
+  U+011E: etl='g' (dart keeps: '─ƒ')
+  U+011F: etl='g' (dart keeps: '─ƒ')
+  U+0123: etl='g' (dart keeps: '─ú')
+  U+012B: etl='i' (dart keeps: '─½')
+  U+0130: etl='i' (dart keeps: 'i╠ç')
+  U+0131: etl='' (dart keeps: '─▒')
+  U+0137: etl='k' (dart keeps: '─╖')
+  U+013C: etl='l' (dart keeps: '─╝')
+  U+0141: etl='' (dart keeps: '┼é')
+  U+0142: etl='' (dart keeps: '┼é')
+  U+0143: etl='n' (dart keeps: '┼ä')
+  U+0144: etl='n' (dart keeps: '┼ä')
+  U+0146: etl='n' (dart keeps: '┼å')
+  U+0150: etl='o' (dart keeps: '┼æ')
+  U+0158: etl='r' (dart keeps: '┼Ö')
+  U+0159: etl='r' (dart keeps: '┼Ö')
+  U+015E: etl='s' (dart keeps: '┼ƒ')
+  U+015F: etl='s' (dart keeps: '┼ƒ')
+  U+0160: etl='s' (dart keeps: '┼í')
+  U+0161: etl='s' (dart keeps: '┼í')
+  U+0164: etl='t' (dart keeps: '┼Ñ')
+  U+0165: etl='t' (dart keeps: '┼Ñ')
+  U+016B: etl='u' (dart keeps: '┼½')
+  U+0170: etl='u' (dart keeps: '┼▒')
+  U+017D: etl='z' (dart keeps: '┼╛')
+  U+017E: etl='z' (dart keeps: '┼╛')
+  U+0219: etl='s' (dart keeps: '╚Ö')
+  U+021B: etl='t' (dart keeps: '╚¢')
+
+=== DB: search_text != Dart-normalized display_name (284 / 28221 players) ===
+
+  [─ç] ΓÇö 60 players
+    Zlatan Ibrahimovi─ç
+      DB:   'zlatan ibrahimovic'
+      Dart: 'zlatan ibrahimovi─ç'
+    Luka Modri─ç
+      DB:   'luka modric'
+      Dart: 'luka modri─ç'
+    Slobodan Rajkovi─ç
+      DB:   'slobodan rajkovic'
+      Dart: 'slobodan rajkovi─ç'
+    Miralem Pjani─ç
+      DB:   'miralem pjanic'
+      Dart: 'miralem pjani─ç'
+
+  [├╕] ΓÇö 59 players
+    S├╕ren Rieks
+      DB:   'sren rieks'
+      Dart: 'soren rieks'
+    Jeppe Gr├╕nning
+      DB:   'jeppe grnning'
+      Dart: 'jeppe gronning'
+    Daniel H├╕egh
+      DB:   'daniel hegh'
+      Dart: 'daniel hoegh'
+    Bj├╕rn Paulsen
+      DB:   'bjrn paulsen'
+      Dart: 'bjorn paulsen'
+
+  [├ƒ] ΓÇö 19 players
+    Stefan Kie├ƒling
+      DB:   'stefan kieling'
+      Dart: 'stefan kiessling'
+    Kevin Gro├ƒkreutz
+      DB:   'kevin grokreutz'
+      Dart: 'kevin grosskreutz'
+    Christian Gro├ƒ
+      DB:   'christian gro'
+      Dart: 'christian gross'
+    Thomas Mei├ƒner
+      DB:   'thomas meiner'
+      Dart: 'thomas meissner'
+
+  [─▒] ΓÇö 12 players
+    Yunus Mall─▒
+      DB:   'yunus mall'
+      Dart: 'yunus mall─▒'
+    Veysel Sar─▒
+      DB:   'veysel sar'
+      Dart: 'veysel sar─▒'
+    Taylan Antalyal─▒
+      DB:   'taylan antalyal'
+      Dart: 'taylan antalyal─▒'
+    Altay Bay─▒nd─▒r
+      DB:   'altay bayndr'
+      Dart: 'altay bay─▒nd─▒r'
+
+  [├ª] ΓÇö 11 players
+    Simon Kj├ªr
+      DB:   'simon kjr'
+      Dart: 'simon kjaer'
+    Ole Seln├ªs
+      DB:   'ole selns'
+      Dart: 'ole selnaes'
+    Simon W├ªver
+      DB:   'simon wver'
+      Dart: 'simon waever'
+    Anders B├ªrtelsen
+      DB:   'anders brtelsen'
+      Dart: 'anders baertelsen'
+
+  [─ç┼í] ΓÇö 9 players
+    Bo┼íko Jankovi─ç
+      DB:   'bosko jankovic'
+      Dart: 'bo┼íko jankovi─ç'
+    Du┼ían Tadi─ç
+      DB:   'dusan tadic'
+      Dart: 'du┼ían tadi─ç'
+    Ivan Peri┼íi─ç
+      DB:   'ivan perisic'
+      Dart: 'ivan peri┼íi─ç'
+    Mario Pa┼íali─ç
+      DB:   'mario pasalic'
+      Dart: 'mario pa┼íali─ç'
+
+  [┼é] ΓÇö 7 players
+    Pawe┼é Olkowski
+      DB:   'pawe olkowski'
+      Dart: 'pawe┼é olkowski'
+    Bart┼éomiej Paw┼éowski
+      DB:   'bartomiej pawowski'
+      Dart: 'bart┼éomiej paw┼éowski'
+    Pawe┼é Wszo┼éek
+      DB:   'pawe wszoek'
+      Dart: 'pawe┼é wszo┼éek'
+    Rafa┼é Wolski
+      DB:   'rafa wolski'
+      Dart: 'rafa┼é wolski'
+
+  [╚¢] ΓÇö 6 players
+    Ionu╚¢ Pop
+      DB:   'ionut pop'
+      Dart: 'ionu╚¢ pop'
+    Aurelian Chi╚¢u
+      DB:   'aurelian chitu'
+      Dart: 'aurelian chi╚¢u'
+    Ionu╚¢ Radu
+      DB:   'ionut radu'
+      Dart: 'ionu╚¢ radu'
+    Olimpiu Moru╚¢an
+      DB:   'olimpiu morutan'
+      Dart: 'olimpiu moru╚¢an'
+
+  [╚Ö] ΓÇö 6 players
+    Drago╚Ö Grigore
+      DB:   'dragos grigore'
+      Dart: 'drago╚Ö grigore'
+    Vlad Chiriche╚Ö
+      DB:   'vlad chiriches'
+      Dart: 'vlad chiriche╚Ö'
+    Alin To╚Öca
+      DB:   'alin tosca'
+      Dart: 'alin to╚Öca'
+    George Pu╚Öca╚Ö
+      DB:   'george puscas'
+      Dart: 'george pu╚Öca╚Ö'
+
+  [─â] ΓÇö 5 players
+    Cristian S─âpunaru
+      DB:   'cristian sapunaru'
+      Dart: 'cristian s─âpunaru'
+    R─âzvan Marin
+      DB:   'razvan marin'
+      Dart: 'r─âzvan marin'
+    Valentin Mih─âil─â
+      DB:   'valentin mihaila'
+      Dart: 'valentin mih─âil─â'
+    R─âzvan Sava
+      DB:   'razvan sava'
+      Dart: 'r─âzvan sava'
+
+  [┼ƒ] ΓÇö 5 players
+    Okay Yoku┼ƒlu
+      DB:   'okay yokuslu'
+      Dart: 'okay yoku┼ƒlu'
+    Emrah Ba┼ƒsan
+      DB:   'emrah bassan'
+      Dart: 'emrah ba┼ƒsan'
+    Emre Ta┼ƒdemir
+      DB:   'emre tasdemir'
+      Dart: 'emre ta┼ƒdemir'
+    Ali Ye┼ƒilyurt
+      DB:   'ali yesilyurt'
+      Dart: 'ali ye┼ƒilyurt'
+
+  [├ª├╕] ΓÇö 5 players
+    Mats M├╕ller D├ªhli
+      DB:   'mats mller dhli'
+      Dart: 'mats moller daehli'
+    Nicklas R├╕jkj├ªr
+      DB:   'nicklas rjkjr'
+      Dart: 'nicklas rojkjaer'
+    Albert Gr├╕nb├ªk
+      DB:   'albert grnbk'
+      Dart: 'albert gronbaek'
+    Mads Fr├╕kj├ªr
+      DB:   'mads frkjr'
+      Dart: 'mads frokjaer'
+
+  [├ÿ] ΓÇö 4 players
+    ├ÿrjan Nyland
+      DB:   'rjan nyland'
+      Dart: 'orjan nyland'
+    Martin ├ÿdegaard
+      DB:   'martin degaard'
+      Dart: 'martin odegaard'
+    Christian ├ÿstergaard
+      DB:   'christian stergaard'
+      Dart: 'christian ostergaard'
+    Mikkel ├ÿxenberg
+      DB:   'mikkel xenberg'
+      Dart: 'mikkel oxenberg'
+
+  [─ƒ] ΓÇö 4 players
+    Do─ƒan Alemdar
+      DB:   'dogan alemdar'
+      Dart: 'do─ƒan alemdar'
+    Bartu─ƒ Elmaz
+      DB:   'bartug elmaz'
+      Dart: 'bartu─ƒ elmaz'
+    Caner Do─ƒan
+      DB:   'caner dogan'
+      Dart: 'caner do─ƒan'
+    Baran Demiro─ƒlu
+      DB:   'baran demiroglu'
+      Dart: 'baran demiro─ƒlu'
+
+  [─â╚¢] ΓÇö 3 players
+    Artur Ioni╚¢─â
+      DB:   'artur ionita'
+      Dart: 'artur ioni╚¢─â'
+    Alexandru Mitri╚¢─â
+      DB:   'alexandru mitrita'
+      Dart: 'alexandru mitri╚¢─â'
+    Tudor B─âlu╚¢─â
+      DB:   'tudor baluta'
+      Dart: 'tudor b─âlu╚¢─â'
+
+  [├º─▒] ΓÇö 3 players
+    Robin Yal├º─▒n
+      DB:   'robin yalcn'
+      Dart: 'robin yalc─▒n'
+    Emre K─▒l─▒n├º
+      DB:   'emre klnc'
+      Dart: 'emre k─▒l─▒nc'
+    Semih K─▒l─▒├ºsoy
+      DB:   'semih klcsoy'
+      Dart: 'semih k─▒l─▒csoy'
+
+  [┼ä] ΓÇö 3 players
+    Marcin Kami┼äski
+      DB:   'marcin kaminski'
+      Dart: 'marcin kami┼äski'
+    Bartosz Bereszy┼äski
+      DB:   'bartosz bereszynski'
+      Dart: 'bartosz bereszy┼äski'
+    Kacper Urba┼äski
+      DB:   'kacper urbanski'
+      Dart: 'kacper urba┼äski'
+
+  [┼á] ΓÇö 3 players
+    Milan ┼ákriniar
+      DB:   'milan skriniar'
+      Dart: 'milan ┼íkriniar'
+    Tomas ┼ávedkauskas
+      DB:   'tomas svedkauskas'
+      Dart: 'tomas ┼ívedkauskas'
+    Marin ┼áverko
+      DB:   'marin sverko'
+      Dart: 'marin ┼íverko'
+
+  [─ç─ì] ΓÇö 3 players
+    Petar Su─ìi─ç
+      DB:   'petar sucic'
+      Dart: 'petar su─ìi─ç'
+    Nikola Pej─ìi─ç
+      DB:   'nikola pejcic'
+      Dart: 'nikola pej─ìi─ç'
+    Adrian Sege─ìi─ç
+      DB:   'adrian segecic'
+      Dart: 'adrian sege─ìi─ç'
+
+  [─░] ΓÇö 3 players
+    Burak ─░nce
+      DB:   'burak ince'
+      Dart: 'burak i╠çnce'
+    Emirhan ─░lkhan
+      DB:   'emirhan ilkhan'
+      Dart: 'emirhan i╠çlkhan'
+    ─░sak Vural
+      DB:   'isak vural'
+      Dart: 'i╠çsak vural'
+
+  [├ç─ƒ─▒] ΓÇö 2 players
+    Musa ├ça─ƒ─▒ran
+      DB:   'musa cagran'
+      Dart: 'musa ca─ƒ─▒ran'
+    U─ƒurcan ├çak─▒r
+      DB:   'ugurcan cakr'
+      Dart: 'u─ƒurcan cak─▒r'
+
+  [├ç─ƒ] ΓÇö 2 players
+    Hakan ├çalhano─ƒlu
+      DB:   'hakan calhanoglu'
+      Dart: 'hakan calhano─ƒlu'
+    O─ƒulcan ├ça─ƒlayan
+      DB:   'ogulcan caglayan'
+      Dart: 'o─ƒulcan ca─ƒlayan'
+
+  [─à] ΓÇö 2 players
+    Damian K─àdzior
+      DB:   'damian kadzior'
+      Dart: 'damian k─àdzior'
+    Kamil Pi─àtkowski
+      DB:   'kamil piatkowski'
+      Dart: 'kamil pi─àtkowski'
+
+  [├╝─▒] ΓÇö 2 players
+    Abd├╝lkerim Bardakc─▒
+      DB:   'abdulkerim bardakc'
+      Dart: 'abdulkerim bardakc─▒'
+    Ey├╝p Ayd─▒n
+      DB:   'eyup aydn'
+      Dart: 'eyup ayd─▒n'
+
+  [─ƒ─▒] ΓÇö 2 players
+    Ferdi Kad─▒o─ƒlu
+      DB:   'ferdi kadoglu'
+      Dart: 'ferdi kad─▒o─ƒlu'
+    Bertu─ƒ Y─▒ld─▒r─▒m
+      DB:   'bertug yldrm'
+      Dart: 'bertu─ƒ y─▒ld─▒r─▒m'
+
+  [┼í] ΓÇö 2 players
+    Luka Ivanu┼íec
+      DB:   'luka ivanusec'
+      Dart: 'luka ivanu┼íec'
+    Eman Ko┼ípo
+      DB:   'eman kospo'
+      Dart: 'eman ko┼ípo'
+
+  [─â╚Ö] ΓÇö 2 players
+    Denis Dr─âgu╚Ö
+      DB:   'denis dragus'
+      Dart: 'denis dr─âgu╚Ö'
+    Radu Dr─âgu╚Öin
+      DB:   'radu dragusin'
+      Dart: 'radu dr─âgu╚Öin'
+
+  [─ç┼╛] ΓÇö 2 players
+    Lazar Samard┼╛i─ç
+      DB:   'lazar samardzic'
+      Dart: 'lazar samard┼╛i─ç'
+    Vasilije Ad┼╛i─ç
+      DB:   'vasilije adzic'
+      Dart: 'vasilije ad┼╛i─ç'
+
+  [─▒┼ƒ] ΓÇö 2 players
+    Bar─▒┼ƒ Alper Y─▒lmaz
+      DB:   'bars alper ylmaz'
+      Dart: 'bar─▒┼ƒ alper y─▒lmaz'
+    Kaz─▒mcan Karata┼ƒ
+      DB:   'kazmcan karatas'
+      Dart: 'kaz─▒mcan karata┼ƒ'
+
+  [├í├⌐┼æ] ΓÇö 1 players
+    D├íniel T┼æzs├⌐r
+      DB:   'daniel tozser'
+      Dart: 'daniel t┼æzser'
+
+=== ETL make_search_text != Dart normalize (284 players) ===
+
+=== Type A: ETL strips but Dart transliterates (102 players) ===
+  Chars: ├╕/├ÿ->o, ├ª/├å->ae, ├ƒ->ss, ┼ô/┼Æ->oe
+    Stefan Kie├ƒling: DB='stefan kieling' user_types='stefan kiessling'
+    S├╕ren Rieks: DB='sren rieks' user_types='soren rieks'
+    Kevin Gro├ƒkreutz: DB='kevin grokreutz' user_types='kevin grosskreutz'
+    Simon Kj├ªr: DB='simon kjr' user_types='simon kjaer'
+    Christian Gro├ƒ: DB='christian gro' user_types='christian gross'
+    Thomas Mei├ƒner: DB='thomas meiner' user_types='thomas meissner'
+    Niko Gie├ƒelmann: DB='niko gieelmann' user_types='niko giesselmann'
+    ├ÿrjan Nyland: DB='rjan nyland' user_types='orjan nyland'
+    Pascal Gro├ƒ: DB='pascal gro' user_types='pascal gross'
+    Marius Sau├ƒ: DB='marius sau' user_types='marius sauss'
+
+=== Type B: ETL strips letter not in Dart map (48 players) ===
+  U+0131: 26 players
+  U+0142: 10 players
+  U+00D8: 6 players
+  U+200E: 1 players
+  U+2018: 1 players
+  U+2011: 1 players
+  U+00C6: 1 players
+  U+2019: 1 players
+  U+0302: 1 players
+
+=== Type C: DB correct (ETL folded), Dart query keeps accent (284 players) ===
+  ASCII search works; accented keyboard input may fail.
+  U+0107: 78 players
+  U+0131: 36 players
+  U+011F: 16 players
+  U+0161: 14 players
+  U+0103: 13 players
+  U+0142: 13 players
+  U+015F: 10 players
+  U+021B: 9 players
+  U+0219: 9 players
+  U+00D8: 6 players
+  U+0130: 5 players
+  U+00C7: 5 players
+  U+0144: 5 players
+  U+010D: 5 players
+  U+0160: 4 players

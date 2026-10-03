@@ -1,0 +1,7 @@
+# Manual search_rank boosts (EUR) for retired or nickname-famous players.
+# Value = added to max(current, peak) market value from Transfermarkt CSV.
+version: "1"
+
+players:
+  # Xavi — retired; peak TM value understates search fame vs many Xavier* players.
+  "7607": 80000000

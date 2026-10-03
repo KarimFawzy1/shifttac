@@ -1,0 +1,40 @@
+{
+  "phase": "D2",
+  "built_at": "2026-06-01T14:09:54+00:00",
+  "input_dir": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging",
+  "output_dir": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\normalized",
+  "allowlisted_clubs": 54,
+  "top5_competitions": [
+    "ES1",
+    "FR1",
+    "GB1",
+    "IT1",
+    "L1"
+  ],
+  "files": {
+    "clubs.csv": {
+      "rows_written": 54
+    },
+    "competitions.csv": {
+      "rows_written": 5
+    },
+    "players.csv": {
+      "rows_written": 47690,
+      "unmapped_citizenship_distinct": 173,
+      "unmapped_citizenship_rows": 22080
+    },
+    "transfers.csv": {
+      "rows_written": 174195
+    },
+    "appearances.csv": {
+      "rows_read": 1885448,
+      "rows_written": 874534
+    },
+    "countries.csv": {
+      "rows_written": 118
+    },
+    "national_teams.csv": {
+      "rows_written": 118
+    }
+  }
+}

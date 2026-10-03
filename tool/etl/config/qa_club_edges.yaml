@@ -1,0 +1,117 @@
+# Supplemental player→club edges when scraped transfers/appearances omit known stints.
+# Used only when the edge is not already emitted by D3 merge (see merge_player_club.py).
+# Auto-synced from famous50_careers.py via patch_career_supplements.py
+version: "1"
+edges:
+  - player_id: "5817"
+    club_id: "46"
+    source: transfer
+    reason: "Andrea Pirlo — Inter Milan; pre-2012 or missing from scrape"
+  - player_id: "5817"
+    club_id: "5"
+    source: transfer
+    reason: "Andrea Pirlo — AC Milan; pre-2012 or missing from scrape"
+  - player_id: "4360"
+    club_id: "383"
+    source: transfer
+    reason: "Arjen Robben — PSV Eindhoven; pre-2012 or missing from scrape"
+  - player_id: "3182"
+    club_id: "11"
+    source: transfer
+    reason: "Ashley Cole — Arsenal; pre-2012 or missing from scrape"
+  - player_id: "3182"
+    club_id: "873"
+    source: transfer
+    reason: "Ashley Cole — Crystal Palace; pre-2012 or missing from scrape"
+  - player_id: "4276"
+    club_id: "189"
+    source: transfer
+    reason: "Carlos Tevez — Boca Juniors; pre-2012 or missing from scrape"
+  - player_id: "4276"
+    club_id: "379"
+    source: transfer
+    reason: "Carlos Tevez — West Ham United; pre-2012 or missing from scrape"
+  - player_id: "4276"
+    club_id: "985"
+    source: transfer
+    reason: "Carlos Tevez — Manchester United; pre-2012 or missing from scrape"
+  - player_id: "3139"
+    club_id: "418"
+    source: transfer
+    reason: "David Beckham — Real Madrid; pre-2012 or missing from scrape"
+  - player_id: "3139"
+    club_id: "5"
+    source: transfer
+    reason: "David Beckham — AC Milan; pre-2012 or missing from scrape"
+  - player_id: "35518"
+    club_id: "1049"
+    source: transfer
+    reason: "David Silva — Valencia; pre-2012 or missing from scrape"
+  - player_id: "7980"
+    club_id: "1049"
+    source: transfer
+    reason: "David Villa — Valencia; pre-2012 or missing from scrape"
+  - player_id: "3924"
+    club_id: "244"
+    source: transfer
+    reason: "Didier Drogba — Marseille; pre-2012 or missing from scrape"
+  - player_id: "7767"
+    club_id: "31"
+    source: transfer
+    reason: "Fernando Torres — Liverpool; pre-2012 or missing from scrape"
+  - player_id: "18944"
+    club_id: "985"
+    source: transfer
+    reason: "Gerard Piqué — Manchester United; pre-2012 or missing from scrape"
+  - player_id: "3160"
+    club_id: "405"
+    source: transfer
+    reason: "John Terry — Aston Villa; pre-2012 or missing from scrape"
+  - player_id: "2219"
+    club_id: "79"
+    source: transfer
+    reason: "Philipp Lahm — VfB Stuttgart; pre-2012 or missing from scrape"
+  - player_id: "4380"
+    club_id: "11"
+    source: transfer
+    reason: "Robin van Persie — Arsenal; pre-2012 or missing from scrape"
+  - player_id: "4257"
+    club_id: "418"
+    source: transfer
+    reason: "Samuel Eto'o — Real Madrid; pre-2012 or missing from scrape"
+  - player_id: "4257"
+    club_id: "46"
+    source: transfer
+    reason: "Samuel Eto'o — Inter Milan; pre-2012 or missing from scrape"
+  - player_id: "26399"
+    club_id: "131"
+    source: transfer
+    reason: "Sergio Agüero — Barcelona; pre-2012 or missing from scrape"
+  - player_id: "4673"
+    club_id: "418"
+    source: transfer
+    reason: "Wesley Sneijder — Real Madrid; pre-2012 or missing from scrape"
+  - player_id: "4673"
+    club_id: "610"
+    source: transfer
+    reason: "Wesley Sneijder — Ajax; pre-2012 or missing from scrape"
+  - player_id: "7476"
+    club_id: "31"
+    source: transfer
+    reason: "Xabi Alonso — Liverpool; pre-2012 or missing from scrape"
+  - player_id: "3455"
+    club_id: "131"
+    source: transfer
+    reason: "Zlatan Ibrahimović — Barcelona; pre-2012 or missing from scrape"
+  - player_id: "3455"
+    club_id: "46"
+    source: transfer
+    reason: "Zlatan Ibrahimović — Inter Milan; pre-2012 or missing from scrape"
+  - player_id: "3455"
+    club_id: "506"
+    source: transfer
+    reason: "Zlatan Ibrahimović — Juventus; pre-2012 or missing from scrape"
+  - player_id: "3455"
+    club_id: "610"
+    source: transfer
+    reason: "Zlatan Ibrahimović — Ajax; pre-2012 or missing from scrape"

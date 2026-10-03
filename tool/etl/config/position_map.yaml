@@ -1,0 +1,27 @@
+# Phase D0 — Transfermarkt position tokens → game bucket (GK | DEF | MID | FWD)
+version: "1"
+
+# Coarse `position` column on players.csv (fallback when sub_position unknown)
+coarse_position:
+  Goalkeeper: GK
+  Defender: DEF
+  Midfield: MID
+  Attack: FWD
+
+# Fine-grained `sub_position` column (preferred when present)
+sub_position:
+  Goalkeeper: GK
+  Centre-Back: DEF
+  Left-Back: DEF
+  Right-Back: DEF
+  Defensive Midfield: MID
+  Central Midfield: MID
+  Attacking Midfield: MID
+  Left Midfield: MID
+  Right Midfield: MID
+  Left Winger: FWD
+  Right Winger: FWD
+  Centre-Forward: FWD
+  Second Striker: FWD
+
+# TM rows with position = Missing: ETL logs warning and omits position edge

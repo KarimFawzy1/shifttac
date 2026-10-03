@@ -1,0 +1,123 @@
+# Phase D10 — hand-curated boards (display names resolved to attribute_id at build time)
+version: "1"
+boards:
+  - id: featured-pl-africa
+    name: "Premier League × Africa"
+    template: club_nation
+    rows: [Liverpool, Chelsea, Arsenal]
+    cols: [Egypt, Senegal, Nigeria]
+  - id: featured-pl-europe
+    name: "Premier League × Europe"
+    template: club_nation
+    rows: [Manchester United, Manchester City, Tottenham Hotspur]
+    cols: [France, Portugal, Netherlands]
+  - id: featured-la-liga-americas
+    name: "La Liga × Americas"
+    template: club_nation
+    rows: [Real Madrid, Barcelona, Atlético Madrid]
+    cols: [Brazil, Argentina, Colombia]
+  - id: featured-bundesliga-world
+    name: "Bundesliga × World"
+    template: club_nation
+    rows: [Bayern Munich, Borussia Dortmund, Bayer Leverkusen]
+    cols: [Germany, France, Brazil]
+  - id: featured-serie-stars
+    name: "Serie A × Star Nations"
+    template: club_nation
+    rows: [Juventus, AC Milan, Inter Milan]
+    cols: [Italy, Brazil, Argentina]
+  - id: featured-ligue-talents
+    name: "Ligue 1 × Talents"
+    template: club_nation
+    rows: [Paris Saint-Germain, Monaco, Marseille]
+    cols: [France, Brazil, Morocco]
+  - id: featured-top5-mix
+    name: "European Giants × Mixed Nations"
+    template: club_nation
+    rows: [Liverpool, Real Madrid, Bayern Munich]
+    cols: [Egypt, Spain, Germany]
+  - id: featured-england-clubs
+    name: "England Clubs × Home Nations"
+    template: club_nation
+    rows: [Chelsea, Manchester United, Newcastle United]
+    cols: [England, France, Brazil]
+  - id: featured-ibero-clash
+    name: "Iberian Clubs × Iberia & Brazil"
+    template: club_nation
+    rows: [Barcelona, Sevilla, Valencia]
+    cols: [Spain, Brazil, Portugal]
+  - id: featured-dutch-portugal
+    name: "Benelux & Portugal Clubs"
+    template: club_nation
+    rows: [Ajax, PSV Eindhoven, Benfica]
+    cols: [Netherlands, Portugal, Brazil]
+  - id: featured-salah-special
+    name: "Salah's League × North Africa"
+    template: club_nation
+    rows: [Liverpool, Chelsea, Arsenal]
+    cols: [Egypt, Morocco, Algeria]
+  - id: featured-big3-italy
+    name: "Italian Big Three × World"
+    template: club_nation
+    rows: [Juventus, AC Milan, Napoli]
+    cols: [Italy, Argentina, France]
+  - id: featured-pl-latam
+    name: "Premier League × Latin America"
+    template: club_nation
+    rows: [Manchester City, Liverpool, Chelsea]
+    cols: [Brazil, Argentina, Colombia]
+  - id: featured-german-trio
+    name: "German Trio × Europe"
+    template: club_nation
+    rows: [Bayern Munich, RB Leipzig, Eintracht Frankfurt]
+    cols: [Germany, France, Croatia]
+  - id: featured-french-power
+    name: "French Power Clubs"
+    template: club_nation
+    rows: [Paris Saint-Germain, Lyon, Lille]
+    cols: [France, Brazil, Morocco]
+  - id: featured-pl-gb1-leagues
+    name: "Top Leagues × Premier Clubs"
+    template: league_club
+    rows: [Premier League, La Liga, Bundesliga]
+    cols: [Liverpool, Chelsea, Arsenal]
+  - id: featured-league-giants
+    name: "Big Five × Spanish Giants"
+    template: league_club
+    rows: [Premier League, Serie A, Ligue 1]
+    cols: [Real Madrid, Barcelona, Atlético Madrid]
+  - id: featured-league-germany
+    name: "Leagues × German Clubs"
+    template: league_club
+    rows: [Premier League, La Liga, Serie A]
+    cols: [Bayern Munich, Borussia Dortmund, Bayer Leverkusen]
+  - id: featured-league-italy
+    name: "Leagues × Italian Clubs"
+    template: league_club
+    rows: [Premier League, Bundesliga, Ligue 1]
+    cols: [Juventus, AC Milan, Inter Milan]
+  - id: featured-league-france
+    name: "Leagues × French Clubs"
+    template: league_club
+    rows: [Premier League, La Liga, Bundesliga]
+    cols: [Paris Saint-Germain, Monaco, Marseille]
+  - id: featured-league-mixed
+    name: "Leagues × Mixed Clubs"
+    template: league_club
+    rows: [La Liga, Serie A, Bundesliga]
+    cols: [Liverpool, Bayern Munich, Paris Saint-Germain]
+  - id: featured-league-underdogs
+    name: "Leagues × Surprise Clubs"
+    template: league_club
+    rows: [Premier League, Ligue 1, Serie A]
+    cols: [Brighton, Lille, Atalanta]
+  - id: featured-league-portugal
+    name: "Leagues × Portugal"
+    template: league_club
+    rows: [Premier League, La Liga, Bundesliga]
+    cols: [Benfica, Porto, Sporting CP]
+  - id: featured-league-europe-west
+    name: "Western Europe Leagues × Clubs"
+    template: league_club
+    rows: [Premier League, La Liga, Ligue 1]
+    cols: [Manchester City, Real Madrid, Paris Saint-Germain]

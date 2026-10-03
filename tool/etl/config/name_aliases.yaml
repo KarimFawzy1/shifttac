@@ -1,0 +1,25 @@
+# Phase D0 — spelling overrides for nation citizenship and player search
+version: "1"
+
+# Raw Transfermarkt / CSV strings → nations_allowlist slug
+nations:
+  "Cote d'Ivoire": ivory_coast
+  "Côte d'Ivoire": ivory_coast
+  USA: united_states
+  "U.S.A.": united_states
+  "United States of America": united_states
+  Congolese: dr_congo
+  Gabonese: gabon
+  Mauritanian: mauritania
+  Liberian: liberia
+  "South African": south_africa
+  Morocca: morocco
+
+# Optional player search aliases (normalized lowercase at ETL time; value = TM player_id or tm:{id})
+players:
+  mo salah: "148455"
+  kim min-jae: "503482" # Min-jae Kim — East Asian name order
+  leo messi: "28003" # Lionel Messi
+  cr7: "8198" # Cristiano Ronaldo
+  kun agüero: "26399" # Sergio Agüero
+  rodrigo: "412363" # Rodrygo

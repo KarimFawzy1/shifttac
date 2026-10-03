@@ -1,0 +1,9 @@
+# Phase D10 — board auto-generation settings
+version: "1"
+min_intersection: 3
+min_auto_boards: 100
+min_featured_boards: 20
+max_generation_attempts: 250000
+templates:
+  - club_nation
+  - league_club

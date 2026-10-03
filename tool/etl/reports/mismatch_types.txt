@@ -1,0 +1,21 @@
+﻿python : Traceback (most recent call last):
+At C:\Users\kmoha\AppData\Local\Temp\ps-script-bd857837-8354-4541-b76d-cbf344a13e17.ps1:98 char:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 25, in <module>
+    print(f'  U+{cp:04X} dart_map={in_dart} dart_query={dk!r}')
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u0111' in position 36: character maps to <undefined>
+Letters ETL strips entirely (lowercase sample):
+  U+00B5 dart_map=False dart_query='╡'
+  U+00DF dart_map=True dart_query='ss'
+  U+00E6 dart_map=True dart_query='ae'
+  U+00F0 dart_map=False dart_query='≡'
+  U+00F8 dart_map=True dart_query='o'
+  U+00FE dart_map=False dart_query='■'

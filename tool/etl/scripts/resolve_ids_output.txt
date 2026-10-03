@@ -1,0 +1,226 @@
+
+=== Cristiano Ronaldo ===
+  tm:8198 | Cristiano Ronaldo
+
+=== Zlatan Ibrahim ===
+  tm:3455 | Zlatan Ibrahimović
+
+=== David Beckham ===
+  tm:3139 | David Beckham
+
+=== Wayne Rooney ===
+  tm:3332 | Wayne Rooney
+
+=== Frank Lampard ===
+  tm:3163 | Frank Lampard
+
+=== Samuel Eto ===
+  tm:4257 | Samuel Eto'o
+
+=== Kak ===
+  tm:3366 | Kaká
+  tm:41234 | Kaká
+  tm:235610 | Káká
+  tm:380696 | Kaká
+  tm:566010 | Kakeru Yamauchi
+
+=== Andrea Pirlo ===
+  tm:5817 | Andrea Pirlo
+
+=== Sergio Ag ===
+  tm:26399 | Sergio Agüero
+  tm:246244 | Sergio Aguza
+  tm:1094402 | Sergio Aguayo
+
+=== Cesc F ===
+  tm:8806 | Cesc Fàbregas
+
+=== David Silva ===
+  tm:35518 | David Silva
+  tm:74071 | David Silva
+
+=== David Villa ===
+  tm:7980 | David Villa
+
+=== Karim Benzema ===
+  tm:18922 | Karim Benzema
+
+=== Luka Modri ===
+  tm:27992 | Luka Modrić
+
+=== Gareth Bale ===
+  tm:39381 | Gareth Bale
+
+=== Robin van Persie ===
+  tm:4380 | Robin van Persie
+
+=== Xabi Alonso ===
+  tm:7476 | Xabi Alonso
+
+=== Fernando Torres ===
+  tm:7767 | Fernando Torres
+
+=== Didier Drogba ===
+  tm:3924 | Didier Drogba
+
+=== Ashley Cole ===
+  tm:3182 | Ashley Cole
+
+=== Petr ===
+  tm:5658 | Petr Cech
+  tm:63737 | Petr Jiracek
+  tm:200558 | Petros
+  tm:127074 | Petrus Boumal
+
+=== John Terry ===
+  tm:3160 | John Terry
+
+=== Carlos Tevez ===
+  tm:4276 | Carlos Tevez
+
+=== Arjen Robben ===
+  tm:4360 | Arjen Robben
+
+=== Wesley Sneijder ===
+  tm:4673 | Wesley Sneijder
+
+=== Dani Alves ===
+  tm:15951 | Dani Alves
+
+=== Gerard Piqu ===
+  tm:18944 | Gerard Piqué
+
+=== Iker Casillas ===
+  tm:3979 | Iker Casillas
+
+=== Sergio Ramos ===
+  tm:25557 | Sergio Ramos
+
+=== Marcelo ===
+  tm:44501 | Marcelo
+  tm:156617 | Marcelo Brozović
+  tm:373916 | Marcelo Saracchi
+  tm:52920 | Marcelo
+  tm:52313 | Marcelo Grohe
+
+=== Gianluigi Buffon ===
+  tm:5023 | Gianluigi Buffon
+
+=== Neymar ===
+  tm:68290 | Neymar
+  tm:1149306 | Neymar Uribe
+
+=== Luis Su ===
+  tm:44352 | Luis Suárez
+  tm:424784 | Luis Suárez
+
+=== Alexis S ===
+  tm:40433 | Alexis Sánchez
+  tm:381950 | Alexis Saelemaekers
+  tm:409272 | Alexis Soto
+  tm:1046802 | Alexis Steimbach
+  tm:648260 | Alexis Serna
+
+=== Radamel Falcao ===
+  tm:39152 | Radamel Falcao
+
+=== Diego Costa ===
+  tm:44779 | Diego Costa
+  tm:546212 | Diego Costa
+
+=== James Rodr ===
+  tm:88103 | James Rodríguez
+
+=== Paul Pogba ===
+  tm:122153 | Paul Pogba
+
+=== Bastian Schweinsteiger ===
+  tm:2514 | Bastian Schweinsteiger
+
+=== Toni Kroos ===
+  tm:31909 | Toni Kroos
+
+=== Philipp Lahm ===
+  tm:2219 | Philipp Lahm
+
+=== Manuel Neuer ===
+  tm:17259 | Manuel Neuer
+
+=== Robert Lewandowski ===
+  tm:38253 | Robert Lewandowski
+
+=== Eden Hazard ===
+  tm:50202 | Eden Hazard
+
+=== Kevin De Bruyne ===
+  tm:88755 | Kevin De Bruyne
+
+=== Romelu Lukaku ===
+  tm:96341 | Romelu Lukaku
+
+=== Morata ===
+
+=== Raheem Sterling ===
+  tm:134425 | Raheem Sterling
+
+=== Mohamed Salah ===
+  tm:148455 | Mohamed Salah
+
+=== Xavi ===
+  tm:7607 | Xavi
+  tm:566931 | Xavi Simons
+  tm:118278 | Xavier Chavalerin
+  tm:204102 | Xavi Quintillà
+  tm:1018912 | Xavi Espart
+
+
+=== USER ID CHECK ===
+  tm:8198 (Cristiano Ronaldo): FOUND ('tm:8198', 'Cristiano Ronaldo')
+  tm:3455 (Zlatan Ibrahimović): FOUND ('tm:3455', 'Zlatan Ibrahimović')
+  tm:3139 (David Beckham): FOUND ('tm:3139', 'David Beckham')
+  tm:3332 (Wayne Rooney): FOUND ('tm:3332', 'Wayne Rooney')
+  tm:3751 (Frank Lampard): NOT IN DB
+  tm:4257 (Samuel Eto'o): FOUND ('tm:4257', "Samuel Eto'o")
+  tm:3359 (Kaká): NOT IN DB
+  tm:5813 (Andrea Pirlo): NOT IN DB
+  tm:26399 (Sergio Agüero): FOUND ('tm:26399', 'Sergio Agüero')
+  tm:8806 (Cesc Fàbregas): FOUND ('tm:8806', 'Cesc Fàbregas')
+  tm:10782 (David Silva): NOT IN DB
+  tm:7943 (David Villa): NOT IN DB
+  tm:18922 (Karim Benzema): FOUND ('tm:18922', 'Karim Benzema')
+  tm:27992 (Luka Modrić): FOUND ('tm:27992', 'Luka Modrić')
+  tm:173095 (Gareth Bale): NOT IN DB
+  tm:4247 (Robin van Persie): NOT IN DB
+  tm:7536 (Xabi Alonso): NOT IN DB
+  tm:7106 (Fernando Torres): NOT IN DB
+  tm:4144 (Didier Drogba): NOT IN DB
+  tm:3180 (Ashley Cole): NOT IN DB
+  tm:1185 (Petr Čech): NOT IN DB
+  tm:3160 (John Terry): FOUND ('tm:3160', 'John Terry')
+  tm:4272 (Carlos Tevez): NOT IN DB
+  tm:4360 (Arjen Robben): FOUND ('tm:4360', 'Arjen Robben')
+  tm:4673 (Wesley Sneijder): FOUND ('tm:4673', 'Wesley Sneijder')
+  tm:15951 (Dani Alves): FOUND ('tm:15951', 'Dani Alves')
+  tm:18944 (Gerard Piqué): FOUND ('tm:18944', 'Gerard Piqué')
+  tm:3979 (Iker Casillas): FOUND ('tm:3979', 'Iker Casillas')
+  tm:25557 (Sergio Ramos): FOUND ('tm:25557', 'Sergio Ramos')
+  tm:3368 (Marcelo): NOT IN DB
+  tm:5023 (Gianluigi Buffon): FOUND ('tm:5023', 'Gianluigi Buffon')
+  tm:68290 (Neymar): FOUND ('tm:68290', 'Neymar')
+  tm:44352 (Luis Suárez): FOUND ('tm:44352', 'Luis Suárez')
+  tm:27684 (Alexis Sánchez): NOT IN DB
+  tm:39152 (Radamel Falcao): FOUND ('tm:39152', 'Radamel Falcao')
+  tm:93938 (Diego Costa): NOT IN DB
+  tm:88103 (James Rodríguez): FOUND ('tm:88103', 'James Rodríguez')
+  tm:89482 (Paul Pogba): NOT IN DB
+  tm:88 (Bastian Schweinsteiger): NOT IN DB
+  tm:58857 (Toni Kroos): NOT IN DB
+  tm:570 (Philipp Lahm): NOT IN DB
+  tm:17259 (Manuel Neuer): FOUND ('tm:17259', 'Manuel Neuer')
+  tm:38272 (Robert Lewandowski): NOT IN DB
+  tm:50202 (Eden Hazard): FOUND ('tm:50202', 'Eden Hazard')
+  tm:88755 (Kevin De Bruyne): FOUND ('tm:88755', 'Kevin De Bruyne')
+  tm:128223 (Álvaro Morata): FOUND ('tm:128223', 'Álvaro Morata')
+  tm:134425 (Raheem Sterling): FOUND ('tm:134425', 'Raheem Sterling')
+  tm:148455 (Mohamed Salah): FOUND ('tm:148455', 'Mohamed Salah')
+  tm:7607 (Xavi): FOUND ('tm:7607', 'Xavi')

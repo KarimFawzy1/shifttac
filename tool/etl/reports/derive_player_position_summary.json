@@ -1,0 +1,24 @@
+{
+  "phase": "D6",
+  "built_at": "2026-06-01T14:21:27+00:00",
+  "player_position_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\player_position.csv",
+  "attributes_position_output": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\staging\\attributes_position.csv",
+  "player_position_edges": 47225,
+  "attributes_position_rows": 4,
+  "players_omitted_missing_position": 465,
+  "unmapped_position_strings_distinct": 0,
+  "unmapped_position_strings_total": 0,
+  "unmapped_positions_report": "D:\\Foozzz_MAIN\\Materials\\AllTerrianTech\\Flutter_Projects\\Infinite-Tic-Tac-Toe\\shifttac\\tool\\etl\\reports\\unmapped_positions.csv",
+  "spot_checks": {
+    "goalkeepers_tagged_fwd_count": 0,
+    "edges_by_bucket": {
+      "GK": 5519,
+      "DEF": 15206,
+      "MID": 13619,
+      "FWD": 12881
+    },
+    "goalkeeper_edges": 5519,
+    "forward_edges": 12881
+  },
+  "spot_check_passed": true
+}
